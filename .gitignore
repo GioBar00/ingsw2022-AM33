@@ -1,0 +1,11 @@
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+/target/
+/.idea/
+*.iml
+out/
+log/*
+!log/.gitkeep
