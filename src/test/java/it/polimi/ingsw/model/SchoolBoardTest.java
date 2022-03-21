@@ -87,7 +87,9 @@ class SchoolBoardTest {
                 assertFalse(profs.contains(t));
         }
         assertEquals(1, profs.size());
-        assertThrows(Exception.class,()-> s.addProfessor(StudentColor.RED));
+        assertThrows(Exception.class,()-> s.addProfessor(StudentColor.BLUE));
+        s.addProfessor(StudentColor.RED);
+        s.removeProfessor(StudentColor.RED);
         //Check consistency
         profs.remove(StudentColor.BLUE);
         profs = s.getProfessors();
@@ -99,7 +101,7 @@ class SchoolBoardTest {
         for(StudentColor t : StudentColor.values()){
             assertFalse(profs.contains(t));
         }
-        assertThrows(Exception.class, ()->s.removeProfessor(StudentColor.RED));
+        assertThrows(Exception.class, ()->s.removeProfessor(StudentColor.BLUE));
 
 
     }
