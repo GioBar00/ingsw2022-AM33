@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 
 public class IslandGroup {
-    private final ArrayList<Island> islands = new ArrayList<>();
+    final ArrayList<Island> islands = new ArrayList<>();
     boolean isBlocked;
 
     IslandGroup() {

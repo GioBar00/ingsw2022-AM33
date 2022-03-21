@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -11,7 +13,7 @@ class Bag {
         students = new LinkedList<>();
     }
 
-    void addStudents(LinkedList<StudentColor> newStudents){
+    void addStudents(Collection<StudentColor> newStudents){
         students.addAll(newStudents);
     }
 

@@ -7,7 +7,6 @@ class SchoolBoard {
     private int numTowers;
     private final Tower tower;
     private final EnumMap<StudentColor, Integer> studentsHall;
-    private final int entranceCapacity;
     private final ArrayList<StudentColor> entrance;
     private final EnumSet<StudentColor> professors;
 
@@ -15,18 +14,18 @@ class SchoolBoard {
         this.maxNumTowers = numTowers;
         this.tower = tower;
         this.numTowers = numTowers;
-        this.entranceCapacity = entranceCapacity;
         this.entrance = new ArrayList<>();
 
-        for(int i = 0; i < entranceCapacity; i++){
-            entrance.add(null);
-        }
+        entrance.addAll(Collections.nCopies(entranceCapacity, null));
+
         this.studentsHall = new EnumMap<>(StudentColor.class);
         for(StudentColor s : StudentColor.values()){
             studentsHall.put(s,0);
         }
         this.professors = EnumSet.noneOf(StudentColor.class);
     }
+
+    int getEntranceCapacity() {return entrance.size();}
 
     Tower getTower(){
         return tower;
@@ -50,10 +49,6 @@ class SchoolBoard {
 
         numTowers = numTowers - num;
 
-    }
-
-    int getStudNumInHall(StudentColor s){
-        return studentsHall.get(s);
     }
 
 
@@ -81,15 +76,21 @@ class SchoolBoard {
     }
 
     void addToEntrance(StudentColor s) throws LimitExceededException{
-        int i;
-        for(i = 0; i < entranceCapacity; i ++){
+        for(int i = 0; i < entrance.size(); i ++){
             if(entrance.get(i) == null){
                 entrance.set(i,s);
-                break;
+                return;
             }
         }
-        if(i == entranceCapacity)
+        throw new LimitExceededException();
+    }
+
+    void addToEntrance(StudentColor s, int index) throws IndexOutOfBoundsException, LimitExceededException {
+        if (index < 0 || index >= entrance.size())
+            throw new IndexOutOfBoundsException();
+        if (entrance.get(index) != null)
             throw new LimitExceededException();
+        entrance.set(index, s);
     }
 
     StudentColor removeFromEntrance(int index) throws NoSuchElementException{
@@ -103,13 +104,13 @@ class SchoolBoard {
     }
     ArrayList<StudentColor> getStudentsInEntrance(){
         ArrayList<StudentColor> ret = new ArrayList<>();
-        for(int i = 0; i < entranceCapacity; i++){
+        for(int i = 0; i < entrance.size(); i++){
             ret.add(i,entrance.get(i));
         }
         return ret;
     }
 
-    Integer getStudentsInHall(StudentColor s){return studentsHall.get(s);}
+    int getStudentsInHall(StudentColor s){return studentsHall.get(s);}
 
     void moveToHall(int entranceIndex) throws LimitExceededException {
         StudentColor s = removeFromEntrance(entranceIndex);

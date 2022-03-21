@@ -16,9 +16,9 @@ class IslandGroupTest {
 
         EnumSet<StudentColor> profs = EnumSet.of(StudentColor.BLUE, StudentColor.GREEN);
 
-        assertTrue(ig1.calcInfluence(Tower.BLACK, profs) == 3);
-        assertTrue(ig1.calcInfluence(profs) == 2);
-        assertFalse(ig1.calcInfluence(Tower.BLACK, profs) == ig1.calcInfluence(profs));
+        assertEquals(3, ig1.calcInfluence(Tower.BLACK, profs));
+        assertEquals(2, ig1.calcInfluence(profs));
+        assertNotEquals(ig1.calcInfluence(Tower.BLACK, profs), ig1.calcInfluence(profs));
     }
 
     @Test
@@ -28,6 +28,6 @@ class IslandGroupTest {
 
         ig1.mergeWith(ig2);
 
-        assertTrue(ig1.size() == 2);
+        assertEquals(2, ig1.size());
     }
 }

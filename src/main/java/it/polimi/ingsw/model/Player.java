@@ -11,7 +11,7 @@ class Player{
     private AssistantCard playedCard;
     private final SchoolBoard schoolBoard;
 
-    Player(String nickname,Wizard wizard,SchoolBoard schoolBoard){
+    Player(String nickname, Wizard wizard, SchoolBoard schoolBoard){
         this.nickname = nickname;
         this.wizard = wizard;
         this.assistantCards = new ArrayList<>();
@@ -24,11 +24,15 @@ class Player{
     String getNickname(){return nickname;}
 
     Wizard getWizard(){return wizard;}
+
     SchoolBoard getSchoolBoard(){return schoolBoard;}
+
     AssistantCard getAssistantCard(){return playedCard;}
+
     void playAssistantCard (AssistantCard card) throws NoSuchElementException {
         if(assistantCards.contains(card)){
-            playedCard = assistantCards.get(assistantCards.indexOf(card));
+            playedCard = card;
+            assistantCards.remove(card);
         }
         else throw new NoSuchElementException();
     }

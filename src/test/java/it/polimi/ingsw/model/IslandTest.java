@@ -11,7 +11,7 @@ class IslandTest {
     void addStudentTest() {
         Island i_test = new Island();
         for (StudentColor s : StudentColor.values()) {
-            assertTrue(i_test.students.get(s) == 0);
+            assertEquals(0, i_test.students.get(s).intValue());
         }
 
         for (StudentColor s : StudentColor.values()) {
@@ -19,8 +19,8 @@ class IslandTest {
         }
 
         for (StudentColor s : StudentColor.values()) {
-            assertFalse(i_test.students.get(s) == 0);
-            assertTrue(i_test.students.get(s) == 1);
+            assertNotEquals(0, i_test.students.get(s).intValue());
+            assertEquals(1, i_test.students.get(s).intValue());
         }
     }
 }

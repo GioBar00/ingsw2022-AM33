@@ -1,29 +1,36 @@
 package it.polimi.ingsw.model;
 
-public class Cloud {
-    private final StudentColor[] students;
+import java.util.ArrayList;
+import java.util.Collections;
 
-    public Cloud(int capacity) {
-        this.students = new StudentColor[capacity];
+class Cloud {
+    private final ArrayList<StudentColor> students;
+
+    Cloud(int capacity) {
+        this.students = new ArrayList<>(capacity);
+        students.addAll(Collections.nCopies(capacity, null));
     }
 
+    private void clearStudents() {
+        for (int i = 0; i < students.size(); i++) {
+            students.set(i, null);
+        }
+    }
 
-    StudentColor[] getStudents() {
+    ArrayList<StudentColor> getStudents() {
         return students;
     }
 
     void addStudent(int index, StudentColor s) throws IndexOutOfBoundsException {
-        students[index] = s;
+        students.set(index, s);
     }
 
-    StudentColor[] popStudents(){
-        StudentColor[] temp = new StudentColor[students.length];
-
-        for(int i = 0; i < students.length; i++){
-            temp[i] = students[i];
-            students[i] = null;
+    ArrayList<StudentColor> popStudents(){
+        ArrayList<StudentColor> tmp = new ArrayList<>();
+        for(int i = 0; i < students.size(); i++){
+            tmp.add(i, students.get(i));
         }
-
-        return temp;
+        clearStudents();
+        return tmp;
     }
 }
