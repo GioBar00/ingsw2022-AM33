@@ -237,7 +237,7 @@
 											"top": 960,
 											"width": 468.64111328125,
 											"height": 13,
-											"text": "~clouds: Cloud[2..4]",
+											"text": "~clouds: ArrayList<Cloud>",
 											"horizontalAlignment": 0
 										},
 										{
@@ -254,7 +254,7 @@
 											"top": 975,
 											"width": 468.64111328125,
 											"height": 13,
-											"text": "~players: Player[2..4]",
+											"text": "~players: ArrayList<Player>",
 											"horizontalAlignment": 0
 										}
 									],
@@ -390,7 +390,7 @@
 											"top": 1088,
 											"width": 468.64111328125,
 											"height": 13,
-											"text": "~initializeSchoolBoards()",
+											"text": "-initializeSchoolBoards()",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4056,7 +4056,7 @@
 											"font": "Arial;13;1",
 											"left": 1933,
 											"top": 935,
-											"width": 231.61328125,
+											"width": 238.83056640625,
 											"height": 13,
 											"text": "Cloud"
 										},
@@ -4091,7 +4091,7 @@
 									"font": "Arial;13;0",
 									"left": 1928,
 									"top": 928,
-									"width": 241.61328125,
+									"width": 248.83056640625,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAF/mkT3plJZNuQ="
@@ -4128,16 +4128,16 @@
 											"font": "Arial;13;0",
 											"left": 1933,
 											"top": 958,
-											"width": 231.61328125,
+											"width": 238.83056640625,
 											"height": 13,
-											"text": "-students: StudentColor[*]",
+											"text": "-students: ArrayList<StudentColor>",
 											"horizontalAlignment": 0
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 1928,
 									"top": 953,
-									"width": 241.61328125,
+									"width": 248.83056640625,
 									"height": 23
 								},
 								{
@@ -4162,7 +4162,7 @@
 											"font": "Arial;13;0",
 											"left": 1933,
 											"top": 981,
-											"width": 231.61328125,
+											"width": 238.83056640625,
 											"height": 13,
 											"text": "~Cloud(capacity: int)",
 											"horizontalAlignment": 0
@@ -4179,9 +4179,9 @@
 											"font": "Arial;13;0",
 											"left": 1933,
 											"top": 996,
-											"width": 231.61328125,
+											"width": 238.83056640625,
 											"height": 13,
-											"text": "~getStudents(): StudentColor[*]",
+											"text": "~getStudents(): ArrayList<StudentColor>",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4196,7 +4196,7 @@
 											"font": "Arial;13;0",
 											"left": 1933,
 											"top": 1011,
-											"width": 231.61328125,
+											"width": 238.83056640625,
 											"height": 13,
 											"text": "~addStudent(index: int, s: StudentColor)",
 											"horizontalAlignment": 0
@@ -4213,17 +4213,34 @@
 											"font": "Arial;13;0",
 											"left": 1933,
 											"top": 1026,
-											"width": 231.61328125,
+											"width": 238.83056640625,
 											"height": 13,
-											"text": "~popStudents(): StudentColor[*]",
+											"text": "~popStudents(): ArrayList<StudentColor>",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAF/sbaKmB6eTzQ=",
+											"_parent": {
+												"$ref": "AAAAAAF/mkT3p1JeZ+A="
+											},
+											"model": {
+												"$ref": "AAAAAAF/sbaKQh6MIBs="
+											},
+											"font": "Arial;13;0",
+											"left": 1933,
+											"top": 1041,
+											"width": 238.83056640625,
+											"height": 13,
+											"text": "-clearStudents()",
 											"horizontalAlignment": 0
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 1928,
 									"top": 976,
-									"width": 241.61328125,
-									"height": 68
+									"width": 248.83056640625,
+									"height": 83
 								},
 								{
 									"_type": "UMLReceptionCompartmentView",
@@ -4262,8 +4279,8 @@
 							"containerChangeable": true,
 							"left": 1928,
 							"top": 928,
-							"width": 241.61328125,
-							"height": 116,
+							"width": 248.83056640625,
+							"height": 131,
 							"nameCompartment": {
 								"$ref": "AAAAAAF/mkT3plJYl78="
 							},
@@ -8016,7 +8033,7 @@
 											"top": 450,
 											"width": 387.6513671875,
 											"height": 13,
-											"text": "-entrance: StudentColor[*]",
+											"text": "-entrance: ArrayList<StudentColor>",
 											"horizontalAlignment": 0
 										},
 										{
@@ -8169,7 +8186,7 @@
 											"top": 578,
 											"width": 387.6513671875,
 											"height": 13,
-											"text": "~getStudNumInHall(s: StudentColor): int",
+											"text": "~getStudentsInHall(s: StudentColor): int",
 											"horizontalAlignment": 0
 										},
 										{
@@ -8271,7 +8288,7 @@
 											"top": 668,
 											"width": 387.6513671875,
 											"height": 13,
-											"text": "~removeFromEntrance(index: int)",
+											"text": "~removeFromEntrance(index: int): StudentColor",
 											"horizontalAlignment": 0
 										},
 										{
@@ -8322,7 +8339,24 @@
 											"top": 713,
 											"width": 387.6513671875,
 											"height": 13,
-											"text": "~removeFromHall(s: StudentColor, maxNum: int)",
+											"text": "~removeFromHall(s: StudentColor, maxNum: int): int",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAF/sa0RywVU48g=",
+											"_parent": {
+												"$ref": "AAAAAAF/nVDC+cNFcX4="
+											},
+											"model": {
+												"$ref": "AAAAAAF/sa0RHgUwyW4="
+											},
+											"font": "Arial;13;0",
+											"left": 165,
+											"top": 728,
+											"width": 387.6513671875,
+											"height": 13,
+											"text": "~getEntranceCapacity(): int",
 											"horizontalAlignment": 0
 										}
 									],
@@ -8330,7 +8364,7 @@
 									"left": 160,
 									"top": 483,
 									"width": 397.6513671875,
-									"height": 248
+									"height": 263
 								},
 								{
 									"_type": "UMLReceptionCompartmentView",
@@ -8368,7 +8402,7 @@
 							"left": 160,
 							"top": 360,
 							"width": 397.6513671875,
-							"height": 371,
+							"height": 386,
 							"nameCompartment": {
 								"$ref": "AAAAAAF/nVDC+MM/iVk="
 							},
@@ -8534,7 +8568,7 @@
 									"visible": false,
 									"font": "Arial;13;0",
 									"left": 343,
-									"top": 749,
+									"top": 764,
 									"height": 13,
 									"alpha": -0.5235987755982988,
 									"distance": 30,
@@ -8554,7 +8588,7 @@
 									"visible": false,
 									"font": "Arial;13;0",
 									"left": 329,
-									"top": 752,
+									"top": 767,
 									"height": 13,
 									"alpha": -0.7853981633974483,
 									"distance": 40,
@@ -8574,7 +8608,7 @@
 									"visible": false,
 									"font": "Arial;13;0",
 									"left": 370,
-									"top": 745,
+									"top": 760,
 									"height": 13,
 									"alpha": 0.5235987755982988,
 									"distance": 25,
@@ -8618,7 +8652,7 @@
 							"tail": {
 								"$ref": "AAAAAAF/mooacImw25I="
 							},
-							"points": "584:760;358:760;358:730",
+							"points": "584:760;358:760;358:745",
 							"showVisibility": true,
 							"nameLabel": {
 								"$ref": "AAAAAAF/nV8vYTByIe8="
@@ -14192,7 +14226,7 @@
 											"width": 462.07763671875,
 											"height": 13,
 											"underline": true,
-											"text": "+getGameModel(gameType: GameType, gameMode: GameMode): GameModel",
+											"text": "+getGameModel(gameType, gameMode: GameMode): GameModel",
 											"horizontalAlignment": 0
 										}
 									],
@@ -14650,7 +14684,7 @@
 											"top": 1204,
 											"width": 252.5224609375,
 											"height": 13,
-											"text": "-lastRound: bool",
+											"text": "-lastRound: boolean",
 											"horizontalAlignment": 0
 										},
 										{
@@ -14701,7 +14735,7 @@
 											"top": 1249,
 											"width": 252.5224609375,
 											"height": 13,
-											"text": "~currentPlayerOrderIndex: int",
+											"text": "~currentPlayerOrderIndex: Integer",
 											"horizontalAlignment": 0
 										},
 										{
@@ -14718,7 +14752,7 @@
 											"top": 1264,
 											"width": 252.5224609375,
 											"height": 13,
-											"text": "~playerOrderIndexes: int[2..4]",
+											"text": "~playerOrderIndexes: Integer[2..4]",
 											"horizontalAlignment": 0
 										}
 									],
@@ -14822,13 +14856,30 @@
 											"height": 13,
 											"text": "~calculatePlayerOrder(players: Player[2..4])",
 											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAF/scKrqF9YmW0=",
+											"_parent": {
+												"$ref": "AAAAAAF/rIMKnmgyIFE="
+											},
+											"model": {
+												"$ref": "AAAAAAF/scKrMV8osTQ="
+											},
+											"font": "Arial;13;0",
+											"left": 949,
+											"top": 1362,
+											"width": 252.5224609375,
+											"height": 13,
+											"text": "-calculateClockwiseOrder()",
+											"horizontalAlignment": 0
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 944,
 									"top": 1282,
 									"width": 262.5224609375,
-									"height": 83
+									"height": 98
 								},
 								{
 									"_type": "UMLReceptionCompartmentView",
@@ -14868,7 +14919,7 @@
 							"left": 944,
 							"top": 1144,
 							"width": 262.5224609375,
-							"height": 221,
+							"height": 236,
 							"nameCompartment": {
 								"$ref": "AAAAAAF/rIMKnWgspXg="
 							},
@@ -16027,10 +16078,7 @@
 							},
 							"name": "clouds",
 							"visibility": "package",
-							"type": {
-								"$ref": "AAAAAAF/mkT3pVJV1MY="
-							},
-							"multiplicity": "2..4"
+							"type": "ArrayList<Cloud>"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -16040,8 +16088,7 @@
 							},
 							"name": "players",
 							"visibility": "package",
-							"type": "Player",
-							"multiplicity": "2..4"
+							"type": "ArrayList<Player>"
 						}
 					],
 					"operations": [
@@ -16160,7 +16207,7 @@
 								"$ref": "AAAAAAF/mhTCwBY+/us="
 							},
 							"name": "initializeSchoolBoards",
-							"visibility": "package"
+							"visibility": "private"
 						},
 						{
 							"_type": "UMLOperation",
@@ -17293,10 +17340,7 @@
 							},
 							"name": "students",
 							"visibility": "private",
-							"type": {
-								"$ref": "AAAAAAF/nWLz4Ve6jOg="
-							},
-							"multiplicity": "*"
+							"type": "ArrayList<StudentColor>"
 						}
 					],
 					"operations": [
@@ -17335,10 +17379,7 @@
 									"_parent": {
 										"$ref": "AAAAAAF/mlfH1Xe3fKk="
 									},
-									"type": {
-										"$ref": "AAAAAAF/nWLz4Ve6jOg="
-									},
-									"multiplicity": "*",
+									"type": "ArrayList<StudentColor>",
 									"direction": "return"
 								}
 							]
@@ -17389,13 +17430,19 @@
 									"_parent": {
 										"$ref": "AAAAAAF/mnue6kN5IQA="
 									},
-									"type": {
-										"$ref": "AAAAAAF/nWLz4Ve6jOg="
-									},
-									"multiplicity": "*",
+									"type": "ArrayList<StudentColor>",
 									"direction": "return"
 								}
 							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAF/sbaKQh6MIBs=",
+							"_parent": {
+								"$ref": "AAAAAAF/mkT3pVJV1MY="
+							},
+							"name": "clearStudents",
+							"visibility": "private"
 						}
 					]
 				},
@@ -18227,10 +18274,7 @@
 							},
 							"name": "entrance",
 							"visibility": "private",
-							"type": {
-								"$ref": "AAAAAAF/nWLz4Ve6jOg="
-							},
-							"multiplicity": "*"
+							"type": "ArrayList<StudentColor>"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -18388,7 +18432,7 @@
 							"_parent": {
 								"$ref": "AAAAAAF/nVDC98M88iI="
 							},
-							"name": "getStudNumInHall",
+							"name": "getStudentsInHall",
 							"visibility": "package",
 							"parameters": [
 								{
@@ -18547,6 +18591,17 @@
 									},
 									"name": "index",
 									"type": "int"
+								},
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAF/sbBJDwnQ0wE=",
+									"_parent": {
+										"$ref": "AAAAAAF/nV+8zDYVJfY="
+									},
+									"type": {
+										"$ref": "AAAAAAF/nWLz4Ve6jOg="
+									},
+									"direction": "return"
 								}
 							]
 						},
@@ -18620,6 +18675,35 @@
 									},
 									"name": "maxNum",
 									"type": "int"
+								},
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAF/sKbb2y1w7aw=",
+									"_parent": {
+										"$ref": "AAAAAAF/nVxL5SP0Sh8="
+									},
+									"type": "int",
+									"direction": "return"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAF/sa0RHgUwyW4=",
+							"_parent": {
+								"$ref": "AAAAAAF/nVDC98M88iI="
+							},
+							"name": "getEntranceCapacity",
+							"visibility": "package",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAF/sa1yQQY2JfM=",
+									"_parent": {
+										"$ref": "AAAAAAF/sa0RHgUwyW4="
+									},
+									"type": "int",
+									"direction": "return"
 								}
 							]
 						}
@@ -19833,9 +19917,7 @@
 										"$ref": "AAAAAAF/qDwwvt983So="
 									},
 									"name": "gameType",
-									"type": {
-										"$ref": "AAAAAAF/mkGb+T7QmlI="
-									}
+									"type": ""
 								},
 								{
 									"_type": "UMLParameter",
@@ -19934,7 +20016,7 @@
 							},
 							"name": "lastRound",
 							"visibility": "private",
-							"type": "bool"
+							"type": "boolean"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -19964,7 +20046,7 @@
 							},
 							"name": "currentPlayerOrderIndex",
 							"visibility": "package",
-							"type": "int"
+							"type": "Integer"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -19974,7 +20056,7 @@
 							},
 							"name": "playerOrderIndexes",
 							"visibility": "package",
-							"type": "int",
+							"type": "Integer",
 							"multiplicity": "2..4"
 						}
 					],
@@ -20083,6 +20165,15 @@
 									"multiplicity": "2..4"
 								}
 							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAF/scKrMV8osTQ=",
+							"_parent": {
+								"$ref": "AAAAAAF/rIMKnGgpDnc="
+							},
+							"name": "calculateClockwiseOrder",
+							"visibility": "private"
 						}
 					]
 				},
