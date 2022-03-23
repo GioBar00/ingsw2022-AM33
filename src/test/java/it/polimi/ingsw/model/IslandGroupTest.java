@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.islands.IslandGroup;
 import org.junit.jupiter.api.Test;
 
 import java.util.EnumSet;

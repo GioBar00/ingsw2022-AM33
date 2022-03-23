@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.islands.IslandsManager;
+
 import javax.naming.LimitExceededException;
 import javax.naming.NoPermissionException;
 import java.nio.channels.AlreadyConnectedException;
@@ -11,7 +13,7 @@ public class GameModel {
     GameState gameState;
     RoundManager roundManager;
     final Bag bag;
-    final ArrayList<IslandGroup> islandGroups;
+    final IslandsManager islandsManager;
     int motherNatureIndex;
     final ArrayList<Cloud> clouds;
     final int numPlayers;
@@ -24,18 +26,13 @@ public class GameModel {
             bag = null;
             players = null;
             clouds = null;
-            islandGroups = null;
+            islandsManager = null;
             return;
         }
-        islandGroups = new ArrayList<>(12);
+        islandsManager = new IslandsManager();
         players = new ArrayList<>(numPlayers);
         clouds = new ArrayList<>(numPlayers);
         bag = new Bag();
-
-        // initialize islandGroups
-        for(int i = 0; i < 12; i++) {
-            islandGroups.add(new IslandGroup());
-        }
 
         // initialize clouds
         int cloudCapacity;
@@ -107,10 +104,10 @@ public class GameModel {
             bag.addStudents(Collections.nCopies(2, s));
         }
 
-        motherNatureIndex = ThreadLocalRandom.current().nextInt(0, islandGroups.size());
-        for (int i = 0; i < islandGroups.size(); i++) {
+        motherNatureIndex = ThreadLocalRandom.current().nextInt(0, islandsManager.size());
+        for (int i = 0; i < islandsManager.size(); i++) {
             if (i % 6 != motherNatureIndex % 6) {
-                islandGroups.get(i).addStudent(0, bag.popRandomStudent());
+                islandsManager.getIslandGroup(i).addStudent(0, bag.popRandomStudent());
             }
         }
 

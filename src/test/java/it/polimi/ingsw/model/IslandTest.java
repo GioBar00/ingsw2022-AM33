@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.islands.Island;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +12,7 @@ class IslandTest {
     void addStudentTest() {
         Island i_test = new Island();
         for (StudentColor s : StudentColor.values()) {
-            assertEquals(0, i_test.students.get(s).intValue());
+            assertEquals(0, i_test.getNumStudents(s));
         }
 
         for (StudentColor s : StudentColor.values()) {
@@ -19,8 +20,8 @@ class IslandTest {
         }
 
         for (StudentColor s : StudentColor.values()) {
-            assertNotEquals(0, i_test.students.get(s).intValue());
-            assertEquals(1, i_test.students.get(s).intValue());
+            assertNotEquals(0, i_test.getNumStudents(s));
+            assertEquals(1, i_test.getNumStudents(s));
         }
     }
 }

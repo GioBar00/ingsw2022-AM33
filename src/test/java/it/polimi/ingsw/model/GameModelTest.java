@@ -1,12 +1,10 @@
 package it.polimi.ingsw.model;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
+import it.polimi.ingsw.model.islands.Island;
+import it.polimi.ingsw.model.islands.IslandGroup;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import javax.naming.NoPermissionException;
-import java.util.Arrays;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,10 +39,10 @@ class GameModelTest {
         assert model.clouds != null;
         for (Cloud c: model.clouds)
             numStud += c.getStudents().stream().filter(Objects::nonNull).toArray().length;
-        assert model.islandGroups != null;
-        for (IslandGroup ig: model.islandGroups)
-            for (Island i: ig.islands)
-                numStud += i.getNumStudents();
+        assert model.islandsManager != null;
+        for (int i = 0; i < model.islandsManager.size(); i++)
+            for (int j = 0; j < model.islandsManager.getIslandGroup(i).size(); j ++)
+                numStud += model.islandsManager.getIslandGroup(i).getIslands().get(j).getNumStudents();
         assertEquals(130, numStud);
     }
 }
