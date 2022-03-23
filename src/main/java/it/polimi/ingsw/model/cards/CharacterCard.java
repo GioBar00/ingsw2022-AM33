@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model.cards;
 
-import it.polimi.ingsw.model.GameModel;
-
 abstract class CharacterCard {
     Integer cost;
     Integer additionalCost = 0;
@@ -15,7 +13,8 @@ abstract class CharacterCard {
         return cost + additionalCost;
     }
 
-    abstract void applyEffect(GameModel model, Object[] args);
+    //FIXME
+    //abstract void applyEffect(GameModel model, Object[] args);
 
     boolean canHandleBlocks(){
         return false;

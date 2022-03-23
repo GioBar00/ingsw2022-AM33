@@ -1,7 +1,9 @@
 package it.polimi.ingsw.model;
 
-import java.util.Collection;
+import it.polimi.ingsw.enums.StudentColor;
+
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -16,7 +18,7 @@ class Bag {
      * adds a group of students to the bag
      * @param newStudents group of students
      */
-    void addStudents(Collection<StudentColor> newStudents){
+    void addStudents(List<StudentColor> newStudents){
         students.addAll(newStudents);
     }
 

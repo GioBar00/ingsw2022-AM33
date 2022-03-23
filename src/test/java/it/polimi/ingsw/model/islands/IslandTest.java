@@ -1,6 +1,6 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.islands;
 
-import it.polimi.ingsw.model.islands.Island;
+import it.polimi.ingsw.enums.StudentColor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

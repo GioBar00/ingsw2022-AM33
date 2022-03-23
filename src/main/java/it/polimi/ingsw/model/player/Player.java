@@ -1,10 +1,13 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.player;
+
+import it.polimi.ingsw.enums.AssistantCard;
+import it.polimi.ingsw.enums.Wizard;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 
-class Player{
+public class Player{
     private final String nickname;
     private final Wizard wizard;
     private final ArrayList<AssistantCard> assistantCards;
@@ -21,7 +24,7 @@ class Player{
     }
 
 
-    String getNickname(){return nickname;}
+    public String getNickname(){return nickname;}
 
     Wizard getWizard(){return wizard;}
 

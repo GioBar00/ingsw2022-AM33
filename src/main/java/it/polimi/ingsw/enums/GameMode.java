@@ -1,8 +1,5 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.enums;
 
-/**
- *
- */
 public enum GameMode {
     EASY,
     EXPERT

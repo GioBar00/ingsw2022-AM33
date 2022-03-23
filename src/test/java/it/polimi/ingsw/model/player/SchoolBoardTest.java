@@ -1,5 +1,7 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.player;
 
+import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.enums.Tower;
 import org.junit.jupiter.api.Test;
 
 import javax.naming.LimitExceededException;
@@ -14,7 +16,7 @@ class SchoolBoardTest {
 
     @Test
     void removeTowers() {
-        SchoolBoard s = new SchoolBoard(300,Tower.WHITE,10);
+        SchoolBoard s = new SchoolBoard(300, Tower.WHITE,10);
         try{s.removeTowers(1);
             assertEquals(9,s.getNumTowers());
             try{s.removeTowers(8);

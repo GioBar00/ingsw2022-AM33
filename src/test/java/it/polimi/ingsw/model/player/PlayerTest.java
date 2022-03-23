@@ -1,5 +1,8 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.player;
 
+import it.polimi.ingsw.enums.AssistantCard;
+import it.polimi.ingsw.enums.Tower;
+import it.polimi.ingsw.enums.Wizard;
 import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;

@@ -1,8 +1,11 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.player;
+import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.enums.Tower;
+
 import javax.naming.LimitExceededException;
 import java.util.*;
 
-class SchoolBoard {
+public class SchoolBoard {
     private final int maxNumTowers;
     private int numTowers;
     private final Tower tower;
@@ -16,7 +19,7 @@ class SchoolBoard {
      * @param tower type of tower related to the SchoolBard
      * @param numTowers max number of towers
      */
-    SchoolBoard(int entranceCapacity, Tower tower, int numTowers){
+    public SchoolBoard(int entranceCapacity, Tower tower, int numTowers){
         this.maxNumTowers = numTowers;
         this.tower = tower;
         this.numTowers = numTowers;
@@ -35,9 +38,9 @@ class SchoolBoard {
      * Calculates the max number of students that schoolBoard can contain
      * @return max number of students containable in the entrance
      */
-    int getEntranceCapacity() {return entrance.size();}
+    public int getEntranceCapacity() {return entrance.size();}
 
-    Tower getTower(){
+    public Tower getTower(){
         return tower;
     }
 
@@ -46,7 +49,7 @@ class SchoolBoard {
      * @param num number of towers to add
      * @throws LimitExceededException  if we're trying to add towers when there's no space left
      */
-    void addTowers(int num) throws LimitExceededException {
+    public void addTowers(int num) throws LimitExceededException {
         if(numTowers + num > maxNumTowers){
             throw new LimitExceededException();
         }
@@ -59,14 +62,14 @@ class SchoolBoard {
      * Calculates the current number of towers in the SchoolBoard
      * @return current number of towers
      */
-    int getNumTowers(){return numTowers;}
+    public int getNumTowers(){return numTowers;}
 
     /**
      * Removes n-towers from SchoolBoard
      * @param num number of towers to remove
      * @throws LimitExceededException  if we're trying to remove more tower than available
      */
-    void removeTowers(int num) throws LimitExceededException{
+    public void removeTowers(int num) throws LimitExceededException{
         if(numTowers - num < 0){
             throw new LimitExceededException();
         }
@@ -77,7 +80,7 @@ class SchoolBoard {
      * Calculates the professors in SchoolBoard
      * @return a deep copy of professors contained in SchoolBoard
      */
-    EnumSet<StudentColor> getProfessors(){
+    public EnumSet<StudentColor> getProfessors(){
         EnumSet<StudentColor> ret;
         ret = EnumSet.copyOf(professors);
         return ret;
@@ -88,7 +91,7 @@ class SchoolBoard {
      * @param p is the color of the professor
      * @throws Exception if professor is already in SchoolBard
      */
-    void addProfessor(StudentColor p)throws Exception{
+    public void addProfessor(StudentColor p)throws Exception{
         if(!professors.contains(p))
             professors.add(p);
         else {
@@ -101,7 +104,7 @@ class SchoolBoard {
      * @param p is the color of the professor
      * @throws Exception if SchoolBard doesn't contain the professor
      */
-    void removeProfessor(StudentColor p) throws Exception{
+    public void removeProfessor(StudentColor p) throws Exception{
         if(professors.contains(p))
             professors.remove(p);
         else{
@@ -114,7 +117,7 @@ class SchoolBoard {
      * @param s the type of Student to add
      * @throws LimitExceededException   if there's no space left
      */
-    void addToEntrance(StudentColor s) throws LimitExceededException{
+    public void addToEntrance(StudentColor s) throws LimitExceededException{
         for(int i = 0; i < entrance.size(); i ++){
             if(entrance.get(i) == null){
                 entrance.set(i,s);
@@ -131,7 +134,7 @@ class SchoolBoard {
      * @throws IndexOutOfBoundsException if the index is a no-valid value
      * @throws LimitExceededException if the slot is already taken
      */
-    void addToEntrance(StudentColor s, int index) throws IndexOutOfBoundsException, LimitExceededException {
+    public void addToEntrance(StudentColor s, int index) throws IndexOutOfBoundsException, LimitExceededException {
         if (index < 0 || index >= entrance.size())
             throw new IndexOutOfBoundsException();
         if (entrance.get(index) != null)
@@ -145,7 +148,7 @@ class SchoolBoard {
      * @return the type of Student removed
      * @throws NoSuchElementException if there's no Student in the selected slot
      */
-    StudentColor removeFromEntrance(int index) throws NoSuchElementException{
+    public StudentColor removeFromEntrance(int index) throws NoSuchElementException{
         StudentColor s;
         if (index < 0 || index >= entrance.size())
             throw new IndexOutOfBoundsException();
@@ -161,7 +164,7 @@ class SchoolBoard {
      * Create a deep copy of the entrance
      * @return the copy of the entrance
      */
-    ArrayList<StudentColor> getStudentsInEntrance(){
+    public ArrayList<StudentColor> getStudentsInEntrance(){
         ArrayList<StudentColor> ret = new ArrayList<>();
         for(int i = 0; i < entrance.size(); i++){
             ret.add(i,entrance.get(i));
@@ -174,14 +177,14 @@ class SchoolBoard {
      * @param s type of Student
      * @return number of specific type of Student in the hall
      */
-    int getStudentsInHall(StudentColor s){return studentsHall.get(s);}
+    public int getStudentsInHall(StudentColor s){return studentsHall.get(s);}
 
     /**
      * Moves a specific Student from entrance to hall
      * @param entranceIndex the position of Student in the entrance
      * @throws LimitExceededException if there's no left space in hall
      */
-    void moveToHall(int entranceIndex) throws LimitExceededException {
+    public void moveToHall(int entranceIndex) throws LimitExceededException {
         StudentColor s = removeFromEntrance(entranceIndex);
         if (studentsHall.get(s) < 12)
             studentsHall.replace(s, studentsHall.get(s)+1);
@@ -194,7 +197,7 @@ class SchoolBoard {
      * @param s type of Student to remove
      * @param maxNum max number of students to remove
      */
-    void removeFromHall(StudentColor s, int maxNum) {
+    public void removeFromHall(StudentColor s, int maxNum) {
             if (studentsHall.get(s) < maxNum) {
                 studentsHall.replace(s, 0);
             }

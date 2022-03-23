@@ -1,14 +1,19 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.enums.*;
 import it.polimi.ingsw.model.islands.IslandsManager;
+import it.polimi.ingsw.model.player.*;
 
 import javax.naming.LimitExceededException;
+import javax.naming.NameAlreadyBoundException;
 import javax.naming.NoPermissionException;
 import java.nio.channels.AlreadyConnectedException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class GameModel {
+class GameModel implements Game {
     GameMode gameMode;
     GameState gameState;
     RoundManager roundManager;
@@ -16,45 +21,49 @@ public class GameModel {
     final IslandsManager islandsManager;
     int motherNatureIndex;
     final ArrayList<Cloud> clouds;
-    final int numPlayers;
-    final ArrayList<Player> players;
+    final PlayersManager playersManager;
+    final PlayerNumber numPlayers;
 
-    GameModel(int numPlayers) {
-        gameMode = GameMode.EASY;
+    GameModel(PlayerNumber numPlayers) {
+        this.gameMode = GameMode.EASY;
+        this.playersManager = new PlayersManager(numPlayers.getPlayersValue());
         this.numPlayers = numPlayers;
-        if (numPlayers == 0) {
-            bag = null;
-            players = null;
-            clouds = null;
-            islandsManager = null;
-            return;
-        }
-        islandsManager = new IslandsManager();
-        players = new ArrayList<>(numPlayers);
-        clouds = new ArrayList<>(numPlayers);
-        bag = new Bag();
+        this.clouds = new ArrayList<>(numPlayers.getPlayersValue());
+        this.bag = new Bag();
+
+        this.islandsManager = new IslandsManager();
+
 
         // initialize clouds
         int cloudCapacity;
-        if (numPlayers == 3)
+        if (numPlayers.getPlayersValue() == 3)
             cloudCapacity = 4;
         else
             cloudCapacity = 3;
-        for (int i = 0; i < numPlayers; i++) {
-            clouds.add(new Cloud(cloudCapacity));
+        for (int i = 0; i < numPlayers.getPlayersValue(); i++) {
+            clouds.add(new Cloud(numPlayers.getCloudCapacity()));
         }
 
         gameState = GameState.UNINITIALIZED;
     }
 
-    public GameMode getGameMode() {return gameMode;}
-    public GameState getGameState() {return gameState;}
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
 
     /**
      * Calculates the number of available slots for players to enter.
      * @return number of available slots
      */
-    public int getAvailablePlayerSlots() {return numPlayers - players.size();}
+
+    public int getAvailablePlayerSlots() {
+        //FIXME
+        return 0;
+    }
 
     /**
      * Adds a new player to the game.
@@ -62,33 +71,8 @@ public class GameModel {
      * @throws NoPermissionException if game not in UNINITIALIZED state or no more available slots for players
      * @throws AlreadyConnectedException if another player with same nickname is already in the game
      */
-    public void addPlayer(String nickname) throws NoPermissionException, AlreadyConnectedException {
-        if (gameState != GameState.UNINITIALIZED || getAvailablePlayerSlots() == 0)
-            throw new NoPermissionException();
-        // get random tower and wizard from available ones
-        List<Tower> availableTowers = new LinkedList<>(Arrays.asList(Tower.values()));
-        List<Wizard> availableWizards = new LinkedList<>(Arrays.asList(Wizard.values()));
-        for (Player p: players) {
-            if (p.getNickname().equals(nickname))
-                throw new AlreadyConnectedException();
-            availableTowers.removeIf(x -> x.equals(p.getSchoolBoard().getTower()));
-            availableWizards.removeIf(x -> x.equals(p.getWizard()));
-        }
-        int numTowers;
-        int entranceCapacity;
-        if(numPlayers == 3) {
-            numTowers = 6;
-            entranceCapacity = 9;
-        }
-        else {
-            numTowers = 8;
-            entranceCapacity = 7;
-        }
-        int towerIndex = ThreadLocalRandom.current().nextInt(0, availableTowers.size());
-        int wizardIndex = ThreadLocalRandom.current().nextInt(0, availableWizards.size());
-
-        SchoolBoard sb = new SchoolBoard(entranceCapacity, availableTowers.get(towerIndex), numTowers);
-        players.add(new Player(nickname, availableWizards.get(wizardIndex), sb));
+    public void addPlayer(String nickname) throws NoPermissionException, NameAlreadyBoundException  {
+        playersManager.addPlayer(nickname,numPlayers.getTowersValue(), numPlayers.getEntranceValue());
     }
 
     /**
@@ -96,12 +80,13 @@ public class GameModel {
      * Add the remaining student on the bag.
      * @throws NoPermissionException if game is not UNINITIALIZED or not all players have entered.
      */
-    public void initializeGame() throws NoPermissionException {
-        if (gameState != GameState.UNINITIALIZED || getAvailablePlayerSlots() != 0)
+    public void initializeGame() throws NoPermissionException{
+        if (gameState != GameState.UNINITIALIZED || playersManager.getAvailablePlayerSlots() != 0)
             throw new NoPermissionException();
 
         for(StudentColor s: StudentColor.values()) {
-            bag.addStudents(Collections.nCopies(2, s));
+            List<StudentColor> l = Collections.nCopies(2, s);
+            bag.addStudents(l);
         }
 
         motherNatureIndex = ThreadLocalRandom.current().nextInt(0, islandsManager.size());
@@ -118,13 +103,39 @@ public class GameModel {
         gameState = GameState.INITIALIZED;
     }
 
+    public void startGame() {
+        return;
+    }
+
+    public void playAssistantCard(AssistantCard assistantCard){
+        return;
+    }
+
+    public void moveStudentToHall(int entranceIndex) {
+        return;
+    }
+
+
+    public void moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) {
+        return;
+    }
+
+    public void moveMotherNature(int num) {
+        return;
+    }
+
+    public void getStudentsFromCloud(int cloudIndex) {
+        return;
+    }
+
     /**
      * Adds the students to the entrance of each players' school board.
      */
+    //FIXME
     private void initializeSchoolBoards() {
-        for (Player player : players) {
-            SchoolBoard sb = player.getSchoolBoard();
-            for (int j = 0; j < sb.getEntranceCapacity(); j++) {
+        for (Player p : playersManager.getPlayers()) {
+            SchoolBoard sb = playersManager.getSchoolBoard(p);
+            for (int i = 0; i < numPlayers.getEntranceValue(); i++) {
                 try {
                     sb.addToEntrance(bag.popRandomStudent());
                 } catch (LimitExceededException ignored) {
@@ -134,4 +145,10 @@ public class GameModel {
         }
     }
 
+    void nextRound(){}
+    void startActionPhase(){}
+    void checkProfessor(StudentColor s){}
+    void checkInfluence(){}
+    void nextTurn(){}
+    void checkWinner(){}
 }
