@@ -47,9 +47,14 @@ public class PlayersManager{
      */
     public int getAvailablePlayerSlots() {return numPlayers - players.size();}
 
+    /**
+     * Method for getting the last Player of the current round
+     * @return last Player
+     */
     public Player getLastPlayer(){
         return players.get(playerOrderIndexes[numPlayers]);
     }
+
     /**
      * Adds a new player to the game.
      * @param nickname unique identifier of a player
@@ -84,7 +89,10 @@ public class PlayersManager{
      */
     public SchoolBoard getSchoolBoard(Player p){ return p.getSchoolBoard();}
 
-    //TODO JavaDOC
+    /**
+     * Returns the player who is playing
+     * @return current Player
+     */
     public Player getCurrentPlayer() {
             return players.get(playerOrderIndexes[currentPlayerOrderIndex]);
     }
@@ -115,17 +123,27 @@ public class PlayersManager{
         ordered.toArray(playerOrderIndexes);
     }
 
-    //TODO JavaDOC
+    /**
+     * Assigns to the current Player the card he wants to play
+     * @param c the card a Player is trying to play
+     */
     public void currentPlayerPlayed(AssistantCard c) {
          players.get(playerOrderIndexes[currentPlayerOrderIndex]).playAssistantCard(c);
     }
 
-    //TODO JavaDOC
+    /**
+     * Calculates the remaining AssistantCard in the hand of one Player
+     * @param p the Player
+     * @return a list of remaining cards
+     */
     public ArrayList<AssistantCard> getPlayerHand(Player p){
         return p.getHand();
     }
 
-    //TODO JavaDOC
+    /**
+     * Calculates a list that contains all the players
+     * @return  a list of all the players
+     */
     public ArrayList<Player> getPlayers(){
         ArrayList<Player> ret = new ArrayList<>(numPlayers);
         for(Integer i : playerOrderIndexes){
@@ -134,8 +152,21 @@ public class PlayersManager{
         return ret;
     }
 
-    //TODO JavaDOC
+    /**
+     * Method for getting the last card played by one Player
+     * @param p the Player
+     * @return the last played card
+     */
     public AssistantCard getPlayedCard(Player p){
         return p.getAssistantCard();
+    }
+
+    /**
+     * deletes all the old played cards
+     */
+    public void clearAllPlayedCards(){
+        for(Player p: players){
+            p.clearPlayedCard();
+        }
     }
 }
