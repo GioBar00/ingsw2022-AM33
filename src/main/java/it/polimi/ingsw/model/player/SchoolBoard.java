@@ -184,12 +184,12 @@ public class SchoolBoard {
      * @param entranceIndex the position of Student in the entrance
      * @throws LimitExceededException if there's no left space in hall
      */
-    public void moveToHall(int entranceIndex) throws LimitExceededException {
+    public StudentColor moveToHall(int entranceIndex) throws LimitExceededException {
         StudentColor s = removeFromEntrance(entranceIndex);
-        if (studentsHall.get(s) < 12)
+        if (studentsHall.get(s) < 12){
             studentsHall.replace(s, studentsHall.get(s)+1);
+            return s;}
         else throw new LimitExceededException();
-
     }
 
     /**

@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//TODO JavaDOC
 class BagTest {
     @Test
     void popRandomStudentTest(){
@@ -27,7 +28,7 @@ class BagTest {
         assertEquals(4, testBag.students.size());
         assertFalse(testBag.students.contains(eliminated));
 
-        for(int i = 0; i < 4; i++) eliminated = testBag.popRandomStudent();
+        for(int i = 0; i < 4; i++)  testBag.popRandomStudent();
 
         assertThrows(NoSuchElementException.class, testBag::popRandomStudent);
     }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import org.junit.jupiter.api.Test;
 
+//TODO JavaDOC and modify existent test
 class GameModelTest {
 
     GameModel model;

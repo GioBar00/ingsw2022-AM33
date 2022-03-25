@@ -40,4 +40,9 @@ public class Player{
         else throw new NoSuchElementException();
     }
     void clearPlayedCard(){playedCard = null;}
+
+    public ArrayList<AssistantCard> getHand(){
+        return new ArrayList<>(assistantCards);
+
+    }
 }

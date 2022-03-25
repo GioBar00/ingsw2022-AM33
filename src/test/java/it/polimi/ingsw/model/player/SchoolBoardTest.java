@@ -12,6 +12,7 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//TODO JavaDOC
 class SchoolBoardTest {
 
     @Test

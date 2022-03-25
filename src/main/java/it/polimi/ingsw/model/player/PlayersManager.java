@@ -20,21 +20,36 @@ public class PlayersManager{
     private final ArrayList<Player> players;
     private final Integer numPlayers;
 
+    /**
+     * Constructor of PlayerManager
+     * @param numPlayers is the number of player that can be allocated
+     */
     public PlayersManager(int numPlayers){
             this.numPlayers = numPlayers;
             this.currentPlayerOrderIndex = 0;
             this.playerOrderIndexes = new Integer[numPlayers];
             this.players = new ArrayList<>(numPlayers);
+            for(int i= 0; i < numPlayers; i++ ){
+                playerOrderIndexes[i] = i;
+            }
     }
+
+    /**
+     * Change state of current player to his next
+     */
     public void nextPlayer(){
         currentPlayerOrderIndex = (currentPlayerOrderIndex + 1) % numPlayers;
     }
+
     /**
      * Calculates the number of available slots for players to enter.
      * @return number of available slots
      */
     public int getAvailablePlayerSlots() {return numPlayers - players.size();}
 
+    public Player getLastPlayer(){
+        return players.get(playerOrderIndexes[numPlayers]);
+    }
     /**
      * Adds a new player to the game.
      * @param nickname unique identifier of a player
@@ -59,19 +74,26 @@ public class PlayersManager{
 
         SchoolBoard sb = new SchoolBoard(entranceCapacity, availableTowers.get(towerIndex), numTowers);
         players.add(new Player(nickname, availableWizards.get(wizardIndex), sb));
+
     }
 
+    /**
+     * Use to get the schoolBoard related to a player
+     * @param p is the player
+     * @return the schoolBoard of player p
+     */
     public SchoolBoard getSchoolBoard(Player p){ return p.getSchoolBoard();}
 
+    //TODO JavaDOC
     public Player getCurrentPlayer() {
-            return players.get(currentPlayerOrderIndex);
+            return players.get(playerOrderIndexes[currentPlayerOrderIndex]);
     }
 
     /**
      * Calculate clockwise order starting from playerOrderIndex[0].
      * Ex: 3 2 0 1 --> 3 0 1 2
      */
-    private void calculateClockwiseOrder() {
+    public void calculateClockwiseOrder() {
         for(int i = 1; i < playerOrderIndexes.length; i++) {
             playerOrderIndexes[i] = (playerOrderIndexes[i - 1] + 1) % playerOrderIndexes.length;
         }
@@ -80,22 +102,40 @@ public class PlayersManager{
     /**
      * Calculates players' order based on the assistant card they played.
      * If they played the same assistant card, goes first the one who played it.
-     * @param players array of players in the game.
      */
-    public void calculatePlayerOrder(Player[] players) {
+    public void calculatePlayerOrder() {
         List<Integer> ordered = Arrays.asList(playerOrderIndexes);
         ordered.sort((i1, i2) -> {
-            int r = players[i1].getAssistantCard().getValue().compareTo(players[i2].getAssistantCard().getValue());
+            int r = players.get(i1).getAssistantCard().getValue().compareTo(players.get(i2).getAssistantCard().getValue());
             if(r == 0)
                 return Integer.compare(ordered.indexOf(i1), ordered.indexOf(i1));
             return r;
         });
+
         ordered.toArray(playerOrderIndexes);
     }
 
+    //TODO JavaDOC
     public void currentPlayerPlayed(AssistantCard c) {
-        players.get(currentPlayerOrderIndex).playAssistantCard(c);
+         players.get(playerOrderIndexes[currentPlayerOrderIndex]).playAssistantCard(c);
     }
 
-    public ArrayList<Player> getPlayers(){ return new ArrayList<>(players);}
+    //TODO JavaDOC
+    public ArrayList<AssistantCard> getPlayerHand(Player p){
+        return p.getHand();
+    }
+
+    //TODO JavaDOC
+    public ArrayList<Player> getPlayers(){
+        ArrayList<Player> ret = new ArrayList<>(numPlayers);
+        for(Integer i : playerOrderIndexes){
+            ret.add(players.get(i));
+        }
+        return ret;
+    }
+
+    //TODO JavaDOC
+    public AssistantCard getPlayedCard(Player p){
+        return p.getAssistantCard();
+    }
 }

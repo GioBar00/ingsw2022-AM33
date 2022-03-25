@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 
 public class IslandsManager {
-    private ArrayList<IslandGroup> islandGroups;
+    private final ArrayList<IslandGroup> islandGroups;
 
     public IslandsManager() {
         islandGroups = new ArrayList<>(12);
@@ -112,5 +112,19 @@ public class IslandsManager {
             islandGroups.get(index).mergeWith(islandGroups.get(right));
             islandGroups.remove(right);
         }
+    }
+
+    /**
+     * Gives back the number of island merged and not
+     * @return the actual number of the Island
+     */
+    public int getActualSize(){
+        int ret = 0;
+        for(IslandGroup i : islandGroups){
+            if(i != null){
+                ret ++;
+            }
+        }
+        return ret;
     }
 }
