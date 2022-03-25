@@ -11,7 +11,6 @@ import java.nio.channels.AlreadyConnectedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.concurrent.ThreadLocalRandom;
 
 class GameModel implements Game {
@@ -90,8 +89,8 @@ class GameModel implements Game {
             bag.addStudents(l);
         }
 
-        motherNatureIndex = ThreadLocalRandom.current().nextInt(0, islandsManager.size());
-        for (int i = 0; i < islandsManager.size(); i++) {
+        motherNatureIndex = ThreadLocalRandom.current().nextInt(0, islandsManager.getNumIslandGroups());
+        for (int i = 0; i < islandsManager.getNumIslandGroups(); i++) {
             if (i % 6 != motherNatureIndex % 6) {
                 islandsManager.getIslandGroup(i).addStudent(0, bag.popRandomStudent());
             }
@@ -277,7 +276,7 @@ class GameModel implements Game {
         ArrayList<Player> toCheck = new ArrayList<>();
         int sup;
         int profs;
-        if(islandsManager.getActualSize()<= 3){
+        if(islandsManager.getNumIslandGroups()<= 3){
             for(Player p: playersManager.getPlayers()){
                 sup = playersManager.getSchoolBoard(p).getNumTowers();
                 if(sup < minTower){

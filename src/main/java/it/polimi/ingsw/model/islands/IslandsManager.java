@@ -30,7 +30,7 @@ public class IslandsManager {
      * method returns the size of the ArrayList islandsGroups
      * @return size
      */
-    public int size(){
+    public int getNumIslandGroups(){
         return islandGroups.size();
     }
 
@@ -84,47 +84,54 @@ public class IslandsManager {
     }
 
     /**
-     * method to check if a IslandGroup needs to be merged with the ones on its left or right; if so, the method proceeds
-     * to call for the merge and subsequently removes the IslandGroup merged with the one just considered
-     * @param index of the IslandGroup
+     * the method check is the IslandGroup(index - 1) can be merged with IslandGroup(index);
+     * if the merge can be done, the method calls for it
+     * @param index of the current IslandGroup
+     * @return true if the merge happens, false otherwise
      */
-    public void checkMerge(int index) {
-        int left, right;
+    public boolean checkMergePrevious(int index){
+        int previous;
 
         if(index == 0){
-            left = 12;
+            previous = islandGroups.size() - 1;
         } else {
-            left = index - 1;
+            previous = index - 1;
         }
 
-        if(index == 12){
-            right = 0;
-        } else {
-            right = index + 1;
+        if(islandGroups.get(previous).getTower() != null){
+            if(islandGroups.get(previous).getTower().equals(islandGroups.get(index).getTower())){
+                islandGroups.get(index).mergeWith(islandGroups.get(previous));
+                islandGroups.remove(previous);
+                return true;
+            }
         }
 
-        if(islandGroups.get(left).getTower().equals(islandGroups.get(index).getTower())){
-            islandGroups.get(index).mergeWith(islandGroups.get(left));
-            islandGroups.remove(left);
-        }
-
-        if(islandGroups.get(right).getTower().equals(islandGroups.get(index).getTower())){
-            islandGroups.get(index).mergeWith(islandGroups.get(right));
-            islandGroups.remove(right);
-        }
+        return false;
     }
 
     /**
-     * Gives back the number of island merged and not
-     * @return the actual number of the Island
+     * the method check is the IslandGroup(index + 1) can be merged with IslandGroup(index);
+     * if the merge can be done, the method calls for it
+     * @param index of the current IslandGroup
+     * @return true if the merge happens, false otherwise
      */
-    public int getActualSize(){
-        int ret = 0;
-        for(IslandGroup i : islandGroups){
-            if(i != null){
-                ret ++;
+    public boolean checkMergeNext(int index){
+        int next;
+
+        if(index == 11){
+            next = 0;
+        } else {
+            next = index + 1;
+        }
+
+        if(islandGroups.get(next).getTower() != null){
+            if(islandGroups.get(next).getTower().equals(islandGroups.get(index).getTower())){
+                islandGroups.get(index).mergeWith(islandGroups.get(next));
+                islandGroups.remove(next);
+                return true;
             }
         }
-        return ret;
+
+        return false;
     }
 }
