@@ -64,22 +64,38 @@ public class PlayersManager{
     public void addPlayer(String nickname, int numTowers, int entranceCapacity) throws NoPermissionException, NameAlreadyBoundException {
         if (getAvailablePlayerSlots() == 0)
             throw new NoPermissionException();
-        // get random tower and wizard from available ones
+
+        // get random tower from available ones
         List<Tower> availableTowers = new LinkedList<>(Arrays.asList(Tower.values()));
+        for (Player p: players)
+            availableTowers.removeIf(x -> x.equals(p.getSchoolBoard().getTower()));
+
+        int towerIndex = ThreadLocalRandom.current().nextInt(0, availableTowers.size());
+
+        addPlayer(nickname, availableTowers.get(towerIndex), numTowers, entranceCapacity);
+    }
+
+    /**
+     * Adds a new player to the game with a specific tower.
+     * @param nickname unique identifier of a player
+     * @throws NoPermissionException if game not in UNINITIALIZED state or no more available slots for players
+     * @throws NameAlreadyBoundException if another player with same nickname is already in the game
+     */
+    public void addPlayer(String nickname, Tower tower, int numTowers, int entranceCapacity) throws NoPermissionException, NameAlreadyBoundException {
+        if (getAvailablePlayerSlots() == 0)
+            throw new NoPermissionException();
+        // get random wizard from available ones
         List<Wizard> availableWizards = new LinkedList<>(Arrays.asList(Wizard.values()));
         for (Player p: players) {
             if (p.getNickname().equals(nickname))
                 throw new NameAlreadyBoundException();
-            availableTowers.removeIf(x -> x.equals(p.getSchoolBoard().getTower()));
             availableWizards.removeIf(x -> x.equals(p.getWizard()));
         }
 
-        int towerIndex = ThreadLocalRandom.current().nextInt(0, availableTowers.size());
         int wizardIndex = ThreadLocalRandom.current().nextInt(0, availableWizards.size());
 
-        SchoolBoard sb = new SchoolBoard(entranceCapacity, availableTowers.get(towerIndex), numTowers);
+        SchoolBoard sb = new SchoolBoard(entranceCapacity, tower, numTowers);
         players.add(new Player(nickname, availableWizards.get(wizardIndex), sb));
-
     }
 
     /**

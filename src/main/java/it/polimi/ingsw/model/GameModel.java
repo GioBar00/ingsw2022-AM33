@@ -161,9 +161,6 @@ class GameModel implements Game {
             SchoolBoard currSch = playersManager.getSchoolBoard(current);
             StudentColor moved = currSch.moveToHall(entranceIndex);
             checkProfessor(moved);
-
-
-
     }
 
 
@@ -175,7 +172,7 @@ class GameModel implements Game {
 
     public void moveMotherNature(int num) {
         motherNatureIndex = (motherNatureIndex + num) % 12;
-        this.checkInfluence();
+        this.checkInfluence(motherNatureIndex);
         checkWinner();
     }
 
@@ -209,42 +206,58 @@ class GameModel implements Game {
         }
     }
 
-    void checkInfluence(){
+    void checkInfluence(int islandGroupIndex){
         SchoolBoard max = null;
         Player pMax = null;
         int maxInfluence = 0;
         int currInfluence;
         for(Player p : playersManager.getPlayers()){
             SchoolBoard curr = playersManager.getSchoolBoard(p);
-            currInfluence = islandsManager.calcInfluence(curr.getTower(),curr.getProfessors(),motherNatureIndex);
+            currInfluence = islandsManager.calcInfluence(curr.getTower(), curr.getProfessors(), islandGroupIndex);
             if( currInfluence > maxInfluence){
                 max = curr;
-                maxInfluence =currInfluence;
+                maxInfluence = currInfluence;
                 pMax = p;
             }
         }
         if(maxInfluence != 0)
-            swapTowers(max,pMax);
+            swapTowers(islandGroupIndex, max,pMax);
 
     }
 
-    private void swapTowers(SchoolBoard max, Player pMax){
+    private void swapTowers(int islandGroupIndex, SchoolBoard schoolBoard, Player player){
 
-        if(!max.getTower().equals(islandsManager.getTower(motherNatureIndex))){
-            Tower old = islandsManager.getTower(motherNatureIndex);
+        if(!schoolBoard.getTower().equals(islandsManager.getTower(islandGroupIndex))){
+            Tower old = islandsManager.getTower(islandGroupIndex);
             try{
-                int size = islandsManager.getIslandGroup(motherNatureIndex).size();
-                max.removeTowers(size);
-                islandsManager.setTower(max.getTower(),motherNatureIndex);
+                int size = islandsManager.getIslandGroup(islandGroupIndex).size();
+                schoolBoard.removeTowers(size);
+                islandsManager.setTower(schoolBoard.getTower(), islandGroupIndex);
                 for(Player p: playersManager.getPlayers()){
                     SchoolBoard s = playersManager.getSchoolBoard(p);
                     if(s.getTower().equals(old)){
                         s.addTowers(size);
                     }
                 }
+
+                // check merge for next and previous island groups.
+                if (islandsManager.checkMergeNext(islandGroupIndex))
+                    if (motherNatureIndex > islandGroupIndex) {
+                        motherNatureIndex--;
+                        if (motherNatureIndex < 0)
+                            motherNatureIndex = islandsManager.getNumIslandGroups() - 1;
+                    }
+
+                if (islandsManager.checkMergePrevious(islandGroupIndex))
+                    if (motherNatureIndex >= islandGroupIndex) {
+                        motherNatureIndex--;
+                        if (motherNatureIndex < 0)
+                            motherNatureIndex = islandsManager.getNumIslandGroups() - 1;
+                    }
+
             }
             catch(LimitExceededException e){
-                roundManager.setWinner(pMax);
+                roundManager.setWinner(player);
             }
         }
     }
@@ -253,6 +266,7 @@ class GameModel implements Game {
     public void startGame() {
 
     }
+
     void nextRound(){
         roundManager.nextRound();
         playersManager.calculatePlayerOrder();

@@ -17,10 +17,10 @@ class GameModelExpert implements Game, EffectHandler {
 
     private final ArrayList<CharacterCard> characterCards;
     private CharacterCard characterCardActivating;
-    private int additionalMotherNatureMovement;
-    private boolean skipTowers;
-    private int additionalInfluence;
-    private EnumSet<StudentColor> skipStudentColor;
+    private int additionalMotherNatureMovement = 0;
+    private boolean skipTowers = false;
+    private int additionalInfluence = 0;
+    private EnumSet<StudentColor> skipStudentColor = EnumSet.noneOf(StudentColor.class);
 
     GameModelExpert(GameModel model) {
         this.model = model;
@@ -34,16 +34,8 @@ class GameModelExpert implements Game, EffectHandler {
             types.remove(sel);
         }
 
-
         reserve = 20;
-        resetParameters();
-    }
 
-    private void resetParameters() {
-        additionalMotherNatureMovement = 0;
-        skipTowers = false;
-        additionalInfluence = 0;
-        skipStudentColor = EnumSet.noneOf(StudentColor.class);
     }
 
     @Override
@@ -58,8 +50,7 @@ class GameModelExpert implements Game, EffectHandler {
 
     @Override
     public int getAvailablePlayerSlots() {
-        // FIXME
-        return 0;
+        return model.getAvailablePlayerSlots();
     }
 
     @Override
@@ -200,8 +191,8 @@ class GameModelExpert implements Game, EffectHandler {
      * Ignores the towers when calculating influence this turn.
      */
     @Override
-    public void ignoreTowers() {
-        skipTowers = true;
+    public void ignoreTowers(boolean ignore) {
+        skipTowers = ignore;
     }
 
     /**
@@ -241,9 +232,15 @@ class GameModelExpert implements Game, EffectHandler {
      * @param s student color to ignore.
      */
     @Override
-    public void ignoreStudentColor(StudentColor s) {
-        if (!skipStudentColor.contains(s))
-            skipStudentColor.add(s);
+    public void ignoreStudentColor(StudentColor s, boolean ignore) {
+        if (skipStudentColor.contains(s)) {
+            if (!ignore)
+                skipStudentColor.remove(s);
+        }
+        else
+            if (ignore)
+                skipStudentColor.add(s);
+
     }
 
     /**
