@@ -194,11 +194,10 @@ public class SchoolBoard {
      * @throws LimitExceededException if there's no left space in hall
      */
     public StudentColor moveToHall(int entranceIndex) throws LimitExceededException {
-        StudentColor s = removeFromEntrance(entranceIndex);
-        if (studentsHall.get(s) < 12){
-            studentsHall.replace(s, studentsHall.get(s)+1);
-            return s;}
-        else throw new LimitExceededException();
+        StudentColor s = getStudentInEntrance(entranceIndex);
+        addToHall(s);
+        removeFromEntrance(entranceIndex);
+        return s;
     }
 
     /**
@@ -213,5 +212,17 @@ public class SchoolBoard {
             else {
                 studentsHall.replace(s, studentsHall.get(s) - maxNum);
             }
+    }
+
+    /**
+     * Adds to Hall a student.
+     * @param s type of Student to remove
+     * @throws LimitExceededException if there's no left space in hall
+     */
+    public void addToHall(StudentColor s) throws LimitExceededException {
+        if (studentsHall.get(s) < 12){
+            studentsHall.replace(s, studentsHall.get(s)+1);
+        }
+        else throw new LimitExceededException();
     }
 }

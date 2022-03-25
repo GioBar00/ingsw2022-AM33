@@ -22,7 +22,7 @@ public interface Game {
     void playAssistantCard(AssistantCard assistantCard) throws Exception;
     void moveStudentToHall(int entranceIndex)  throws Exception;
     void moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) throws Exception;
-    void moveMotherNature(int num);
+    void moveMotherNature(int num) throws LimitExceededException;
     void getStudentsFromCloud(int cloudIndex) throws LimitExceededException;
 
 

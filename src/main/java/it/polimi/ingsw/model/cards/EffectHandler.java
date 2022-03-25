@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enums.StudentColor;
 
+import javax.naming.LimitExceededException;
 import java.util.EnumMap;
 
 public interface EffectHandler {
@@ -15,9 +16,9 @@ public interface EffectHandler {
      * Adds a student to a specific island.
      * @param s student to add
      * @param islandGroupIndex index of the island group.
-     * @param islandGroup index of the island in the island group.
+     * @param islandIndex index of the island in the island group.
      */
-    void addStudentToIsland(StudentColor s, int islandGroupIndex, int islandGroup);
+    void addStudentToIsland(StudentColor s, int islandGroupIndex, int islandIndex);
 
     /**
      * Moves the professors to the current player if it has the same number of student in the hall of the current owner.
@@ -66,7 +67,7 @@ public interface EffectHandler {
      * Adds a student to the entrance of current player's school board.
      * @param entranceIndex index of the entrance.
      */
-    void addStudentOnEntrance(int entranceIndex);
+    void addStudentOnEntrance(StudentColor s, int entranceIndex) throws LimitExceededException;
 
     /**
      * Adds additional influence when calculating influence this turn.
@@ -91,7 +92,7 @@ public interface EffectHandler {
      * Adds a student to the current player's hall.
      * @param s student color to add.
      */
-    void addStudentToHall(StudentColor s);
+    void addStudentToHall(StudentColor s) throws LimitExceededException;
 
     /**
      * Tries to remove the ideal amount of students from the hall of all players and puts them back in the bag.

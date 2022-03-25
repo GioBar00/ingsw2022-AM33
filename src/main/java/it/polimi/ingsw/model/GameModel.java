@@ -10,10 +10,7 @@ import javax.naming.LimitExceededException;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NoPermissionException;
 import java.nio.channels.AlreadyConnectedException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 class GameModel implements Game {
@@ -178,7 +175,7 @@ class GameModel implements Game {
         if(roundManager.canPlay()) {
             roundManager.addMoves();
             StudentColor s = playersManager.getSchoolBoard(playersManager.getCurrentPlayer()).removeFromEntrance(entranceIndex);
-            islandsManager.addStudent(islandGroupIndex, s, islandIndex);
+            islandsManager.addStudent(s, islandGroupIndex, islandIndex);
             roundManager.addMoves();
         }
     }
@@ -228,40 +225,67 @@ class GameModel implements Game {
         }
     }
 
-    void checkInfluence(int islandGroupIndex){
-        SchoolBoard max = null;
-        Player pMax = null;
-        int maxInfluence = 0;
-        int currInfluence;
-        for(Player p : playersManager.getPlayers()){
-            SchoolBoard curr = playersManager.getSchoolBoard(p);
-            currInfluence = islandsManager.calcInfluence(curr.getTower(), curr.getProfessors(), islandGroupIndex);
-            if( currInfluence > maxInfluence){
-                max = curr;
-                maxInfluence = currInfluence;
-                pMax = p;
-            }
-        }
-        if(maxInfluence != 0)
-            if(!max.getTower().equals(islandsManager.getTower(islandGroupIndex)))
-                swapTowers(islandGroupIndex, max,pMax);
-
+    void checkInfluence(int islandGroupIndex) {
+        checkInfluence(islandGroupIndex, false, 0, EnumSet.noneOf(StudentColor.class));
     }
 
-    private void swapTowers(int islandGroupIndex, SchoolBoard schoolBoard, Player player){
+    void checkInfluence(int islandGroupIndex, boolean skipTowers, int additionalInfluence, EnumSet<StudentColor> skipStudentColor) {
+        // group players by Tower
+        EnumMap<Tower, List<Player>> playersByTower = new EnumMap<>(Tower.class);
+        for (Player p: playersManager.getPlayers()) {
+            Tower tower = playersManager.getSchoolBoard(p).getTower();
+            if (!playersByTower.containsKey(tower)) {
+                LinkedList<Player> pl = new LinkedList<>();
+                pl.add(p);
+                playersByTower.put(tower, pl);
+            }
+            else {
+                playersByTower.get(tower).add(p);
+            }
+        }
 
-        if(!schoolBoard.getTower().equals(islandsManager.getTower(islandGroupIndex))){
-            Tower old = islandsManager.getTower(islandGroupIndex);
-            try{
-                int size = islandsManager.getIslandGroup(islandGroupIndex).size();
-                schoolBoard.removeTowers(size);
-                islandsManager.setTower(schoolBoard.getTower(), islandGroupIndex);
-                for(Player p: playersManager.getPlayers()){
-                    SchoolBoard s = playersManager.getSchoolBoard(p);
-                    if(s.getTower().equals(old)){
-                        s.addTowers(size);
-                    }
+        Tower tower = islandsManager.getTower(islandGroupIndex);
+        SchoolBoard sb = playersManager.getSchoolBoard();
+        EnumSet<StudentColor> profs = sb.getProfessors();
+        profs.removeAll(skipStudentColor);
+        int maxInfluence = skipTowers ?
+                islandsManager.calcInfluence(profs, islandGroupIndex):
+                islandsManager.calcInfluence(sb.getTower(), profs, islandGroupIndex);
+        maxInfluence += additionalInfluence;
+
+        for (Player p: playersManager.getPlayers()) {
+            sb = playersManager.getSchoolBoard(p);
+            profs = sb.getProfessors();
+            profs.removeAll(skipStudentColor);
+            int influence = skipTowers ?
+                    islandsManager.calcInfluence(profs, islandGroupIndex):
+                    islandsManager.calcInfluence(sb.getTower(), profs, islandGroupIndex);
+            if (influence > maxInfluence) {
+                maxInfluence = influence;
+                tower = sb.getTower();
+            }
+        }
+        if (tower != null && tower != islandsManager.getTower(islandGroupIndex))
+            swapTowers(islandGroupIndex, tower);
+    }
+
+    void swapTowers(int islandGroupIndex, Tower newTower){
+        Player newPlayer = null;
+        SchoolBoard oldSchoolBoard = null;
+        SchoolBoard newSchoolBoard = null;
+        Tower oldTower = islandsManager.getTower(islandGroupIndex);
+        if (!newTower.equals(oldTower)) {
+            for (Player p: playersManager.getPlayers()) {
+                if (newTower.equals(playersManager.getSchoolBoard(p).getTower())) {
+                    newPlayer = p;
+                    newSchoolBoard = playersManager.getSchoolBoard(p);
                 }
+                else if (oldTower.equals(playersManager.getSchoolBoard(p).getTower())) {
+                    oldSchoolBoard = playersManager.getSchoolBoard(p);
+                }
+            }
+            if (newPlayer != null && oldSchoolBoard != null && newSchoolBoard != null) {
+                islandsManager.setTower(newTower, islandGroupIndex);
 
                 // check merge for next and previous island groups.
                 if (islandsManager.checkMergeNext(islandGroupIndex))
@@ -278,9 +302,13 @@ class GameModel implements Game {
                             motherNatureIndex = islandsManager.getNumIslandGroups() - 1;
                     }
 
-            }
-            catch(LimitExceededException e){
-                roundManager.setWinner(player);
+                int size = islandsManager.getIslandGroup(islandGroupIndex).size();
+                try {
+                    oldSchoolBoard.addTowers(size);
+                    newSchoolBoard.removeTowers(size);
+                } catch (LimitExceededException e) {
+                    roundManager.setWinner(newPlayer);
+                }
             }
         }
     }

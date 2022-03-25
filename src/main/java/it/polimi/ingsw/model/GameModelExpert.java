@@ -4,7 +4,11 @@ import it.polimi.ingsw.enums.*;
 import it.polimi.ingsw.model.cards.CharacterCard;
 import it.polimi.ingsw.model.cards.EffectHandler;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.model.player.SchoolBoard;
 
+import javax.naming.LimitExceededException;
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NoPermissionException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -54,14 +58,20 @@ class GameModelExpert implements Game, EffectHandler {
     }
 
     @Override
-    public void addPlayer(String nickname) {
-        // TODO: remember to add player to playersCoin
+    public void addPlayer(String nickname) throws NameAlreadyBoundException, NoPermissionException {
+        model.addPlayer(nickname);
+        List<Player> players = model.playersManager.getPlayers();
+        Player p = players.get(players.size() - 1);
+        playerCoins.put(p, 0);
     }
 
     @Override
-    public void initializeGame() {
-        // FIXME give one coin to each player
-
+    public void initializeGame() throws NoPermissionException {
+        model.initializeGame();
+        for (Player p: model.playersManager.getPlayers()) {
+            playerCoins.put(p, 1);
+            reserve--;
+        }
     }
 
     @Override
@@ -93,13 +103,21 @@ class GameModelExpert implements Game, EffectHandler {
     }
 
     @Override
-    public void moveMotherNature(int num) {
-
+    public void moveMotherNature(int num) throws LimitExceededException {
+        if (num <= model.playersManager.getPlayedCard(model.playersManager.getCurrentPlayer()).getMoves() + additionalMotherNatureMovement) {
+            model.motherNatureIndex = (model.motherNatureIndex + num) % 12;
+            calcInfluenceOnIslandGroup(model.motherNatureIndex);
+            model.checkWinner();
+            if (model.playersManager.getCurrentPlayer().equals(model.playersManager.getLastPlayer())) {
+                model.endActionPhase();
+            }
+        }
+        else { throw new LimitExceededException(); }
     }
 
     @Override
-    public void getStudentsFromCloud(int cloudIndex) {
-
+    public void getStudentsFromCloud(int cloudIndex) throws LimitExceededException {
+        model.getStudentsFromCloud(cloudIndex);
     }
 
     @Override
@@ -110,9 +128,8 @@ class GameModelExpert implements Game, EffectHandler {
     @Override
     public void applyEffect(EnumMap<StudentColor, List<Integer>> pairs) {
         characterCardActivating.applyEffect(this, pairs);
+        characterCardActivating = null;
     }
-
-
 
 
     /**
@@ -130,11 +147,11 @@ class GameModelExpert implements Game, EffectHandler {
      *
      * @param s                student to add
      * @param islandGroupIndex index of the island group.
-     * @param islandGroup      index of the island in the island group.
+     * @param islandIndex      index of the island in the island group.
      */
     @Override
-    public void addStudentToIsland(StudentColor s, int islandGroupIndex, int islandGroup) {
-
+    public void addStudentToIsland(StudentColor s, int islandGroupIndex, int islandIndex) {
+        model.islandsManager.addStudent(s, islandGroupIndex, islandIndex);
     }
 
     /**
@@ -144,7 +161,27 @@ class GameModelExpert implements Game, EffectHandler {
      */
     @Override
     public EnumMap<StudentColor, Integer> tryGiveProfsToCurrPlayer() {
-        return null;
+        EnumMap<StudentColor, Integer> profs = new EnumMap<>(StudentColor.class);
+        List<Player> players = model.playersManager.getPlayers();
+        Player curr = model.playersManager.getCurrentPlayer();
+        SchoolBoard currSB = model.playersManager.getSchoolBoard();
+        for (Player p: players) {
+            if (p != curr) {
+                SchoolBoard sb = model.playersManager.getSchoolBoard(p);
+                EnumSet<StudentColor> playerProfs = sb.getProfessors();
+                for (StudentColor studentColor: StudentColor.values()) {
+                    if (playerProfs.contains(studentColor) && currSB.getStudentsInHall(studentColor) >= sb.getStudentsInHall(studentColor)) {
+                        profs.put(studentColor, players.indexOf(p));
+                        try {
+                            sb.removeProfessor(studentColor);
+                            currSB.addProfessor(studentColor);
+                        } catch (Exception ignored) {}
+
+                    }
+                }
+            }
+        }
+        return profs;
     }
 
     /**
@@ -154,17 +191,25 @@ class GameModelExpert implements Game, EffectHandler {
      */
     @Override
     public void restoreProfsToOriginalPlayer(EnumMap<StudentColor, Integer> original) {
-
+        List<Player> players = model.playersManager.getPlayers();
+        SchoolBoard currSB = model.playersManager.getSchoolBoard();
+        for (StudentColor sc: StudentColor.values()) {
+            if (original.containsKey(sc)) {
+                try {
+                    currSB.removeProfessor(sc);
+                    model.playersManager.getSchoolBoard(players.get(original.get(sc))).addProfessor(sc);
+                } catch (Exception ignored) {}
+            }
+        }
     }
 
     /**
      * Calculates the influence on an island group.
-     *
      * @param islandGroupIndex index of the island group.
      */
     @Override
     public void calcInfluenceOnIslandGroup(int islandGroupIndex) {
-
+        model.checkInfluence(islandGroupIndex, skipTowers, additionalInfluence, skipStudentColor);
     }
 
     /**
@@ -184,7 +229,7 @@ class GameModelExpert implements Game, EffectHandler {
      */
     @Override
     public void blockIslandGroup(int islandGroupIndex) {
-
+        model.islandsManager.getIslandGroup(islandGroupIndex).setBlocked(true);
     }
 
     /**
@@ -203,7 +248,7 @@ class GameModelExpert implements Game, EffectHandler {
      */
     @Override
     public StudentColor getStudentFromEntrance(int entranceIndex) {
-        return null;
+        return model.playersManager.getSchoolBoard().removeFromEntrance(entranceIndex);
     }
 
     /**
@@ -212,8 +257,8 @@ class GameModelExpert implements Game, EffectHandler {
      * @param entranceIndex index of the entrance.
      */
     @Override
-    public void addStudentOnEntrance(int entranceIndex) {
-
+    public void addStudentOnEntrance(StudentColor s, int entranceIndex) throws LimitExceededException {
+        model.playersManager.getSchoolBoard().addToEntrance(s, entranceIndex);
     }
 
     /**
@@ -250,7 +295,10 @@ class GameModelExpert implements Game, EffectHandler {
      */
     @Override
     public void removeStudentFromHall(StudentColor s) {
-
+        SchoolBoard sb = model.playersManager.getSchoolBoard();
+        if (sb.getStudentsInHall(s) <= 0)
+            throw new NoSuchElementException();
+        sb.removeFromHall(s, 1);
     }
 
     /**
@@ -259,8 +307,9 @@ class GameModelExpert implements Game, EffectHandler {
      * @param s student color to add.
      */
     @Override
-    public void addStudentToHall(StudentColor s) {
-
+    public void addStudentToHall(StudentColor s) throws LimitExceededException {
+        SchoolBoard sb = model.playersManager.getSchoolBoard();
+        sb.addToHall(s);
     }
 
     /**
@@ -272,6 +321,9 @@ class GameModelExpert implements Game, EffectHandler {
      */
     @Override
     public void tryRemoveStudentsFromHalls(StudentColor s, int idealAmount) {
-
+        for (Player p: model.playersManager.getPlayers()) {
+            SchoolBoard sb = model.playersManager.getSchoolBoard(p);
+            sb.removeFromHall(s, idealAmount);
+        }
     }
 }

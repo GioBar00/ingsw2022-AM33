@@ -54,12 +54,12 @@ public class IslandsManager {
 
     /**
      * method to add a student on a specific Island inside a specific IslandGroup
-     * @param index_island: index of the Island
      * @param s: type of student to be added
      * @param index_group: index of the IslandGroup
+     * @param index_island: index of the Island
      */
-    public void addStudent(int index_island, StudentColor s, int index_group){
-        islandGroups.get(index_group).addStudent(index_island,s);
+    public void addStudent(StudentColor s, int index_group, int index_island){
+        islandGroups.get(index_group).addStudent(index_island, s);
     }
 
     /**

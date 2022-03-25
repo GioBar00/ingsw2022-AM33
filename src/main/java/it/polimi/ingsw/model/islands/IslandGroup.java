@@ -48,6 +48,22 @@ public class IslandGroup{
     }
 
     /**
+     * get if island group is blocked.
+     * @return if is blocked.
+     */
+    public boolean isBlocked() {
+        return isBlocked;
+    }
+
+    /**
+     * set island group blocked.
+     * @param blocked is blocked.
+     */
+    public void setBlocked(boolean blocked) {
+        isBlocked = blocked;
+    }
+
+    /**
      * method to add a student on a specific island of the IslandGroup
      * @param index of the island
      * @param s type of student
