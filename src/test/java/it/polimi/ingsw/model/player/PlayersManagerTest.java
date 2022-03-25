@@ -9,10 +9,12 @@ import javax.naming.NoPermissionException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-//TODO JavaDOC
 class PlayersManagerTest {
     PlayersManager pm = new PlayersManager(3);
 
+    /**
+     * Test the methods addPlayer, tries to add a new player when there's no space left and to add a player with an existing nickname
+     */
     @Test
     void CreatePm(){
         //TestingAdd
@@ -34,6 +36,9 @@ class PlayersManagerTest {
 
     }
 
+    /**
+     * Check the correct implementation of nextPlayer and getPlayer by cycling on the players order
+     */
     @Test
     void playersManagerTest() {
         try{pm.addPlayer("Pl1",6,9);}
@@ -67,6 +72,9 @@ class PlayersManagerTest {
         assertEquals("Pl1",pm.getCurrentPlayer().getNickname());
     }
 
+    /**
+     * Test the right implementation of calculatePlayerOrder assign a new played card to each player. A limit case is when we have more player playing the same card
+     */
     @Test
     void SortingTest(){
         try{pm.addPlayer("Pl1",6,9);}
@@ -104,6 +112,10 @@ class PlayersManagerTest {
         assertEquals("Pl1",pm.getPlayers().get(1).getNickname());
         assertEquals("Pl2",pm.getPlayers().get(2).getNickname());
     }
+
+    /**
+     * Test the right implementation of clockWiseOrder assign a new played card to each player.
+     */
     @Test
     void clockwiseTest (){
         try{pm.addPlayer("Pl1",6,9);}
@@ -137,6 +149,39 @@ class PlayersManagerTest {
         assertEquals("Pl1",pm.getPlayers().get(2).getNickname());
 
 
+    }
+
+    /**
+     * Test the implementation of setFirstPlayer
+     */
+    @Test
+    void firstPlayerTest(){
+        try{pm.addPlayer("Pl1",6,9);}
+        catch (NoPermissionException | NameAlreadyBoundException ignored){
+
+        }
+        try{pm.addPlayer("Pl2",6,9);}
+        catch (NoPermissionException | NameAlreadyBoundException ignored){
+
+        }
+        try{pm.addPlayer("Pl3",6,9);}
+        catch (NoPermissionException | NameAlreadyBoundException ignored){
+
+        }
+        pm.setFirstPlayer(2 - 1);
+        assertEquals("Pl2",pm.getPlayers().get(0).getNickname());
+        assertEquals("Pl3",pm.getPlayers().get(1).getNickname());
+        assertEquals("Pl1",pm.getPlayers().get(2).getNickname());
+
+        pm.setFirstPlayer(3 - 1);
+        assertEquals("Pl3",pm.getPlayers().get(0).getNickname());
+        assertEquals("Pl1",pm.getPlayers().get(1).getNickname());
+        assertEquals("Pl2",pm.getPlayers().get(2).getNickname());
+
+        pm.setFirstPlayer(0);
+        assertEquals("Pl1",pm.getPlayers().get(0).getNickname());
+        assertEquals("Pl2",pm.getPlayers().get(1).getNickname());
+        assertEquals("Pl3",pm.getPlayers().get(2).getNickname());
     }
 
 }

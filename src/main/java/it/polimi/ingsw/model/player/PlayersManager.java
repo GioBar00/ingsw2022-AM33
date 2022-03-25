@@ -6,7 +6,6 @@ import it.polimi.ingsw.enums.Wizard;
 
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NoPermissionException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -19,7 +18,6 @@ public class PlayersManager{
     private final Integer[] playerOrderIndexes;
     private final ArrayList<Player> players;
     private final Integer numPlayers;
-
     /**
      * Constructor of PlayerManager
      * @param numPlayers is the number of player that can be allocated
@@ -41,6 +39,15 @@ public class PlayersManager{
         currentPlayerOrderIndex = (currentPlayerOrderIndex + 1) % numPlayers;
     }
 
+    /**
+     * Starting from a random Player calcute a clockwise order
+     */
+    public void setFirstPlayer(int firstPlayer){
+        for(int i = 0; i < numPlayers; i ++){
+            playerOrderIndexes[i] = firstPlayer;
+            firstPlayer = (firstPlayer + 1) % numPlayers;
+        }
+    }
     /**
      * Calculates the number of available slots for players to enter.
      * @return number of available slots
@@ -105,6 +112,7 @@ public class PlayersManager{
      */
     public SchoolBoard getSchoolBoard(Player p){ return p.getSchoolBoard();}
 
+    public SchoolBoard getSchoolBoard(){ return getCurrentPlayer().getSchoolBoard();}
     /**
      * Returns the player who is playing
      * @return current Player

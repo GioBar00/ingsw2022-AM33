@@ -15,7 +15,7 @@ class RoundManager {
 
     RoundManager(Integer numPlayers) {
         gamePhase = GamePhase.PLANNING;
-        roundNum = 1;
+        roundNum = 0;
         if (numPlayers == 3)
             maxNumMoves = 4;
         else
@@ -49,6 +49,7 @@ class RoundManager {
     void nextRound() {
         gamePhase = GamePhase.PLANNING;
         roundNum++;
+        moves = 0;
     }
     void startActionPhase(){
         gamePhase = GamePhase.MOVE_STUDENTS;
@@ -64,4 +65,9 @@ class RoundManager {
         moves = 0;
     }
 
+    boolean canPlay(){
+        if(gamePhase.equals(GamePhase.MOVE_STUDENTS))
+            return moves < maxNumMoves;
+        return false;
+    }
 }

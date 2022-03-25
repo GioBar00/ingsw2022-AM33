@@ -9,18 +9,22 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//TODO JavaDOC
 class PlayerTest {
 
     Player p = new Player("p1", Wizard.TWO, new SchoolBoard(7, Tower.GREY, 6));
 
+    /**
+     * check the correct implementation of playAssistantCard,clearPlayedCard and getHand by forcing the remove in an empty list
+     */
     @Test
     void assistantCardHandling() {
         // check that player can play every card
         for(AssistantCard c: AssistantCard.values()) {
             p.playAssistantCard(c);
-            assertEquals(p.getAssistantCard(), c);
+            assertEquals(c,p.getAssistantCard());
             assertFalse(p.getHand().contains(c));
+            p.clearPlayedCard();
+            assertNull(p.getAssistantCard());
         }
         // check clearPlayedCard
         p.clearPlayedCard();
