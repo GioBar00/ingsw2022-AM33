@@ -13,6 +13,7 @@ import java.nio.channels.AlreadyConnectedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ThreadLocalRandom;
 
 class GameModel implements Game {
@@ -75,6 +76,9 @@ class GameModel implements Game {
      */
     public void addPlayer(String nickname) throws NoPermissionException, NameAlreadyBoundException  {
         playersManager.addPlayer(nickname,preset.getTowersNumber(), preset.getEntranceCapacity());
+        if(playersManager.getAvailablePlayerSlots() == 0){
+            startGame();
+        }
     }
 
     /**
@@ -132,48 +136,63 @@ class GameModel implements Game {
     public void playAssistantCard(AssistantCard assistantCard) throws Exception{
         ArrayList<AssistantCard> played =  new ArrayList<>();
         Player current = playersManager.getCurrentPlayer();
-        for(Player p :playersManager.getPlayers() ){
-            if(!current.equals(p)){
-                if(playersManager.getPlayedCard(p).equals(assistantCard)) {
-                    played.add(playersManager.getPlayedCard(p));
-                }
-            }
-        }
-        if(!played.isEmpty()){
-            for(AssistantCard a : AssistantCard.values()){
-                if(!played.contains(a))
-                    if(playersManager.getPlayerHand(playersManager.getCurrentPlayer()).contains(a)){
-                        throw new Exception();
+        if(roundManager.getGamePhase().equals(GamePhase.PLANNING)) {
+            for (Player p : playersManager.getPlayers()) {
+                if (!current.equals(p)) {
+                    if (playersManager.getPlayedCard(p).equals(assistantCard)) {
+                        played.add(playersManager.getPlayedCard(p));
                     }
                 }
             }
-        playersManager.currentPlayerPlayed(assistantCard);
-        if(playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())){
-            roundManager.startActionPhase();
+            if (!played.isEmpty()) {
+                for (AssistantCard a : AssistantCard.values()) {
+                    if (!played.contains(a))
+                        if (playersManager.getPlayerHand(playersManager.getCurrentPlayer()).contains(a)) {
+                            throw new Exception();
+                        }
+                }
+            }
+            playersManager.currentPlayerPlayed(assistantCard);
+            if (playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())) {
+                roundManager.startActionPhase();
+            }
+            playersManager.nextPlayer();
+            roundManager.clearMoves();
         }
-        playersManager.nextPlayer();
     }
 
     //TODO from here JavaDOC
     public void moveStudentToHall(int entranceIndex) throws Exception {
+        if(roundManager.canPlay()) {
             roundManager.addMoves();
             Player current = playersManager.getCurrentPlayer();
             SchoolBoard currSch = playersManager.getSchoolBoard(current);
             StudentColor moved = currSch.moveToHall(entranceIndex);
             checkProfessor(moved);
+            roundManager.addMoves();
+        }
     }
 
 
     public void moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) throws Exception {
-        roundManager.addMoves();
-        StudentColor s = playersManager.getSchoolBoard(playersManager.getCurrentPlayer()).removeFromEntrance(entranceIndex);
-        islandsManager.addStudent(islandGroupIndex,s,islandIndex);
+        if(roundManager.canPlay()) {
+            roundManager.addMoves();
+            StudentColor s = playersManager.getSchoolBoard(playersManager.getCurrentPlayer()).removeFromEntrance(entranceIndex);
+            islandsManager.addStudent(islandGroupIndex, s, islandIndex);
+            roundManager.addMoves();
+        }
     }
 
-    public void moveMotherNature(int num) {
-        motherNatureIndex = (motherNatureIndex + num) % 12;
-        this.checkInfluence(motherNatureIndex);
-        checkWinner();
+    public void moveMotherNature(int num) throws LimitExceededException {
+        if (num <= playersManager.getPlayedCard(playersManager.getCurrentPlayer()).getMoves()) {
+            motherNatureIndex = (motherNatureIndex + num) % 12;
+            this.checkInfluence(motherNatureIndex);
+            checkWinner();
+            if (playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())) {
+                endActionPhase();
+            }
+        }
+        else { throw new LimitExceededException(); }
     }
 
     public void getStudentsFromCloud(int cloudIndex) throws LimitExceededException{
@@ -183,7 +202,10 @@ class GameModel implements Game {
         if(playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())){
             nextRound();
         }
-        else{playersManager.nextPlayer();}
+        else{
+            playersManager.nextPlayer();
+            roundManager.clearMoves();
+        }
     }
 
     void checkProfessor(StudentColor s){
@@ -221,7 +243,8 @@ class GameModel implements Game {
             }
         }
         if(maxInfluence != 0)
-            swapTowers(islandGroupIndex, max,pMax);
+            if(!max.getTower().equals(islandsManager.getTower(islandGroupIndex)))
+                swapTowers(islandGroupIndex, max,pMax);
 
     }
 
@@ -262,20 +285,24 @@ class GameModel implements Game {
         }
     }
 
-    //TODO
-    public void startGame() {
-
+    public void startGame(){
+        int i =ThreadLocalRandom.current().nextInt(0,preset.getPlayersNumber() - 1);
+        playersManager.setFirstPlayer(i);
+        roundManager.nextRound();
     }
 
     void nextRound(){
         roundManager.nextRound();
         playersManager.calculatePlayerOrder();
         playersManager.nextPlayer();
+        roundManager.clearMoves();
     }
 
     void endActionPhase(){
+        roundManager.nextRound();
         playersManager.calculateClockwiseOrder();
         playersManager.nextPlayer();
+        roundManager.clearMoves();
         if(roundManager.isLastRound()){
             checkWinner();
         }
@@ -285,6 +312,19 @@ class GameModel implements Game {
             }
         }
         playersManager.clearAllPlayedCards();
+
+        for(Cloud c :clouds){
+            for(int i = 0; i < preset.getCloudsNumber();i++){
+                for(int j = 0; j < preset.getCloudCapacity(); j++){
+                    try{
+                        c.addStudent(bag.popRandomStudent(),j);
+                    }
+                    catch (NoSuchElementException e){
+                        roundManager.setLastRound();
+                    }
+                }
+            }
+        }
     }
 
     void checkWinner(){
@@ -319,6 +359,3 @@ class GameModel implements Game {
     }
 
 }
-
-//TODO ATTENZIONE MANCANO TUTTI I CONTROLLI SULLO STATO DELLA PARTITA
-//TODO MANCA DA IMPLEMENTARE METODO START
