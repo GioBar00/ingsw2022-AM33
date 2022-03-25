@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 //TODO
 class IslandGroupTest {
+
     @Test
     void CalcInfluenceGeneralTest(){
         IslandGroup ig1 = new IslandGroup();

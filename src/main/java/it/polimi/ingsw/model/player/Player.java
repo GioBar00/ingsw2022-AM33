@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 
+//TODO JavaDO
 public class Player{
     private final String nickname;
     private final Wizard wizard;

@@ -2,7 +2,9 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.enums.*;
 import it.polimi.ingsw.model.islands.IslandsManager;
-import it.polimi.ingsw.model.player.*;
+import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.model.player.PlayersManager;
+import it.polimi.ingsw.model.player.SchoolBoard;
 
 import javax.naming.LimitExceededException;
 import javax.naming.NameAlreadyBoundException;
@@ -258,7 +260,7 @@ class GameModel implements Game {
     }
 
     void endActionPhase(){
-        playersManager.calculatePlayerOrder();
+        playersManager.calculateClockwiseOrder();
         playersManager.nextPlayer();
         if(roundManager.isLastRound()){
             checkWinner();
@@ -268,6 +270,7 @@ class GameModel implements Game {
                 checkWinner();
             }
         }
+        playersManager.clearAllPlayedCards();
     }
 
     void checkWinner(){
@@ -289,9 +292,9 @@ class GameModel implements Game {
                 }
             }
             if(toCheck.size() > 1){
-                sup = 0;
+                profs = 0;
                 for(Player p : toCheck){
-                    if(playersManager.getSchoolBoard(p).getProfessors().size() > sup){
+                    if(playersManager.getSchoolBoard(p).getProfessors().size() > profs){
                         winner = p;
                     }
                 }
