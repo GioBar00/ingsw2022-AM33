@@ -23,25 +23,57 @@ class GameModel implements Game {
     final Bag bag;
     int motherNatureIndex;
     final ArrayList<Cloud> clouds;
-    final PlayerNumber numPlayers;
+    final GamePreset preset;
 
-    GameModel(PlayerNumber numPlayers) {
-        this.gameMode = GameMode.EASY;
-        roundManager = new RoundManager(numPlayers.getPlayersValue());
-        this.playersManager = new PlayersManager(numPlayers.getPlayersValue());
-        this.numPlayers = numPlayers;
-        this.clouds = new ArrayList<>(numPlayers.getPlayersValue());
-        this.bag = new Bag();
+    GameModel(GamePreset preset) {
+        gameMode = GameMode.EASY;
+        this.preset = preset;
+        roundManager = new RoundManager(preset.getPlayersNumber());
+        playersManager = new PlayersManager(preset.getPlayersNumber());
+        clouds = new ArrayList<>(preset.getCloudsNumber());
+        bag = new Bag();
 
-        this.islandsManager = new IslandsManager();
+        islandsManager = new IslandsManager();
 
-        //initialize clouds
-        if (numPlayers.getPlayersValue() == 3)
-        for (int i = 0; i < numPlayers.getPlayersValue(); i++) {
-            clouds.add(new Cloud(numPlayers.getCloudCapacity()));
+
+        // initialize clouds
+        for (int i = 0; i < preset.getCloudsNumber(); i++) {
+            clouds.add(new Cloud(preset.getCloudCapacity()));
         }
 
         gameState = GameState.UNINITIALIZED;
+    }
+
+    /**
+     * @return the game mode
+     */
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    /**
+     * @return the current state of the game
+     */
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    /**
+     * Calculates the number of available slots for players to enter.
+     * @return number of available slots
+     */
+    public int getAvailablePlayerSlots() {
+        return playersManager.getAvailablePlayerSlots();
+    }
+
+    /**
+     * Adds a new player to the game.
+     * @param nickname unique identifier of a player
+     * @throws NoPermissionException if game not in UNINITIALIZED state or no more available slots for players
+     * @throws AlreadyConnectedException if another player with same nickname is already in the game
+     */
+    public void addPlayer(String nickname) throws NoPermissionException, NameAlreadyBoundException  {
+        playersManager.addPlayer(nickname,preset.getTowersNumber(), preset.getEntranceCapacity());
     }
 
     /**
@@ -75,10 +107,11 @@ class GameModel implements Game {
     /**
      * Adds the students to the entrance of each players' school board.
      */
+    //FIXME
     private void initializeSchoolBoards() {
         for (Player p : playersManager.getPlayers()) {
             SchoolBoard sb = playersManager.getSchoolBoard(p);
-            for (int i = 0; i < numPlayers.getEntranceValue(); i++) {
+            for (int i = 0; i < preset.getEntranceCapacity(); i++) {
                 try {
                     sb.addToEntrance(bag.popRandomStudent());
                 } catch (LimitExceededException ignored) {
@@ -88,37 +121,7 @@ class GameModel implements Game {
         }
     }
 
-    /**
-     * @return the game mode
-     */
-    public GameMode getGameMode() {
-        return gameMode;
-    }
 
-    /**
-     * @return the current state of the game
-     */
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    /**
-     * Calculates the number of available slots for players to enter.
-     * @return number of available slots
-     */
-    public int getAvailablePlayerSlots() {
-        return playersManager.getAvailablePlayerSlots();
-    }
-
-    /**
-     * Adds a new player to the game.
-     * @param nickname unique identifier of a player
-     * @throws NoPermissionException if game not in UNINITIALIZED state or no more available slots for players
-     * @throws AlreadyConnectedException if another player with same nickname is already in the game
-     */
-    public void addPlayer(String nickname) throws NoPermissionException, NameAlreadyBoundException  {
-        playersManager.addPlayer(nickname,numPlayers.getTowersValue(), numPlayers.getEntranceValue());
-    }
 
     /**
      * Try to play an assistant card. If someone has already played it check that the current player hasn't other cards playable.
@@ -151,7 +154,7 @@ class GameModel implements Game {
     }
 
     //TODO from here JavaDOC
-    public void moveStudentToHall(int entranceIndex) throws LimitExceededException, Exception {
+    public void moveStudentToHall(int entranceIndex) throws Exception {
             roundManager.addMoves();
             Player current = playersManager.getCurrentPlayer();
             SchoolBoard currSch = playersManager.getSchoolBoard(current);
@@ -163,7 +166,7 @@ class GameModel implements Game {
     }
 
 
-    public void moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) throws NoSuchElementException, Exception {
+    public void moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) throws Exception {
         roundManager.addMoves();
         StudentColor s = playersManager.getSchoolBoard(playersManager.getCurrentPlayer()).removeFromEntrance(entranceIndex);
         islandsManager.addStudent(islandGroupIndex,s,islandIndex);
@@ -270,8 +273,8 @@ class GameModel implements Game {
 
     void checkWinner(){
         Player winner = null;
-        int minTower = numPlayers.getTowersValue() + 1;
-        ArrayList<Player> toCheck= new ArrayList<>();
+        int minTower = preset.getTowersNumber() + 1;
+        ArrayList<Player> toCheck = new ArrayList<>();
         int sup;
         int profs;
         if(islandsManager.getActualSize()<= 3){

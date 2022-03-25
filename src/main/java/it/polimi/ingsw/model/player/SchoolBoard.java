@@ -164,12 +164,21 @@ public class SchoolBoard {
      * Create a deep copy of the entrance
      * @return the copy of the entrance
      */
-    public ArrayList<StudentColor> getStudentsInEntrance(){
+    public ArrayList<StudentColor> getStudentsInEntrance() {
         ArrayList<StudentColor> ret = new ArrayList<>();
         for(int i = 0; i < entrance.size(); i++){
             ret.add(i,entrance.get(i));
         }
         return ret;
+    }
+
+    /**
+     * Gets the student color in the entrance at a specific index.
+     * @param index index to get the student from.
+     * @return student color at index.
+     */
+    public StudentColor getStudentInEntrance(int index) {
+        return entrance.get(index);
     }
 
     /**

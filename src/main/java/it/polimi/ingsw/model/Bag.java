@@ -25,9 +25,9 @@ class Bag {
     /**
      * extracts a random student from the bag
      * @return student extracted
-     * @throws NoSuchElementException in case that there aren't anymore students in the bag
+     * @throws NoSuchElementException in case that there are no more students in the bag
      */
-    StudentColor popRandomStudent() throws NoSuchElementException{
+    StudentColor popRandomStudent() throws NoSuchElementException {
         int extracted;
         StudentColor temp;
 

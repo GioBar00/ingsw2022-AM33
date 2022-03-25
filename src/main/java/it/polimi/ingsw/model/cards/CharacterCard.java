@@ -1,26 +1,44 @@
 package it.polimi.ingsw.model.cards;
 
-abstract class CharacterCard {
-    Integer cost;
-    Integer additionalCost = 0;
+import it.polimi.ingsw.enums.CharacterType;
+import it.polimi.ingsw.enums.StudentColor;
 
+import java.util.EnumMap;
+import java.util.List;
 
-    Integer getAdditionalCost() {
+public abstract class CharacterCard {
+    CharacterType type;
+    int cost;
+    int additionalCost = 0;
+
+    public int getCost() {
+        return cost;
+    }
+
+    public int getAdditionalCost() {
         return additionalCost;
     }
 
-    Integer getTotalCost(){
+    public int getTotalCost(){
         return cost + additionalCost;
     }
 
-    //FIXME
-    //abstract void applyEffect(GameModel model, Object[] args);
+    public abstract void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs);
 
-    boolean canHandleBlocks(){
+    public void endEffect(EffectHandler effectHandler) {}
+
+    public boolean canHandleBlocks(){
         return false;
     }
 
-    void addNumBlocks(Integer num) throws Exception {
-        throw new Exception();
+    public void addNumBlocks(int num) {}
+
+    public boolean containsStudents() {
+        return false;
     }
+
+    public EnumMap<StudentColor, Integer> getStudents() {
+        return new EnumMap<>(StudentColor.class);
+    }
+
 }
