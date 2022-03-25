@@ -44,19 +44,19 @@ class RoundManager {
         winner = p;
     }
 
-    Player getWinner(){ return winner; }
+    Player getWinner() { return winner; }
 
-    void nextRound(){
+    void nextRound() {
         gamePhase = GamePhase.PLANNING;
-        roundNum ++;
+        roundNum++;
     }
     void startActionPhase(){
         gamePhase = GamePhase.MOVE_STUDENTS;
     }
 
-    void addMoves() throws Exception{
+    void addMoves() throws Exception {
         if(moves < maxNumMoves)
-            moves ++;
+            moves++;
         else throw new Exception();
     }
 

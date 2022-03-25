@@ -98,15 +98,7 @@ public class IslandsManager {
             previous = index - 1;
         }
 
-        if(islandGroups.get(previous).getTower() != null){
-            if(islandGroups.get(previous).getTower().equals(islandGroups.get(index).getTower())){
-                islandGroups.get(index).mergeWith(islandGroups.get(previous));
-                islandGroups.remove(previous);
-                return true;
-            }
-        }
-
-        return false;
+        return mergeIslandGroups(index, previous);
     }
 
     /**
@@ -118,16 +110,20 @@ public class IslandsManager {
     public boolean checkMergeNext(int index){
         int next;
 
-        if(index == 11){
+        if(index == islandGroups.size() - 1){
             next = 0;
         } else {
             next = index + 1;
         }
 
-        if(islandGroups.get(next).getTower() != null){
-            if(islandGroups.get(next).getTower().equals(islandGroups.get(index).getTower())){
-                islandGroups.get(index).mergeWith(islandGroups.get(next));
-                islandGroups.remove(next);
+        return mergeIslandGroups(index, next);
+    }
+
+    private boolean mergeIslandGroups(int index, int index2) {
+        if(islandGroups.get(index2).getTower() != null){
+            if(islandGroups.get(index2).getTower().equals(islandGroups.get(index).getTower())){
+                islandGroups.get(index).mergeWith(islandGroups.get(index2));
+                islandGroups.remove(index2);
                 return true;
             }
         }

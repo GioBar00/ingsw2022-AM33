@@ -51,8 +51,9 @@ public interface EffectHandler {
 
     /**
      * Ignores the towers when calculating influence this turn.
+     * @param ignore ignore towers.
      */
-    void ignoreTowers();
+    void ignoreTowers(boolean ignore);
 
     /**
      * Removes a student from the entrance of current player's school board.
@@ -76,8 +77,9 @@ public interface EffectHandler {
     /**
      * Ignores student color when calculating influence this turn.
      * @param s student color to ignore.
+     * @param ignore ignore student color.
      */
-    void ignoreStudentColor(StudentColor s);
+    void ignoreStudentColor(StudentColor s, boolean ignore);
 
     /**
      * Removes a student from the current player's hall.
