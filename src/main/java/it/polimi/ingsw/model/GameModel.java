@@ -16,14 +16,15 @@ import java.util.concurrent.ThreadLocalRandom;
 class GameModel implements Game {
     GameMode gameMode;
     GameState gameState;
+    final GamePreset preset;
     RoundManager roundManager;
     final PlayersManager playersManager;
     final IslandsManager islandsManager;
     final Bag bag;
     int motherNatureIndex;
     final ArrayList<Cloud> clouds;
-    final GamePreset preset;
 
+    //TODO JavaDOC
     GameModel(GamePreset preset) {
         gameMode = GameMode.EASY;
         this.preset = preset;
@@ -109,7 +110,6 @@ class GameModel implements Game {
     /**
      * Adds the students to the entrance of each players' school board.
      */
-    //FIXME
     private void initializeSchoolBoards() {
         for (Player p : playersManager.getPlayers()) {
             SchoolBoard sb = playersManager.getSchoolBoard(p);
@@ -276,25 +276,38 @@ class GameModel implements Game {
         SchoolBoard oldSchoolBoard = null;
         SchoolBoard newSchoolBoard = null;
         Tower oldTower = islandsManager.getTower(islandGroupIndex);
-        if (!newTower.equals(oldTower)) {
-            for (Player p: playersManager.getPlayers()) {
-                if (newTower.equals(playersManager.getSchoolBoard(p).getTower())) {
+        if(islandsManager.getTower(islandGroupIndex) == null){
+            for(Player p : playersManager.getPlayers()){
+                if(playersManager.getSchoolBoard(p).getTower().equals(newTower)){
                     newPlayer = p;
                     newSchoolBoard = playersManager.getSchoolBoard(p);
-                }
-                else if (oldTower.equals(playersManager.getSchoolBoard(p).getTower())) {
-                    oldSchoolBoard = playersManager.getSchoolBoard(p);
+                    try {
+                            newSchoolBoard.removeTowers(islandsManager.getIslandGroup(islandGroupIndex).size());
+                    } catch (LimitExceededException e) {
+                        roundManager.setWinner(newPlayer);
+                    }
                 }
             }
-            if (newPlayer != null && oldSchoolBoard != null && newSchoolBoard != null) {
-                islandsManager.setTower(newTower, islandGroupIndex);
+        }else {
+            if (!newTower.equals(oldTower)) {
+                for (Player p : playersManager.getPlayers()) {
+                    if (newTower.equals(playersManager.getSchoolBoard(p).getTower())) {
+                        newPlayer = p;
+                        newSchoolBoard = playersManager.getSchoolBoard(p);
+                    } else if (oldTower.equals(playersManager.getSchoolBoard(p).getTower())) {
+                        oldSchoolBoard = playersManager.getSchoolBoard(p);
+                    }
+                }
+                if (newPlayer != null && oldSchoolBoard != null && newSchoolBoard != null) {
+                    islandsManager.setTower(newTower, islandGroupIndex);
 
-                int size = islandsManager.getIslandGroup(islandGroupIndex).size();
-                try {
-                    oldSchoolBoard.addTowers(size);
-                    newSchoolBoard.removeTowers(size);
-                } catch (LimitExceededException e) {
-                    roundManager.setWinner(newPlayer);
+                    int size = islandsManager.getIslandGroup(islandGroupIndex).size();
+                    try {
+                        oldSchoolBoard.addTowers(size);
+                        newSchoolBoard.removeTowers(size);
+                    } catch (LimitExceededException e) {
+                        roundManager.setWinner(newPlayer);
+                    }
                 }
             }
         }
