@@ -8,9 +8,15 @@ import java.util.EnumSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 public class IslandsManagerTest {
 
+    /**
+     * the test checks that the merge works correctly. in particular the features that are here tested are:
+     * - correct update of the size of the ArrayList of island groups
+     * - correct functioning of both checkMergeNext and checkMergePrevious
+     * - in the particular case that a merge has already happened (hence the size of the ArrayList IslandGroups
+     * is reduced), whether the merge of the first and last IslandGroups still work correctly
+     */
     @Test
     void MergeTest(){
         IslandsManager im = new IslandsManager();
@@ -32,8 +38,20 @@ public class IslandsManagerTest {
         // group 0 should merge with both 1 and 11
         assertEquals(3, im.getIslandGroup(0).size());
         assertEquals(10, im.getNumIslandGroups());
+
+        // tries the case of a merge between the last and first islandGroups when the num of groups changes
+        im.setTower(Tower.WHITE, 0);
+        im.setTower(Tower.WHITE, im.getNumIslandGroups()-1);
+
+        assertTrue(im.checkMergeNext(im.getNumIslandGroups() - 1));
     }
 
+    /**
+     * the test check that the method calcInfluence works correctly. the particular cases here tested are:
+     * - calcInfluence doesn't consider Students/Towers that the Player doesn't control
+     * - if the tower is swapped with another, that the Player controls the result changes
+     * - whether the method returns the right value of influence after a merge of islands has happened
+     */
     @Test
     void InfluenceTest(){
         IslandsManager im = new IslandsManager();

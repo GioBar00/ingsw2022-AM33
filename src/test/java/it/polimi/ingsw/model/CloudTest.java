@@ -5,8 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//TODO JavaDOC
 class CloudTest {
+
+    /**
+     * the test checks that the cloud is created empty, adds students to the cloud, check that
+     * each student is added to the right position, that the method throws the right exception, proceeds to
+     * pop all students and check that finally the islands is empty
+     */
     @Test
     void get_add_pop_Students(){
         Cloud testCloud = new Cloud(3);

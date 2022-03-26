@@ -9,8 +9,13 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//TODO JavaDOC
 class BagTest {
+
+    /**
+     * the tests checks the addictions to the bag are done correctly and proceeds to check if the
+     * method popRandomStudent() works correctly (extracting the right number of students and
+     * throwing the right exception
+     */
     @Test
     void popRandomStudentTest(){
         Bag testBag = new Bag();
