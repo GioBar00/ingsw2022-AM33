@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 
 import it.polimi.ingsw.enums.GamePhase;
+import it.polimi.ingsw.enums.GamePreset;
 import it.polimi.ingsw.model.player.Player;
 
 class RoundManager {
@@ -13,13 +14,10 @@ class RoundManager {
     private Player winner;
     private int moves;
 
-    RoundManager(Integer numPlayers) {
+    RoundManager(GamePreset preset) {
         gamePhase = GamePhase.PLANNING;
         roundNum = 0;
-        if (numPlayers == 3)
-            maxNumMoves = 4;
-        else
-            maxNumMoves = 3;
+        maxNumMoves = preset.getMaxNumMoves();
         winner = null;
         moves = 0;
     }

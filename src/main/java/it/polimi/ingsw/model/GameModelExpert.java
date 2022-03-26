@@ -24,7 +24,7 @@ class GameModelExpert implements Game, EffectHandler {
     private int additionalMotherNatureMovement = 0;
     private boolean skipTowers = false;
     private int additionalInfluence = 0;
-    private EnumSet<StudentColor> skipStudentColor = EnumSet.noneOf(StudentColor.class);
+    private final EnumSet<StudentColor> skipStudentColors = EnumSet.noneOf(StudentColor.class);
 
     GameModelExpert(GameModel model) {
         this.model = model;
@@ -72,11 +72,13 @@ class GameModelExpert implements Game, EffectHandler {
             playerCoins.put(p, 1);
             reserve--;
         }
+        for (CharacterCard c: characterCards)
+            c.initialize(this);
     }
 
     @Override
     public void startGame() {
-
+        model.startGame();
     }
 
     @Override
@@ -118,10 +120,16 @@ class GameModelExpert implements Game, EffectHandler {
     @Override
     public void getStudentsFromCloud(int cloudIndex) throws LimitExceededException {
         model.getStudentsFromCloud(cloudIndex);
+        for (CharacterCard c: characterCards)
+            c.endEffect(this);
     }
 
     @Override
     public void activateCharacterCard(int index) {
+        Player curr = model.playersManager.getCurrentPlayer();
+        if (playerCoins.get(curr) < characterCards.get(index).getTotalCost())
+            return;
+        playerCoins.put(curr, playerCoins.get(curr) - characterCards.get(index).getTotalCost());
         characterCardActivating = characterCards.get(index);
     }
 
@@ -209,7 +217,24 @@ class GameModelExpert implements Game, EffectHandler {
      */
     @Override
     public void calcInfluenceOnIslandGroup(int islandGroupIndex) {
-        model.checkInfluence(islandGroupIndex, skipTowers, additionalInfluence, skipStudentColor);
+        if (model.islandsManager.getIslandGroup(islandGroupIndex).isBlocked()) {
+            model.islandsManager.getIslandGroup(islandGroupIndex).setBlocked(false);
+            for (CharacterCard c: characterCards)
+                if (c.canHandleBlocks())
+                    c.addNumBlocks(1);
+            return;
+        }
+        Tower tower = model.checkInfluence(islandGroupIndex, skipTowers, additionalInfluence, skipStudentColors);
+        if (tower != null && tower != model.islandsManager.getTower(islandGroupIndex)) {
+            model.swapTowers(islandGroupIndex, tower);
+            int numBlocks = model.checkMergeIslandGroups(islandGroupIndex);
+            for (CharacterCard c: characterCards)
+                if (c.canHandleBlocks()) {
+                    c.addNumBlocks(numBlocks);
+                    return;
+                }
+
+        }
     }
 
     /**
@@ -278,13 +303,13 @@ class GameModelExpert implements Game, EffectHandler {
      */
     @Override
     public void ignoreStudentColor(StudentColor s, boolean ignore) {
-        if (skipStudentColor.contains(s)) {
+        if (skipStudentColors.contains(s)) {
             if (!ignore)
-                skipStudentColor.remove(s);
+                skipStudentColors.remove(s);
         }
         else
             if (ignore)
-                skipStudentColor.add(s);
+                skipStudentColors.add(s);
 
     }
 

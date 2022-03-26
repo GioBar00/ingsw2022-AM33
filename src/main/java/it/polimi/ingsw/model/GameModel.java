@@ -27,7 +27,7 @@ class GameModel implements Game {
     GameModel(GamePreset preset) {
         gameMode = GameMode.EASY;
         this.preset = preset;
-        roundManager = new RoundManager(preset.getPlayersNumber());
+        roundManager = new RoundManager(preset);
         playersManager = new PlayersManager(preset.getPlayersNumber());
         clouds = new ArrayList<>(preset.getCloudsNumber());
         bag = new Bag();
@@ -123,8 +123,6 @@ class GameModel implements Game {
         }
     }
 
-
-
     /**
      * Try to play an assistant card. If someone has already played it check that the current player hasn't other cards playable.
      * @param assistantCard the card the player wants to play
@@ -183,7 +181,7 @@ class GameModel implements Game {
     public void moveMotherNature(int num) throws LimitExceededException {
         if (num <= playersManager.getPlayedCard(playersManager.getCurrentPlayer()).getMoves()) {
             motherNatureIndex = (motherNatureIndex + num) % 12;
-            this.checkInfluence(motherNatureIndex);
+            checkInfluence(motherNatureIndex);
             checkWinner();
             if (playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())) {
                 endActionPhase();
@@ -226,10 +224,15 @@ class GameModel implements Game {
     }
 
     void checkInfluence(int islandGroupIndex) {
-        checkInfluence(islandGroupIndex, false, 0, EnumSet.noneOf(StudentColor.class));
+        Tower tower = checkInfluence(islandGroupIndex, false, 0, EnumSet.noneOf(StudentColor.class));
+        if (tower != null && tower != islandsManager.getTower(islandGroupIndex)) {
+            swapTowers(islandGroupIndex, tower);
+            checkMergeIslandGroups(islandGroupIndex);
+        }
+
     }
 
-    void checkInfluence(int islandGroupIndex, boolean skipTowers, int additionalInfluence, EnumSet<StudentColor> skipStudentColor) {
+    Tower checkInfluence(int islandGroupIndex, boolean skipTowers, int additionalInfluence, EnumSet<StudentColor> skipStudentColor) {
         // group players by Tower
         EnumMap<Tower, List<Player>> playersByTower = new EnumMap<>(Tower.class);
         for (Player p: playersManager.getPlayers()) {
@@ -265,8 +268,7 @@ class GameModel implements Game {
                 tower = sb.getTower();
             }
         }
-        if (tower != null && tower != islandsManager.getTower(islandGroupIndex))
-            swapTowers(islandGroupIndex, tower);
+        return tower;
     }
 
     void swapTowers(int islandGroupIndex, Tower newTower){
@@ -287,21 +289,6 @@ class GameModel implements Game {
             if (newPlayer != null && oldSchoolBoard != null && newSchoolBoard != null) {
                 islandsManager.setTower(newTower, islandGroupIndex);
 
-                // check merge for next and previous island groups.
-                if (islandsManager.checkMergeNext(islandGroupIndex))
-                    if (motherNatureIndex > islandGroupIndex) {
-                        motherNatureIndex--;
-                        if (motherNatureIndex < 0)
-                            motherNatureIndex = islandsManager.getNumIslandGroups() - 1;
-                    }
-
-                if (islandsManager.checkMergePrevious(islandGroupIndex))
-                    if (motherNatureIndex >= islandGroupIndex) {
-                        motherNatureIndex--;
-                        if (motherNatureIndex < 0)
-                            motherNatureIndex = islandsManager.getNumIslandGroups() - 1;
-                    }
-
                 int size = islandsManager.getIslandGroup(islandGroupIndex).size();
                 try {
                     oldSchoolBoard.addTowers(size);
@@ -313,8 +300,42 @@ class GameModel implements Game {
         }
     }
 
+    int checkMergeIslandGroups(int islandGroupIndex) {
+        int numBlocks = 0;
+        boolean bothBlocked;
+
+        int previous = Math.floorMod(islandGroupIndex - 1, islandsManager.getNumIslandGroups());
+        int next = Math.floorMod(islandGroupIndex + 1, islandsManager.getNumIslandGroups());
+
+        bothBlocked = islandsManager.getIslandGroup(islandGroupIndex).isBlocked() && islandsManager.getIslandGroup(next).isBlocked();
+
+        if (islandsManager.checkMergeNext(islandGroupIndex)) {
+            if (bothBlocked)
+                numBlocks++;
+            if (motherNatureIndex > islandGroupIndex) {
+                motherNatureIndex--;
+                if (motherNatureIndex < 0)
+                    motherNatureIndex = islandsManager.getNumIslandGroups() - 1;
+            }
+        }
+
+        bothBlocked = islandsManager.getIslandGroup(islandGroupIndex).isBlocked() && islandsManager.getIslandGroup(previous).isBlocked();
+
+        if (islandsManager.checkMergePrevious(islandGroupIndex)) {
+            if (bothBlocked)
+                numBlocks++;
+            if (motherNatureIndex >= islandGroupIndex) {
+                motherNatureIndex--;
+                if (motherNatureIndex < 0)
+                    motherNatureIndex = islandsManager.getNumIslandGroups() - 1;
+            }
+        }
+
+        return numBlocks;
+    }
+
     public void startGame(){
-        int i =ThreadLocalRandom.current().nextInt(0,preset.getPlayersNumber() - 1);
+        int i = ThreadLocalRandom.current().nextInt(0,preset.getPlayersNumber() - 1);
         playersManager.setFirstPlayer(i);
         roundManager.nextRound();
     }

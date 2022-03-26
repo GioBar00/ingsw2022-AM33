@@ -7,9 +7,14 @@ import java.util.EnumMap;
 import java.util.List;
 
 public abstract class CharacterCard {
-    CharacterType type;
-    int cost;
+    final CharacterType type;
+    final int cost;
     int additionalCost = 0;
+
+    protected CharacterCard(CharacterType type, int cost) {
+        this.type = type;
+        this.cost = cost;
+    }
 
     public int getCost() {
         return cost;
@@ -22,6 +27,8 @@ public abstract class CharacterCard {
     public int getTotalCost(){
         return cost + additionalCost;
     }
+
+    public void initialize(EffectHandler effectHandler) {}
 
     public abstract void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs);
 
