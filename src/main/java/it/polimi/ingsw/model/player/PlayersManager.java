@@ -170,8 +170,8 @@ public class PlayersManager{
      */
     public ArrayList<Player> getPlayers(){
         ArrayList<Player> ret = new ArrayList<>(numPlayers);
-        for(Integer i : playerOrderIndexes){
-            ret.add(players.get(i));
+        for (int i = 0; i < players.size(); i++) {
+            ret.add(players.get(playerOrderIndexes[i]));
         }
         return ret;
     }

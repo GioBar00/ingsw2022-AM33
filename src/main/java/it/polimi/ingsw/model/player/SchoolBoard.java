@@ -70,10 +70,11 @@ public class SchoolBoard {
      * @throws LimitExceededException  if we're trying to remove more tower than available
      */
     public void removeTowers(int num) throws LimitExceededException{
-        if(numTowers - num < 0){
+        numTowers = numTowers - num;
+        if(numTowers <= 0){
+            numTowers = 0;
             throw new LimitExceededException();
         }
-        numTowers = numTowers - num;
     }
 
     /**

@@ -119,10 +119,10 @@ public class IslandsManager {
         return mergeIslandGroups(index, next);
     }
 
-    private boolean mergeIslandGroups(int index, int index2) {
+    private boolean mergeIslandGroups(int index1, int index2) {
         if(islandGroups.get(index2).getTower() != null){
-            if(islandGroups.get(index2).getTower().equals(islandGroups.get(index).getTower())){
-                islandGroups.get(index).mergeWith(islandGroups.get(index2));
+            if(islandGroups.get(index2).getTower().equals(islandGroups.get(index1).getTower())){
+                islandGroups.get(index1).mergeWith(islandGroups.get(index2));
                 islandGroups.remove(index2);
                 return true;
             }

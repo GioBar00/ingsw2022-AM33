@@ -22,7 +22,7 @@ class SchoolBoardTest {
             assertEquals(9,s.getNumTowers());
             try{s.removeTowers(8);
                 assertThrows(LimitExceededException.class,() -> s.removeTowers(2));
-                assertEquals(1,s.getNumTowers());
+                assertEquals(0,s.getNumTowers());
             }
             catch (LimitExceededException ignored){}
 
@@ -60,7 +60,9 @@ class SchoolBoardTest {
 
         SchoolBoard m =new SchoolBoard(300,Tower.BLACK,30);
         assertEquals(30,m.getNumTowers());
-        m.removeTowers(30);
+        try {
+            m.removeTowers(30);
+        } catch (LimitExceededException ignored){}
 
         for(int i = 0; i < 30; i++) {
             assertEquals(i, m.getNumTowers());

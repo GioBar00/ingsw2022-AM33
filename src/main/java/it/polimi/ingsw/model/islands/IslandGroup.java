@@ -19,7 +19,7 @@ public class IslandGroup{
      * method to access the islands of the IslandGroup
      * @return the ArrayList of islands of the IslandGroup
      */
-    public ArrayList<Island> getIslands() {
+    ArrayList<Island> getIslands() {
         return islands;
     }
 
@@ -35,7 +35,7 @@ public class IslandGroup{
      * method to access the tower of the IslandGroup; Tower can be null (if island never conquered)
      * @return current Tower
      */
-    public Tower getTower(){
+    Tower getTower(){
         return islands.get(0).getTower();
     }
 
@@ -43,7 +43,7 @@ public class IslandGroup{
      * method to set the tower of the IslandGroup
      * @param tower: new tower to be set on the island
      */
-    public void setTower(Tower tower){
+    void setTower(Tower tower){
         for (Island i : islands) i.setTower(tower);
     }
 
@@ -78,7 +78,7 @@ public class IslandGroup{
      * @param professors list of professors currently controlled by the player
      * @return influence of the Player on the IslandGroup
      */
-    public int calcInfluence(Tower playerTower, EnumSet<StudentColor> professors){
+    int calcInfluence(Tower playerTower, EnumSet<StudentColor> professors){
         int infl;
 
         infl = calcInfluence(professors);
@@ -96,7 +96,7 @@ public class IslandGroup{
      * @param professors list of professors currently controlled by the player
      * @return influence of the Player on the IslandGroup
      */
-    public int calcInfluence(EnumSet<StudentColor> professors){
+    int calcInfluence(EnumSet<StudentColor> professors){
         int infl = 0;
 
         // calculates the number of students on which the player has influence, considering all the islands of the gruop
@@ -113,7 +113,7 @@ public class IslandGroup{
      * merges the current IslandGroup with another one
      * @param ig1 other IslandGroup to merge with the current one
      */
-    public void mergeWith(IslandGroup ig1){
+    void mergeWith(IslandGroup ig1){
         // add second island group to the first island group
         this.islands.addAll(ig1.islands);
         // the model will then call a function to delete ig1
