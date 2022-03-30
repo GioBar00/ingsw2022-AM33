@@ -19,7 +19,7 @@ public class IslandGroup{
      * method to access the islands of the IslandGroup
      * @return the ArrayList of islands of the IslandGroup
      */
-    ArrayList<Island> getIslands() {
+    public ArrayList<Island> getIslands() {
         return islands;
     }
 

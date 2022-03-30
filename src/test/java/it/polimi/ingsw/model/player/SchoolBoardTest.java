@@ -5,7 +5,6 @@ import it.polimi.ingsw.enums.Tower;
 import org.junit.jupiter.api.Test;
 
 import javax.naming.LimitExceededException;
-
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.NoSuchElementException;
@@ -24,24 +23,24 @@ class SchoolBoardTest {
                 assertThrows(LimitExceededException.class,() -> s.removeTowers(2));
                 assertEquals(0,s.getNumTowers());
             }
-            catch (LimitExceededException ignored){}
+            catch (LimitExceededException e){
+                fail();
+            }
 
         }
-        catch (LimitExceededException ignored){}
+        catch (LimitExceededException e){
+            fail();
+        }
     }
 
     @Test
-    void addTowers() throws LimitExceededException {
+    void addTowers() {
         final SchoolBoard s = new SchoolBoard(10,Tower.BLACK,0);
         assertThrows(LimitExceededException.class,() -> s.addTowers(1) );
 
         SchoolBoard n = new SchoolBoard(10,Tower.BLACK, 10);
         assertEquals(10, n.getNumTowers());
-        try {
-            n.removeTowers(10);
-        }
-        catch(LimitExceededException ignored){}
-
+        assertThrows(LimitExceededException.class, ()->n.removeTowers(10));
         try {
             n.addTowers(1);
             assertEquals(1, n.getNumTowers());
@@ -49,7 +48,9 @@ class SchoolBoardTest {
         try {
             n.addTowers(3);
             assertEquals(4, n.getNumTowers());
-        } catch (LimitExceededException ignored) {}
+        } catch (LimitExceededException e){
+            fail();
+        }
         try {
             n.addTowers(10);
             assertEquals(14, n.getNumTowers());
@@ -69,7 +70,9 @@ class SchoolBoardTest {
             try {
                 m.addTowers(1);
             }
-            catch (LimitExceededException ignored){}
+            catch (LimitExceededException e){
+                fail();
+            }
         }
         assertEquals(30, m.getNumTowers());
         assertThrows(LimitExceededException.class,() -> m.addTowers(1) );
@@ -78,13 +81,14 @@ class SchoolBoardTest {
 
 
     @Test
-    void ProfessorsTest() throws Exception{
+    void ProfessorsTest(){
         SchoolBoard s = new SchoolBoard(20,Tower.GREY,10);
         EnumSet<StudentColor> profs;
         profs = s.getProfessors();
         //Check add and get
         assertEquals(0,profs.size());
-        s.addProfessor(StudentColor.BLUE);
+        try {   s.addProfessor(StudentColor.BLUE); }
+        catch (Exception e){ fail(); }
         profs = s.getProfessors();
         assertTrue(profs.contains(StudentColor.BLUE));
         for(StudentColor t : StudentColor.values()){
@@ -93,14 +97,20 @@ class SchoolBoardTest {
         }
         assertEquals(1, profs.size());
         assertThrows(Exception.class,()-> s.addProfessor(StudentColor.BLUE));
-        s.addProfessor(StudentColor.RED);
-        s.removeProfessor(StudentColor.RED);
+        try{    s.addProfessor(StudentColor.RED); }
+        catch (Exception e){ fail();}
+        assertThrows(Exception.class,()-> s.addProfessor(StudentColor.RED));
         //Check consistency
         profs.remove(StudentColor.BLUE);
         profs = s.getProfessors();
         assertTrue(profs.contains(StudentColor.BLUE));
         //Check remove and get
-        s.removeProfessor(StudentColor.BLUE);
+        try {   s.removeProfessor(StudentColor.BLUE); }
+        catch (Exception e ){ fail(); }
+        profs = s.getProfessors();
+        assertEquals(1,profs.size());
+        try{    s.removeProfessor(StudentColor.RED); }
+        catch (Exception e){ fail();}
         profs = s.getProfessors();
         assertEquals(0,profs.size());
         for(StudentColor t : StudentColor.values()){
@@ -112,12 +122,15 @@ class SchoolBoardTest {
     }
 
     @Test
-    void EntranceTest() throws  Exception{
+    void EntranceTest(){
         SchoolBoard s = new SchoolBoard(20,Tower.GREY,10);
         //Check addInEntrance and getStudentsInEntrance
-        s.addToEntrance(StudentColor.BLUE);
-        s.addToEntrance(StudentColor.BLUE);
-        s.addToEntrance(StudentColor.GREEN);
+        try {   s.addToEntrance(StudentColor.BLUE); }
+        catch (Exception e ){ fail(); }
+        try {   s.addToEntrance(StudentColor.BLUE); }
+        catch (Exception e ){ fail(); }
+        try {   s.addToEntrance(StudentColor.GREEN); }
+        catch (Exception e ){ fail(); }
         ArrayList<StudentColor>entrance = s.getStudentsInEntrance();
         assertTrue(entrance.contains(StudentColor.BLUE));
         assertTrue(entrance.contains(StudentColor.GREEN));
@@ -131,8 +144,14 @@ class SchoolBoardTest {
 
         //Check removeFromEntrance
         SchoolBoard m = new SchoolBoard(2,Tower.GREY,10);
-        m.addToEntrance(StudentColor.BLUE);
-        m.addToEntrance(StudentColor.PINK);
+        try {
+            m.addToEntrance(StudentColor.BLUE);
+        }
+        catch (Exception e){ fail(); }
+        try {
+            m.addToEntrance(StudentColor.PINK);
+        }
+        catch (Exception e){ fail(); }
         m.removeFromEntrance(0);
         assertFalse(m.getStudentsInEntrance().contains(StudentColor.BLUE));
         assertThrows(NoSuchElementException.class, () -> m.removeFromEntrance(0));

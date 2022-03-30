@@ -45,7 +45,7 @@ public class Island {
      * calculates the total number of students on the island, regardless of color
      * @return total number of students
      */
-    int getNumStudents(){
+    public int getNumStudents(){
         return students.get(StudentColor.GREEN) + students.get(StudentColor.RED) + students.get(StudentColor.YELLOW) + students.get(StudentColor.PINK) + students.get(StudentColor.BLUE);
     }
 

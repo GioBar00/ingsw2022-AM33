@@ -40,7 +40,6 @@ class GameModel implements Game {
         for (int i = 0; i < preset.getCloudsNumber(); i++) {
             clouds.add(new Cloud(preset.getCloudCapacity()));
         }
-
         gameState = GameState.UNINITIALIZED;
     }
 
@@ -103,6 +102,16 @@ class GameModel implements Game {
         for(StudentColor s: StudentColor.values()) {
             bag.addStudents(Collections.nCopies(24, s));
         }
+        for(Cloud c: clouds){
+            for(int i = 0; i < preset.getCloudCapacity(); i++){
+                try {
+                    c.addStudent(bag.popRandomStudent(), i);
+                }
+                catch(NoSuchElementException e ){
+                    e.printStackTrace();
+                }
+            }
+        }
         initializeSchoolBoards();
         gameState = GameState.INITIALIZED;
     }
@@ -130,25 +139,24 @@ class GameModel implements Game {
      */
     public void playAssistantCard(AssistantCard assistantCard) throws Exception{
         ArrayList<AssistantCard> played =  new ArrayList<>();
-        Player current = playersManager.getCurrentPlayer();
+        Player currentPlayer = playersManager.getCurrentPlayer();
         if(roundManager.getGamePhase().equals(GamePhase.PLANNING)) {
             for (Player p : playersManager.getPlayers()) {
-                if (!current.equals(p)) {
-                    if (playersManager.getPlayedCard(p).equals(assistantCard)) {
+                if (!currentPlayer.equals(p)) {
+                    if (playersManager.getPlayedCard(p) != null) {
                         played.add(playersManager.getPlayedCard(p));
                     }
                 }
             }
-            if (!played.isEmpty()) {
-                for (AssistantCard a : AssistantCard.values()) {
+            if (played.contains(assistantCard)) {
+                for (AssistantCard a : playersManager.getPlayerHand(currentPlayer)) {
                     if (!played.contains(a))
-                        if (playersManager.getPlayerHand(playersManager.getCurrentPlayer()).contains(a)) {
-                            throw new Exception();
-                        }
+                        throw new Exception();
                 }
             }
-            playersManager.currentPlayerPlayed(assistantCard);
-            if (playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())) {
+            try{ playersManager.currentPlayerPlayed(assistantCard);}
+            catch (NoSuchElementException e){ throw new Exception ();}
+            if (currentPlayer.equals(playersManager.getLastPlayer())) {
                 roundManager.startActionPhase();
             }
             playersManager.nextPlayer();
@@ -159,48 +167,62 @@ class GameModel implements Game {
     //TODO from here JavaDOC
     public void moveStudentToHall(int entranceIndex) throws Exception {
         if(roundManager.canPlay()) {
-            roundManager.addMoves();
             Player current = playersManager.getCurrentPlayer();
             SchoolBoard currSch = playersManager.getSchoolBoard(current);
-            StudentColor moved = currSch.moveToHall(entranceIndex);
-            checkProfessor(moved);
-            roundManager.addMoves();
+            try{
+                StudentColor moved = currSch.moveToHall(entranceIndex);
+                checkProfessor(moved);
+                roundManager.addMoves();
+                roundManager.canPlay();}
+            catch (LimitExceededException e){
+                throw new Exception();
+            }
         }
+        else{ throw new Exception();}
     }
 
 
     public void moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) throws Exception {
         if(roundManager.canPlay()) {
-            roundManager.addMoves();
-            StudentColor s = playersManager.getSchoolBoard(playersManager.getCurrentPlayer()).removeFromEntrance(entranceIndex);
-            islandsManager.addStudent(s, islandGroupIndex, islandIndex);
-            roundManager.addMoves();
+            try {
+                StudentColor s = playersManager.getSchoolBoard(playersManager.getCurrentPlayer()).removeFromEntrance(entranceIndex);
+                islandsManager.addStudent(s, islandGroupIndex, islandIndex);
+                roundManager.addMoves();
+                roundManager.canPlay();
+            } catch (NoSuchElementException e) {
+                throw new Exception();
+            }
         }
+        else{ throw new Exception();}
     }
 
     public void moveMotherNature(int num) throws LimitExceededException {
-        if (num <= playersManager.getPlayedCard(playersManager.getCurrentPlayer()).getMoves()) {
-            motherNatureIndex = (motherNatureIndex + num) % 12;
-            checkInfluence(motherNatureIndex);
-            checkWinner();
-            if (playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())) {
-                endActionPhase();
+        if(roundManager.getGamePhase().equals(GamePhase.MOVE_MOTHER_NATURE)) {
+            if (num <= playersManager.getPlayedCard(playersManager.getCurrentPlayer()).getMoves()) {
+                motherNatureIndex = (motherNatureIndex + num) % 12;
+                checkInfluence(motherNatureIndex);
+                checkWinner();
+                if (playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())) {
+                    endActionPhase();
+                }
+            } else {
+                throw new LimitExceededException();
             }
-        }
-        else { throw new LimitExceededException(); }
+        }else {throw new LimitExceededException();} //TODO this must be another type of exception
     }
 
-    public void getStudentsFromCloud(int cloudIndex) throws LimitExceededException{
-        for(StudentColor s : clouds.get(cloudIndex).getStudents()){
-            playersManager.getSchoolBoard(playersManager.getCurrentPlayer()).addToEntrance(s);
-        }
-        if(playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())){
-            nextRound();
-        }
-        else{
-            playersManager.nextPlayer();
-            roundManager.clearMoves();
-        }
+    public void getStudentsFromCloud(int cloudIndex) throws LimitExceededException {
+        if (cloudIndex >= 0 && cloudIndex < preset.getCloudsNumber()){
+            for (StudentColor s : clouds.get(cloudIndex).getStudents()) {
+                playersManager.getSchoolBoard(playersManager.getCurrentPlayer()).addToEntrance(s);
+            }
+            if (playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())) {
+                nextRound();
+            } else {
+                playersManager.nextPlayer();
+                roundManager.clearMoves();
+            }
+        }else {throw new LimitExceededException();}
     }
 
     void checkProfessor(StudentColor s){
@@ -348,9 +370,13 @@ class GameModel implements Game {
     }
 
     public void startGame(){
-        int i = ThreadLocalRandom.current().nextInt(0,preset.getPlayersNumber() - 1);
-        playersManager.setFirstPlayer(i);
-        roundManager.nextRound();
+        if(gameState.equals(GameState.INITIALIZED)) {
+            int i = ThreadLocalRandom.current().nextInt(0, preset.getPlayersNumber());
+            playersManager.setFirstPlayer(i);
+            roundManager.nextRound();
+            gameState = GameState.STARTED;
+        }
+        //TODO Throws an exception
     }
 
     void nextRound(){

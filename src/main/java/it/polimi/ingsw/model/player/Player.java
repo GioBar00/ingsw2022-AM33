@@ -77,6 +77,5 @@ public class Player{
      */
     public ArrayList<AssistantCard> getHand(){
         return new ArrayList<>(assistantCards);
-
     }
 }

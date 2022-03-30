@@ -40,6 +40,10 @@ public class SchoolBoard {
      */
     public int getEntranceCapacity() {return entrance.size();}
 
+    /**
+     * Returns the type of tower related to the schoolBoard
+     * @return the tower type
+     */
     public Tower getTower(){
         return tower;
     }
@@ -196,6 +200,9 @@ public class SchoolBoard {
      */
     public StudentColor moveToHall(int entranceIndex) throws LimitExceededException {
         StudentColor s = getStudentInEntrance(entranceIndex);
+        if(s == null){
+            throw  new LimitExceededException();
+        }
         addToHall(s);
         removeFromEntrance(entranceIndex);
         return s;

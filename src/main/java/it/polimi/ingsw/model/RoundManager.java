@@ -10,16 +10,15 @@ class RoundManager {
     private int roundNum;
     private boolean lastRound = false;
     private final int maxNumMoves;
-    private final int numMoves = 0;
+    private int numMoves = 0;
     private Player winner;
-    private int moves;
 
     RoundManager(GamePreset preset) {
         gamePhase = GamePhase.PLANNING;
         roundNum = 0;
         maxNumMoves = preset.getMaxNumMoves();
         winner = null;
-        moves = 0;
+
     }
 
     GamePhase getGamePhase() {
@@ -45,27 +44,33 @@ class RoundManager {
     Player getWinner() { return winner; }
 
     void nextRound() {
-        gamePhase = GamePhase.PLANNING;
-        roundNum++;
-        moves = 0;
+        if(!lastRound) {
+            gamePhase = GamePhase.PLANNING;
+            roundNum++;
+            numMoves = 0;
+        }
     }
+
     void startActionPhase(){
         gamePhase = GamePhase.MOVE_STUDENTS;
     }
 
     void addMoves() throws Exception {
-        if(moves < maxNumMoves)
-            moves++;
+        if(numMoves < maxNumMoves)
+            numMoves++;
         else throw new Exception();
     }
 
     void clearMoves() {
-        moves = 0;
+        numMoves = 0;
     }
 
     boolean canPlay(){
-        if(gamePhase.equals(GamePhase.MOVE_STUDENTS))
-            return moves < maxNumMoves;
+        if(gamePhase.equals(GamePhase.MOVE_STUDENTS)){
+            if(numMoves >= maxNumMoves)
+                gamePhase = GamePhase.MOVE_MOTHER_NATURE;
+            return numMoves < maxNumMoves;
+        }
         return false;
     }
 }

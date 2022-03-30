@@ -6,10 +6,7 @@ import it.polimi.ingsw.enums.Wizard;
 
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NoPermissionException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PlayersManager{
@@ -59,7 +56,7 @@ public class PlayersManager{
      * @return last Player
      */
     public Player getLastPlayer(){
-        return players.get(playerOrderIndexes[numPlayers]);
+        return players.get(playerOrderIndexes[numPlayers - 1]);
     }
 
     /**
@@ -112,7 +109,12 @@ public class PlayersManager{
      */
     public SchoolBoard getSchoolBoard(Player p){ return p.getSchoolBoard();}
 
+    /**
+     * Use to get the schoolBoard of current player
+     * @return the schoolBoard of current player
+     */
     public SchoolBoard getSchoolBoard(){ return getCurrentPlayer().getSchoolBoard();}
+
     /**
      * Returns the player who is playing
      * @return current Player
@@ -151,7 +153,7 @@ public class PlayersManager{
      * Assigns to the current Player the card he wants to play
      * @param c the card a Player is trying to play
      */
-    public void currentPlayerPlayed(AssistantCard c) {
+    public void currentPlayerPlayed(AssistantCard c) throws NoSuchElementException {
          players.get(playerOrderIndexes[currentPlayerOrderIndex]).playAssistantCard(c);
     }
 
