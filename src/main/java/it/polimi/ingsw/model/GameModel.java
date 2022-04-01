@@ -504,6 +504,8 @@ class GameModel implements Game {
                 }
             }
         }
+        if(bag.isEmpty())
+            roundManager.setLastRound();
     }
 
     /**

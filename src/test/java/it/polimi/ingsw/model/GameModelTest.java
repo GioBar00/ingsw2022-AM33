@@ -321,8 +321,10 @@ class GameModelTest {
 
     }
 
-
-
+    /**
+     * Tests the implementation of mergeIsland by forcing the swap and the merge control.
+     * Check the value of motherNature after the call to mergeIsland.
+     */
     @Test
     void checkMergeIslandGroups() {
         GameModel m = new GameModel(GamePreset.THREE);
@@ -354,15 +356,16 @@ class GameModelTest {
         assertEquals(1,m.motherNatureIndex);
     }
 
-    @Test
-    void endActionPhase() {
-    }
-
+    /**
+     * Checks the winner after the remove of all the tower in a player' Schoolboard.
+     * Checks the winner after the last round when all the player Cards have been played.
+     * Checks the winner after all the Students have been used.
+     */
     @Test
     void checkWinner() {
         Tower test = model.playersManager.getSchoolBoard().getTower();
         int nTower = model.playersManager.getSchoolBoard().getNumTowers();
-
+        Player curr;
         model.islandsManager.setTower(test, 0);
         for (int i = 1; i < nTower; i++) {
             model.swapTowers(i, test);
@@ -370,13 +373,13 @@ class GameModelTest {
         }
         model.swapTowers(nTower, test);
         assertEquals(model.playersManager.getCurrentPlayer(), model.roundManager.getWinner());
-
         GameModel m1 = new GameModel(GamePreset.THREE);
         try {
             m1.addPlayer("1");
         } catch (NoPermissionException | NameAlreadyBoundException e) {
             fail();
         }
+        curr = m1.playersManager.getCurrentPlayer();
         try {
             m1.addPlayer("2");
         } catch (NoPermissionException | NameAlreadyBoundException e) {
@@ -409,8 +412,43 @@ class GameModelTest {
         } catch (Exception e) {
             fail();
         }
-        model.endActionPhase();
-        //assertEquals(m1.playersManager.getCurrentPlayer(),m1.roundManager.getWinner());
+        m1.endActionPhase();
+        assertEquals(curr,m1.roundManager.getWinner());
+
+
+        GameModel m2 = new GameModel(GamePreset.TWO);
+        try {
+            m2.addPlayer("1");
+        } catch (NoPermissionException | NameAlreadyBoundException e) {
+            fail();
+        }
+        try {
+            m2.addPlayer("2");
+        } catch (NoPermissionException | NameAlreadyBoundException e) {
+            fail();
+        }
+        try {
+            m2.initializeGame();
+        } catch (NoPermissionException e) {
+            fail();
+        }
+        //svuota pedine
+
+        try {
+            m2.playersManager.getSchoolBoard().removeTowers(5);
+            curr = m2.playersManager.getCurrentPlayer();
+        } catch (LimitExceededException e) {
+            fail();
+        }
+        do{
+            for(Cloud c : m2.clouds){
+                c.popStudents();
+            }
+            m2.endActionPhase();
+        }
+        while(!m2.bag.isEmpty());
+        m2.endActionPhase();
+        assertEquals(curr,m2.roundManager.getWinner());
 
     }
 }
