@@ -141,6 +141,8 @@ class GameModel implements Game {
         ArrayList<AssistantCard> played =  new ArrayList<>();
         Player currentPlayer = playersManager.getCurrentPlayer();
         if(roundManager.getGamePhase().equals(GamePhase.PLANNING)) {
+            if(playersManager.getPlayerHand(playersManager.getCurrentPlayer()).size() == 1)
+                roundManager.setLastRound();
             for (Player p : playersManager.getPlayers()) {
                 if (!currentPlayer.equals(p)) {
                     if (playersManager.getPlayedCard(p) != null) {
@@ -198,7 +200,7 @@ class GameModel implements Game {
 
     public void moveMotherNature(int num) throws LimitExceededException {
         if(roundManager.getGamePhase().equals(GamePhase.MOVE_MOTHER_NATURE)) {
-            if (num <= playersManager.getPlayedCard(playersManager.getCurrentPlayer()).getMoves()) {
+            if (num <= playersManager.getPlayedCard(playersManager.getCurrentPlayer()).getMoves() && num > 0) {
                 motherNatureIndex = (motherNatureIndex + num) % 12;
                 checkInfluence(motherNatureIndex);
                 checkWinner();
@@ -213,7 +215,7 @@ class GameModel implements Game {
 
     public void getStudentsFromCloud(int cloudIndex) throws LimitExceededException {
         if (cloudIndex >= 0 && cloudIndex < preset.getCloudsNumber()){
-            for (StudentColor s : clouds.get(cloudIndex).getStudents()) {
+            for (StudentColor s : clouds.get(cloudIndex).popStudents()) {
                 playersManager.getSchoolBoard(playersManager.getCurrentPlayer()).addToEntrance(s);
             }
             if (playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())) {
@@ -228,11 +230,13 @@ class GameModel implements Game {
     void checkProfessor(StudentColor s){
         Player current = playersManager.getCurrentPlayer();
         SchoolBoard currSch = playersManager.getSchoolBoard(current);
+        boolean found = false;
         for(Player p: playersManager.getPlayers()){
             if(!p.equals(current)){
                 SchoolBoard compSch = playersManager.getSchoolBoard(p);
                 if(compSch.getStudentsInHall(s) < currSch.getStudentsInHall(s)){
                     if(compSch.getProfessors().contains(s)){
+                        found = true;
                         try {
                             compSch.removeProfessor(s);
                             currSch.addProfessor(s);
@@ -241,6 +245,13 @@ class GameModel implements Game {
                         catch (Exception ignored){}
                     }
                 }
+            }
+        }
+        if(!found && !currSch.getProfessors().contains(s)){
+            try {
+                currSch.addProfessor(s);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -269,14 +280,22 @@ class GameModel implements Game {
             }
         }
 
+        int maxInfluence;
+        SchoolBoard sb;
+        EnumSet<StudentColor> profs;
+
         Tower tower = islandsManager.getTower(islandGroupIndex);
-        SchoolBoard sb = playersManager.getSchoolBoard();
-        EnumSet<StudentColor> profs = sb.getProfessors();
-        profs.removeAll(skipStudentColor);
-        int maxInfluence = skipTowers ?
-                islandsManager.calcInfluence(profs, islandGroupIndex):
-                islandsManager.calcInfluence(sb.getTower(), profs, islandGroupIndex);
-        maxInfluence += additionalInfluence;
+        if (tower != null) {
+            sb = playersManager.getSchoolBoard(playersByTower.get(tower).get(0));
+            profs = sb.getProfessors();
+            profs.removeAll(skipStudentColor);
+            maxInfluence = skipTowers ?
+                    islandsManager.calcInfluence(profs, islandGroupIndex):
+                    islandsManager.calcInfluence(sb.getTower(), profs, islandGroupIndex);
+        }
+        else
+            maxInfluence = 0;
+
 
         for (Player p: playersManager.getPlayers()) {
             sb = playersManager.getSchoolBoard(p);
@@ -285,6 +304,8 @@ class GameModel implements Game {
             int influence = skipTowers ?
                     islandsManager.calcInfluence(profs, islandGroupIndex):
                     islandsManager.calcInfluence(sb.getTower(), profs, islandGroupIndex);
+            if (p.equals(playersManager.getCurrentPlayer()))
+                maxInfluence += additionalInfluence;
             if (influence > maxInfluence) {
                 maxInfluence = influence;
                 tower = sb.getTower();
@@ -298,13 +319,14 @@ class GameModel implements Game {
         SchoolBoard oldSchoolBoard = null;
         SchoolBoard newSchoolBoard = null;
         Tower oldTower = islandsManager.getTower(islandGroupIndex);
-        if(islandsManager.getTower(islandGroupIndex) == null){
+        if(oldTower == null){
             for(Player p : playersManager.getPlayers()){
                 if(playersManager.getSchoolBoard(p).getTower().equals(newTower)){
                     newPlayer = p;
                     newSchoolBoard = playersManager.getSchoolBoard(p);
                     try {
                             newSchoolBoard.removeTowers(islandsManager.getIslandGroup(islandGroupIndex).size());
+                            islandsManager.setTower(newTower,islandGroupIndex);
                     } catch (LimitExceededException e) {
                         roundManager.setWinner(newPlayer);
                     }
@@ -381,16 +403,15 @@ class GameModel implements Game {
 
     void nextRound(){
         roundManager.nextRound();
-        playersManager.calculatePlayerOrder();
+        playersManager.calculateClockwiseOrder();
         playersManager.nextPlayer();
         roundManager.clearMoves();
+        playersManager.clearAllPlayedCards();
     }
 
     void endActionPhase(){
         roundManager.nextRound();
         playersManager.calculateClockwiseOrder();
-        playersManager.nextPlayer();
-        roundManager.clearMoves();
         if(roundManager.isLastRound()){
             checkWinner();
         }
@@ -399,7 +420,7 @@ class GameModel implements Game {
                 checkWinner();
             }
         }
-        playersManager.clearAllPlayedCards();
+
 
         for(Cloud c :clouds){
             for(int i = 0; i < preset.getCloudsNumber();i++){
@@ -443,6 +464,16 @@ class GameModel implements Game {
             }
             else{ winner = toCheck.get(0);}
             roundManager.setWinner(winner);
+        }
+        else{
+            for(Player p : playersManager.getPlayers()){
+                if(playersManager.getSchoolBoard(p).getNumTowers() < minTower){
+                    minTower = playersManager.getSchoolBoard(p).getNumTowers();
+                    winner = p;
+                }
+            }
+            roundManager.setWinner(winner);
+
         }
     }
 

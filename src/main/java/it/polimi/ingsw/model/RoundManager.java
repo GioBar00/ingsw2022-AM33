@@ -47,7 +47,7 @@ class RoundManager {
         if(!lastRound) {
             gamePhase = GamePhase.PLANNING;
             roundNum++;
-            numMoves = 0;
+            clearMoves();
         }
     }
 
