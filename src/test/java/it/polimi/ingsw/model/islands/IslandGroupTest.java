@@ -8,7 +8,6 @@ import java.util.EnumSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//TODO JavaDoc
 class IslandGroupTest {
 
     @Test

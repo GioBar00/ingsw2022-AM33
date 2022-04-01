@@ -40,6 +40,7 @@ class GameModel implements Game {
         for (int i = 0; i < preset.getCloudsNumber(); i++) {
             clouds.add(new Cloud(preset.getCloudCapacity()));
         }
+
         gameState = GameState.UNINITIALIZED;
     }
 
@@ -162,7 +163,12 @@ class GameModel implements Game {
         }
     }
 
-    //TODO from here JavaDOC
+    /**
+     * the method selects the current Player's SchoolBoard and moves a student form the Entrance to the Hall.
+     * then proceeds to check if the professors need to be re-distributed between the players
+     * @param entranceIndex of the student that will be moved to the Hall
+     * @throws Exception from the method moveToHall (will be propagated to the controller)
+     */
     public void moveStudentToHall(int entranceIndex) throws Exception {
         if(roundManager.canPlay()) {
             Player current = playersManager.getCurrentPlayer();
@@ -180,7 +186,14 @@ class GameModel implements Game {
         else{ throw new Exception();}
     }
 
-
+    /**
+     * the method selects a student from the Entrance of the current Player's SchoolBoard, removes it from there and
+     * moves it to a selected island that is part of a selected IslandGroup
+     * @param entranceIndex of the slot occupied by the student that will be moved
+     * @param islandGroupIndex of the IslandGroup that contains the selected island
+     * @param islandIndex of the Island on which the student will be moved
+     * @throws Exception from the method removeFromEntrance (will be propagated to the controller)
+     */
     public void moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) throws Exception {
         if(roundManager.canPlay()) {
             try {
@@ -195,6 +208,12 @@ class GameModel implements Game {
         else{ throw new Exception();}
     }
 
+    /**
+     * the method moves MotherNature of a selected number of moves, following the order of IslandGroups
+     * @param num of moves that MotherNature makes
+     * @throws LimitExceededException if the method calls for more moves of MotherNature
+     * than the Player is allowed to do
+     */
     public void moveMotherNature(int num) throws LimitExceededException {
         if(roundManager.getGamePhase().equals(GamePhase.MOVE_MOTHER_NATURE)) {
             if (num <= playersManager.getPlayedCard(playersManager.getCurrentPlayer()).getMoves() && num > 0) {
@@ -210,6 +229,12 @@ class GameModel implements Game {
         }else {throw new LimitExceededException();} //TODO this must be another type of exception
     }
 
+    /**
+     * the method moves the student currently residing on a cloud to the Entrance of the current Player
+     * @param cloudIndex of the selected cloud
+     * @throws LimitExceededException in case the number of students added is more than the slots
+     * currently empty in the Entrance
+     */
     public void getStudentsFromCloud(int cloudIndex) throws LimitExceededException {
         if (cloudIndex >= 0 && cloudIndex < preset.getCloudsNumber()){
             for (StudentColor s : clouds.get(cloudIndex).popStudents()) {
@@ -224,6 +249,11 @@ class GameModel implements Game {
         }else {throw new LimitExceededException();}
     }
 
+    /**
+     * the method checks that che professor of type s is assigned to the correct SchoolBoard and changes its position
+     * in case that the current assignment is incorrect
+     * @param s: the color of the professor to be checked
+     */
     void checkProfessor(StudentColor s){
         Player current = playersManager.getCurrentPlayer();
         SchoolBoard currSch = playersManager.getSchoolBoard(current);
@@ -249,6 +279,15 @@ class GameModel implements Game {
         }
     }
 
+    /**
+     * The method calculated the Influence that each Player has on a specific IslandGroup, selects the most influential
+     * Player and, in the casa that the Tower currently present on the IslandGroup is not the same one of the most
+     * influential Player, swaps the tower with the correct one, then proceeds to check whether the IslandGroup
+     * can be merged with the ones next to it.
+     * In order to calculate the influence of the various Players, the method calls an overloaded version
+     * of checkInfluence.
+     * @param islandGroupIndex of the IslandGroup in question
+     */
     void checkInfluence(int islandGroupIndex) {
         Tower tower = checkInfluence(islandGroupIndex, false, 0, EnumSet.noneOf(StudentColor.class));
         if (tower != null && tower != islandsManager.getTower(islandGroupIndex)) {
@@ -258,6 +297,17 @@ class GameModel implements Game {
 
     }
 
+    /**
+     * Overloaded version of checkInfluence that uses particular parameters to handel the effects of the CharacterCards
+     * @param islandGroupIndex of the IslandGroup on which the influence is calculated
+     * @param skipTowers true in case that the CharacterCard "Centaur" is activated (during the turn the
+     *                   towers of the IslandGroup will not be counted for the computation on the influence)
+     * @param additionalInfluence adds two extra points to the Player that has activated the CharacterCard
+     *                            of the Knight
+     * @param skipStudentColor during the computation of the influence, the students of the colors decided by the Player
+     *                         that has activated the CharacterCard "Harvester" will not be counted
+     * @return the tower that belongs to the player with the most influence
+     */
     Tower checkInfluence(int islandGroupIndex, boolean skipTowers, int additionalInfluence, EnumSet<StudentColor> skipStudentColor) {
         // group players by Tower
         EnumMap<Tower, List<Player>> playersByTower = new EnumMap<>(Tower.class);
@@ -307,6 +357,15 @@ class GameModel implements Game {
         return tower;
     }
 
+    /**
+     * the method is called after calculating the influence, whenever there is a change in the Player that
+     * holds the most influence on the IslandGroup; the method removes the current towers from the IslandGroup, puts
+     * them back on the SchoolBoard of the Player that they belong to, selects the current most influential Player
+     * and puts its towers on the islands. If the IslandGroup originally didn't have any tower, the first part of the
+     * method is skipped.
+     * @param islandGroupIndex index of the IslandGroup considered
+     * @param newTower to be put on the IslandGroup
+     */
     void swapTowers(int islandGroupIndex, Tower newTower){
         Player newPlayer = null;
         SchoolBoard oldSchoolBoard = null;
@@ -325,7 +384,7 @@ class GameModel implements Game {
                     }
                 }
             }
-        }else {
+        }else{
             if (!newTower.equals(oldTower)) {
                 for (Player p : playersManager.getPlayers()) {
                     if (newTower.equals(playersManager.getSchoolBoard(p).getTower())) {
@@ -350,6 +409,15 @@ class GameModel implements Game {
         }
     }
 
+    /**
+     * The method selects the IslandGroups that come before and after the one in the position islandGroupIndex
+     * and checks whether they can be merged. The method also handles the effects of the CharacterCard "Herbalist",
+     * which can put blocks on an IslandGroup to stop Players from positioning a Tower there: if the method is called
+     * on a blocked IslandGroup, the blocks need to be removed
+     * @param islandGroupIndex of the islandGroup considered
+     * @return the number of blocks (prohibit cards) that need to be removed from the IslandGroup and put
+     * back on the "Herbalist" card
+     */
     int checkMergeIslandGroups(int islandGroupIndex) {
         int numBlocks = 0;
         boolean bothBlocked;
@@ -384,6 +452,9 @@ class GameModel implements Game {
         return numBlocks;
     }
 
+    /**
+     * the method starts the Game and selects the first Player
+     */
     public void startGame(){
         if(gameState.equals(GameState.INITIALIZED)) {
             int i = ThreadLocalRandom.current().nextInt(0, preset.getPlayersNumber());
@@ -394,6 +465,9 @@ class GameModel implements Game {
         //TODO Throws an exception
     }
 
+    /**
+     * the method advances the Game to the next round
+     */
     void nextRound(){
         roundManager.nextRound();
         playersManager.calculateClockwiseOrder();
@@ -402,6 +476,9 @@ class GameModel implements Game {
         playersManager.clearAllPlayedCards();
     }
 
+    /**
+     * the method ends the current action phase and initializes the game for the next preparation phase
+     */
     void endActionPhase(){
         roundManager.nextRound();
         playersManager.calculateClockwiseOrder();
@@ -429,6 +506,9 @@ class GameModel implements Game {
         }
     }
 
+    /**
+     * the method checks whether the game is ended and proceeds to establish a winner
+     */
     void checkWinner(){
         Player winner = null;
         int minTower = preset.getTowersNumber() + 1;

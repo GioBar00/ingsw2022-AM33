@@ -11,9 +11,12 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//TODO JavaDOC
 class SchoolBoardTest {
 
+    /**
+     * the test checks that the method removeTowers works properly in the two cases of usage: removing
+     * just one tower at a time and removing more than one with the same call
+     */
     @Test
     void removeTowers() {
         SchoolBoard s = new SchoolBoard(300, Tower.WHITE,10);
@@ -33,6 +36,13 @@ class SchoolBoardTest {
         }
     }
 
+    /**
+     * checks that the method addTowers works correctly, right after the initialization of the board and also
+     * once some towers are removed before being re-added; the method is used in this test in two ways: to add one
+     * tower at a time and add more towers at the same time
+     * @throws LimitExceededException when the caller tries to add to the SchoolBoard more towers than allowed
+     * by definition
+     */
     @Test
     void addTowers() {
         final SchoolBoard s = new SchoolBoard(10,Tower.BLACK,0);
@@ -79,7 +89,12 @@ class SchoolBoardTest {
         assertEquals(30, m.getNumTowers());
     }
 
-
+    /**
+     * checks that the professors of a SchoolBoard are initialized in the correct way and then modified through the
+     * game as per the rules
+     * @throws Exception in two cases: if a professor that is already present in the enum is added again and if a
+     * professor that is not present called in a remove
+     */
     @Test
     void ProfessorsTest(){
         SchoolBoard s = new SchoolBoard(20,Tower.GREY,10);
@@ -117,7 +132,11 @@ class SchoolBoardTest {
 
     }
 
-    //fixme
+    /**
+     * the test checks for the correct use of two methods related to the entrance of the SchoolBoard: addToEntrance and
+     * removeFromEntrance
+     * @throws Exception when a removeFromEntrance is called on an Entrance slot that is already empty
+     */
     @Test
     void EntranceTest(){
         SchoolBoard s = new SchoolBoard(20,Tower.GREY,10);
@@ -161,7 +180,9 @@ class SchoolBoardTest {
 
     }
 
-    //fixme
+    /**
+     * the test checks two methods related to che Hall of the SchoolBoard: moveToHall and removeFromHall
+     */
     @Test
     void HallTest(){
         SchoolBoard s = new SchoolBoard(10,Tower.BLACK,0);
