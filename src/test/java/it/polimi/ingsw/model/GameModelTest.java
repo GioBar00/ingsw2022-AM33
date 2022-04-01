@@ -312,17 +312,7 @@ class GameModelTest {
         //check the swap of towers
         int befNextTow = model.playersManager.getSchoolBoard(next).getNumTowers();
 
-        //System.out.println(fMotherNature);
         model.checkInfluence(fMotherNature);
-
-
-        //FIXME
-        //mi ritorna null quando in realtà non è null
-
-        System.out.println(model.playersManager.getSchoolBoard(curr).getTower().toString());
-        System.out.println(model.playersManager.getSchoolBoard(next).getTower().toString());
-        System.out.println(model.islandsManager.getTower(fMotherNature).toString());
-
         assertEquals(model.playersManager.getSchoolBoard(next).getTower(), model.islandsManager.getTower(fMotherNature));
         assertEquals(befTow, model.playersManager.getSchoolBoard(curr).getNumTowers());
         assertEquals(befNextTow - 1,model.playersManager.getSchoolBoard(next).getNumTowers());

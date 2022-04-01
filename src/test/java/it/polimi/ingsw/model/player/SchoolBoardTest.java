@@ -117,6 +117,7 @@ class SchoolBoardTest {
 
     }
 
+    //fixme
     @Test
     void EntranceTest(){
         SchoolBoard s = new SchoolBoard(20,Tower.GREY,10);

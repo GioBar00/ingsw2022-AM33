@@ -234,12 +234,8 @@ class GameModel implements Game {
                 if(compSch.getStudentsInHall(s) < currSch.getStudentsInHall(s)){
                     if(compSch.getProfessors().contains(s)){
                         found = true;
-                        try {
-                            compSch.removeProfessor(s);
-                            currSch.addProfessor(s);
-                            break;
-                        }
-                        catch (Exception ignored){}
+                        compSch.removeProfessor(s);
+                        currSch.addProfessor(s);
                     }
                 }
             }

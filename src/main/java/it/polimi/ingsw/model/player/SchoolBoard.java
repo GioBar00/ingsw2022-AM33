@@ -73,12 +73,13 @@ public class SchoolBoard {
      * @param num number of towers to remove
      * @throws LimitExceededException  if we're trying to remove more tower than available
      */
-    public void removeTowers(int num) throws LimitExceededException{
+    public boolean removeTowers(int num) throws LimitExceededException{
         numTowers = numTowers - num;
         if(numTowers <= 0){
             numTowers = 0;
             throw new LimitExceededException();
         }
+        return false;
     }
 
     /**
@@ -214,13 +215,14 @@ public class SchoolBoard {
      * @param s type of Student to remove
      * @param maxNum max number of students to remove
      */
-    public void removeFromHall(StudentColor s, int maxNum) {
+    public boolean removeFromHall(StudentColor s, int maxNum) {
         if (studentsHall.get(s) < maxNum) {
             studentsHall.replace(s, 0);
         }
         else {
             studentsHall.replace(s, studentsHall.get(s) - maxNum);
         }
+        return false;
     }
 
     /**
