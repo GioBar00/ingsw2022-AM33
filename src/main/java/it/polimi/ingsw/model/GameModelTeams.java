@@ -56,9 +56,10 @@ class GameModelTeams extends GameModel {
         Tower oldTower = islandsManager.getTower(islandGroupIndex);
         int size = islandsManager.getIslandGroup(islandGroupIndex).size();
 
+        /*
         if (newTower.equals(Tower.WHITE)) {
             teamLeaderIndex = 0;
-        }
+        }*/
         if (newTower.equals(Tower.BLACK)) {
                 teamLeaderIndex = 1;
         }

@@ -123,11 +123,7 @@ class GameModel implements Game {
         for (Player p : playersManager.getPlayers()) {
             SchoolBoard sb = playersManager.getSchoolBoard(p);
             for (int i = 0; i < preset.getEntranceCapacity(); i++) {
-                try {
-                    sb.addToEntrance(bag.popRandomStudent());
-                } catch (LimitExceededException ignored) {
-                    return;
-                }
+                sb.addToEntrance(bag.popRandomStudent());
             }
         }
     }
@@ -171,11 +167,12 @@ class GameModel implements Game {
         if(roundManager.canPlay()) {
             Player current = playersManager.getCurrentPlayer();
             SchoolBoard currSch = playersManager.getSchoolBoard(current);
-            try{
+            try {
                 StudentColor moved = currSch.moveToHall(entranceIndex);
                 checkProfessor(moved);
                 roundManager.addMoves();
-                roundManager.canPlay();}
+                roundManager.canPlay();
+            }
             catch (LimitExceededException e){
                 throw new Exception();
             }

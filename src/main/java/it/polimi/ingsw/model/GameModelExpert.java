@@ -14,18 +14,49 @@ import java.util.concurrent.ThreadLocalRandom;
 
 class GameModelExpert implements Game, EffectHandler {
 
+    /**
+     * GameModel to change in expert mode.
+     */
     private final GameModel model;
 
+    /**
+     * Reserve of coins in the game.
+     */
     private int reserve;
+    /**
+     * Number of coins for each player.
+     */
     private final Map<Player, Integer> playerCoins = new HashMap<>();
 
+    /**
+     * Character cards in the game.
+     */
     private final ArrayList<CharacterCard> characterCards;
+    /**
+     * Character card that is being activated.
+     */
     private CharacterCard characterCardActivating;
+    /**
+     * Additional movement that mother nature can make.
+     */
     private int additionalMotherNatureMovement = 0;
+    /**
+     * If to skip counting towers for influence.
+     */
     private boolean skipTowers = false;
+    /**
+     * Additional influence points to add to current player.
+     */
     private int additionalInfluence = 0;
+    /**
+     * Student colors to skip during influence counting.
+     */
     private final EnumSet<StudentColor> skipStudentColors = EnumSet.noneOf(StudentColor.class);
 
+    /**
+     * Changes mode to expert, gets 3 random character cards and initialises reserve.
+     * @param model GameModel to make expert.
+     */
     GameModelExpert(GameModel model) {
         this.model = model;
         model.gameMode = GameMode.EXPERT;

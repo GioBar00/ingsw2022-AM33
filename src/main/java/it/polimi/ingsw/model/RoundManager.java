@@ -55,10 +55,12 @@ class RoundManager {
         gamePhase = GamePhase.MOVE_STUDENTS;
     }
 
-    void addMoves() throws Exception {
-        if(numMoves < maxNumMoves)
+    boolean addMoves() {
+        if(numMoves < maxNumMoves) {
             numMoves++;
-        else throw new Exception();
+            return true;
+        }
+        return false;
     }
 
     void clearMoves() {

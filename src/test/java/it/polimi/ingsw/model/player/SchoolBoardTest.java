@@ -87,8 +87,7 @@ class SchoolBoardTest {
         profs = s.getProfessors();
         //Check add and get
         assertEquals(0,profs.size());
-        try {   s.addProfessor(StudentColor.BLUE); }
-        catch (Exception e){ fail(); }
+        s.addProfessor(StudentColor.BLUE);
         profs = s.getProfessors();
         assertTrue(profs.contains(StudentColor.BLUE));
         for(StudentColor t : StudentColor.values()){
@@ -96,27 +95,24 @@ class SchoolBoardTest {
                 assertFalse(profs.contains(t));
         }
         assertEquals(1, profs.size());
-        assertThrows(Exception.class,()-> s.addProfessor(StudentColor.BLUE));
-        try{    s.addProfessor(StudentColor.RED); }
-        catch (Exception e){ fail();}
-        assertThrows(Exception.class,()-> s.addProfessor(StudentColor.RED));
+        assertFalse(s.addProfessor(StudentColor.BLUE));
+        s.addProfessor(StudentColor.RED);
+        assertFalse(s.addProfessor(StudentColor.RED));
         //Check consistency
         profs.remove(StudentColor.BLUE);
         profs = s.getProfessors();
         assertTrue(profs.contains(StudentColor.BLUE));
         //Check remove and get
-        try {   s.removeProfessor(StudentColor.BLUE); }
-        catch (Exception e ){ fail(); }
+        s.removeProfessor(StudentColor.BLUE);
         profs = s.getProfessors();
         assertEquals(1,profs.size());
-        try{    s.removeProfessor(StudentColor.RED); }
-        catch (Exception e){ fail();}
+        s.removeProfessor(StudentColor.RED);
         profs = s.getProfessors();
         assertEquals(0,profs.size());
         for(StudentColor t : StudentColor.values()){
             assertFalse(profs.contains(t));
         }
-        assertThrows(Exception.class, ()->s.removeProfessor(StudentColor.BLUE));
+        assertFalse(s.removeProfessor(StudentColor.BLUE));
 
 
     }
@@ -164,21 +160,25 @@ class SchoolBoardTest {
 
     }
 
+    //fixme
     @Test
-    void HallTest() throws LimitExceededException {
+    void HallTest(){
         SchoolBoard s = new SchoolBoard(10,Tower.BLACK,0);
         s.addToEntrance(StudentColor.BLUE);
         s.addToEntrance(StudentColor.BLUE);
         s.addToEntrance(StudentColor.GREEN);
         s.addToEntrance(StudentColor.PINK);
-        s.moveToHall(0);
-        assertEquals(1,s.getStudentsInHall(StudentColor.BLUE));
-        assertNull(s.getStudentsInEntrance().get(0));
-        assertEquals(StudentColor.BLUE,s.getStudentsInEntrance().get(1));
-        s.moveToHall(1);
-        assertEquals(2,s.getStudentsInHall(StudentColor.BLUE));
-        s.moveToHall(2);
-        s.moveToHall(3);
+        try {
+            s.moveToHall(0);
+
+            assertEquals(1,s.getStudentsInHall(StudentColor.BLUE));
+            assertNull(s.getStudentsInEntrance().get(0));
+            assertEquals(StudentColor.BLUE,s.getStudentsInEntrance().get(1));
+            s.moveToHall(1);
+            assertEquals(2,s.getStudentsInHall(StudentColor.BLUE));
+            s.moveToHall(2);
+            s.moveToHall(3);
+        } catch (LimitExceededException e) { fail();}
         assertEquals(1,s.getStudentsInHall(StudentColor.GREEN));
         assertEquals(1,s.getStudentsInHall(StudentColor.PINK));
 
