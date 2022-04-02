@@ -298,7 +298,9 @@ class GameModel implements Game {
     }
 
     /**
-     * Overloaded version of checkInfluence that uses particular parameters to handel the effects of the CharacterCards
+     * Overloaded version of checkInfluence that uses particular parameters to handel the effects of the CharacterCards.
+     * Groups players by tower color then finds the tower color that has the highest influence.
+     *
      * @param islandGroupIndex of the IslandGroup on which the influence is calculated
      * @param skipTowers true in case that the CharacterCard "Centaur" is activated (during the turn the
      *                   towers of the IslandGroup will not be counted for the computation on the influence)
@@ -306,7 +308,7 @@ class GameModel implements Game {
      *                            of the Knight
      * @param skipStudentColor during the computation of the influence, the students of the colors decided by the Player
      *                         that has activated the CharacterCard "Harvester" will not be counted
-     * @return the tower that belongs to the player with the most influence
+     * @return the tower that belongs to the player/players with the most influence
      */
     Tower checkInfluence(int islandGroupIndex, boolean skipTowers, int additionalInfluence, EnumSet<StudentColor> skipStudentColor) {
         // group players by Tower
@@ -324,36 +326,45 @@ class GameModel implements Game {
         }
 
         int maxInfluence;
-        SchoolBoard sb;
         EnumSet<StudentColor> profs;
 
+        // calculate influence of the current owner
         Tower tower = islandsManager.getTower(islandGroupIndex);
         if (tower != null) {
-            sb = playersManager.getSchoolBoard(playersByTower.get(tower).get(0));
-            profs = sb.getProfessors();
+            profs = EnumSet.noneOf(StudentColor.class);
+            for (Player p: playersByTower.get(tower)) {
+                profs.addAll(playersManager.getSchoolBoard(p).getProfessors());
+            }
             profs.removeAll(skipStudentColor);
             maxInfluence = skipTowers ?
                     islandsManager.calcInfluence(profs, islandGroupIndex):
-                    islandsManager.calcInfluence(sb.getTower(), profs, islandGroupIndex);
+                    islandsManager.calcInfluence(tower, profs, islandGroupIndex);
+            if (playersByTower.get(tower).contains(playersManager.getCurrentPlayer()))
+                maxInfluence += additionalInfluence;
         }
         else
             maxInfluence = 0;
 
+        playersByTower.remove(tower);
 
-        for (Player p: playersManager.getPlayers()) {
-            sb = playersManager.getSchoolBoard(p);
-            profs = sb.getProfessors();
+        // check influence for others
+        for (Map.Entry<Tower, List<Player>> entry: playersByTower.entrySet()) {
+            profs = EnumSet.noneOf(StudentColor.class);
+            for (Player p: entry.getValue()) {
+                profs.addAll(playersManager.getSchoolBoard(p).getProfessors());
+            }
             profs.removeAll(skipStudentColor);
             int influence = skipTowers ?
                     islandsManager.calcInfluence(profs, islandGroupIndex):
-                    islandsManager.calcInfluence(sb.getTower(), profs, islandGroupIndex);
-            if (p.equals(playersManager.getCurrentPlayer()))
-                maxInfluence += additionalInfluence;
+                    islandsManager.calcInfluence(entry.getKey(), profs, islandGroupIndex);
+            if (entry.getValue().contains(playersManager.getCurrentPlayer()))
+                influence += additionalInfluence;
             if (influence > maxInfluence) {
                 maxInfluence = influence;
-                tower = sb.getTower();
+                tower = entry.getKey();
             }
         }
+
         return tower;
     }
 

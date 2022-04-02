@@ -126,7 +126,7 @@ class GameModelTest {
     }
 
     /**
-     * Test the moving of Students from the entrance to the hall. Tries to move from a empty slot and check the amount of students in hall.
+     * Test the moving of Students from the entrance to the hall. Tries to move from an empty slot and check the amount of students in hall.
      * After the allowed moves choose a Cloud and refill the player entrance
      */
     @Test
@@ -329,7 +329,7 @@ class GameModelTest {
     void checkMergeIslandGroups() {
         GameModel m = new GameModel(GamePreset.THREE);
         ArrayList<Island> old;
-        int oldLenght;
+        int oldLength;
         m.motherNatureIndex = 3;
         m.islandsManager.setTower(Tower.WHITE,0);
         m.islandsManager.setTower(Tower.BLACK,1);
@@ -337,10 +337,10 @@ class GameModelTest {
         m.islandsManager.setTower(Tower.WHITE,3);
         m.islandsManager.setTower(Tower.BLACK,4);
         old = m.islandsManager.getIslandGroup(2).getIslands();
-        oldLenght = m.islandsManager.getNumIslandGroups();
+        oldLength = m.islandsManager.getNumIslandGroups();
         m.checkMergeIslandGroups(2);
         assertTrue(m.islandsManager.getIslandGroup(2).getIslands().containsAll(old));
-        assertEquals(oldLenght - 1,m.islandsManager.getNumIslandGroups());
+        assertEquals(oldLength - 1,m.islandsManager.getNumIslandGroups());
         assertEquals(2,m.motherNatureIndex);
         assertEquals(Tower.WHITE,m.islandsManager.getTower(0));
         assertEquals(Tower.BLACK,m.islandsManager.getTower(1));
@@ -350,14 +350,14 @@ class GameModelTest {
         old.clear();
         old.addAll(m.islandsManager.getIslandGroup(2).getIslands());
         old.addAll(m.islandsManager.getIslandGroup(3).getIslands());
-        oldLenght = m.islandsManager.getNumIslandGroups();
+        oldLength = m.islandsManager.getNumIslandGroups();
         m.checkMergeIslandGroups(2);
-        assertEquals(oldLenght - 2,m.islandsManager.getNumIslandGroups());
+        assertEquals(oldLength - 2,m.islandsManager.getNumIslandGroups());
         assertEquals(1,m.motherNatureIndex);
     }
 
     /**
-     * Checks the winner after the remove of all the tower in a player' Schoolboard.
+     * Checks the winner after the remove of all the tower in a player' school board.
      * Checks the winner after the last round when all the player Cards have been played.
      * Checks the winner after all the Students have been used.
      */
@@ -432,7 +432,6 @@ class GameModelTest {
         } catch (NoPermissionException e) {
             fail();
         }
-        //svuota pedine
 
         try {
             m2.playersManager.getSchoolBoard().removeTowers(5);
