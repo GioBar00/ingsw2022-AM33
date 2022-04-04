@@ -8,16 +8,29 @@ import it.polimi.ingsw.util.Pair;
 import java.util.EnumMap;
 import java.util.List;
 
+/**
+ * Friar character card.
+ */
 public class Friar extends CharacterCard {
 
+    /**
+     * Students on the card.
+     */
     private final EnumMap<StudentColor, Integer> students = new EnumMap<>(StudentColor.class);
 
+    /**
+     * Creates the friar.
+     */
     public Friar() {
         super(CharacterType.FRIAR, 1);
         for (StudentColor s: StudentColor.values())
             students.put(s, 0);
     }
 
+    /**
+     * Initializes the character card. It gets 4 students from the bag.
+     * @param effectHandler handler for the effects.
+     */
     @Override
     public void initialize(EffectHandler effectHandler) {
         for (int i = 0; i < 4; i++) {
@@ -26,16 +39,28 @@ public class Friar extends CharacterCard {
         }
     }
 
+    /**
+     * Applies the effect of the character card if the parameters are correct.
+     * Gets one student from the card, adds it on the chosen island and then gets one student from the bag.
+     * @param effectHandler handler for the effects.
+     * @param pairs parameters for the effect.
+     * @return if the effect was applied.
+     */
     @Override
     public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
         for (Pair<StudentColor, List<Integer>> pair: pairs) {
             StudentColor s = pair.getFirst();
-            if (s != null && students.get(s) > 0 && pair.getSecond().size() >= 2) {
-                if (effectHandler.addStudentToIsland(s, pair.getSecond().get(0), pair.getSecond().get(1))) {
-                    students.replace(s, students.get(s) - 1);
+            List<Integer> second = pair.getSecond();
+            if (s != null && students.get(s) > 0 && second != null && second.size() >= 2) {
+                Integer n1 = second.get(0);
+                Integer n2 = second.get(1);
+                if (n1 != null && n2 != null && effectHandler.addStudentToIsland(s, n1, n2)) {
+                    students.put(s, students.get(s) - 1);
                     additionalCost++;
                     s = effectHandler.getStudentFromBag();
-                    students.replace(s, students.get(s) + 1);
+                    students.put(s, students.get(s) + 1);
+                    appliedEffect = true;
+                    return true;
                 }
             }
             return false;
@@ -43,13 +68,19 @@ public class Friar extends CharacterCard {
         return false;
     }
 
+    /**
+     * @return if it contains students.
+     */
     @Override
     public boolean containsStudents() {
         return true;
     }
 
+    /**
+     * @return the students on the card
+     */
     @Override
     public EnumMap<StudentColor, Integer> getStudents() {
-        return students;
+        return new EnumMap<>(students);
     }
 }

@@ -4,7 +4,11 @@ import it.polimi.ingsw.enums.StudentColor;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.EnumSet;
 
+/**
+ * Handler for the effect of the character cards.
+ */
 public interface EffectHandler {
     /**
      * Gets a random student from the bag.
@@ -85,13 +89,6 @@ public interface EffectHandler {
     void addAdditionalInfluence(int num);
 
     /**
-     * Ignores student color when calculating influence this turn.
-     * @param s student color to ignore.
-     * @param ignore ignore student color.
-     */
-    void ignoreStudentColor(StudentColor s, boolean ignore);
-
-    /**
      * Removes a student from the current player's hall.
      * @param s student color to remove.
      * @return if the remove was successful.
@@ -119,4 +116,9 @@ public interface EffectHandler {
      * @param idealAmount ideal amount of student to remove from halls.
      */
     void tryRemoveStudentsFromHalls(StudentColor s, int idealAmount);
+
+    /**
+     * @return the current student colors skipped.
+     */
+    EnumSet<StudentColor> getSkippedStudentColors();
 }

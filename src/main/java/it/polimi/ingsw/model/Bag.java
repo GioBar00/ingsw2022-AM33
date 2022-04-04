@@ -48,6 +48,9 @@ class Bag {
         return students.isEmpty();
     }
 
+    /**
+     * removes all the students from the bag.
+     */
     void empty(){
         students.clear();
     }

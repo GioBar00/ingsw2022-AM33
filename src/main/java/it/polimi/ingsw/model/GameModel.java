@@ -99,12 +99,7 @@ class GameModel implements Game {
         }
         for(Cloud c: clouds){
             for(int i = 0; i < preset.getCloudCapacity(); i++){
-                try {
-                    c.addStudent(bag.popRandomStudent(), i);
-                }
-                catch(NoSuchElementException e ){
-                    e.printStackTrace();
-                }
+                c.addStudent(bag.popRandomStudent(), i);
             }
         }
         initializeSchoolBoards();
@@ -237,7 +232,7 @@ class GameModel implements Game {
 
     /**
      * Moves mother nature with a maximum movement of the number in the assistant card played.
-     * @param num of moves that MotherNature makes than the Player is allowed to do
+     * @param num of moves that MotherNature should make.
      * @return if the move ended successfully.
      */
     public boolean moveMotherNature(int num) {
@@ -247,7 +242,7 @@ class GameModel implements Game {
     /**
      * Moves MotherNature of a selected number of moves, following the order of IslandGroups if the game phase is correct and the num is valid.
      * If there are no clouds with students it skips the "choose cloud" phase.
-     * @param num of moves that MotherNature makes
+     * @param num of moves that MotherNature makes.
      * @return if the move ended successfully.
      */
     boolean moveMotherNature(int num, int maxNum) {
