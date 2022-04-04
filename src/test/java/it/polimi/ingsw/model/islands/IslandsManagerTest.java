@@ -28,13 +28,13 @@ public class IslandsManagerTest {
         im.setTower(Tower.BLACK, 10);
         im.setTower(Tower.GREY, 11);
 
-        im.checkMergeNext(10);
-        im.checkMergePrevious(10);
+        assertFalse(im.checkMergeNext(10));
+        assertFalse(im.checkMergePrevious(10));
         // group 10 should not merge with anyone
         assertEquals(12, im.getNumIslandGroups());
 
-        im.checkMergeNext(0);
-        im.checkMergePrevious(0);
+        assertTrue(im.checkMergeNext(0));
+        assertTrue(im.checkMergePrevious(0));
         // group 0 should merge with both 1 and 11
         assertEquals(3, im.getIslandGroup(0).size());
         assertEquals(10, im.getNumIslandGroups());
@@ -78,8 +78,8 @@ public class IslandsManagerTest {
 
         // if two island get merged in 1 the IslandManager should return the influence of the whole IslandGroup
         im.setTower(Tower.BLACK, 1);
-        im.checkMergeNext(0);
-        im.checkMergePrevious(0);
+        assertTrue(im.checkMergeNext(0));
+        assertFalse(im.checkMergePrevious(0));
         assertEquals(2, im.getIslandGroup(0).size());
 
         assertEquals(11, im.getNumIslandGroups());

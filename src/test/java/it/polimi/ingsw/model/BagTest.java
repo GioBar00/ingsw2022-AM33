@@ -35,7 +35,7 @@ class BagTest {
 
         for(int i = 0; i < 4; i++)  testBag.popRandomStudent();
 
-        assertThrows(NoSuchElementException.class, testBag::popRandomStudent);
+        assertNull(testBag.popRandomStudent());
     }
 
 }

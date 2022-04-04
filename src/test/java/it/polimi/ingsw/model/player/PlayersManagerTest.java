@@ -3,11 +3,7 @@ package it.polimi.ingsw.model.player;
 import it.polimi.ingsw.enums.AssistantCard;
 import org.junit.jupiter.api.Test;
 
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NoPermissionException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PlayersManagerTest {
     PlayersManager pm = new PlayersManager(3);
@@ -18,22 +14,13 @@ class PlayersManagerTest {
     @Test
     void CreatePm(){
         //TestingAdd
-        try{pm.addPlayer("Pl1",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
+        assertTrue(pm.addPlayer("Pl1",6,9));
 
-        }
-        try{pm.addPlayer("Pl2",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
-
-        }
-        assertThrows(NameAlreadyBoundException.class, () -> pm.addPlayer("Pl1",1,1));
+        assertTrue(pm.addPlayer("Pl2",6,9));
+        assertFalse(pm.addPlayer("Pl1",1,1));
         assertEquals(1,pm.getAvailablePlayerSlots());
-        try{pm.addPlayer("Pl3",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
-
-        }
-        assertThrows(NoPermissionException.class, () -> pm.addPlayer("Pl4",0,0));
-
+        assertTrue(pm.addPlayer("Pl3",6,9));
+        assertFalse(pm.addPlayer("Pl4",0,0));
     }
 
     /**
@@ -41,18 +28,9 @@ class PlayersManagerTest {
      */
     @Test
     void playersManagerTest() {
-        try{pm.addPlayer("Pl1",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
-
-        }
-        try{pm.addPlayer("Pl2",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
-
-        }
-        try{pm.addPlayer("Pl3",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
-
-        }
+        assertTrue(pm.addPlayer("Pl1",6,9));
+        assertTrue(pm.addPlayer("Pl2",6,9));
+        assertTrue(pm.addPlayer("Pl3",6,9));
 
         //Check slots
         assertEquals(0,pm.getAvailablePlayerSlots());
@@ -77,35 +55,26 @@ class PlayersManagerTest {
      */
     @Test
     void SortingTest(){
-        try{pm.addPlayer("Pl1",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
+        assertTrue(pm.addPlayer("Pl1",6,9));
+        assertTrue(pm.addPlayer("Pl2",6,9));
+        assertTrue(pm.addPlayer("Pl3",6,9));
 
-        }
-        try{pm.addPlayer("Pl2",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
-
-        }
-        try{pm.addPlayer("Pl3",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
-
-        }
-
-        pm.currentPlayerPlayed(AssistantCard.FOUR);
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
         pm.nextPlayer();
-        pm.currentPlayerPlayed(AssistantCard.TWO);
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.TWO));
         pm.nextPlayer();
-        pm.currentPlayerPlayed(AssistantCard.FOUR);
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
         pm.nextPlayer();
 
         pm.calculatePlayerOrder();
         assertEquals("Pl2",pm.getPlayers().get(0).getNickname());
         assertEquals("Pl1",pm.getPlayers().get(1).getNickname());
         assertEquals("Pl3",pm.getPlayers().get(2).getNickname());
-        pm.currentPlayerPlayed(AssistantCard.SEVEN);
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.SEVEN));
         pm.nextPlayer();
-        pm.currentPlayerPlayed(AssistantCard.TWO);
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.TWO));
         pm.nextPlayer();
-        pm.currentPlayerPlayed(AssistantCard.ONE);
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.ONE));
 
         pm.calculatePlayerOrder();
         assertEquals("Pl3",pm.getPlayers().get(0).getNickname());
@@ -118,24 +87,15 @@ class PlayersManagerTest {
      */
     @Test
     void clockwiseTest (){
-        try{pm.addPlayer("Pl1",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
+        assertTrue(pm.addPlayer("Pl1",6,9));
+        assertTrue(pm.addPlayer("Pl2",6,9));
+        assertTrue(pm.addPlayer("Pl3",6,9));
 
-        }
-        try{pm.addPlayer("Pl2",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
-
-        }
-        try{pm.addPlayer("Pl3",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
-
-        }
-
-        pm.currentPlayerPlayed(AssistantCard.FOUR);
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
         pm.nextPlayer();
-        pm.currentPlayerPlayed(AssistantCard.TWO);
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.TWO));
         pm.nextPlayer();
-        pm.currentPlayerPlayed(AssistantCard.FOUR);
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
         pm.nextPlayer();
 
         pm.calculatePlayerOrder();
@@ -156,18 +116,10 @@ class PlayersManagerTest {
      */
     @Test
     void firstPlayerTest(){
-        try{pm.addPlayer("Pl1",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
+        assertTrue(pm.addPlayer("Pl1",6,9));
+        assertTrue(pm.addPlayer("Pl2",6,9));
+        assertTrue(pm.addPlayer("Pl3",6,9));
 
-        }
-        try{pm.addPlayer("Pl2",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
-
-        }
-        try{pm.addPlayer("Pl3",6,9);}
-        catch (NoPermissionException | NameAlreadyBoundException ignored){
-
-        }
         pm.setFirstPlayer(2 - 1);
         assertEquals("Pl2",pm.getPlayers().get(0).getNickname());
         assertEquals("Pl3",pm.getPlayers().get(1).getNickname());
