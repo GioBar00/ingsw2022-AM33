@@ -38,7 +38,7 @@ public class Island {
      * @param s type of the student to be added
      */
     void addStudent(StudentColor s){
-        students.replace(s, students.get(s) + 1);
+        students.put(s, students.get(s) + 1);
     }
 
     /**

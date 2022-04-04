@@ -215,7 +215,7 @@ public class SchoolBoard {
     public boolean removeFromHall(StudentColor s, int num) {
         if (studentsHall.get(s) < num)
             return false;
-        studentsHall.replace(s, studentsHall.get(s) - num);
+        studentsHall.put(s, studentsHall.get(s) - num);
         return true;
     }
 
@@ -226,10 +226,10 @@ public class SchoolBoard {
      */
     public void tryRemoveFromHall(StudentColor s, int maxNum) {
         if (studentsHall.get(s) < maxNum) {
-            studentsHall.replace(s, 0);
+            studentsHall.put(s, 0);
         }
         else {
-            studentsHall.replace(s, studentsHall.get(s) - maxNum);
+            studentsHall.put(s, studentsHall.get(s) - maxNum);
         }
     }
 
@@ -240,7 +240,7 @@ public class SchoolBoard {
      */
     public boolean addToHall(StudentColor s) {
         if (studentsHall.get(s) < 12){
-            studentsHall.replace(s, studentsHall.get(s) + 1);
+            studentsHall.put(s, studentsHall.get(s) + 1);
             return true;
         }
         return false;

@@ -10,6 +10,10 @@ import it.polimi.ingsw.util.LinkedPairList;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Changes mode of the Game to expert mode.
+ * Composite pattern.
+ */
 class GameModelExpert implements Game, EffectHandler {
 
     /**
@@ -75,21 +79,35 @@ class GameModelExpert implements Game, EffectHandler {
 
     }
 
+    /**
+     * @return current game mode.
+     */
     @Override
     public GameMode getGameMode() {
         return model.getGameMode();
     }
 
+    /**
+     * @return current game state.
+     */
     @Override
     public GameState getGameState() {
         return model.getGameState();
     }
 
+    /**
+     * @return number of available player slots.
+     */
     @Override
     public int getAvailablePlayerSlots() {
         return model.getAvailablePlayerSlots();
     }
 
+    /**
+     * Adds a new player to the game. Initializes the coins of the player if the player was added successfully.
+     * @param nickname unique identifier of a player
+     * @return if the player was added successfully.
+     */
     @Override
     public boolean addPlayer(String nickname) {
         if (model.addPlayer(nickname)) {
@@ -101,6 +119,11 @@ class GameModelExpert implements Game, EffectHandler {
         return false;
     }
 
+    /**
+     * Initializes the game. Initializes the cards and gives one coin to each player.
+     * Add the remaining student on the bag.
+     * @return if the initialization was successful.
+     */
     @Override
     public boolean initializeGame() {
         if (model.initializeGame()) {
@@ -115,16 +138,31 @@ class GameModelExpert implements Game, EffectHandler {
         return false;
     }
 
+    /**
+     * Starts the game.
+     * @return if the game started successfully.
+     */
     @Override
     public boolean startGame() {
         return model.startGame();
     }
 
+    /**
+     * Current player plays the specified assistant card.
+     * @param assistantCard the card the player wants to play.
+     * @return if the card was played successfully.
+     */
     @Override
     public boolean playAssistantCard(AssistantCard assistantCard) {
         return model.playAssistantCard(assistantCard);
     }
 
+    /**
+     * Moves a student from the Entrance to the Hall of the current player if the player is not activating a card.
+     * If the student was added in a "coin space" of the hall and there are enough coins in the reserve then one coin is given to the player.
+     * @param entranceIndex of the student that will be moved to the Hall.
+     * @return if the student was successfully moved to the hall.
+     */
     @Override
     public boolean moveStudentToHall(int entranceIndex) {
         if (characterCardActivating != null)
@@ -144,6 +182,14 @@ class GameModelExpert implements Game, EffectHandler {
         return false;
     }
 
+    /**
+     * Selects a student from the Entrance of the current Player's SchoolBoard, removes it from there and
+     * moves it to a selected island that is part of a selected IslandGroup only if the player is not activating a card.
+     * @param entranceIndex of the slot occupied by the student that will be moved.
+     * @param islandGroupIndex of the IslandGroup that contains the selected island.
+     * @param islandIndex of the Island on which the student will be moved.
+     * @return if the student was moved successfully.
+     */
     @Override
     public boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) {
         if (characterCardActivating != null)
@@ -151,6 +197,12 @@ class GameModelExpert implements Game, EffectHandler {
         return model.moveStudentToIsland(entranceIndex, islandGroupIndex, islandIndex);
     }
 
+    /**
+     * Moves mother nature by num + additional movement if the player is not activating a card.
+     * If there are no clouds with students it skips the "choose cloud" phase.
+     * @param num of moves that MotherNature should make.
+     * @return if the move ended successfully.
+     */
     @Override
     public boolean moveMotherNature(int num) {
         if (characterCardActivating != null)
@@ -165,12 +217,20 @@ class GameModelExpert implements Game, EffectHandler {
         return false;
     }
 
+    /**
+     * Ends the effects of all cards and clears the activated card.
+     */
     void endTurn() {
         for (CharacterCard c: characterCards)
             c.endEffect(this);
         activatedACharacterCard = false;
     }
 
+    /**
+     * Moves the student currently residing on a cloud to the Entrance of the current Player if the player is not activating a card.
+     * @param cloudIndex of the selected cloud.
+     * @return if the students were taken correctly from the cloud and added to the entrance.
+     */
     @Override
     public boolean getStudentsFromCloud(int cloudIndex) {
         if (characterCardActivating != null)
@@ -183,19 +243,34 @@ class GameModelExpert implements Game, EffectHandler {
         return false;
     }
 
+    /**
+     * Activates character card at index if the player has not already activated another card, the index is valid and the player has enough coins.
+     * @param index of the character card to activate.
+     * @return if the activation was successful.
+     */
     @Override
     public boolean activateCharacterCard(int index) {
         if (activatedACharacterCard)
             return false;
-        Player curr = model.playersManager.getCurrentPlayer();
-        if (playerCoins.get(curr) < characterCards.get(index).getTotalCost())
+        if (index < 0 || index >= characterCards.size())
             return false;
-        playerCoins.put(curr, playerCoins.get(curr) - characterCards.get(index).getTotalCost());
+        Player curr = model.playersManager.getCurrentPlayer();
+        int totalCost = characterCards.get(index).getTotalCost();
+        if (playerCoins.get(curr) < totalCost)
+            return false;
+
+        playerCoins.put(curr, playerCoins.get(curr) - totalCost);
+        reserve += totalCost - 1;
         characterCardActivating = characterCards.get(index);
         activatedACharacterCard = true;
         return true;
     }
 
+    /**
+     * Applies the effect of the activated character card if the player activated a card.
+     * @param pairs parameters to use in the effect.
+     * @return if the effect was applied successfully.
+     */
     @Override
     public boolean applyEffect(LinkedPairList<StudentColor, List<Integer>> pairs) {
         if (characterCardActivating == null)
@@ -392,23 +467,6 @@ class GameModelExpert implements Game, EffectHandler {
     }
 
     /**
-     * Ignores student color when calculating influence this turn.
-     *
-     * @param s student color to ignore.
-     */
-    @Override
-    public void ignoreStudentColor(StudentColor s, boolean ignore) {
-        if (skipStudentColors.contains(s)) {
-            if (!ignore)
-                skipStudentColors.remove(s);
-        }
-        else
-            if (ignore)
-                skipStudentColors.add(s);
-
-    }
-
-    /**
      * Removes a student from the current player's hall.
      *
      * @param s student color to remove.
@@ -456,5 +514,13 @@ class GameModelExpert implements Game, EffectHandler {
             SchoolBoard sb = model.playersManager.getSchoolBoard(p);
             sb.tryRemoveFromHall(s, idealAmount);
         }
+    }
+
+    /**
+     * @return the current student colors skipped.
+     */
+    @Override
+    public EnumSet<StudentColor> getSkippedStudentColors() {
+        return skipStudentColors;
     }
 }

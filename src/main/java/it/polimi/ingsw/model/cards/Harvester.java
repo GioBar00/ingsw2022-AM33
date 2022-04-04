@@ -8,35 +8,52 @@ import it.polimi.ingsw.util.Pair;
 import java.util.EnumSet;
 import java.util.List;
 
+/**
+ * Harvester character card.
+ */
 public class Harvester extends CharacterCard {
 
-    private final EnumSet<StudentColor> skipStudentColors = EnumSet.noneOf(StudentColor.class);
-
+    /**
+     * Creates harvester
+     */
     public Harvester() {
         super(CharacterType.HARVESTER, 3);
     }
 
+    /**
+     * Applies the effect of the character card if the parameters are correct.
+     * Adds a student color to the ones to skip.
+     * @param effectHandler handler for the effects.
+     * @param pairs parameters for the effect.
+     * @return if the effect was applied.
+     */
     @Override
     public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
         for (Pair<StudentColor, List<Integer>> pair: pairs) {
             StudentColor s = pair.getFirst();
             if (s == null)
                 return false;
+            EnumSet<StudentColor> skipStudentColors = effectHandler.getSkippedStudentColors();
             if (skipStudentColors.contains(s))
                 return false;
             skipStudentColors.add(s);
-            effectHandler.ignoreStudentColor(s, true);
             additionalCost++;
+            appliedEffect = true;
             return true;
         }
 
         return false;
     }
 
+    /**
+     * Ends the effect of the character card. It reverts the effect.
+     * @param effectHandler handler for the effects.
+     */
     @Override
     public void endEffect(EffectHandler effectHandler) {
-        for (StudentColor s: skipStudentColors) {
-            effectHandler.ignoreStudentColor(s, false);
+        if (appliedEffect) {
+            effectHandler.getSkippedStudentColors().clear();
+            appliedEffect = false;
         }
     }
 }

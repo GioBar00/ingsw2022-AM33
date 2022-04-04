@@ -9,7 +9,7 @@ import javax.naming.NoPermissionException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class PlayersManager{
+public class PlayersManager {
 
     private Integer currentPlayerOrderIndex;
     private final Integer[] playerOrderIndexes;
