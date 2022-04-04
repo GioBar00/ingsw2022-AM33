@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.enums.AssistantCard;
+import it.polimi.ingsw.enums.GamePhase;
 import it.polimi.ingsw.enums.Tower;
 import it.polimi.ingsw.enums.Wizard;
 
@@ -67,6 +68,11 @@ public class PlayersManager{
     public boolean addPlayer(String nickname, int numTowers, int entranceCapacity) {
         // get random tower from available ones
         List<Tower> availableTowers = new LinkedList<>(Arrays.asList(Tower.values()));
+
+        if (numPlayers == 2) {
+            availableTowers.remove(Tower.GREY);
+        }
+
         for (Player p: players)
             availableTowers.removeIf(x -> x.equals(p.getSchoolBoard().getTower()));
 

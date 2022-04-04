@@ -26,7 +26,6 @@ class CloudTest {
         assertSame(testCloud.getStudents().get(1), StudentColor.RED);
         assertSame(testCloud.getStudents().get(2), StudentColor.YELLOW);
 
-        assertThrows(IndexOutOfBoundsException.class, ()-> testCloud.addStudent(StudentColor.BLUE, 4));
 
         testCloud.popStudents();
 

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import javax.naming.NoPermissionException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -24,7 +23,7 @@ class GameModelTest {
     @BeforeEach
     void creationTest() {
         model = new GameModel(GamePreset.THREE);
-        assertThrows(NoPermissionException.class, () -> model.initializeGame());
+        assertFalse(model.initializeGame());
         assertTrue(model.addPlayer("1"));
 
         assertFalse(model.initializeGame());
@@ -130,10 +129,14 @@ class GameModelTest {
         assertTrue(model.moveStudentToHall(2));
         assertTrue(model.moveStudentToHall(4));
 
-        assertEquals(GamePhase.MOVE_STUDENTS, model.roundManager.getGamePhase());
+
         assertTrue(model.moveStudentToHall(5));
 
-        assertThrows(Exception.class, () -> model.moveStudentToHall(6));
+        assertNotEquals(GamePhase.MOVE_STUDENTS, model.roundManager.getGamePhase());
+        assertEquals(GamePhase.MOVE_MOTHER_NATURE, model.roundManager.getGamePhase());
+        assertFalse(model.moveStudentToHall(6));
+        assertFalse(model.moveStudentToHall(7));
+        assertFalse(model.moveStudentToHall(6));
         int numOfNull = 0;
         for (StudentColor s : model.playersManager.getSchoolBoard(current).getStudentsInEntrance()) {
             if (s == null)
@@ -141,15 +144,16 @@ class GameModelTest {
         }
         assertEquals(model.preset.getMaxNumMoves(), numOfNull);
 
+
+        assertEquals(GamePhase.MOVE_MOTHER_NATURE, model.roundManager.getGamePhase());
+        assertFalse(model.getStudentsFromCloud(5));
+
+        model.roundManager.startChooseCloudPhase();
         assertTrue(model.getStudentsFromCloud(2));
 
         for (StudentColor s : model.clouds.get(2).getStudents()) {
             assertNull(s);
         }
-
-        assertEquals(GamePhase.MOVE_MOTHER_NATURE, model.roundManager.getGamePhase());
-        assertFalse(model.getStudentsFromCloud(5));
-
         //check the implementation of the getStudentsFromCloud
         numOfNull = 0;
         ArrayList<StudentColor> entrance = model.playersManager.getSchoolBoard(current).getStudentsInEntrance();
@@ -314,7 +318,7 @@ class GameModelTest {
 
         for(Player p : model.playersManager.getPlayers()){
             if(p.equals(model.playersManager.getCurrentPlayer()))
-                assertTrue(model.roundManager.getWinners().contains(model.playersManager.getSchoolBoard().getTower()));
+                assertTrue(model.roundManager.getWinners().contains(model.playersManager.getSchoolBoard(p).getTower()));
             else{
                 assertFalse(model.roundManager.getWinners().contains(model.playersManager.getSchoolBoard(p).getTower()));
             }
@@ -341,8 +345,8 @@ class GameModelTest {
         m1.nextRound();
 
         for(Player p : m1.playersManager.getPlayers()){
-            if(p.equals(m1.playersManager.getCurrentPlayer()))
-                assertTrue(m1.roundManager.getWinners().contains(m1.playersManager.getSchoolBoard().getTower()));
+            if(p.equals(curr))
+                assertTrue(m1.roundManager.getWinners().contains(m1.playersManager.getSchoolBoard(p).getTower()));
             else{
                 assertFalse(m1.roundManager.getWinners().contains(m1.playersManager.getSchoolBoard(p).getTower()));
             }
@@ -365,10 +369,13 @@ class GameModelTest {
             m2.nextRound();
         }
         while(!m2.bag.isEmpty());
+        assertTrue(true);
         m2.nextRound();
+        assertFalse(m2.roundManager.getWinners().isEmpty());
+
         for(Player p : m2.playersManager.getPlayers()){
-            if(p.equals(m2.playersManager.getCurrentPlayer()))
-                assertTrue(m2.roundManager.getWinners().contains(m2.playersManager.getSchoolBoard().getTower()));
+            if(p.equals(curr))
+                assertTrue(m2.roundManager.getWinners().contains(m2.playersManager.getSchoolBoard(p).getTower()));
             else{
                 assertFalse(m2.roundManager.getWinners().contains(m2.playersManager.getSchoolBoard(p).getTower()));
             }

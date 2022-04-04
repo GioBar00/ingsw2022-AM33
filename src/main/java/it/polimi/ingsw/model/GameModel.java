@@ -192,7 +192,7 @@ class GameModel implements Game {
      * @return if the student was successfully moved to the hall.
      */
     public boolean moveStudentToHall(int entranceIndex) {
-        if (gameState != GameState.STARTED && !roundManager.canMoveStudents())
+        if (gameState != GameState.STARTED || !roundManager.canMoveStudents())
             return false;
 
         SchoolBoard currSch = playersManager.getSchoolBoard();
@@ -219,7 +219,7 @@ class GameModel implements Game {
      * @return if the student was moved successfully.
      */
     public boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) {
-        if (gameState != GameState.STARTED && !roundManager.canMoveStudents())
+        if (gameState != GameState.STARTED || !roundManager.canMoveStudents())
             return false;
 
         SchoolBoard currSch = playersManager.getSchoolBoard();
