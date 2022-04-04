@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.cards.EffectHandler;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.SchoolBoard;
 import it.polimi.ingsw.util.LinkedPairList;
-import it.polimi.ingsw.util.Pair;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -35,6 +34,10 @@ class GameModelExpert implements Game, EffectHandler {
      * Character card that is being activated.
      */
     private CharacterCard characterCardActivating;
+    /**
+     * If a card was activated this turn.
+     */
+    private boolean activatedACharacterCard = false;
     /**
      * Additional movement that mother nature can make.
      */
@@ -155,12 +158,17 @@ class GameModelExpert implements Game, EffectHandler {
 
         if (model.moveMotherNature(num, model.playersManager.getPlayedCard().getMoves() + additionalMotherNatureMovement)) {
             if (model.atLeastOneCloudWithStudents()) {
-                for (CharacterCard c: characterCards)
-                    c.endEffect(this);
+                endTurn();
             }
             return true;
         }
         return false;
+    }
+
+    void endTurn() {
+        for (CharacterCard c: characterCards)
+            c.endEffect(this);
+        activatedACharacterCard = false;
     }
 
     @Override
@@ -169,8 +177,7 @@ class GameModelExpert implements Game, EffectHandler {
             return false;
 
         if (model.getStudentsFromCloud(cloudIndex)) {
-            for (CharacterCard c: characterCards)
-                c.endEffect(this);
+            endTurn();
             return true;
         }
         return false;
@@ -178,11 +185,14 @@ class GameModelExpert implements Game, EffectHandler {
 
     @Override
     public boolean activateCharacterCard(int index) {
+        if (activatedACharacterCard)
+            return false;
         Player curr = model.playersManager.getCurrentPlayer();
         if (playerCoins.get(curr) < characterCards.get(index).getTotalCost())
             return false;
         playerCoins.put(curr, playerCoins.get(curr) - characterCards.get(index).getTotalCost());
         characterCardActivating = characterCards.get(index);
+        activatedACharacterCard = true;
         return true;
     }
 
