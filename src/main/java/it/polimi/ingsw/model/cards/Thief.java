@@ -2,11 +2,10 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enums.CharacterType;
 import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.util.LinkedPairList;
+import it.polimi.ingsw.util.Pair;
 
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class Thief extends CharacterCard {
 
@@ -15,15 +14,14 @@ public class Thief extends CharacterCard {
     }
 
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
-        Set<Map.Entry<StudentColor, List<Integer>>> entries = pairs.entrySet();
-        if (entries.size() > 1)
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
+        for (Pair<StudentColor, List<Integer>> pair: pairs) {
+            if (pair.getFirst() != null) {
+                effectHandler.tryRemoveStudentsFromHalls(pair.getFirst(), 3);
+                additionalCost++;
+                return true;
+            }
             return false;
-
-        for (Map.Entry<StudentColor, List<Integer>> entry: entries) {
-            effectHandler.tryRemoveStudentsFromHalls(entry.getKey(), 3);
-            additionalCost++;
-            return true;
         }
         return false;
     }

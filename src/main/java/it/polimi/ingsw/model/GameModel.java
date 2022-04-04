@@ -174,6 +174,7 @@ class GameModel implements Game {
 
         if (currentPlayer.equals(playersManager.getLastPlayer())) {
             roundManager.startActionPhase();
+            playersManager.calculatePlayerOrder();
         }
 
         if(playersManager.getPlayerHand(currentPlayer).size() == 0)
@@ -181,9 +182,7 @@ class GameModel implements Game {
 
 
         playersManager.nextPlayer();
-        playersManager.calculatePlayerOrder();
-        roundManager.startActionPhase();
-        return false;
+        return true;
     }
 
     /**
@@ -200,6 +199,7 @@ class GameModel implements Game {
         StudentColor moved = currSch.getStudentInEntrance(entranceIndex);
         if (moved != null) {
             if (currSch.moveToHall(entranceIndex)) {
+                currSch.removeFromEntrance(entranceIndex);
                 checkProfessor(moved);
                 roundManager.addMoves();
                 return true;
@@ -273,6 +273,10 @@ class GameModel implements Game {
         return true;
     }
 
+    /**
+     * Checks if at least one cloud has at least one student.
+     * @return if at least one cloud has at least one student.
+     */
     boolean atLeastOneCloudWithStudents() {
         boolean b = false;
         for (Cloud c: clouds)
@@ -407,7 +411,8 @@ class GameModel implements Game {
         else
             maxInfluence = 0;
 
-        playersByTower.remove(tower);
+        if (tower != null)
+            playersByTower.remove(tower);
 
         // check influence for others
         for (Map.Entry<Tower, List<Player>> entry: playersByTower.entrySet()) {
@@ -430,6 +435,10 @@ class GameModel implements Game {
         return tower;
     }
 
+    /**
+     * Groups players by tower color.
+     * @return players grouped by tower color.
+     */
     EnumMap<Tower, List<Player>> groupPlayersByTower() {
         EnumMap<Tower, List<Player>> playersByTower = new EnumMap<>(Tower.class);
         for (Player p: playersManager.getPlayers()) {
@@ -529,14 +538,13 @@ class GameModel implements Game {
     void nextRound(){
         if (roundManager.isLastRound()) {
             calculateWinners();
+            return;
         }
-        if (roundManager.getWinners().isEmpty()) {
-            roundManager.nextRound();
-            playersManager.calculateClockwiseOrder();
-            playersManager.nextPlayer();
-            playersManager.clearAllPlayedCards();
-            refillClouds();
-        }
+        roundManager.nextRound();
+        playersManager.calculateClockwiseOrder();
+        playersManager.nextPlayer();
+        playersManager.clearAllPlayedCards();
+        refillClouds();
 
     }
 

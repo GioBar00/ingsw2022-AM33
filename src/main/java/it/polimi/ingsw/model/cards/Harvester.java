@@ -2,11 +2,11 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enums.CharacterType;
 import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.util.LinkedPairList;
+import it.polimi.ingsw.util.Pair;
 
-import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 
 public class Harvester extends CharacterCard {
 
@@ -17,12 +17,15 @@ public class Harvester extends CharacterCard {
     }
 
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
-        for (Map.Entry<StudentColor, List<Integer>> entry: pairs.entrySet()) {
-            if (skipStudentColors.contains(entry.getKey()))
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
+        for (Pair<StudentColor, List<Integer>> pair: pairs) {
+            StudentColor s = pair.getFirst();
+            if (s == null)
                 return false;
-            skipStudentColors.add(entry.getKey());
-            effectHandler.ignoreStudentColor(entry.getKey(), true);
+            if (skipStudentColors.contains(s))
+                return false;
+            skipStudentColors.add(s);
+            effectHandler.ignoreStudentColor(s, true);
             additionalCost++;
             return true;
         }

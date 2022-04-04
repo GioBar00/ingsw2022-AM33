@@ -2,10 +2,10 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enums.CharacterType;
 import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.util.LinkedPairList;
+import it.polimi.ingsw.util.Pair;
 
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 public class Herald extends CharacterCard {
 
@@ -14,9 +14,10 @@ public class Herald extends CharacterCard {
     }
 
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
-        for (Map.Entry<StudentColor, List<Integer>> entry: pairs.entrySet()) {
-            if (effectHandler.calcInfluenceOnIslandGroup(entry.getValue().get(0))) {
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
+        for (Pair<StudentColor, List<Integer>> pair: pairs) {
+            List<Integer> second = pair.getSecond();
+            if (second != null && second.size() > 0 && effectHandler.calcInfluenceOnIslandGroup(second.get(0))) {
                 additionalCost++;
                 return true;
             }

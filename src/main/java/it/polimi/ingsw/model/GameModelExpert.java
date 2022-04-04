@@ -5,6 +5,8 @@ import it.polimi.ingsw.model.cards.CharacterCard;
 import it.polimi.ingsw.model.cards.EffectHandler;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.SchoolBoard;
+import it.polimi.ingsw.util.LinkedPairList;
+import it.polimi.ingsw.util.Pair;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -185,7 +187,7 @@ class GameModelExpert implements Game, EffectHandler {
     }
 
     @Override
-    public boolean applyEffect(EnumMap<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(LinkedPairList<StudentColor, List<Integer>> pairs) {
         if (characterCardActivating == null)
             return false;
 
@@ -349,6 +351,16 @@ class GameModelExpert implements Game, EffectHandler {
     }
 
     /**
+     * Gets the students in the entrance of the current player's school board.
+     *
+     * @return the students in the entrance.
+     */
+    @Override
+    public ArrayList<StudentColor> getStudentsInEntrance() {
+        return model.playersManager.getSchoolBoard().getStudentsInEntrance();
+    }
+
+    /**
      * Adds a student to the entrance of current player's school board.
      *
      * @param entranceIndex index of the entrance.
@@ -408,6 +420,17 @@ class GameModelExpert implements Game, EffectHandler {
     public boolean addStudentToHall(StudentColor s) {
         SchoolBoard sb = model.playersManager.getSchoolBoard();
         return sb.addToHall(s);
+    }
+
+    /**
+     * Gets the number of students of a specific color in the hall.
+     *
+     * @param s color of the student.
+     * @return number of students in the hall.
+     */
+    @Override
+    public int getStudentsInHall(StudentColor s) {
+        return model.playersManager.getSchoolBoard().getStudentsInHall(s);
     }
 
     /**

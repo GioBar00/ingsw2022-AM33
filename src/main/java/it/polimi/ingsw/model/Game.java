@@ -4,13 +4,9 @@ import it.polimi.ingsw.enums.AssistantCard;
 import it.polimi.ingsw.enums.GameMode;
 import it.polimi.ingsw.enums.GameState;
 import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.util.LinkedPairList;
 
-import javax.naming.LimitExceededException;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NoPermissionException;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public interface Game {
     GameMode getGameMode();
@@ -30,7 +26,7 @@ public interface Game {
         return false;
     }
 
-    default boolean applyEffect(EnumMap<StudentColor, List<Integer>> pairs) {
+    default boolean applyEffect(LinkedPairList<StudentColor, List<Integer>> pairs) {
         return false;
     }
 }

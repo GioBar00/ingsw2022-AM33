@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enums.StudentColor;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 
 public interface EffectHandler {
@@ -65,6 +66,12 @@ public interface EffectHandler {
     StudentColor popStudentFromEntrance(int entranceIndex);
 
     /**
+     * Gets the students in the entrance of the current player's school board.
+     * @return the students in the entrance.
+     */
+    ArrayList<StudentColor> getStudentsInEntrance();
+
+    /**
      * Adds a student to the entrance of current player's school board.
      * @param entranceIndex index of the entrance.
      * @return if the student was added successfully.
@@ -97,6 +104,13 @@ public interface EffectHandler {
      * @return if the add was successful.
      */
     boolean addStudentToHall(StudentColor s);
+
+    /**
+     * Gets the number of students of a specific color in the hall.
+     * @param s color of the student.
+     * @return number of students in the hall.
+     */
+    int getStudentsInHall(StudentColor s);
 
     /**
      * Tries to remove the ideal amount of students from the hall of all players and puts them back in the bag.

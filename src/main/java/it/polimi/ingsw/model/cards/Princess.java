@@ -2,10 +2,11 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enums.CharacterType;
 import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.util.LinkedPairList;
+import it.polimi.ingsw.util.Pair;
 
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 public class Princess extends CharacterCard {
 
@@ -26,10 +27,10 @@ public class Princess extends CharacterCard {
     }
 
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
-        for (Map.Entry<StudentColor, List<Integer>> entry: pairs.entrySet()) {
-            StudentColor s = entry.getKey();
-            if (students.get(s) > 0) {
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
+        for (Pair<StudentColor, List<Integer>> entry: pairs) {
+            StudentColor s = entry.getFirst();
+            if (s != null && students.get(s) > 0) {
                 if (effectHandler.addStudentToHall(s)) {
                     students.put(s, students.get(s) - 1);
                     additionalCost++;
