@@ -13,9 +13,10 @@ public class Mailman extends CharacterCard {
     }
 
     @Override
-    public void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
         effectHandler.addAdditionalMovement(2);
         additionalCost++;
+        return true;
     }
 
     @Override

@@ -21,15 +21,18 @@ public class Herbalist extends CharacterCard {
     }
 
     @Override
-    public void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
         for (Map.Entry<StudentColor, List<Integer>> entry: pairs.entrySet()) {
             if (numBlocks > 0) {
-                effectHandler.blockIslandGroup(entry.getValue().get(0));
-                additionalCost++;
-                numBlocks--;
+                if (effectHandler.blockIslandGroup(entry.getValue().get(0))) {
+                    additionalCost++;
+                    numBlocks--;
+                    return true;
+                }
             }
-            return;
+            return false;
         }
+        return false;
     }
 
     @Override

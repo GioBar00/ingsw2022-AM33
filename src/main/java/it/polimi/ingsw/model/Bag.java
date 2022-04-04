@@ -24,16 +24,15 @@ class Bag {
 
     /**
      * extracts a random student from the bag
-     * @return student extracted
-     * @throws NoSuchElementException in case that there are no more students in the bag
+     * @return student extracted, null if empty
      */
-    StudentColor popRandomStudent() throws NoSuchElementException {
+    StudentColor popRandomStudent() {
         int extracted;
         StudentColor temp;
 
         if(students.size() != 0) {
             extracted = ThreadLocalRandom.current().nextInt(0, students.size());
-        } else throw new NoSuchElementException();
+        } else return null;
 
         temp = students.get(extracted);
         students.remove(extracted);

@@ -17,16 +17,17 @@ public class Harvester extends CharacterCard {
     }
 
     @Override
-    public void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
         for (Map.Entry<StudentColor, List<Integer>> entry: pairs.entrySet()) {
             if (skipStudentColors.contains(entry.getKey()))
-                return;
+                return false;
             skipStudentColors.add(entry.getKey());
             effectHandler.ignoreStudentColor(entry.getKey(), true);
             additionalCost++;
-            return;
+            return true;
         }
 
+        return false;
     }
 
     @Override

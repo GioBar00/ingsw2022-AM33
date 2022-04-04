@@ -5,7 +5,6 @@ import it.polimi.ingsw.enums.Wizard;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.NoSuchElementException;
 
 public class Player{
     private final String nickname;
@@ -33,43 +32,53 @@ public class Player{
      * Used to get the nickname
      * @return the nickname of the Player
      */
-    public String getNickname(){return nickname;}
+    public String getNickname() {
+        return nickname;
+    }
 
     /**
      * Used to get the wizard
      * @return the wizard of the Player
      */
-    Wizard getWizard(){return wizard;}
+    Wizard getWizard() {
+        return wizard;
+    }
 
     /**
      * Used to get the schoolBoard
      * @return the schoolBoard of the Player
      */
-    SchoolBoard getSchoolBoard(){return schoolBoard;}
+    SchoolBoard getSchoolBoard() {
+        return schoolBoard;
+    }
 
     /**
      * Calculates the last played card
      * @return the last played card
      */
-    AssistantCard getAssistantCard(){return playedCard;}
+    AssistantCard getAssistantCard() {
+        return playedCard;
+    }
 
     /**
      * Tries to play an AssistantCard
      * @param card the card the player wants to play
-     * @throws NoSuchElementException if the card is not in the player hand
+     * @return if the card was played successfully.
      */
-    void playAssistantCard (AssistantCard card) throws NoSuchElementException {
-        if(assistantCards.contains(card)){
-            playedCard = card;
-            assistantCards.remove(card);
-        }
-        else throw new NoSuchElementException();
+    boolean playAssistantCard (AssistantCard card) {
+        if(!assistantCards.contains(card))
+            return false;
+        playedCard = card;
+        assistantCards.remove(card);
+        return true;
     }
 
     /**
      * Removes the last played card
      */
-    void clearPlayedCard(){playedCard = null;}
+    void clearPlayedCard() {
+        playedCard = null;
+    }
 
     /**
      * Calculates the remaining cards of the player

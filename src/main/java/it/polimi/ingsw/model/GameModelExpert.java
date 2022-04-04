@@ -6,9 +6,6 @@ import it.polimi.ingsw.model.cards.EffectHandler;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.SchoolBoard;
 
-import javax.naming.LimitExceededException;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NoPermissionException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -89,85 +86,114 @@ class GameModelExpert implements Game, EffectHandler {
     }
 
     @Override
-    public void addPlayer(String nickname) throws NameAlreadyBoundException, NoPermissionException {
-        model.addPlayer(nickname);
-        List<Player> players = model.playersManager.getPlayers();
-        Player p = players.get(players.size() - 1);
-        playerCoins.put(p, 0);
-    }
-
-    @Override
-    public void initializeGame() throws NoPermissionException {
-        model.initializeGame();
-        for (Player p: model.playersManager.getPlayers()) {
-            playerCoins.put(p, 1);
-            reserve--;
+    public boolean addPlayer(String nickname) {
+        if (model.addPlayer(nickname)) {
+            List<Player> players = model.playersManager.getPlayers();
+            Player p = players.get(players.size() - 1);
+            playerCoins.put(p, 0);
+            return true;
         }
-        for (CharacterCard c: characterCards)
-            c.initialize(this);
+        return false;
     }
 
     @Override
-    public void startGame() {
-        model.startGame();
-    }
-
-    @Override
-    public void playAssistantCard(AssistantCard assistantCard) throws Exception {
-        model.playAssistantCard(assistantCard);
-    }
-
-    @Override
-    public void moveStudentToHall(int entranceIndex) throws Exception {
-        Player p = model.playersManager.getCurrentPlayer();
-        StudentColor sc = model.playersManager.getSchoolBoard(p).getStudentInEntrance(entranceIndex);
-        model.moveStudentToHall(entranceIndex);
-        if (model.playersManager.getSchoolBoard(p).getStudentsInHall(sc) % 3 == 0) {
-            if (reserve > 0) {
-                playerCoins.put(p, playerCoins.get(p) + 1);
+    public boolean initializeGame() {
+        if (model.initializeGame()) {
+            for (Player p: model.playersManager.getPlayers()) {
+                playerCoins.put(p, 1);
                 reserve--;
             }
+            for (CharacterCard c: characterCards)
+                c.initialize(this);
+            return true;
         }
+        return false;
     }
 
     @Override
-    public void moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) throws Exception {
-        model.moveStudentToIsland(entranceIndex, islandGroupIndex, islandIndex);
+    public boolean startGame() {
+        return model.startGame();
     }
 
     @Override
-    public void moveMotherNature(int num) throws LimitExceededException {
-        if (num <= model.playersManager.getPlayedCard(model.playersManager.getCurrentPlayer()).getMoves() + additionalMotherNatureMovement) {
-            model.motherNatureIndex = (model.motherNatureIndex + num) % 12;
-            calcInfluenceOnIslandGroup(model.motherNatureIndex);
-            model.checkWinner();
-            if (model.playersManager.getCurrentPlayer().equals(model.playersManager.getLastPlayer())) {
-                model.endActionPhase();
+    public boolean playAssistantCard(AssistantCard assistantCard) {
+        return model.playAssistantCard(assistantCard);
+    }
+
+    @Override
+    public boolean moveStudentToHall(int entranceIndex) {
+        if (characterCardActivating != null)
+            return false;
+
+        if (model.moveStudentToHall(entranceIndex)) {
+            Player p = model.playersManager.getCurrentPlayer();
+            StudentColor sc = model.playersManager.getSchoolBoard(p).getStudentInEntrance(entranceIndex);
+
+            if (model.playersManager.getSchoolBoard(p).getStudentsInHall(sc) % 3 == 0) {
+                if (reserve > 0) {
+                    playerCoins.put(p, playerCoins.get(p) + 1);
+                    reserve--;
+                }
             }
         }
-        else { throw new LimitExceededException(); }
+        return false;
     }
 
     @Override
-    public void getStudentsFromCloud(int cloudIndex) throws LimitExceededException {
-        model.getStudentsFromCloud(cloudIndex);
-        for (CharacterCard c: characterCards)
-            c.endEffect(this);
+    public boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) {
+        if (characterCardActivating != null)
+            return false;
+        return model.moveStudentToIsland(entranceIndex, islandGroupIndex, islandIndex);
     }
 
     @Override
-    public void activateCharacterCard(int index) {
+    public boolean moveMotherNature(int num) {
+        if (characterCardActivating != null)
+            return false;
+
+        if (model.moveMotherNature(num, model.playersManager.getPlayedCard().getMoves() + additionalMotherNatureMovement)) {
+            if (model.atLeastOneCloudWithStudents()) {
+                for (CharacterCard c: characterCards)
+                    c.endEffect(this);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean getStudentsFromCloud(int cloudIndex) {
+        if (characterCardActivating != null)
+            return false;
+
+        if (model.getStudentsFromCloud(cloudIndex)) {
+            for (CharacterCard c: characterCards)
+                c.endEffect(this);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean activateCharacterCard(int index) {
         Player curr = model.playersManager.getCurrentPlayer();
         if (playerCoins.get(curr) < characterCards.get(index).getTotalCost())
-            return;
+            return false;
         playerCoins.put(curr, playerCoins.get(curr) - characterCards.get(index).getTotalCost());
         characterCardActivating = characterCards.get(index);
+        return true;
     }
 
     @Override
-    public void applyEffect(EnumMap<StudentColor, List<Integer>> pairs) {
-        characterCardActivating.applyEffect(this, pairs);
-        characterCardActivating = null;
+    public boolean applyEffect(EnumMap<StudentColor, List<Integer>> pairs) {
+        if (characterCardActivating == null)
+            return false;
+
+        if (characterCardActivating.applyEffect(this, pairs)) {
+            characterCardActivating = null;
+            return true;
+        }
+        return false;
     }
 
 
@@ -187,10 +213,11 @@ class GameModelExpert implements Game, EffectHandler {
      * @param s                student to add
      * @param islandGroupIndex index of the island group.
      * @param islandIndex      index of the island in the island group.
+     * @return if the add was successful.
      */
     @Override
-    public void addStudentToIsland(StudentColor s, int islandGroupIndex, int islandIndex) {
-        model.islandsManager.addStudent(s, islandGroupIndex, islandIndex);
+    public boolean addStudentToIsland(StudentColor s, int islandGroupIndex, int islandIndex) {
+        return model.islandsManager.addStudent(s, islandGroupIndex, islandIndex);
     }
 
     /**
@@ -245,27 +272,32 @@ class GameModelExpert implements Game, EffectHandler {
     /**
      * Calculates the influence on an island group.
      * @param islandGroupIndex index of the island group.
+     * @return if the calcInfluence when well.
      */
     @Override
-    public void calcInfluenceOnIslandGroup(int islandGroupIndex) {
+    public boolean calcInfluenceOnIslandGroup(int islandGroupIndex) {
+        if (islandGroupIndex < 0 || islandGroupIndex >= model.islandsManager.getNumIslandGroups())
+            return false;
+
         if (model.islandsManager.getIslandGroup(islandGroupIndex).isBlocked()) {
             model.islandsManager.getIslandGroup(islandGroupIndex).setBlocked(false);
             for (CharacterCard c: characterCards)
                 if (c.canHandleBlocks())
                     c.addNumBlocks(1);
-            return;
+            return true;
         }
-        Tower tower = model.checkInfluence(islandGroupIndex, skipTowers, additionalInfluence, skipStudentColors);
-        if (tower != null && tower != model.islandsManager.getTower(islandGroupIndex)) {
-            model.swapTowers(islandGroupIndex, tower);
+        Tower newTower = model.checkInfluence(islandGroupIndex, skipTowers, additionalInfluence, skipStudentColors);
+        if (newTower != null && newTower != model.islandsManager.getTower(islandGroupIndex)) {
+            model.swapTowers(islandGroupIndex, newTower);
             int numBlocks = model.checkMergeIslandGroups(islandGroupIndex);
             for (CharacterCard c: characterCards)
                 if (c.canHandleBlocks()) {
                     c.addNumBlocks(numBlocks);
-                    return;
+                    return true;
                 }
 
         }
+        return true;
     }
 
     /**
@@ -282,10 +314,16 @@ class GameModelExpert implements Game, EffectHandler {
      * Blocks and island group.
      *
      * @param islandGroupIndex island group index to block.
+     * @return if the island was blocked.
      */
     @Override
-    public void blockIslandGroup(int islandGroupIndex) {
+    public boolean blockIslandGroup(int islandGroupIndex) {
+        if (islandGroupIndex < 0 || islandGroupIndex >= model.islandsManager.getNumIslandGroups())
+            return false;
+        if (model.islandsManager.getIslandGroup(islandGroupIndex).isBlocked())
+            return false;
         model.islandsManager.getIslandGroup(islandGroupIndex).setBlocked(true);
+        return true;
     }
 
     /**
@@ -303,18 +341,22 @@ class GameModelExpert implements Game, EffectHandler {
      * @return student at entranceIndex.
      */
     @Override
-    public StudentColor getStudentFromEntrance(int entranceIndex) {
-        return model.playersManager.getSchoolBoard().removeFromEntrance(entranceIndex);
+    public StudentColor popStudentFromEntrance(int entranceIndex) {
+        StudentColor s = model.playersManager.getSchoolBoard().getStudentInEntrance(entranceIndex);
+        if (s != null)
+            model.playersManager.getSchoolBoard().removeFromEntrance(entranceIndex);
+        return s;
     }
 
     /**
      * Adds a student to the entrance of current player's school board.
      *
      * @param entranceIndex index of the entrance.
+     * @return if the student was added successfully.
      */
     @Override
-    public void addStudentOnEntrance(StudentColor s, int entranceIndex) throws LimitExceededException {
-        model.playersManager.getSchoolBoard().addToEntrance(s, entranceIndex);
+    public boolean addStudentOnEntrance(StudentColor s, int entranceIndex) {
+        return model.playersManager.getSchoolBoard().addToEntrance(s, entranceIndex);
     }
 
     /**
@@ -348,24 +390,24 @@ class GameModelExpert implements Game, EffectHandler {
      * Removes a student from the current player's hall.
      *
      * @param s student color to remove.
+     * @return if the remove was successful.
      */
     @Override
-    public void removeStudentFromHall(StudentColor s) {
+    public boolean removeStudentFromHall(StudentColor s) {
         SchoolBoard sb = model.playersManager.getSchoolBoard();
-        if (sb.getStudentsInHall(s) <= 0)
-            throw new NoSuchElementException();
-        sb.removeFromHall(s, 1);
+        return sb.removeFromHall(s, 1);
     }
 
     /**
      * Adds a student to the current player's hall.
      *
      * @param s student color to add.
+     * @return if the add was successful.
      */
     @Override
-    public void addStudentToHall(StudentColor s) throws LimitExceededException {
+    public boolean addStudentToHall(StudentColor s) {
         SchoolBoard sb = model.playersManager.getSchoolBoard();
-        sb.addToHall(s);
+        return sb.addToHall(s);
     }
 
     /**
@@ -379,7 +421,7 @@ class GameModelExpert implements Game, EffectHandler {
     public void tryRemoveStudentsFromHalls(StudentColor s, int idealAmount) {
         for (Player p: model.playersManager.getPlayers()) {
             SchoolBoard sb = model.playersManager.getSchoolBoard(p);
-            sb.removeFromHall(s, idealAmount);
+            sb.tryRemoveFromHall(s, idealAmount);
         }
     }
 }

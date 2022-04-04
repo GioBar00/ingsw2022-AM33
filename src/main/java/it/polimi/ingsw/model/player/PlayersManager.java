@@ -60,46 +60,45 @@ public class PlayersManager{
     }
 
     /**
-     * Adds a new player to the game.
+     * Adds a new player to the game if there are no other players with the same nickname.
      * @param nickname unique identifier of a player
-     * @throws NoPermissionException if game not in UNINITIALIZED state or no more available slots for players
-     * @throws NameAlreadyBoundException if another player with same nickname is already in the game
+     * @return if the player was added successfully.
      */
-    public void addPlayer(String nickname, int numTowers, int entranceCapacity) throws NoPermissionException, NameAlreadyBoundException {
-        if (getAvailablePlayerSlots() == 0)
-            throw new NoPermissionException();
-
+    public boolean addPlayer(String nickname, int numTowers, int entranceCapacity) {
         // get random tower from available ones
         List<Tower> availableTowers = new LinkedList<>(Arrays.asList(Tower.values()));
         for (Player p: players)
             availableTowers.removeIf(x -> x.equals(p.getSchoolBoard().getTower()));
 
-        int towerIndex = ThreadLocalRandom.current().nextInt(0, availableTowers.size());
-
-        addPlayer(nickname, availableTowers.get(towerIndex), numTowers, entranceCapacity);
+        if (availableTowers.size() > 0) {
+            int towerIndex = ThreadLocalRandom.current().nextInt(0, availableTowers.size());
+            return addPlayer(nickname, availableTowers.get(towerIndex), numTowers, entranceCapacity);
+        }
+        return false;
     }
 
     /**
-     * Adds a new player to the game with a specific tower.
+     * Adds a new player to the game with a specific tower if there are no other players with the same nickname.
      * @param nickname unique identifier of a player
-     * @throws NoPermissionException if game not in UNINITIALIZED state or no more available slots for players
-     * @throws NameAlreadyBoundException if another player with same nickname is already in the game
+     * @return if the player was added successfully.
      */
-    public void addPlayer(String nickname, Tower tower, int numTowers, int entranceCapacity) throws NoPermissionException, NameAlreadyBoundException {
-        if (getAvailablePlayerSlots() == 0)
-            throw new NoPermissionException();
-        // get random wizard from available ones
-        List<Wizard> availableWizards = new LinkedList<>(Arrays.asList(Wizard.values()));
-        for (Player p: players) {
-            if (p.getNickname().equals(nickname))
-                throw new NameAlreadyBoundException();
-            availableWizards.removeIf(x -> x.equals(p.getWizard()));
+    public boolean addPlayer(String nickname, Tower tower, int numTowers, int entranceCapacity) {
+        if (getAvailablePlayerSlots() > 0) {
+            // get random wizard from available ones
+            List<Wizard> availableWizards = new LinkedList<>(Arrays.asList(Wizard.values()));
+            for (Player p: players) {
+                if (p.getNickname().equals(nickname))
+                    return false;
+                availableWizards.removeIf(x -> x.equals(p.getWizard()));
+            }
+
+            int wizardIndex = ThreadLocalRandom.current().nextInt(0, availableWizards.size());
+
+            SchoolBoard sb = new SchoolBoard(entranceCapacity, tower, numTowers);
+            players.add(new Player(nickname, availableWizards.get(wizardIndex), sb));
+            return true;
         }
-
-        int wizardIndex = ThreadLocalRandom.current().nextInt(0, availableWizards.size());
-
-        SchoolBoard sb = new SchoolBoard(entranceCapacity, tower, numTowers);
-        players.add(new Player(nickname, availableWizards.get(wizardIndex), sb));
+        return false;
     }
 
     /**
@@ -107,13 +106,17 @@ public class PlayersManager{
      * @param p is the player
      * @return the schoolBoard of player p
      */
-    public SchoolBoard getSchoolBoard(Player p){ return p.getSchoolBoard();}
+    public SchoolBoard getSchoolBoard(Player p) {
+        return p.getSchoolBoard();
+    }
 
     /**
      * Use to get the schoolBoard of current player
      * @return the schoolBoard of current player
      */
-    public SchoolBoard getSchoolBoard(){ return getCurrentPlayer().getSchoolBoard();}
+    public SchoolBoard getSchoolBoard() {
+        return getCurrentPlayer().getSchoolBoard();
+    }
 
     /**
      * Returns the player who is playing
@@ -152,9 +155,10 @@ public class PlayersManager{
     /**
      * Assigns to the current Player the card he wants to play
      * @param c the card a Player is trying to play
+     * @return if the card was played successfully.
      */
-    public void currentPlayerPlayed(AssistantCard c) throws NoSuchElementException {
-         players.get(playerOrderIndexes[currentPlayerOrderIndex]).playAssistantCard(c);
+    public boolean currentPlayerPlayed(AssistantCard c) {
+         return getCurrentPlayer().playAssistantCard(c);
     }
 
     /**
@@ -179,12 +183,20 @@ public class PlayersManager{
     }
 
     /**
-     * Method for getting the last card played by one Player
+     * Method for getting the last card played by one Player.
      * @param p the Player
      * @return the last played card
      */
     public AssistantCard getPlayedCard(Player p){
         return p.getAssistantCard();
+    }
+
+    /**
+     * Method for getting the last card played the current player.
+     * @return the last played card
+     */
+    public AssistantCard getPlayedCard(){
+        return getCurrentPlayer().getAssistantCard();
     }
 
     /**

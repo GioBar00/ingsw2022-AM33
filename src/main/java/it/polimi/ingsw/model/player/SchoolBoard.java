@@ -2,7 +2,6 @@ package it.polimi.ingsw.model.player;
 import it.polimi.ingsw.enums.StudentColor;
 import it.polimi.ingsw.enums.Tower;
 
-import javax.naming.LimitExceededException;
 import java.util.*;
 
 public class SchoolBoard {
@@ -38,7 +37,9 @@ public class SchoolBoard {
      * Calculates the max number of students that schoolBoard can contain
      * @return max number of students containable in the entrance
      */
-    public int getEntranceCapacity() {return entrance.size();}
+    public int getEntranceCapacity() {
+        return entrance.size();
+    }
 
     /**
      * Returns the type of tower related to the schoolBoard
@@ -49,55 +50,55 @@ public class SchoolBoard {
     }
 
     /**
-     * Adds towers to the SchoolBoard
+     * Adds towers to the SchoolBoard if it doesn't overflow.
      * @param num number of towers to add
-     * @throws LimitExceededException  if we're trying to add towers when there's no space left
+     * @return if thw towers were added successfully.
      */
-    public void addTowers(int num) throws LimitExceededException {
-        if(numTowers + num > maxNumTowers){
-            throw new LimitExceededException();
-        }
-        else{
-            numTowers = numTowers + num;
-        }
+    public boolean addTowers(int num) {
+        if (numTowers + num > maxNumTowers)
+            return false;
+        numTowers = numTowers + num;
+        return true;
     }
 
     /**
      * Calculates the current number of towers in the SchoolBoard
      * @return current number of towers
      */
-    public int getNumTowers(){return numTowers;}
+    public int getNumTowers() {
+        return numTowers;
+    }
 
     /**
-     * Removes n-towers from SchoolBoard
+     * Removes at most n-towers from the SchoolBoard.
      * @param num number of towers to remove
-     * @throws LimitExceededException  if we're trying to remove more tower than available
+     * @return if all the towers were removed successfully.
      */
-    public boolean removeTowers(int num) throws LimitExceededException{
+    public boolean removeTowers(int num) {
         numTowers = numTowers - num;
         if(numTowers <= 0){
             numTowers = 0;
-            throw new LimitExceededException();
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**
      * Calculates the professors in SchoolBoard
      * @return a deep copy of professors contained in SchoolBoard
      */
-    public EnumSet<StudentColor> getProfessors(){
+    public EnumSet<StudentColor> getProfessors() {
         EnumSet<StudentColor> ret;
         ret = EnumSet.copyOf(professors);
         return ret;
     }
 
     /**
-     * Adds a new professor in SchoolBoard
+     * Adds a new professor in SchoolBoard if professor is not already in school board.
      * @param p is the color of the professor
-     * @throws Exception if professor is already in SchoolBard
+     * @return if the add was successful.
      */
-    public boolean addProfessor(StudentColor p){
+    public boolean addProfessor(StudentColor p) {
         if(!professors.contains(p)) {
             professors.add(p);
             return true;
@@ -106,11 +107,11 @@ public class SchoolBoard {
     }
 
     /**
-     * Removes a professor in SchoolBoard
+     * Removes a professor in SchoolBoard if the school board has the professor to remove.
      * @param p is the color of the professor
-     * @throws Exception if SchoolBard doesn't contain the professor
+     * @return if the remove was successful.
      */
-    public boolean removeProfessor(StudentColor p){
+    public boolean removeProfessor(StudentColor p) {
         if (professors.contains(p)){
             professors.remove(p);
             return true;
@@ -119,9 +120,9 @@ public class SchoolBoard {
     }
 
     /**
-     * Adds a new Student to the entrance
+     * Adds a new Student to the entrance if there is space left.
      * @param s the type of Student to add
-     * @throws LimitExceededException   if there's no space left
+     * @return if the student was added correctly
      */
     public boolean addToEntrance(StudentColor s) {
         for(int i = 0; i < entrance.size(); i++) {
@@ -134,15 +135,14 @@ public class SchoolBoard {
     }
 
     /**
-     * Adds a Student in a specific position in the entrance
+     * Adds a Student in a specific position in the entrance if the index is valid and there is no other student at that index.
      * @param s type of Student to add
      * @param index position in the entrance
-     * @throws IndexOutOfBoundsException if the index is a no-valid value
-     * @throws LimitExceededException if the slot is already taken
+     * @return if the student was added correctly.
      */
-    public boolean addToEntrance(StudentColor s, int index) throws IndexOutOfBoundsException {
+    public boolean addToEntrance(StudentColor s, int index) {
         if (index < 0 || index >= entrance.size())
-            throw new IndexOutOfBoundsException();
+            return false;
         if (entrance.get(index) != null)
             return false;
         entrance.set(index, s);
@@ -150,20 +150,15 @@ public class SchoolBoard {
     }
 
     /**
-     * Removes a specific Student from entrance
+     * Removes a specific Student from entrance if the index is valid.
      * @param index the position of the Student to remove
-     * @return the type of Student removed
-     * @throws NoSuchElementException if there's no Student in the selected slot
+     * @return if the remove was successful.
      */
-    public StudentColor removeFromEntrance(int index) throws IndexOutOfBoundsException, NoSuchElementException {
-        StudentColor s;
+    public boolean removeFromEntrance(int index) {
         if (index < 0 || index >= entrance.size())
-            throw new IndexOutOfBoundsException();
-        if(entrance.get(index) == null)
-            throw new NoSuchElementException();
-        s = entrance.get(index);
+            return false;
         entrance.set(index, null);
-        return s;
+        return true;
 
     }
 
@@ -172,19 +167,17 @@ public class SchoolBoard {
      * @return the copy of the entrance
      */
     public ArrayList<StudentColor> getStudentsInEntrance() {
-        ArrayList<StudentColor> ret = new ArrayList<>();
-        for(int i = 0; i < entrance.size(); i++){
-            ret.add(i,entrance.get(i));
-        }
-        return ret;
+        return new ArrayList<>(entrance);
     }
 
     /**
-     * Gets the student color in the entrance at a specific index.
+     * Gets the student color in the entrance at a specific index or null if the index is not valid.
      * @param index index to get the student from.
      * @return student color at index.
      */
     public StudentColor getStudentInEntrance(int index) {
+        if (index < 0 || index >= entrance.size())
+            return null;
         return entrance.get(index);
     }
 
@@ -193,21 +186,37 @@ public class SchoolBoard {
      * @param s type of Student
      * @return number of specific type of Student in the hall
      */
-    public int getStudentsInHall(StudentColor s){return studentsHall.get(s);}
+    public int getStudentsInHall(StudentColor s) { return studentsHall.get(s); }
 
     /**
-     * Moves a specific Student from entrance to hall
+     * Moves a specific Student from entrance to hall if the entrance index is valid and there is space in the hall.
      * @param entranceIndex the position of Student in the entrance
-     * @throws LimitExceededException if there's no left space in hall
+     * @return the student was successfully moved to the hall.
      */
-    public StudentColor moveToHall(int entranceIndex) throws LimitExceededException {
+    public boolean moveToHall(int entranceIndex) {
+        if (entranceIndex >= entrance.size() || entranceIndex < 0)
+            return false;
         StudentColor s = getStudentInEntrance(entranceIndex);
-        if(s == null){
-            throw  new LimitExceededException();
+        if(s != null) {
+            if (addToHall(s)) {
+                removeFromEntrance(entranceIndex);
+                return true;
+            }
         }
-        addToHall(s);
-        removeFromEntrance(entranceIndex);
-        return s;
+        return false;
+    }
+
+    /**
+     * Removes from Hall a specified number and type of student if there are enough in the hall.
+     * @param s type of Student to remove
+     * @param num number of students to remove
+     * @return if the remove was successful.
+     */
+    public boolean removeFromHall(StudentColor s, int num) {
+        if (studentsHall.get(s) < num)
+            return false;
+        studentsHall.replace(s, studentsHall.get(s) - num);
+        return true;
     }
 
     /**
@@ -215,25 +224,25 @@ public class SchoolBoard {
      * @param s type of Student to remove
      * @param maxNum max number of students to remove
      */
-    public boolean removeFromHall(StudentColor s, int maxNum) {
+    public void tryRemoveFromHall(StudentColor s, int maxNum) {
         if (studentsHall.get(s) < maxNum) {
             studentsHall.replace(s, 0);
         }
         else {
             studentsHall.replace(s, studentsHall.get(s) - maxNum);
         }
-        return false;
     }
 
     /**
-     * Adds to Hall a student.
+     * Adds to Hall a student if there is space left in hall.
      * @param s type of Student to remove
-     * @throws LimitExceededException if there's no left space in hall
+     * @return if the student was successfully added to the hall.
      */
-    public void addToHall(StudentColor s) throws LimitExceededException {
+    public boolean addToHall(StudentColor s) {
         if (studentsHall.get(s) < 12){
-            studentsHall.replace(s, studentsHall.get(s)+1);
+            studentsHall.replace(s, studentsHall.get(s) + 1);
+            return true;
         }
-        else throw new LimitExceededException();
+        return false;
     }
 }

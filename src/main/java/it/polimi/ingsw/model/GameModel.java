@@ -6,10 +6,6 @@ import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.PlayersManager;
 import it.polimi.ingsw.model.player.SchoolBoard;
 
-import javax.naming.LimitExceededException;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NoPermissionException;
-import java.nio.channels.AlreadyConnectedException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -67,26 +63,24 @@ class GameModel implements Game {
     }
 
     /**
-     * Adds a new player to the game.
+     * Adds a new player to the game only if the game is uninitialized, there is at lest an empty player slot and there isn't any other player with that nickname.
      * @param nickname unique identifier of a player
-     * @throws NoPermissionException if game not in UNINITIALIZED state or no more available slots for players
-     * @throws AlreadyConnectedException if another player with same nickname is already in the game
+     * @return if the player was added successfully.
      */
-    public void addPlayer(String nickname) throws NoPermissionException, NameAlreadyBoundException  {
-        playersManager.addPlayer(nickname,preset.getTowersNumber(), preset.getEntranceCapacity());
-        if(playersManager.getAvailablePlayerSlots() == 0){
-            startGame();
-        }
+    public boolean addPlayer(String nickname) {
+        if (gameState != GameState.UNINITIALIZED)
+            return false;
+        return playersManager.addPlayer(nickname, preset.getTowersNumber(), preset.getEntranceCapacity());
     }
 
     /**
      * Initializes the game by adding one student on each island except where there is mother nature and on the opposite island.
      * Add the remaining student on the bag.
-     * @throws NoPermissionException if game is not UNINITIALIZED or not all players have entered.
+     * @return if game is UNINITIALIZED or all players have entered.
      */
-    public void initializeGame() throws NoPermissionException{
+    public boolean initializeGame() {
         if (gameState != GameState.UNINITIALIZED || playersManager.getAvailablePlayerSlots() != 0)
-            throw new NoPermissionException();
+            return false;
 
         for(StudentColor s: StudentColor.values()) {
             List<StudentColor> l = Collections.nCopies(2, s);
@@ -115,6 +109,7 @@ class GameModel implements Game {
         }
         initializeSchoolBoards();
         gameState = GameState.INITIALIZED;
+        return true;
     }
 
     /**
@@ -130,123 +125,202 @@ class GameModel implements Game {
     }
 
     /**
-     * Try to play an assistant card. If someone has already played it check that the current player hasn't other cards playable.
-     * @param assistantCard the card the player wants to play
-     * @throws Exception Someone has played the same card and the player can play another card
+     * Starts the Game and randomly selects the first Player if the game is initialized.
+     * @return if the game started successfully.
      */
-    public void playAssistantCard(AssistantCard assistantCard) throws Exception{
-        ArrayList<AssistantCard> played =  new ArrayList<>();
-        Player currentPlayer = playersManager.getCurrentPlayer();
-        if(roundManager.getGamePhase().equals(GamePhase.PLANNING)) {
-            if(playersManager.getPlayerHand(playersManager.getCurrentPlayer()).size() == 1)
-                roundManager.setLastRound();
-            for (Player p : playersManager.getPlayers()) {
-                if (!currentPlayer.equals(p)) {
-                    if (playersManager.getPlayedCard(p) != null) {
-                        played.add(playersManager.getPlayedCard(p));
-                    }
-                }
-            }
-            if (played.contains(assistantCard)) {
-                for (AssistantCard a : playersManager.getPlayerHand(currentPlayer)) {
-                    if (!played.contains(a))
-                        throw new Exception();
-                }
-            }
-            try{ playersManager.currentPlayerPlayed(assistantCard);}
-            catch (NoSuchElementException e){ throw new Exception ();}
-            if (currentPlayer.equals(playersManager.getLastPlayer())) {
-                roundManager.startActionPhase();
-            }
-            playersManager.nextPlayer();
-            roundManager.clearMoves();
-        }
+    public boolean startGame(){
+        if (gameState != GameState.INITIALIZED)
+            return false;
+
+        int i = ThreadLocalRandom.current().nextInt(0, preset.getPlayersNumber());
+        playersManager.setFirstPlayer(i);
+        roundManager.nextRound();
+        gameState = GameState.STARTED;
+        return true;
     }
 
     /**
-     * the method selects the current Player's SchoolBoard and moves a student form the Entrance to the Hall.
+     * Try to play an assistant card. If someone has already played it check that the current player hasn't other cards playable.
+     * Checks if the player had that card in hand and if it is the correct phase to play a card.
+     * @param assistantCard the card the player wants to play
+     * @return if the card was played successfully.
+     */
+    public boolean playAssistantCard(AssistantCard assistantCard) {
+        if (gameState != GameState.STARTED && roundManager.getGamePhase() != GamePhase.PLANNING)
+            return false;
+
+        ArrayList<AssistantCard> played = new ArrayList<>();
+        Player currentPlayer = playersManager.getCurrentPlayer();
+        ArrayList<AssistantCard> playerHand = playersManager.getPlayerHand(currentPlayer);
+
+        for (Player p : playersManager.getPlayers()) {
+            if (!currentPlayer.equals(p)) {
+                AssistantCard card = playersManager.getPlayedCard(p);
+                if (card != null) {
+                    played.add(card);
+                }
+            }
+        }
+
+        if (played.contains(assistantCard)) {
+            for (AssistantCard a : playerHand) {
+                if (!played.contains(a))
+                    return false;
+            }
+        }
+
+        if (!playersManager.currentPlayerPlayed(assistantCard))
+            return false;
+
+        if (currentPlayer.equals(playersManager.getLastPlayer())) {
+            roundManager.startActionPhase();
+        }
+
+        if(playersManager.getPlayerHand(currentPlayer).size() == 0)
+            roundManager.setLastRound();
+
+
+        playersManager.nextPlayer();
+        playersManager.calculatePlayerOrder();
+        roundManager.startActionPhase();
+        return false;
+    }
+
+    /**
+     * Moves a student from the Entrance to the Hall of the current player if the player can play, the hall is not full and the index is valid.
      * then proceeds to check if the professors need to be re-distributed between the players
      * @param entranceIndex of the student that will be moved to the Hall
-     * @throws Exception from the method moveToHall (will be propagated to the controller)
+     * @return if the student was successfully moved to the hall.
      */
-    public void moveStudentToHall(int entranceIndex) throws Exception {
-        if(roundManager.canPlay()) {
-            Player current = playersManager.getCurrentPlayer();
-            SchoolBoard currSch = playersManager.getSchoolBoard(current);
-            try {
-                StudentColor moved = currSch.moveToHall(entranceIndex);
+    public boolean moveStudentToHall(int entranceIndex) {
+        if (gameState != GameState.STARTED && !roundManager.canMoveStudents())
+            return false;
+
+        SchoolBoard currSch = playersManager.getSchoolBoard();
+        StudentColor moved = currSch.getStudentInEntrance(entranceIndex);
+        if (moved != null) {
+            if (currSch.moveToHall(entranceIndex)) {
                 checkProfessor(moved);
                 roundManager.addMoves();
-                roundManager.canPlay();
-            }
-            catch (LimitExceededException e){
-                throw new Exception();
+                return true;
             }
         }
-        else{ throw new Exception();}
+
+        return false;
     }
 
     /**
-     * the method selects a student from the Entrance of the current Player's SchoolBoard, removes it from there and
-     * moves it to a selected island that is part of a selected IslandGroup
+     * Selects a student from the Entrance of the current Player's SchoolBoard, removes it from there and
+     * moves it to a selected island that is part of a selected IslandGroup. Checks if the player can play,
+     * if it is the correct game state and if the indexes are valid.
      * @param entranceIndex of the slot occupied by the student that will be moved
      * @param islandGroupIndex of the IslandGroup that contains the selected island
      * @param islandIndex of the Island on which the student will be moved
-     * @throws Exception from the method removeFromEntrance (will be propagated to the controller)
+     * @return if the student was moved successfully.
      */
-    public void moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) throws Exception {
-        if(roundManager.canPlay()) {
-            try {
-                StudentColor s = playersManager.getSchoolBoard(playersManager.getCurrentPlayer()).removeFromEntrance(entranceIndex);
-                islandsManager.addStudent(s, islandGroupIndex, islandIndex);
+    public boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) {
+        if (gameState != GameState.STARTED && !roundManager.canMoveStudents())
+            return false;
+
+        SchoolBoard currSch = playersManager.getSchoolBoard();
+        StudentColor moved = currSch.getStudentInEntrance(entranceIndex);
+        if (moved != null) {
+            if (islandsManager.addStudent(moved, islandGroupIndex, islandIndex)) {
+                currSch.removeFromEntrance(entranceIndex);
                 roundManager.addMoves();
-                roundManager.canPlay();
-            } catch (NoSuchElementException e) {
-                throw new Exception();
+                return true;
             }
         }
-        else{ throw new Exception();}
+
+        return false;
     }
 
     /**
-     * the method moves MotherNature of a selected number of moves, following the order of IslandGroups
+     * Moves mother nature with a maximum movement of the number in the assistant card played.
+     * @param num of moves that MotherNature makes than the Player is allowed to do
+     * @return if the move ended successfully.
+     */
+    public boolean moveMotherNature(int num) {
+        return moveMotherNature(num, playersManager.getPlayedCard().getMoves());
+    }
+
+    /**
+     * Moves MotherNature of a selected number of moves, following the order of IslandGroups if the game phase is correct and the num is valid.
+     * If there are no clouds with students it skips the "choose cloud" phase.
      * @param num of moves that MotherNature makes
-     * @throws LimitExceededException if the method calls for more moves of MotherNature
-     * than the Player is allowed to do
+     * @return if the move ended successfully.
      */
-    public void moveMotherNature(int num) throws LimitExceededException {
-        if(roundManager.getGamePhase().equals(GamePhase.MOVE_MOTHER_NATURE)) {
-            if (num <= playersManager.getPlayedCard(playersManager.getCurrentPlayer()).getMoves() && num > 0) {
-                motherNatureIndex = (motherNatureIndex + num) % 12;
-                checkInfluence(motherNatureIndex);
-                checkWinner();
-                if (playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())) {
-                    endActionPhase();
-                }
+    boolean moveMotherNature(int num, int maxNum) {
+        if (gameState != GameState.STARTED)
+            return false;
+        if (roundManager.getGamePhase() != GamePhase.MOVE_MOTHER_NATURE)
+            return false;
+
+        if (num > maxNum || num <= 0)
+            return false;
+
+        motherNatureIndex = (motherNatureIndex + num) % islandsManager.getNumIslandGroups();
+        checkInfluence(motherNatureIndex);
+
+        if (roundManager.getWinners().isEmpty()) {
+            boolean cloudWithStud = atLeastOneCloudWithStudents();
+            if (cloudWithStud) {
+                roundManager.startChooseCloudPhase();
             } else {
-                throw new LimitExceededException();
+                nextTurn();
             }
-        }else {throw new LimitExceededException();} //TODO this must be another type of exception
+        }
+        return true;
+    }
+
+    boolean atLeastOneCloudWithStudents() {
+        boolean b = false;
+        for (Cloud c: clouds)
+            if (c.getStudents().size() > 0) {
+                b = true;
+                break;
+            }
+        return b;
     }
 
     /**
-     * the method moves the student currently residing on a cloud to the Entrance of the current Player
+     * Moves the student currently residing on a cloud to the Entrance of the current Player if the game state and phase are correct,
+     * if the index is valid and if the cloud is not empty.
      * @param cloudIndex of the selected cloud
-     * @throws LimitExceededException in case the number of students added is more than the slots
-     * currently empty in the Entrance
+     * @return if the students were taken correctly from the cloud and added to the entrance.
      */
-    public void getStudentsFromCloud(int cloudIndex) throws LimitExceededException {
-        if (cloudIndex >= 0 && cloudIndex < preset.getCloudsNumber()){
-            for (StudentColor s : clouds.get(cloudIndex).popStudents()) {
-                playersManager.getSchoolBoard(playersManager.getCurrentPlayer()).addToEntrance(s);
-            }
-            if (playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())) {
-                nextRound();
-            } else {
-                playersManager.nextPlayer();
-                roundManager.clearMoves();
-            }
-        }else {throw new LimitExceededException();}
+    public boolean getStudentsFromCloud(int cloudIndex) {
+        if (gameState != GameState.STARTED)
+            return false;
+        if (roundManager.getGamePhase() != GamePhase.CHOOSE_CLOUD)
+            return false;
+        if (cloudIndex < 0 || cloudIndex >= preset.getCloudsNumber())
+            return false;
+
+        List<StudentColor> studs = clouds.get(cloudIndex).popStudents();
+
+        if (studs.size() == 0)
+            return false;
+
+        for (StudentColor s : studs) {
+            playersManager.getSchoolBoard().addToEntrance(s);
+        }
+
+        nextTurn();
+
+        return true;
+    }
+
+    /**
+     * Starts the action phase of the next player. If it is the last players it ends the round.
+     */
+    void nextTurn() {
+        if (playersManager.getCurrentPlayer().equals(playersManager.getLastPlayer())) {
+            nextRound();
+        } else {
+            playersManager.nextPlayer();
+            roundManager.startActionPhase();
+        }
     }
 
     /**
@@ -311,19 +385,7 @@ class GameModel implements Game {
      * @return the tower that belongs to the player/players with the most influence
      */
     Tower checkInfluence(int islandGroupIndex, boolean skipTowers, int additionalInfluence, EnumSet<StudentColor> skipStudentColor) {
-        // group players by Tower
-        EnumMap<Tower, List<Player>> playersByTower = new EnumMap<>(Tower.class);
-        for (Player p: playersManager.getPlayers()) {
-            Tower tower = playersManager.getSchoolBoard(p).getTower();
-            if (!playersByTower.containsKey(tower)) {
-                LinkedList<Player> pl = new LinkedList<>();
-                pl.add(p);
-                playersByTower.put(tower, pl);
-            }
-            else {
-                playersByTower.get(tower).add(p);
-            }
-        }
+        EnumMap<Tower, List<Player>> playersByTower = groupPlayersByTower();
 
         int maxInfluence;
         EnumSet<StudentColor> profs;
@@ -368,6 +430,22 @@ class GameModel implements Game {
         return tower;
     }
 
+    EnumMap<Tower, List<Player>> groupPlayersByTower() {
+        EnumMap<Tower, List<Player>> playersByTower = new EnumMap<>(Tower.class);
+        for (Player p: playersManager.getPlayers()) {
+            Tower tower = playersManager.getSchoolBoard(p).getTower();
+            if (!playersByTower.containsKey(tower)) {
+                LinkedList<Player> pl = new LinkedList<>();
+                pl.add(p);
+                playersByTower.put(tower, pl);
+            }
+            else {
+                playersByTower.get(tower).add(p);
+            }
+        }
+        return playersByTower;
+    }
+
     /**
      * the method is called after calculating the influence, whenever there is a change in the Player that
      * holds the most influence on the IslandGroup; the method removes the current towers from the IslandGroup, puts
@@ -378,45 +456,22 @@ class GameModel implements Game {
      * @param newTower to be put on the IslandGroup
      */
     void swapTowers(int islandGroupIndex, Tower newTower){
-        Player newPlayer = null;
-        SchoolBoard oldSchoolBoard = null;
-        SchoolBoard newSchoolBoard = null;
         Tower oldTower = islandsManager.getTower(islandGroupIndex);
-        if(oldTower == null){
-            for(Player p : playersManager.getPlayers()){
-                if(playersManager.getSchoolBoard(p).getTower().equals(newTower)){
-                    newPlayer = p;
-                    newSchoolBoard = playersManager.getSchoolBoard(p);
-                    try {
-                            newSchoolBoard.removeTowers(islandsManager.getIslandGroup(islandGroupIndex).size());
-                            islandsManager.setTower(newTower,islandGroupIndex);
-                    } catch (LimitExceededException e) {
-                        roundManager.setWinner(newPlayer);
-                    }
-                }
-            }
-        }else{
-            if (!newTower.equals(oldTower)) {
-                for (Player p : playersManager.getPlayers()) {
-                    if (newTower.equals(playersManager.getSchoolBoard(p).getTower())) {
-                        newPlayer = p;
-                        newSchoolBoard = playersManager.getSchoolBoard(p);
-                    } else if (oldTower.equals(playersManager.getSchoolBoard(p).getTower())) {
-                        oldSchoolBoard = playersManager.getSchoolBoard(p);
-                    }
-                }
-                if (newPlayer != null && oldSchoolBoard != null && newSchoolBoard != null) {
-                    islandsManager.setTower(newTower, islandGroupIndex);
 
-                    int size = islandsManager.getIslandGroup(islandGroupIndex).size();
-                    try {
-                        oldSchoolBoard.addTowers(size);
-                        newSchoolBoard.removeTowers(size);
-                    } catch (LimitExceededException e) {
-                        roundManager.setWinner(newPlayer);
-                    }
-                }
+        if (newTower != oldTower) {
+            EnumMap<Tower, List<Player>> playersByTower = groupPlayersByTower();
+            SchoolBoard newSchoolBoard = playersManager.getSchoolBoard(playersByTower.get(newTower).get(0));
+            int size = islandsManager.getIslandGroup(islandGroupIndex).size();
+            if (oldTower != null) {
+                SchoolBoard oldSchoolBoard = playersManager.getSchoolBoard(playersByTower.get(oldTower).get(0));
+                oldSchoolBoard.addTowers(size);
             }
+            islandsManager.setTower(newTower, islandGroupIndex);
+            if (!newSchoolBoard.removeTowers(size)) {
+                roundManager.setWinner(newTower);
+                gameState = GameState.ENDED;
+            }
+
         }
     }
 
@@ -424,7 +479,8 @@ class GameModel implements Game {
      * The method selects the IslandGroups that come before and after the one in the position islandGroupIndex
      * and checks whether they can be merged. The method also handles the effects of the CharacterCard "Herbalist",
      * which can put blocks on an IslandGroup to stop Players from positioning a Tower there: if the method is called
-     * on a blocked IslandGroup, the blocks need to be removed
+     * on a blocked IslandGroup, the blocks need to be removed.
+     * If there are 3 or less island groups the game ends.
      * @param islandGroupIndex of the islandGroup considered
      * @return the number of blocks (prohibit cards) that need to be removed from the IslandGroup and put
      * back on the "Herbalist" card
@@ -460,107 +516,85 @@ class GameModel implements Game {
             }
         }
 
+        if (islandsManager.getNumIslandGroups() <= 3)
+            calculateWinners();
+
         return numBlocks;
     }
 
     /**
-     * the method starts the Game and selects the first Player
-     */
-    public void startGame(){
-        if(gameState.equals(GameState.INITIALIZED)) {
-            int i = ThreadLocalRandom.current().nextInt(0, preset.getPlayersNumber());
-            playersManager.setFirstPlayer(i);
-            roundManager.nextRound();
-            gameState = GameState.STARTED;
-        }
-        //TODO Throws an exception
-    }
-
-    /**
-     * the method advances the Game to the next round
+     * Advances the Game to the next round.
+     * If it is the last round it checks the winner.
      */
     void nextRound(){
-        roundManager.nextRound();
-        playersManager.calculateClockwiseOrder();
-        playersManager.nextPlayer();
-        roundManager.clearMoves();
-        playersManager.clearAllPlayedCards();
+        if (roundManager.isLastRound()) {
+            calculateWinners();
+        }
+        if (roundManager.getWinners().isEmpty()) {
+            roundManager.nextRound();
+            playersManager.calculateClockwiseOrder();
+            playersManager.nextPlayer();
+            playersManager.clearAllPlayedCards();
+            refillClouds();
+        }
+
     }
 
     /**
-     * the method ends the current action phase and initializes the game for the next preparation phase
+     * Fills the clouds by getting the students from the bag.
+     * If there are no more students this will be the last round.
      */
-    void endActionPhase(){
-        roundManager.nextRound();
-        playersManager.calculateClockwiseOrder();
-        if(roundManager.isLastRound()){
-            checkWinner();
-        }
-        for(Player p: playersManager.getPlayers()){
-            if(p.getHand().size() == 0){
-                checkWinner();
-            }
-        }
-
-
-        for(Cloud c :clouds){
-            for(int i = 0; i < preset.getCloudsNumber();i++){
-                for(int j = 0; j < preset.getCloudCapacity(); j++){
-                    try{
-                        c.addStudent(bag.popRandomStudent(),j);
-                    }
-                    catch (NoSuchElementException e){
-                        roundManager.setLastRound();
-                    }
+    void refillClouds() {
+        for (Cloud c: clouds) {
+            for (int i = 0; i < preset.getCloudCapacity(); i++) {
+                StudentColor s = bag.popRandomStudent();
+                if (s == null) {
+                    roundManager.setLastRound();
+                    return;
                 }
+                c.addStudent(s, i);
             }
         }
-        if(bag.isEmpty())
-            roundManager.setLastRound();
     }
 
     /**
-     * the method checks whether the game is ended and proceeds to establish a winner
+     * Calculates winners by finding who build the most towers. If equal, who has the most professors.
+     * If still equal then there is a draw.
      */
-    void checkWinner(){
-        Player winner = null;
-        int minTower = preset.getTowersNumber() + 1;
-        ArrayList<Player> toCheck = new ArrayList<>();
-        int sup;
-        int profs;
-        if(islandsManager.getNumIslandGroups()<= 3){
-            for(Player p: playersManager.getPlayers()){
-                sup = playersManager.getSchoolBoard(p).getNumTowers();
-                if(sup < minTower){
-                    minTower = sup;
-                }
-            }
-            for(Player p : playersManager.getPlayers()){
-                if(playersManager.getSchoolBoard(p).getNumTowers() == minTower){
-                    toCheck.add(p);
-                }
-            }
-            if(toCheck.size() > 1){
-                profs = 0;
-                for(Player p : toCheck){
-                    if(playersManager.getSchoolBoard(p).getProfessors().size() > profs){
-                        winner = p;
-                    }
-                }
-            }
-            else{ winner = toCheck.get(0);}
-            roundManager.setWinner(winner);
-        }
-        else{
-            for(Player p : playersManager.getPlayers()){
-                if(playersManager.getSchoolBoard(p).getNumTowers() < minTower){
-                    minTower = playersManager.getSchoolBoard(p).getNumTowers();
-                    winner = p;
-                }
-            }
-            roundManager.setWinner(winner);
+    void calculateWinners() {
+        EnumMap<Tower, List<Player>> playersByTower = groupPlayersByTower();
 
+        EnumSet<Tower> winners = EnumSet.noneOf(Tower.class);
+        int minNumTower = preset.getTowersNumber() + 1;
+        for (Map.Entry<Tower, List<Player>> entry: playersByTower.entrySet()) {
+            int numTower = 0;
+            for (Player p: entry.getValue())
+                numTower += playersManager.getSchoolBoard(p).getNumTowers();
+            if (numTower < minNumTower) {
+                minNumTower = numTower;
+                winners = EnumSet.of(entry.getKey());
+            } else if (numTower == minNumTower)
+                winners.add(entry.getKey());
         }
+        if (winners.size() > 1) {
+
+            Map<Integer, EnumSet<Tower>> towersByNumProfs = new HashMap<>();
+            for (Tower t: winners) {
+                int numProfs = 0;
+                for (Player p: playersByTower.get(t))
+                    numProfs += playersManager.getSchoolBoard(p).getProfessors().size();
+                if (towersByNumProfs.containsKey(numProfs))
+                    towersByNumProfs.get(numProfs).add(t);
+                else {
+                    towersByNumProfs.put(numProfs, EnumSet.of(t));
+                }
+            }
+
+            winners = towersByNumProfs.get(Collections.max(towersByNumProfs.keySet()));
+        }
+
+        roundManager.setWinners(winners);
+        gameState = GameState.ENDED;
     }
 
 }

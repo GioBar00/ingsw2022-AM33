@@ -14,11 +14,14 @@ public class Herald extends CharacterCard {
     }
 
     @Override
-    public void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
         for (Map.Entry<StudentColor, List<Integer>> entry: pairs.entrySet()) {
-            effectHandler.calcInfluenceOnIslandGroup(entry.getValue().get(0));
-            additionalCost++;
-            return;
+            if (effectHandler.calcInfluenceOnIslandGroup(entry.getValue().get(0))) {
+                additionalCost++;
+                return true;
+            }
+            return false;
         }
+        return false;
     }
 }

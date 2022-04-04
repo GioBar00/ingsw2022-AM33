@@ -26,18 +26,20 @@ public class Friar extends CharacterCard {
     }
 
     @Override
-    public void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
         for (Map.Entry<StudentColor, List<Integer>> entry: pairs.entrySet()) {
             StudentColor s = entry.getKey();
             if (students.get(s) > 0) {
-                effectHandler.addStudentToIsland(s, entry.getValue().get(0), entry.getValue().get(1));
-                students.put(s, students.get(s) - 1);
-                additionalCost++;
-                s = effectHandler.getStudentFromBag();
-                students.put(s, students.get(s) + 1);
+                if (effectHandler.addStudentToIsland(s, entry.getValue().get(0), entry.getValue().get(1))) {
+                    students.replace(s, students.get(s) - 1);
+                    additionalCost++;
+                    s = effectHandler.getStudentFromBag();
+                    students.replace(s, students.get(s) + 1);
+                }
             }
-            return;
+            return false;
         }
+        return false;
     }
 
     @Override

@@ -16,21 +16,21 @@ public interface Game {
     GameMode getGameMode();
     GameState getGameState();
     int getAvailablePlayerSlots();
-    void addPlayer(String nickname) throws NoPermissionException, NameAlreadyBoundException;
-    void initializeGame() throws NoPermissionException;
-    void startGame();
-    void playAssistantCard(AssistantCard assistantCard) throws Exception;
-    void moveStudentToHall(int entranceIndex)  throws Exception;
-    void moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) throws Exception;
-    void moveMotherNature(int num) throws LimitExceededException;
-    void getStudentsFromCloud(int cloudIndex) throws LimitExceededException;
+    boolean addPlayer(String nickname);
+    boolean initializeGame();
+    boolean startGame();
+    boolean playAssistantCard(AssistantCard assistantCard);
+    boolean moveStudentToHall(int entranceIndex);
+    boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex);
+    boolean moveMotherNature(int num);
+    boolean getStudentsFromCloud(int cloudIndex);
 
 
-    default void activateCharacterCard(int index) throws Exception {
-        throw new Exception();
+    default boolean activateCharacterCard(int index) {
+        return false;
     }
 
-    default void applyEffect(EnumMap<StudentColor, List<Integer>> pairs) throws Exception {
-        throw new Exception();
+    default boolean applyEffect(EnumMap<StudentColor, List<Integer>> pairs) {
+        return false;
     }
 }

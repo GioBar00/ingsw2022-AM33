@@ -30,7 +30,7 @@ public abstract class CharacterCard {
 
     public void initialize(EffectHandler effectHandler) {}
 
-    public abstract void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs);
+    public abstract boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs);
 
     public void endEffect(EffectHandler effectHandler) {}
 

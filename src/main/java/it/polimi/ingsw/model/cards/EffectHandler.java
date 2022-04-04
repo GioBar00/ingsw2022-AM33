@@ -2,7 +2,6 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enums.StudentColor;
 
-import javax.naming.LimitExceededException;
 import java.util.EnumMap;
 
 public interface EffectHandler {
@@ -17,8 +16,9 @@ public interface EffectHandler {
      * @param s student to add
      * @param islandGroupIndex index of the island group.
      * @param islandIndex index of the island in the island group.
+     * @return if the add was successful.
      */
-    void addStudentToIsland(StudentColor s, int islandGroupIndex, int islandIndex);
+    boolean addStudentToIsland(StudentColor s, int islandGroupIndex, int islandIndex);
 
     /**
      * Moves the professors to the current player if it has the same number of student in the hall of the current owner.
@@ -35,8 +35,9 @@ public interface EffectHandler {
     /**
      * Calculates the influence on an island group.
      * @param islandGroupIndex index of the island group.
+     * @return if the calcInfluence when well.
      */
-    void calcInfluenceOnIslandGroup(int islandGroupIndex);
+    boolean calcInfluenceOnIslandGroup(int islandGroupIndex);
 
     /**
      * Adds additional movements to the maximum movement of mother nature.
@@ -48,7 +49,7 @@ public interface EffectHandler {
      * Blocks and island group.
      * @param islandGroupIndex island group index to block.
      */
-    void blockIslandGroup(int islandGroupIndex);
+    boolean blockIslandGroup(int islandGroupIndex);
 
     /**
      * Ignores the towers when calculating influence this turn.
@@ -61,13 +62,14 @@ public interface EffectHandler {
      * @param entranceIndex index of the entrance.
      * @return student at entranceIndex.
      */
-    StudentColor getStudentFromEntrance(int entranceIndex);
+    StudentColor popStudentFromEntrance(int entranceIndex);
 
     /**
      * Adds a student to the entrance of current player's school board.
      * @param entranceIndex index of the entrance.
+     * @return if the student was added successfully.
      */
-    void addStudentOnEntrance(StudentColor s, int entranceIndex) throws LimitExceededException;
+    boolean addStudentOnEntrance(StudentColor s, int entranceIndex);
 
     /**
      * Adds additional influence when calculating influence this turn.
@@ -85,14 +87,16 @@ public interface EffectHandler {
     /**
      * Removes a student from the current player's hall.
      * @param s student color to remove.
+     * @return if the remove was successful.
      */
-    void removeStudentFromHall(StudentColor s);
+    boolean removeStudentFromHall(StudentColor s);
 
     /**
      * Adds a student to the current player's hall.
      * @param s student color to add.
+     * @return if the add was successful.
      */
-    void addStudentToHall(StudentColor s) throws LimitExceededException;
+    boolean addStudentToHall(StudentColor s);
 
     /**
      * Tries to remove the ideal amount of students from the hall of all players and puts them back in the bag.

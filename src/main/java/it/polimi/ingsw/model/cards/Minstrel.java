@@ -16,16 +16,18 @@ public class Minstrel extends CharacterCard {
     }
 
     @Override
-    public void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
+        //FIXME: fix, check
         Set<Map.Entry<StudentColor, List<Integer>>> entrySet = pairs.entrySet();
         int num = 0;
         for (Map.Entry<StudentColor, List<Integer>> entry: entrySet) {
             num += entry.getValue().size();
         }
         if (num > 3)
-            return;
+            return false;
+
         for (Map.Entry<StudentColor, List<Integer>> entry: entrySet) {
-            StudentColor s = effectHandler.getStudentFromEntrance(entry.getValue().get(0));
+            StudentColor s = effectHandler.popStudentFromEntrance(entry.getValue().get(0));
             try {
                 try {
                     effectHandler.addStudentToHall(s);
@@ -37,5 +39,6 @@ public class Minstrel extends CharacterCard {
 
         }
         additionalCost++;
+        return false;
     }
 }

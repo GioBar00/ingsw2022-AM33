@@ -13,9 +13,10 @@ public class Knight extends CharacterCard {
     }
 
     @Override
-    public void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
         effectHandler.addAdditionalInfluence(2);
         additionalCost++;
+        return true;
     }
 
     @Override

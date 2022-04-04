@@ -13,9 +13,10 @@ public class Centaur extends CharacterCard {
     }
 
     @Override
-    public void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
         effectHandler.ignoreTowers(true);
         additionalCost++;
+        return true;
     }
 
     @Override

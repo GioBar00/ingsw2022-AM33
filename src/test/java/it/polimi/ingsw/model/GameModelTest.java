@@ -9,8 +9,6 @@ import javax.naming.LimitExceededException;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NoPermissionException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -412,7 +410,7 @@ class GameModelTest {
         } catch (Exception e) {
             fail();
         }
-        m1.endActionPhase();
+        m1.endRound();
         assertEquals(curr,m1.roundManager.getWinner());
 
 
@@ -443,10 +441,10 @@ class GameModelTest {
             for(Cloud c : m2.clouds){
                 c.popStudents();
             }
-            m2.endActionPhase();
+            m2.endRound();
         }
         while(!m2.bag.isEmpty());
-        m2.endActionPhase();
+        m2.endRound();
         assertEquals(curr,m2.roundManager.getWinner());
 
     }

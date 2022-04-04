@@ -15,9 +15,10 @@ public class Farmer extends CharacterCard {
     }
 
     @Override
-    public void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
         original = effectHandler.tryGiveProfsToCurrPlayer();
         additionalCost++;
+        return true;
     }
 
     @Override
