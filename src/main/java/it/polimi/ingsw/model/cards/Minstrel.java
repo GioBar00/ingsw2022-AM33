@@ -38,6 +38,7 @@ public class Minstrel extends CharacterCard {
                 effectHandler.removeStudentFromHall(s);
                 effectHandler.addStudentToHall(onEntrance);
             }
+            additionalCost++;
             appliedEffect = true;
             return true;
         }

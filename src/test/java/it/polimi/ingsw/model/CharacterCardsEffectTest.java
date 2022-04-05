@@ -365,16 +365,58 @@ class CharacterCardsEffectTest {
         testEffectForNullAndEmptyPair(jester);
         testEffectForNullAndEmptyList(jester, s);
 
-        //TODO
-        
-    }
+        SchoolBoard sb = gme.model.playersManager.getSchoolBoard();
+        for (int i = 0; i < sb.getEntranceCapacity(); i++) {
+            sb.removeFromEntrance(i);
+        }
+        sb.addToEntrance(StudentColor.GREEN);
+        sb.addToEntrance(StudentColor.BLUE);
+        sb.addToEntrance(StudentColor.RED);
+        sb.addToEntrance(StudentColor.BLUE);
+        sb.addToEntrance(StudentColor.YELLOW);
+        sb.addToEntrance(StudentColor.RED);
 
-    /**
-     * @return a random student color.
-     */
-    StudentColor getRandomStudentColor() {
-        StudentColor[] values = StudentColor.values();
-        return values[ThreadLocalRandom.current().nextInt(0, values.length)];
+        LinkedPairList<StudentColor, List<Integer>> pairs = new LinkedPairList<>();
+        // test with one move
+        pairs.add(new Pair<>(students.get(0), List.of(0)));
+        assertTrue(jester.applyEffect(gme, pairs));
+        pairs.clear();
+        // test with two moves
+        pairs.add(new Pair<>(students.get(1), List.of(1)));
+        pairs.add(new Pair<>(students.get(2), List.of(2)));
+        assertTrue(jester.applyEffect(gme, pairs));
+        pairs.clear();
+        // test with three moves
+        pairs.add(new Pair<>(students.get(3), List.of(3)));
+        pairs.add(new Pair<>(students.get(4), List.of(4)));
+        pairs.add(new Pair<>(students.get(5), List.of(5)));
+        assertTrue(jester.applyEffect(gme, pairs));
+        pairs.clear();
+
+        for (int i = 0; i < sb.getEntranceCapacity(); i++) {
+            sb.removeFromEntrance(i);
+        }
+        sb.addToEntrance(StudentColor.PINK);
+        sb.addToEntrance(StudentColor.RED);
+        sb.addToEntrance(StudentColor.GREEN);
+
+        initialStudents = jester.getStudents();
+        // test with four moves
+        pairs.add(new Pair<>(StudentColor.GREEN, List.of(2)));
+        pairs.add(new Pair<>(StudentColor.GREEN, List.of(2)));
+        pairs.add(new Pair<>(StudentColor.GREEN, List.of(2)));
+        pairs.add(new Pair<>(StudentColor.GREEN, List.of(2)));
+        assertFalse(jester.applyEffect(gme, pairs));
+        checkStudentsAreEqual(initialStudents, jester.getStudents());
+        pairs.clear();
+        // test invalid move sequence
+        pairs.add(new Pair<>(StudentColor.YELLOW, List.of(2)));
+        pairs.add(new Pair<>(StudentColor.YELLOW, List.of(0)));
+        assertFalse(jester.applyEffect(gme, pairs));
+        checkStudentsAreEqual(initialStudents, jester.getStudents());
+        pairs.clear();
+
+        assertEquals(3, jester.getAdditionalCost());
     }
 
     /**
@@ -388,17 +430,17 @@ class CharacterCardsEffectTest {
         SchoolBoard sb = gme.model.playersManager.getSchoolBoard();
         for (StudentColor s: StudentColor.values())
             sb.tryRemoveFromHall(s, 10);
+        for (int i = 0; i < 10; i++)
+            sb.addToHall(StudentColor.PINK);
 
         sb.addToHall(StudentColor.BLUE);
         LinkedPairList<StudentColor, List<Integer>> pairs = new LinkedPairList<>();
-        LinkedList<Integer> second = new LinkedList<>();
 
         testEffectForNullAndEmptyPair(minstrel);
         testEffectForNullAndEmptyList(minstrel, StudentColor.BLUE);
 
         for (int i = 0; i < sb.getEntranceCapacity(); i++) {
             sb.removeFromEntrance(i);
-            //sb.addToEntrance(getRandomStudentColor(), i);
         }
         sb.addToEntrance(StudentColor.GREEN);
         sb.addToEntrance(StudentColor.BLUE);
@@ -407,30 +449,49 @@ class CharacterCardsEffectTest {
         sb.addToEntrance(StudentColor.YELLOW);
 
         // test invalid student in hall
-        second.add(0);
-        pairs.add(new Pair<>(StudentColor.RED, second));
+        pairs.add(new Pair<>(StudentColor.RED, List.of(0)));
         assertFalse(minstrel.applyEffect(gme, pairs));
         pairs.clear();
-        second.clear();
 
         // test invalid entrance index
-        second.add(5);
-        pairs.add(new Pair<>(StudentColor.BLUE, second));
+        pairs.add(new Pair<>(StudentColor.BLUE, List.of(5)));
         assertFalse(minstrel.applyEffect(gme, pairs));
         pairs.clear();
-        second.clear();
 
 
         EnumMap<StudentColor, Integer> initialHall = gme.getHall();
         // test over max size
-        pairs.add(new Pair<>(StudentColor.BLUE, second));
-        pairs.add(new Pair<>(StudentColor.BLUE, second));
-        pairs.add(new Pair<>(StudentColor.BLUE, second));
+        pairs.add(new Pair<>(StudentColor.PINK, List.of(0)));
+        pairs.add(new Pair<>(StudentColor.PINK, List.of(0)));
+        pairs.add(new Pair<>(StudentColor.PINK, List.of(0)));
         assertFalse(minstrel.applyEffect(gme, pairs));
         checkStudentsAreEqual(initialHall, gme.getHall());
         pairs.clear();
         // test invalid second move
-        //TODO
+        pairs.add(new Pair<>(StudentColor.BLUE, List.of(0)));
+        pairs.add(new Pair<>(StudentColor.YELLOW, List.of(0)));
+        assertFalse(minstrel.applyEffect(gme, pairs));
+        checkStudentsAreEqual(initialHall, gme.getHall());
+        pairs.clear();
+
+        pairs.add(new Pair<>(StudentColor.BLUE, List.of(0)));
+        pairs.add(new Pair<>(StudentColor.PINK, List.of(5)));
+        assertFalse(minstrel.applyEffect(gme, pairs));
+        checkStudentsAreEqual(initialHall, gme.getHall());
+        pairs.clear();
+        // test valid effect
+        pairs.add(new Pair<>(StudentColor.PINK, List.of(0)));
+        pairs.add(new Pair<>(StudentColor.GREEN, List.of(0)));
+        assertTrue(minstrel.applyEffect(gme, pairs));
+        checkStudentsAreEqual(initialHall, gme.getHall());
+        pairs.clear();
+        // test valid effect with only one move
+        pairs.add(new Pair<>(StudentColor.PINK, List.of(4)));
+        assertTrue(minstrel.applyEffect(gme, pairs));
+        assertEquals(1, gme.getStudentsInHall(StudentColor.YELLOW));
+        assertEquals(initialHall.get(StudentColor.PINK) - 1, gme.getStudentsInHall(StudentColor.PINK));
+
+        assertEquals(2, minstrel.getAdditionalCost());
     }
 
     /**

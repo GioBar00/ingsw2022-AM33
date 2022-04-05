@@ -56,6 +56,7 @@ public class Jester extends CharacterCard {
                 students.put(s, students.get(s) - 1);
                 students.put(onEntrance, students.get(onEntrance) + 1);
             }
+            additionalCost++;
             appliedEffect = true;
             return true;
         }
