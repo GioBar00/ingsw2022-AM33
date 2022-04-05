@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.player;
 
+import it.polimi.ingsw.enums.GamePreset;
 import it.polimi.ingsw.enums.StudentColor;
 import it.polimi.ingsw.enums.Tower;
 import org.junit.jupiter.api.Test;
@@ -179,6 +180,23 @@ class SchoolBoardTest {
         assertEquals(0,s.getStudentsInHall(StudentColor.RED));
         assertEquals(0,s.getStudentsInHall(StudentColor.YELLOW));
 
+        SchoolBoard s1 = new SchoolBoard(GamePreset.FOUR.getEntranceCapacity(), Tower.BLACK,0);
+        for (int i = 0; i < GamePreset.FOUR.getEntranceCapacity(); i++) {
+            s1.addToEntrance(StudentColor.BLUE);
+        }
+        assertFalse(s1.addToEntrance(StudentColor.BLUE));
+
+        assertFalse(s1.addToEntrance(StudentColor.BLUE, GamePreset.FOUR.getEntranceCapacity()));
+        assertFalse(s1.addToEntrance(StudentColor.BLUE, 0));
+
+        assertFalse(s1.removeFromEntrance(-1));
+        assertFalse(s1.removeFromEntrance(GamePreset.FOUR.getEntranceCapacity()));
+
+        assertFalse(s1.moveToHall(-1));
+        assertFalse(s1.moveToHall(GamePreset.FOUR.getEntranceCapacity()));
+
+        assertTrue(s1.removeFromEntrance(0));
+        assertFalse(s1.moveToHall(0));
     }
 
 }

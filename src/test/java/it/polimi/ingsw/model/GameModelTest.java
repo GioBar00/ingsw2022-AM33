@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.enums.*;
 import it.polimi.ingsw.model.islands.Island;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.util.LinkedPairList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -17,6 +18,15 @@ class GameModelTest {
     GameModel model;
     int fMotherNature = 0;
 
+    /**
+     * Tests the return value for the Game interface if the match is not expert.
+     */
+    @Test
+    void interfaceTesting(){
+        Game m = new GameModel(GamePreset.THREE);
+        assertFalse(m.activateCharacterCard(4));
+        assertFalse(m.applyEffect(new LinkedPairList<>()));
+    }
     /**
      * Test the creation of a three payers game and the setting up of the match
      */
@@ -333,13 +343,15 @@ class GameModelTest {
         assertTrue(m1.addPlayer("3"));
 
         assertTrue(m1.initializeGame());
+        m1.gameState = GameState.STARTED;
+        m1.roundManager.nextRound();
         assertTrue(m1.playersManager.getSchoolBoard().removeTowers(5));
 
         for(AssistantCard a : AssistantCard.values()) {
             if (!a.equals(AssistantCard.TEN))
                 m1.playersManager.currentPlayerPlayed(a);
         }
-
+        assertTrue(true);
         assertTrue(m1.playAssistantCard(AssistantCard.TEN));
 
         m1.nextRound();

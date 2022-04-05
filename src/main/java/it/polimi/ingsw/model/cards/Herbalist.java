@@ -80,4 +80,5 @@ public class Herbalist extends CharacterCard {
     public int getNumBlocks() {
         return numBlocks;
     }
+
 }

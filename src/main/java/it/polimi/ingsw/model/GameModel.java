@@ -141,7 +141,7 @@ class GameModel implements Game {
      * @return if the card was played successfully.
      */
     public boolean playAssistantCard(AssistantCard assistantCard) {
-        if (gameState != GameState.STARTED && roundManager.getGamePhase() != GamePhase.PLANNING)
+        if (gameState != GameState.STARTED || roundManager.getGamePhase() != GamePhase.PLANNING)
             return false;
 
         ArrayList<AssistantCard> played = new ArrayList<>();
@@ -495,7 +495,7 @@ class GameModel implements Game {
         int previous = Math.floorMod(islandGroupIndex - 1, islandsManager.getNumIslandGroups());
         int next = Math.floorMod(islandGroupIndex + 1, islandsManager.getNumIslandGroups());
 
-        bothBlocked = islandsManager.getIslandGroup(islandGroupIndex).isBlocked() && islandsManager.getIslandGroup(next).isBlocked();
+        bothBlocked = islandsManager.getIslandGroup(previous).isBlocked() && islandsManager.getIslandGroup(next).isBlocked();
 
         if (islandsManager.checkMergeNext(islandGroupIndex)) {
             if (bothBlocked)

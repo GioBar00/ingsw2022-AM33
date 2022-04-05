@@ -168,9 +168,9 @@ class GameModelExpert implements Game, EffectHandler {
         if (characterCardActivating != null)
             return false;
 
-        if (model.moveStudentToHall(entranceIndex)) {
-            Player p = model.playersManager.getCurrentPlayer();
-            StudentColor sc = model.playersManager.getSchoolBoard(p).getStudentInEntrance(entranceIndex);
+        Player p = model.playersManager.getCurrentPlayer();
+        StudentColor sc = model.playersManager.getSchoolBoard(p).getStudentInEntrance(entranceIndex);
+        if (sc != null && model.moveStudentToHall(entranceIndex)) {
 
             if (model.playersManager.getSchoolBoard(p).getStudentsInHall(sc) % 3 == 0) {
                 if (reserve > 0) {
@@ -178,6 +178,7 @@ class GameModelExpert implements Game, EffectHandler {
                     reserve--;
                 }
             }
+            return true;
         }
         return false;
     }
