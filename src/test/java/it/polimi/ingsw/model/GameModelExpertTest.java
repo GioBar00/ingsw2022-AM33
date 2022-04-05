@@ -18,26 +18,26 @@ class GameModelExpertTest {
 
     /**
      * Tests the simulation of an expert game. Stress out the correct
-     * @param prst Game Presets
+     * @param preset Game Presets
      */
     @ParameterizedTest
     @EnumSource(value = GamePreset.class, names = {"TWO", "THREE"})
-    void GameModelTestCreation(GamePreset prst) {
-        GameModel gameModel = new GameModel(prst);
+    void GameModelTestCreation(GamePreset preset) {
+        GameModel gameModel = new GameModel(preset);
         GameModelExpert m = new GameModelExpert(gameModel);
 
         assertEquals(GameMode.EXPERT, m.getGameMode());
         assertEquals(20, m.reserve);
         assertFalse(m.initializeGame());
-        for (int i = 0; i < prst.getPlayersNumber(); i++) {
+        for (int i = 0; i < preset.getPlayersNumber(); i++) {
             String nick = Integer.toString(i);
             assertTrue(m.addPlayer(nick));
-            assertEquals(prst.getPlayersNumber() - i - 1, m.getAvailablePlayerSlots());
+            assertEquals(preset.getPlayersNumber() - i - 1, m.getAvailablePlayerSlots());
         }
 
         assertFalse(m.addPlayer(":("));
 
-        int currentReserve = 20 - prst.getPlayersNumber();
+        int currentReserve = 20 - preset.getPlayersNumber();
 
         assertEquals(GameState.UNINITIALIZED, m.getGameState());
         assertFalse(m.startGame());
@@ -48,9 +48,9 @@ class GameModelExpertTest {
         assertTrue(m.startGame());
         assertEquals(GameState.STARTED, m.getGameState());
 
-        ArrayList<AssistantCard> played = new ArrayList<>(prst.getPlayersNumber());
+        ArrayList<AssistantCard> played = new ArrayList<>(preset.getPlayersNumber());
         ArrayList<AssistantCard> available = new ArrayList<>(Arrays.asList(AssistantCard.values()));
-        for (int i = 0; i < prst.getPlayersNumber(); i++) {
+        for (int i = 0; i < preset.getPlayersNumber(); i++) {
            do {
                 int sel = ThreadLocalRandom.current().nextInt(0, available.size());
                 if (!played.contains(available.get(sel))) {
@@ -71,19 +71,19 @@ class GameModelExpertTest {
             }
         } while (true);
 
-        for (int i = 0; i < prst.getEntranceCapacity(); i++) {
+        for (int i = 0; i < preset.getEntranceCapacity(); i++) {
             assertNotNull(m.popStudentFromEntrance(i));
             assertTrue(m.addStudentOnEntrance(StudentColor.BLUE, i));
         }
         assertFalse(m.moveMotherNature(1));
-        for (int i = 0; i < prst.getMaxNumMoves(); i++) {
+        for (int i = 0; i < preset.getMaxNumMoves(); i++) {
             assertTrue(m.moveStudentToHall(i));
         }
         assertNull(m.popStudentFromEntrance(0));
 
         currentReserve--;
         assertEquals(currentReserve, m.reserve);
-        assertFalse(m.moveStudentToHall(prst.getEntranceCapacity() - 1));
+        assertFalse(m.moveStudentToHall(preset.getEntranceCapacity() - 1));
 
         int firstMotherNature = gameModel.motherNatureIndex;
         Tower expected = gameModel.playersManager.getSchoolBoard().getTower();
@@ -92,11 +92,11 @@ class GameModelExpertTest {
         assertTrue(m.moveMotherNature(1));
         assertTrue(m.getStudentsFromCloud(0));
 
-        for (int i = 0; i < prst.getEntranceCapacity(); i++) {
+        for (int i = 0; i < preset.getEntranceCapacity(); i++) {
             assertTrue(gameModel.playersManager.getSchoolBoard().removeFromEntrance(i));
             assertTrue(gameModel.playersManager.getSchoolBoard().addToEntrance(StudentColor.BLUE));
         }
-        for (int i = 0; i < prst.getMaxNumMoves(); i++) {
+        for (int i = 0; i < preset.getMaxNumMoves(); i++) {
             assertTrue(m.moveStudentToIsland(i, firstMotherNature));
         }
         gameModel.motherNatureIndex = (firstMotherNature + 11) % 12;
@@ -106,7 +106,7 @@ class GameModelExpertTest {
         assertFalse(m.getStudentsFromCloud(0));
         assertTrue(m.getStudentsFromCloud(1));
 
-        if (prst.equals(GamePreset.THREE)) {
+        if (preset.equals(GamePreset.THREE)) {
             Map<Player, Integer> oldValues = new HashMap<>();
             for (Player p : gameModel.playersManager.getPlayers()) {
                 oldValues.put(p, gameModel.playersManager.getSchoolBoard(p).getStudentsInHall(StudentColor.BLUE));
