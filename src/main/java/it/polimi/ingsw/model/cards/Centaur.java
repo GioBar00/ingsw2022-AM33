@@ -4,8 +4,6 @@ import it.polimi.ingsw.enums.CharacterType;
 import it.polimi.ingsw.enums.StudentColor;
 import it.polimi.ingsw.util.LinkedPairList;
 
-import java.util.List;
-
 /**
  * Centaur character card.
  */
@@ -25,7 +23,7 @@ public class Centaur extends CharacterCard {
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
         effectHandler.ignoreTowers(true);
         additionalCost++;
         appliedEffect = true;

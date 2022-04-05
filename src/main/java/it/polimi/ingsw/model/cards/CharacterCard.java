@@ -72,7 +72,7 @@ public abstract class CharacterCard {
      * @param pairs parameters for the effect.
      * @return if the effect was applied.
      */
-    public abstract boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs);
+    public abstract boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs);
 
     /**
      * Ends the effect of the character card.
@@ -118,19 +118,16 @@ public abstract class CharacterCard {
      * @param copy of the students to modify.
      * @return if the moves are valid.
      */
-    boolean areMovesValid(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs, int maxSize, EnumMap<StudentColor, Integer> copy) {
+    boolean areMovesValid(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs, int maxSize, EnumMap<StudentColor, Integer> copy) {
         if (pairs == null || pairs.size() == 0 || pairs.size() > maxSize)
             return false;
         List<StudentColor> entrance = effectHandler.getStudentsInEntrance();
 
-        for (Pair<StudentColor, List<Integer>> pair: pairs) {
+        for (Pair<StudentColor, Integer> pair: pairs) {
             StudentColor s = pair.getFirst();
             if (s == null || copy.get(s) <= 0)
                 return false;
-            List<Integer> second = pair.getSecond();
-            if (second == null || second.size() != 1)
-                return false;
-            Integer index = second.get(0);
+            Integer index = pair.getSecond();
             if (index == null || index < 0 || index >= entrance.size())
                 return false;
             StudentColor onEntrance = entrance.get(index);

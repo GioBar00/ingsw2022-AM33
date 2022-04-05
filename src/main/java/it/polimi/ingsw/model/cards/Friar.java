@@ -6,7 +6,6 @@ import it.polimi.ingsw.util.LinkedPairList;
 import it.polimi.ingsw.util.Pair;
 
 import java.util.EnumMap;
-import java.util.List;
 
 /**
  * Friar character card.
@@ -47,14 +46,12 @@ public class Friar extends CharacterCard {
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
-        for (Pair<StudentColor, List<Integer>> pair: pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
+        for (Pair<StudentColor, Integer> pair: pairs) {
             StudentColor s = pair.getFirst();
-            List<Integer> second = pair.getSecond();
-            if (s != null && students.get(s) > 0 && second != null && second.size() >= 2) {
-                Integer n1 = second.get(0);
-                Integer n2 = second.get(1);
-                if (n1 != null && n2 != null && effectHandler.addStudentToIsland(s, n1, n2)) {
+            Integer islandGroupIndex = pair.getSecond();
+            if (s != null && students.get(s) > 0 && islandGroupIndex != null) {
+                if (effectHandler.addStudentToIsland(s, islandGroupIndex)) {
                     students.put(s, students.get(s) - 1);
                     additionalCost++;
                     s = effectHandler.getStudentFromBag();

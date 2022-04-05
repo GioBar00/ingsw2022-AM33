@@ -51,7 +51,7 @@ class CharacterCardsEffectTest {
      * @param card to test.
      */
     void testEffectForNullAndEmptyPair(CharacterCard card) {
-        LinkedPairList<StudentColor, List<Integer>> pairs = new LinkedPairList<>();
+        LinkedPairList<StudentColor, Integer> pairs = new LinkedPairList<>();
 
         // test empty pairs
         assertFalse(card.applyEffect(gme, pairs));
@@ -66,8 +66,8 @@ class CharacterCardsEffectTest {
      * Tests for empty and null values of the list with null as the first element of the pair.
      * @param card to test.
      */
-    void testEffectForNullAndEmptyList(CharacterCard card) {
-        testEffectForNullAndEmptyList(card, null);
+    void testEffectForNullAndInvalidInteger(CharacterCard card) {
+        testEffectForNullAndInvalidInteger(card, null);
     }
 
     /**
@@ -75,16 +75,14 @@ class CharacterCardsEffectTest {
      * @param card to test.
      * @param valid value.
      */
-    void testEffectForNullAndEmptyList(CharacterCard card, StudentColor valid) {
-        LinkedPairList<StudentColor, List<Integer>> pairs = new LinkedPairList<>();
-        LinkedList<Integer> second = new LinkedList<>();
-        
-        // test null list
+    void testEffectForNullAndInvalidInteger(CharacterCard card, StudentColor valid) {
+        LinkedPairList<StudentColor, Integer> pairs = new LinkedPairList<>();
+        // test null integer
         pairs.add(new Pair<>(valid, null));
         assertFalse(card.applyEffect(gme, pairs));
         pairs.clear();
-        // test empty list
-        pairs.add(new Pair<>(valid, second));
+        // test invalid
+        pairs.add(new Pair<>(valid, -1));
         assertFalse(card.applyEffect(gme, pairs));
         pairs.clear();
     }
@@ -125,7 +123,7 @@ class CharacterCardsEffectTest {
      */
     @Test
     void centaurEffectTest() {
-        Centaur centaur = new Centaur();
+        CharacterCard centaur = new Centaur();
         initializeCharacterCardOnGameModel(centaur);
 
         gme.skipTowers = false;
@@ -142,7 +140,7 @@ class CharacterCardsEffectTest {
      */
     @Test
     void farmerEffectTest() {
-        Farmer farmer = new Farmer();
+        CharacterCard farmer = new Farmer();
         initializeCharacterCardOnGameModel(farmer);
 
         Player current = gme.model.playersManager.getCurrentPlayer();
@@ -200,7 +198,7 @@ class CharacterCardsEffectTest {
      */
     @Test
     void friarEffectTest() {
-        Friar friar = new Friar();
+        CharacterCard friar = new Friar();
         initializeCharacterCardOnGameModel(friar);
 
         // gets students on friar
@@ -212,23 +210,16 @@ class CharacterCardsEffectTest {
         }
         assertEquals(4, students.size());
 
-        LinkedPairList<StudentColor, List<Integer>> pairs = new LinkedPairList<>();
-        LinkedList<Integer> second = new LinkedList<>();
+        LinkedPairList<StudentColor, Integer> pairs = new LinkedPairList<>();
+
         StudentColor s = students.get(0);
-        pairs.add(new Pair<>(s, second));
+
         
         testEffectForNullAndEmptyPair(friar);
-        testEffectForNullAndEmptyList(friar, s);
-        // test wrong island group index
-        second.add(-1);
-        second.add(0);
-        assertFalse(friar.applyEffect(gme, pairs));
-        checkStudentsAreEqual(initialStudents, friar.getStudents());
-        second.clear();
+        testEffectForNullAndInvalidInteger(friar, s);
         // test with correct parameters
         int initial = gme.model.islandsManager.getIslandGroup(0).getIslands().get(0).getNumStudents(s);
-        second.add(0);
-        second.add(0);
+        pairs.add(new Pair<>(s, 0));
         assertTrue(friar.applyEffect(gme, pairs));
         // check if student added correctly
         assertEquals(initial + 1, gme.model.islandsManager.getIslandGroup(0).getIslands().get(0).getNumStudents(s));
@@ -245,10 +236,10 @@ class CharacterCardsEffectTest {
      */
     @Test
     void harvesterEffectTest() {
-        Harvester harvester = new Harvester();
+        CharacterCard harvester = new Harvester();
         initializeCharacterCardOnGameModel(harvester);
 
-        LinkedPairList<StudentColor, List<Integer>> pairs = new LinkedPairList<>();
+        LinkedPairList<StudentColor, Integer> pairs = new LinkedPairList<>();
         
         testEffectForNullAndEmptyPair(harvester);
         
@@ -277,20 +268,18 @@ class CharacterCardsEffectTest {
      */
     @Test
     void heraldEffectTest() {
-        Herald herald = new Herald();
+        CharacterCard herald = new Herald();
         initializeCharacterCardOnGameModel(herald);
         
-        testEffectForNullAndEmptyList(herald);
+        testEffectForNullAndInvalidInteger(herald);
 
-        LinkedPairList<StudentColor, List<Integer>> pairs = new LinkedPairList<>();
-        LinkedList<Integer> second = new LinkedList<>();
-        pairs.add(new Pair<>(null, second));
+        LinkedPairList<StudentColor, Integer> pairs = new LinkedPairList<>();
         // test wrong island group index
-        second.add(13);
+        pairs.add(new Pair<>(null, 13));
         assertFalse(herald.applyEffect(gme, pairs));
-        second.clear();
+        pairs.clear();
         // test normal effect
-        second.add(0);
+        pairs.add(new Pair<>(null, 0));
         assertTrue(herald.applyEffect(gme, pairs));
 
         assertEquals(1, herald.getAdditionalCost());
@@ -303,29 +292,31 @@ class CharacterCardsEffectTest {
     void herbalistEffectTest() {
         Herbalist herbalist = new Herbalist();
         initializeCharacterCardOnGameModel(herbalist);
-        
-        testEffectForNullAndEmptyList(herbalist);
 
-        LinkedPairList<StudentColor, List<Integer>> pairs = new LinkedPairList<>();
-        LinkedList<Integer> second = new LinkedList<>();
-        pairs.add(new Pair<>(null, second));
+        assertEquals(4, herbalist.getNumBlocks());
+        
+        testEffectForNullAndInvalidInteger(herbalist);
+
+        LinkedPairList<StudentColor, Integer> pairs = new LinkedPairList<>();
+
         // test wrong island group index
-        second.add(13);
+        pairs.add(new Pair<>(null, 13));
         assertFalse(herbalist.applyEffect(gme, pairs));
-        second.clear();
+        pairs.clear();
         // test normal effect
         for (int i = 0; i < 4; i++) {
             gme.model.islandsManager.getIslandGroup(0).setBlocked(false);
-            second.add(0);
+            pairs.add(new Pair<>(null, 0));
             assertTrue(herbalist.applyEffect(gme, pairs));
             assertTrue(gme.model.islandsManager.getIslandGroup(0).isBlocked());
             assertEquals(i + 1, herbalist.getAdditionalCost());
-            second.clear();
+            assertEquals(4 - i - 1, herbalist.getNumBlocks());
+            pairs.clear();
         }
         // test already blocked
-        second.add(0);
+        pairs.add(new Pair<>(null, 0));
         assertFalse(herbalist.applyEffect(gme, pairs));
-        second.clear();
+        pairs.clear();
         // test no more blocks
         gme.model.islandsManager.getIslandGroup(0).setBlocked(false);
         assertFalse(herbalist.applyEffect(gme, pairs));
@@ -338,7 +329,7 @@ class CharacterCardsEffectTest {
      */
     @Test
     void jesterEffectTest() {
-        Jester jester = new Jester();
+        CharacterCard jester = new Jester();
         initializeCharacterCardOnGameModel(jester);
 
         // gets students on jester
@@ -352,7 +343,7 @@ class CharacterCardsEffectTest {
 
         StudentColor s = students.get(0);
         testEffectForNullAndEmptyPair(jester);
-        testEffectForNullAndEmptyList(jester, s);
+        testEffectForNullAndInvalidInteger(jester, s);
 
         SchoolBoard sb = gme.model.playersManager.getSchoolBoard();
         for (int i = 0; i < sb.getEntranceCapacity(); i++) {
@@ -365,20 +356,20 @@ class CharacterCardsEffectTest {
         sb.addToEntrance(StudentColor.YELLOW);
         sb.addToEntrance(StudentColor.RED);
 
-        LinkedPairList<StudentColor, List<Integer>> pairs = new LinkedPairList<>();
+        LinkedPairList<StudentColor, Integer> pairs = new LinkedPairList<>();
         // test with one move
-        pairs.add(new Pair<>(students.get(0), List.of(0)));
+        pairs.add(new Pair<>(students.get(0), 0));
         assertTrue(jester.applyEffect(gme, pairs));
         pairs.clear();
         // test with two moves
-        pairs.add(new Pair<>(students.get(1), List.of(1)));
-        pairs.add(new Pair<>(students.get(2), List.of(2)));
+        pairs.add(new Pair<>(students.get(1), 1));
+        pairs.add(new Pair<>(students.get(2), 2));
         assertTrue(jester.applyEffect(gme, pairs));
         pairs.clear();
         // test with three moves
-        pairs.add(new Pair<>(students.get(3), List.of(3)));
-        pairs.add(new Pair<>(students.get(4), List.of(4)));
-        pairs.add(new Pair<>(students.get(5), List.of(5)));
+        pairs.add(new Pair<>(students.get(3), 3));
+        pairs.add(new Pair<>(students.get(4), 4));
+        pairs.add(new Pair<>(students.get(5), 5));
         assertTrue(jester.applyEffect(gme, pairs));
         pairs.clear();
 
@@ -391,16 +382,16 @@ class CharacterCardsEffectTest {
 
         initialStudents = jester.getStudents();
         // test with four moves
-        pairs.add(new Pair<>(StudentColor.GREEN, List.of(2)));
-        pairs.add(new Pair<>(StudentColor.GREEN, List.of(2)));
-        pairs.add(new Pair<>(StudentColor.GREEN, List.of(2)));
-        pairs.add(new Pair<>(StudentColor.GREEN, List.of(2)));
+        pairs.add(new Pair<>(StudentColor.GREEN, 2));
+        pairs.add(new Pair<>(StudentColor.GREEN, 2));
+        pairs.add(new Pair<>(StudentColor.GREEN, 2));
+        pairs.add(new Pair<>(StudentColor.GREEN, 2));
         assertFalse(jester.applyEffect(gme, pairs));
         checkStudentsAreEqual(initialStudents, jester.getStudents());
         pairs.clear();
         // test invalid move sequence
-        pairs.add(new Pair<>(StudentColor.YELLOW, List.of(2)));
-        pairs.add(new Pair<>(StudentColor.YELLOW, List.of(0)));
+        pairs.add(new Pair<>(StudentColor.YELLOW, 2));
+        pairs.add(new Pair<>(StudentColor.YELLOW, 0));
         assertFalse(jester.applyEffect(gme, pairs));
         checkStudentsAreEqual(initialStudents, jester.getStudents());
         pairs.clear();
@@ -413,7 +404,7 @@ class CharacterCardsEffectTest {
      */
     @Test
     void minstrelEffectTest() {
-        Minstrel minstrel = new Minstrel();
+        CharacterCard minstrel = new Minstrel();
         initializeCharacterCardOnGameModel(minstrel);
 
         SchoolBoard sb = gme.model.playersManager.getSchoolBoard();
@@ -423,10 +414,10 @@ class CharacterCardsEffectTest {
             sb.addToHall(StudentColor.PINK);
 
         sb.addToHall(StudentColor.BLUE);
-        LinkedPairList<StudentColor, List<Integer>> pairs = new LinkedPairList<>();
+        LinkedPairList<StudentColor, Integer> pairs = new LinkedPairList<>();
 
         testEffectForNullAndEmptyPair(minstrel);
-        testEffectForNullAndEmptyList(minstrel, StudentColor.BLUE);
+        testEffectForNullAndInvalidInteger(minstrel, StudentColor.BLUE);
 
         for (int i = 0; i < sb.getEntranceCapacity(); i++) {
             sb.removeFromEntrance(i);
@@ -438,44 +429,44 @@ class CharacterCardsEffectTest {
         sb.addToEntrance(StudentColor.YELLOW);
 
         // test invalid student in hall
-        pairs.add(new Pair<>(StudentColor.RED, List.of(0)));
+        pairs.add(new Pair<>(StudentColor.RED, 0));
         assertFalse(minstrel.applyEffect(gme, pairs));
         pairs.clear();
 
         // test invalid entrance index
-        pairs.add(new Pair<>(StudentColor.BLUE, List.of(5)));
+        pairs.add(new Pair<>(StudentColor.BLUE, 5));
         assertFalse(minstrel.applyEffect(gme, pairs));
         pairs.clear();
 
 
         EnumMap<StudentColor, Integer> initialHall = gme.getHall();
         // test over max size
-        pairs.add(new Pair<>(StudentColor.PINK, List.of(0)));
-        pairs.add(new Pair<>(StudentColor.PINK, List.of(0)));
-        pairs.add(new Pair<>(StudentColor.PINK, List.of(0)));
+        pairs.add(new Pair<>(StudentColor.PINK, 0));
+        pairs.add(new Pair<>(StudentColor.PINK, 0));
+        pairs.add(new Pair<>(StudentColor.PINK, 0));
         assertFalse(minstrel.applyEffect(gme, pairs));
         checkStudentsAreEqual(initialHall, gme.getHall());
         pairs.clear();
         // test invalid second move
-        pairs.add(new Pair<>(StudentColor.BLUE, List.of(0)));
-        pairs.add(new Pair<>(StudentColor.YELLOW, List.of(0)));
+        pairs.add(new Pair<>(StudentColor.BLUE, 0));
+        pairs.add(new Pair<>(StudentColor.YELLOW, 0));
         assertFalse(minstrel.applyEffect(gme, pairs));
         checkStudentsAreEqual(initialHall, gme.getHall());
         pairs.clear();
 
-        pairs.add(new Pair<>(StudentColor.BLUE, List.of(0)));
-        pairs.add(new Pair<>(StudentColor.PINK, List.of(5)));
+        pairs.add(new Pair<>(StudentColor.BLUE, 0));
+        pairs.add(new Pair<>(StudentColor.YELLOW, 0));
         assertFalse(minstrel.applyEffect(gme, pairs));
         checkStudentsAreEqual(initialHall, gme.getHall());
         pairs.clear();
         // test valid effect
-        pairs.add(new Pair<>(StudentColor.PINK, List.of(0)));
-        pairs.add(new Pair<>(StudentColor.GREEN, List.of(0)));
+        pairs.add(new Pair<>(StudentColor.PINK, 0));
+        pairs.add(new Pair<>(StudentColor.GREEN, 0));
         assertTrue(minstrel.applyEffect(gme, pairs));
         checkStudentsAreEqual(initialHall, gme.getHall());
         pairs.clear();
         // test valid effect with only one move
-        pairs.add(new Pair<>(StudentColor.PINK, List.of(4)));
+        pairs.add(new Pair<>(StudentColor.PINK, 4));
         assertTrue(minstrel.applyEffect(gme, pairs));
         assertEquals(1, gme.getStudentsInHall(StudentColor.YELLOW));
         assertEquals(initialHall.get(StudentColor.PINK) - 1, gme.getStudentsInHall(StudentColor.PINK));
@@ -488,7 +479,7 @@ class CharacterCardsEffectTest {
      */
     @Test
     void knightEffectTest() {
-        Knight knight = new Knight();
+        CharacterCard knight = new Knight();
         initializeCharacterCardOnGameModel(knight);
 
         int initialAdditionalInfluence = gme.additionalInfluence;
@@ -505,7 +496,7 @@ class CharacterCardsEffectTest {
      */
     @Test
     void mailmanEffectTest() {
-        Mailman mailman = new Mailman();
+        CharacterCard mailman = new Mailman();
         initializeCharacterCardOnGameModel(mailman);
 
         int initialAdditionalMotherNatureMovement = gme.additionalMotherNatureMovement;
@@ -522,12 +513,12 @@ class CharacterCardsEffectTest {
      */
     @Test
     void princessEffectTest() {
-        Princess princess = new Princess();
+        CharacterCard princess = new Princess();
         initializeCharacterCardOnGameModel(princess);
 
         testEffectForNullAndEmptyPair(princess);
 
-        LinkedPairList<StudentColor, List<Integer>> pairs = new LinkedPairList<>();
+        LinkedPairList<StudentColor, Integer> pairs = new LinkedPairList<>();
 
         // gets students on princess
         assertTrue(princess.containsStudents());
@@ -574,12 +565,12 @@ class CharacterCardsEffectTest {
      */
     @Test
     void thiefEffectTest() {
-        Thief thief = new Thief();
+        CharacterCard thief = new Thief();
         initializeCharacterCardOnGameModel(thief);
 
         testEffectForNullAndEmptyPair(thief);
 
-        LinkedPairList<StudentColor, List<Integer>> pairs = new LinkedPairList<>();
+        LinkedPairList<StudentColor, Integer> pairs = new LinkedPairList<>();
 
         // test normal effect
         StudentColor s = StudentColor.BLUE;

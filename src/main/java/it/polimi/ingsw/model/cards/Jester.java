@@ -46,13 +46,13 @@ public class Jester extends CharacterCard {
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
         if (areMovesValid(effectHandler, pairs, 3, new EnumMap<>(students))) {
-            for (Pair<StudentColor, List<Integer>> pair: pairs) {
+            for (Pair<StudentColor, Integer> pair: pairs) {
                 StudentColor s = pair.getFirst();
-                List<Integer> second = pair.getSecond();
-                StudentColor onEntrance = effectHandler.popStudentFromEntrance(second.get(0));
-                effectHandler.addStudentOnEntrance(s, second.get(0));
+                Integer entranceIndex = pair.getSecond();
+                StudentColor onEntrance = effectHandler.popStudentFromEntrance(entranceIndex);
+                effectHandler.addStudentOnEntrance(s, entranceIndex);
                 students.put(s, students.get(s) - 1);
                 students.put(onEntrance, students.get(onEntrance) + 1);
             }

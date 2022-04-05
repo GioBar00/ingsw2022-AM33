@@ -6,7 +6,6 @@ import it.polimi.ingsw.util.LinkedPairList;
 import it.polimi.ingsw.util.Pair;
 
 import java.util.EnumMap;
-import java.util.List;
 
 /**
  * Princess character card.
@@ -47,8 +46,8 @@ public class Princess extends CharacterCard {
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
-        for (Pair<StudentColor, List<Integer>> entry: pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
+        for (Pair<StudentColor, Integer> entry: pairs) {
             StudentColor s = entry.getFirst();
             if (s != null && students.get(s) > 0) {
                 if (effectHandler.addStudentToHall(s)) {

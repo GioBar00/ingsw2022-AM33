@@ -5,7 +5,6 @@ import it.polimi.ingsw.enums.StudentColor;
 import it.polimi.ingsw.util.LinkedPairList;
 import it.polimi.ingsw.util.Pair;
 
-import java.util.List;
 
 /**
  * Herald character card.
@@ -27,10 +26,10 @@ public class Herald extends CharacterCard {
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
-        for (Pair<StudentColor, List<Integer>> pair: pairs) {
-            List<Integer> second = pair.getSecond();
-            if (second != null && second.size() > 0 && second.get(0) != null && effectHandler.calcInfluenceOnIslandGroup(second.get(0))) {
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
+        for (Pair<StudentColor, Integer> pair: pairs) {
+            Integer islandGroupIndex = pair.getSecond();
+            if (islandGroupIndex != null && effectHandler.calcInfluenceOnIslandGroup(islandGroupIndex)) {
                 additionalCost++;
                 appliedEffect = true;
                 return true;

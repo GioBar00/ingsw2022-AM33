@@ -271,7 +271,7 @@ class GameModelExpert implements Game, EffectHandler {
      * @return if the effect was applied successfully.
      */
     @Override
-    public boolean applyEffect(LinkedPairList<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(LinkedPairList<StudentColor, Integer> pairs) {
         if (characterCardActivating == null)
             return false;
 
@@ -298,11 +298,10 @@ class GameModelExpert implements Game, EffectHandler {
      *
      * @param s                student to add
      * @param islandGroupIndex index of the island group.
-     * @param islandIndex      index of the island in the island group.
      * @return if the add was successful.
      */
     @Override
-    public boolean addStudentToIsland(StudentColor s, int islandGroupIndex, int islandIndex) {
+    public boolean addStudentToIsland(StudentColor s, int islandGroupIndex) {
         return model.islandsManager.addStudent(s, islandGroupIndex);
     }
 

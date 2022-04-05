@@ -4,7 +4,6 @@ import it.polimi.ingsw.enums.StudentColor;
 import it.polimi.ingsw.enums.Tower;
 import org.junit.jupiter.api.Test;
 
-import javax.naming.LimitExceededException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 

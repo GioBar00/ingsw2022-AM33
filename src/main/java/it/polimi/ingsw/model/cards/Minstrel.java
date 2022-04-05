@@ -5,9 +5,6 @@ import it.polimi.ingsw.enums.StudentColor;
 import it.polimi.ingsw.util.LinkedPairList;
 import it.polimi.ingsw.util.Pair;
 
-import java.util.EnumMap;
-import java.util.List;
-
 /**
  * Minstrel character card.
  */
@@ -28,13 +25,13 @@ public class Minstrel extends CharacterCard {
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
         if (areMovesValid(effectHandler, pairs, 2, effectHandler.getHall())) {
-            for (Pair<StudentColor, List<Integer>> pair: pairs) {
-                int index = pair.getSecond().get(0);
+            for (Pair<StudentColor, Integer> pair: pairs) {
+                int entranceIndex = pair.getSecond();
                 StudentColor s = pair.getFirst();
-                StudentColor onEntrance = effectHandler.popStudentFromEntrance(index);
-                effectHandler.addStudentOnEntrance(s, index);
+                StudentColor onEntrance = effectHandler.popStudentFromEntrance(entranceIndex);
+                effectHandler.addStudentOnEntrance(s, entranceIndex);
                 effectHandler.removeStudentFromHall(s);
                 effectHandler.addStudentToHall(onEntrance);
             }

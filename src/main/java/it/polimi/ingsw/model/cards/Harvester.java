@@ -6,7 +6,6 @@ import it.polimi.ingsw.util.LinkedPairList;
 import it.polimi.ingsw.util.Pair;
 
 import java.util.EnumSet;
-import java.util.List;
 
 /**
  * Harvester character card.
@@ -28,8 +27,8 @@ public class Harvester extends CharacterCard {
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
-        for (Pair<StudentColor, List<Integer>> pair: pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
+        for (Pair<StudentColor, Integer> pair: pairs) {
             StudentColor s = pair.getFirst();
             if (s == null)
                 return false;

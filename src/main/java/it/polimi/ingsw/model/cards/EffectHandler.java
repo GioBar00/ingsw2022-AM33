@@ -20,10 +20,9 @@ public interface EffectHandler {
      * Adds a student to a specific island.
      * @param s student to add
      * @param islandGroupIndex index of the island group.
-     * @param islandIndex index of the island in the island group.
      * @return if the add was successful.
      */
-    boolean addStudentToIsland(StudentColor s, int islandGroupIndex, int islandIndex);
+    boolean addStudentToIsland(StudentColor s, int islandGroupIndex);
 
     /**
      * Moves the professors to the current player if it has the same number of student in the hall of the current owner.

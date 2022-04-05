@@ -5,7 +5,6 @@ import it.polimi.ingsw.enums.StudentColor;
 import it.polimi.ingsw.util.LinkedPairList;
 import it.polimi.ingsw.util.Pair;
 
-import java.util.List;
 
 /**
  * Herbalist character card.
@@ -41,11 +40,11 @@ public class Herbalist extends CharacterCard {
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
-        for (Pair<StudentColor, List<Integer>> pair: pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
+        for (Pair<StudentColor, Integer> pair: pairs) {
             if (numBlocks > 0) {
-                List<Integer> second = pair.getSecond();
-                if (second != null && second.size() > 0 && second.get(0) != null && effectHandler.blockIslandGroup(second.get(0))) {
+                Integer islandGroupIndex = pair.getSecond();
+                if (islandGroupIndex != null && effectHandler.blockIslandGroup(islandGroupIndex)) {
                     additionalCost++;
                     numBlocks--;
                     appliedEffect = true;
@@ -72,5 +71,13 @@ public class Herbalist extends CharacterCard {
     @Override
     public void addNumBlocks(int num) {
         numBlocks += num;
+    }
+
+    /**
+     * For Tests only
+     * @return num of blocks on the card.
+     */
+    public int getNumBlocks() {
+        return numBlocks;
     }
 }

@@ -5,7 +5,6 @@ import it.polimi.ingsw.enums.StudentColor;
 import it.polimi.ingsw.util.LinkedPairList;
 
 import java.util.EnumMap;
-import java.util.List;
 
 /**
  * Farmer character card.
@@ -31,7 +30,7 @@ public class Farmer extends CharacterCard {
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
         original = effectHandler.tryGiveProfsToCurrPlayer();
         additionalCost++;
         appliedEffect = true;

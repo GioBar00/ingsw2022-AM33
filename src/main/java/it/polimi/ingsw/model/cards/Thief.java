@@ -5,8 +5,6 @@ import it.polimi.ingsw.enums.StudentColor;
 import it.polimi.ingsw.util.LinkedPairList;
 import it.polimi.ingsw.util.Pair;
 
-import java.util.List;
-
 /**
  * Thief character card.
  */
@@ -27,8 +25,8 @@ public class Thief extends CharacterCard {
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
-        for (Pair<StudentColor, List<Integer>> pair: pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
+        for (Pair<StudentColor, Integer> pair: pairs) {
             if (pair.getFirst() != null) {
                 effectHandler.tryRemoveStudentsFromHalls(pair.getFirst(), 3);
                 additionalCost++;

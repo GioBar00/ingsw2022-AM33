@@ -6,8 +6,6 @@ import it.polimi.ingsw.enums.GameState;
 import it.polimi.ingsw.enums.StudentColor;
 import it.polimi.ingsw.util.LinkedPairList;
 
-import java.util.List;
-
 /**
  * Game interface. It exposes the methods to change the state of the game.
  */
@@ -98,7 +96,7 @@ public interface Game {
      * @param pairs parameters to use in the effect.
      * @return if the effect was applied successfully.
      */
-    default boolean applyEffect(LinkedPairList<StudentColor, List<Integer>> pairs) {
+    default boolean applyEffect(LinkedPairList<StudentColor, Integer> pairs) {
         return false;
     }
 }
