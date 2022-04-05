@@ -2,37 +2,57 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enums.CharacterType;
 import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.util.LinkedPairList;
+import it.polimi.ingsw.util.Pair;
 
-import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
 
+/**
+ * Harvester character card.
+ */
 public class Harvester extends CharacterCard {
 
-    private final EnumSet<StudentColor> skipStudentColors = EnumSet.noneOf(StudentColor.class);
-
+    /**
+     * Creates harvester
+     */
     public Harvester() {
         super(CharacterType.HARVESTER, 3);
     }
 
+    /**
+     * Applies the effect of the character card if the parameters are correct.
+     * Adds a student color to the ones to skip.
+     * @param effectHandler handler for the effects.
+     * @param pairs parameters for the effect.
+     * @return if the effect was applied.
+     */
     @Override
-    public void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
-        for (Map.Entry<StudentColor, List<Integer>> entry: pairs.entrySet()) {
-            if (skipStudentColors.contains(entry.getKey()))
-                return;
-            skipStudentColors.add(entry.getKey());
-            effectHandler.ignoreStudentColor(entry.getKey(), true);
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
+        for (Pair<StudentColor, Integer> pair: pairs) {
+            StudentColor s = pair.getFirst();
+            if (s == null)
+                return false;
+            EnumSet<StudentColor> skipStudentColors = effectHandler.getSkippedStudentColors();
+            if (skipStudentColors.contains(s))
+                return false;
+            skipStudentColors.add(s);
             additionalCost++;
-            return;
+            appliedEffect = true;
+            return true;
         }
 
+        return false;
     }
 
+    /**
+     * Ends the effect of the character card. It reverts the effect.
+     * @param effectHandler handler for the effects.
+     */
     @Override
     public void endEffect(EffectHandler effectHandler) {
-        for (StudentColor s: skipStudentColors) {
-            effectHandler.ignoreStudentColor(s, false);
+        if (appliedEffect) {
+            effectHandler.getSkippedStudentColors().clear();
+            appliedEffect = false;
         }
     }
 }

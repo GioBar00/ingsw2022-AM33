@@ -20,7 +20,7 @@ class PlayerTest {
     void assistantCardHandling() {
         // check that player can play every card
         for(AssistantCard c: AssistantCard.values()) {
-            p.playAssistantCard(c);
+            assertTrue(p.playAssistantCard(c));
             assertEquals(c,p.getAssistantCard());
             assertFalse(p.getHand().contains(c));
             p.clearPlayedCard();
@@ -31,7 +31,7 @@ class PlayerTest {
         assertNull(p.getAssistantCard());
         // check that there are no more cards to be played
         for(AssistantCard c: AssistantCard.values()) {
-            assertThrows(NoSuchElementException.class, ()-> p.playAssistantCard(c));
+            assertFalse(p.playAssistantCard(c));
         }
     }
 }

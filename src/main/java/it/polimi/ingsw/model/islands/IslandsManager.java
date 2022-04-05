@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 
 public class IslandsManager {
+    /**
+     * array of all islandGroups that are part of the game (at the very beginning they are 12)
+     */
     private final ArrayList<IslandGroup> islandGroups;
 
     public IslandsManager() {
@@ -30,7 +33,7 @@ public class IslandsManager {
      * method returns the size of the ArrayList islandsGroups
      * @return size
      */
-    public int getNumIslandGroups(){
+    public int getNumIslandGroups() {
         return islandGroups.size();
     }
 
@@ -39,7 +42,7 @@ public class IslandsManager {
      * @param index of the IslandGroup
      * @return tower of the IslandGroup
      */
-    public Tower getTower(int index){
+    public Tower getTower(int index) {
         return islandGroups.get(index).getTower();
     }
 
@@ -48,18 +51,22 @@ public class IslandsManager {
      * @param tower: the new tower that will be set on the IslandGroup
      * @param index of the IslandGroup
      */
-    public void setTower(Tower tower, int index){
+    public void setTower(Tower tower, int index) {
         islandGroups.get(index).setTower(tower);
     }
 
     /**
-     * method to add a student on a specific Island inside a specific IslandGroup
+     * method to add a student on a specific Island inside a specific IslandGroup if the indexes are valid.
      * @param s: type of student to be added
      * @param index_group: index of the IslandGroup
-     * @param index_island: index of the Island
+     * @return if the student was added successfully.
      */
-    public void addStudent(StudentColor s, int index_group, int index_island){
-        islandGroups.get(index_group).addStudent(index_island, s);
+    public boolean addStudent(StudentColor s, int index_group) {
+        if (index_group < 0 || index_group >= islandGroups.size())
+            return false;
+
+        islandGroups.get(index_group).addStudent(s);
+        return true;
     }
 
     /**
@@ -69,7 +76,7 @@ public class IslandsManager {
      * @param index of the IslandGroup
      * @return the influence
      */
-    public int calcInfluence(Tower playerTower, EnumSet<StudentColor> professors, int index){
+    public int calcInfluence(Tower playerTower, EnumSet<StudentColor> professors, int index) {
         return islandGroups.get(index).calcInfluence(playerTower, professors);
     }
 
@@ -79,7 +86,7 @@ public class IslandsManager {
      * @param index of the IslandGroup
      * @return the influence
      */
-    public int calcInfluence(EnumSet<StudentColor> professors, int index){
+    public int calcInfluence(EnumSet<StudentColor> professors, int index) {
         return islandGroups.get(index).calcInfluence(professors);
     }
 
@@ -89,7 +96,7 @@ public class IslandsManager {
      * @param index of the current IslandGroup
      * @return true if the merge happens, false otherwise
      */
-    public boolean checkMergePrevious(int index){
+    public boolean checkMergePrevious(int index) {
         int previous;
 
         if(index == 0){
@@ -107,7 +114,7 @@ public class IslandsManager {
      * @param index of the current IslandGroup
      * @return true if the merge happens, false otherwise
      */
-    public boolean checkMergeNext(int index){
+    public boolean checkMergeNext(int index) {
         int next;
 
         if(index == islandGroups.size() - 1){

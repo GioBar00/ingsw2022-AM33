@@ -2,9 +2,13 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enums.StudentColor;
 
-import javax.naming.LimitExceededException;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.EnumSet;
 
+/**
+ * Handler for the effect of the character cards.
+ */
 public interface EffectHandler {
     /**
      * Gets a random student from the bag.
@@ -16,9 +20,9 @@ public interface EffectHandler {
      * Adds a student to a specific island.
      * @param s student to add
      * @param islandGroupIndex index of the island group.
-     * @param islandIndex index of the island in the island group.
+     * @return if the add was successful.
      */
-    void addStudentToIsland(StudentColor s, int islandGroupIndex, int islandIndex);
+    boolean addStudentToIsland(StudentColor s, int islandGroupIndex);
 
     /**
      * Moves the professors to the current player if it has the same number of student in the hall of the current owner.
@@ -35,8 +39,9 @@ public interface EffectHandler {
     /**
      * Calculates the influence on an island group.
      * @param islandGroupIndex index of the island group.
+     * @return if the calcInfluence when well.
      */
-    void calcInfluenceOnIslandGroup(int islandGroupIndex);
+    boolean calcInfluenceOnIslandGroup(int islandGroupIndex);
 
     /**
      * Adds additional movements to the maximum movement of mother nature.
@@ -48,7 +53,7 @@ public interface EffectHandler {
      * Blocks and island group.
      * @param islandGroupIndex island group index to block.
      */
-    void blockIslandGroup(int islandGroupIndex);
+    boolean blockIslandGroup(int islandGroupIndex);
 
     /**
      * Ignores the towers when calculating influence this turn.
@@ -61,13 +66,20 @@ public interface EffectHandler {
      * @param entranceIndex index of the entrance.
      * @return student at entranceIndex.
      */
-    StudentColor getStudentFromEntrance(int entranceIndex);
+    StudentColor popStudentFromEntrance(int entranceIndex);
+
+    /**
+     * Gets the students in the entrance of the current player's school board.
+     * @return the students in the entrance.
+     */
+    ArrayList<StudentColor> getStudentsInEntrance();
 
     /**
      * Adds a student to the entrance of current player's school board.
      * @param entranceIndex index of the entrance.
+     * @return if the student was added successfully.
      */
-    void addStudentOnEntrance(StudentColor s, int entranceIndex) throws LimitExceededException;
+    boolean addStudentOnEntrance(StudentColor s, int entranceIndex);
 
     /**
      * Adds additional influence when calculating influence this turn.
@@ -76,23 +88,35 @@ public interface EffectHandler {
     void addAdditionalInfluence(int num);
 
     /**
-     * Ignores student color when calculating influence this turn.
-     * @param s student color to ignore.
-     * @param ignore ignore student color.
-     */
-    void ignoreStudentColor(StudentColor s, boolean ignore);
-
-    /**
      * Removes a student from the current player's hall.
      * @param s student color to remove.
+     * @return if the remove was successful.
      */
-    void removeStudentFromHall(StudentColor s);
+    boolean removeStudentFromHall(StudentColor s);
 
     /**
      * Adds a student to the current player's hall.
      * @param s student color to add.
+     * @return if the add was successful.
      */
-    void addStudentToHall(StudentColor s) throws LimitExceededException;
+    boolean addStudentToHall(StudentColor s);
+
+    /**
+     * Gets the number of students of a specific color in the hall.
+     * @param s color of the student.
+     * @return number of students in the hall.
+     */
+    int getStudentsInHall(StudentColor s);
+
+    /**
+     * @return the student hall of the current player.
+     */
+    default EnumMap<StudentColor, Integer> getHall() {
+        EnumMap<StudentColor, Integer> hallCopy = new EnumMap<>(StudentColor.class);
+        for (StudentColor s: StudentColor.values())
+            hallCopy.put(s, getStudentsInHall(s));
+        return hallCopy;
+    }
 
     /**
      * Tries to remove the ideal amount of students from the hall of all players and puts them back in the bag.
@@ -101,4 +125,9 @@ public interface EffectHandler {
      * @param idealAmount ideal amount of student to remove from halls.
      */
     void tryRemoveStudentsFromHalls(StudentColor s, int idealAmount);
+
+    /**
+     * @return the current student colors skipped.
+     */
+    EnumSet<StudentColor> getSkippedStudentColors();
 }

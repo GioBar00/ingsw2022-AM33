@@ -28,13 +28,13 @@ public class IslandsManagerTest {
         im.setTower(Tower.BLACK, 10);
         im.setTower(Tower.GREY, 11);
 
-        im.checkMergeNext(10);
-        im.checkMergePrevious(10);
+        assertFalse(im.checkMergeNext(10));
+        assertFalse(im.checkMergePrevious(10));
         // group 10 should not merge with anyone
         assertEquals(12, im.getNumIslandGroups());
 
-        im.checkMergeNext(0);
-        im.checkMergePrevious(0);
+        assertTrue(im.checkMergeNext(0));
+        assertTrue(im.checkMergePrevious(0));
         // group 0 should merge with both 1 and 11
         assertEquals(3, im.getIslandGroup(0).size());
         assertEquals(10, im.getNumIslandGroups());
@@ -58,10 +58,11 @@ public class IslandsManagerTest {
         EnumSet<StudentColor> professors = EnumSet.of(StudentColor.BLUE, StudentColor.GREEN);
 
         for (StudentColor s: StudentColor.values()) {
-            im.getIslandGroup(0).addStudent(0, s);
+            im.getIslandGroup(0).addStudent(s);
         }
 
         im.setTower(Tower.GREY, 0);
+        assertEquals(Tower.GREY, im.getTower(0));
 
         // on the IslandGroup there are students of all types and a grey tower, but the student only has two profs
         // and a different tower
@@ -78,14 +79,14 @@ public class IslandsManagerTest {
 
         // if two island get merged in 1 the IslandManager should return the influence of the whole IslandGroup
         im.setTower(Tower.BLACK, 1);
-        im.checkMergeNext(0);
-        im.checkMergePrevious(0);
+        assertTrue(im.checkMergeNext(0));
+        assertFalse(im.checkMergePrevious(0));
         assertEquals(2, im.getIslandGroup(0).size());
 
         assertEquals(11, im.getNumIslandGroups());
 
         for (StudentColor s: StudentColor.values()) {
-            im.getIslandGroup(0).addStudent(1, s);
+            im.getIslandGroup(0).addStudent(s);
         }
 
         assertEquals(im.calcInfluence(Tower.BLACK, professors, 0), 6);

@@ -2,24 +2,44 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enums.CharacterType;
 import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.util.LinkedPairList;
 
-import java.util.EnumMap;
-import java.util.List;
-
+/**
+ * Knight character card.
+ */
 public class Knight extends CharacterCard {
 
+    /**
+     * Creates knight.
+     */
     public Knight() {
         super(CharacterType.KNIGHT, 2);
     }
 
+    /**
+     * Applies the effect of the character card. It adds 2 influence points this turn.
+     * @param effectHandler handler for the effects.
+     * @param pairs parameters for the effect.
+     * @return if the effect was applied.
+     */
     @Override
-    public void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
         effectHandler.addAdditionalInfluence(2);
         additionalCost++;
+        appliedEffect = true;
+        return true;
     }
 
+    /**
+     * Ends the effect of the character card. It reverts the effect.
+     * @param effectHandler handler for the effects.
+     */
     @Override
     public void endEffect(EffectHandler effectHandler) {
-        effectHandler.addAdditionalInfluence(-2);
+        if (appliedEffect) {
+            effectHandler.addAdditionalInfluence(-2);
+            appliedEffect = false;
+        }
+
     }
 }

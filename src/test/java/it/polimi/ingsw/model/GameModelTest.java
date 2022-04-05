@@ -3,14 +3,12 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.enums.*;
 import it.polimi.ingsw.model.islands.Island;
 import it.polimi.ingsw.model.player.Player;
-import org.junit.jupiter.api.*;
+import it.polimi.ingsw.util.LinkedPairList;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
-import javax.naming.LimitExceededException;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NoPermissionException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,42 +19,40 @@ class GameModelTest {
     int fMotherNature = 0;
 
     /**
+     * Tests the return value for the Game interface if the match is not expert.
+     */
+    @Test
+    void interfaceTesting(){
+        Game m = new GameModel(GamePreset.THREE);
+        assertFalse(m.activateCharacterCard(4));
+        assertFalse(m.applyEffect(new LinkedPairList<>()));
+    }
+    /**
      * Test the creation of a three payers game and the setting up of the match
      */
     @BeforeEach
     void creationTest() {
         model = new GameModel(GamePreset.THREE);
-        assertThrows(NoPermissionException.class, () -> model.initializeGame());
-        try {
-            model.addPlayer("1");
-        } catch (NoPermissionException | NameAlreadyBoundException e) {
-            fail();
-        }
-        assertThrows(NoPermissionException.class, () -> model.initializeGame());
-        try {
-            model.addPlayer("2");
-        } catch (NoPermissionException | NameAlreadyBoundException e) {
-            fail();
-        }
-        assertThrows(NoPermissionException.class, () -> model.initializeGame());
+        assertFalse(model.initializeGame());
+        assertTrue(model.addPlayer("1"));
+
+        assertFalse(model.initializeGame());
+        assertTrue(model.addPlayer("2"));
+        assertFalse(model.initializeGame());
         assertEquals(1, model.getAvailablePlayerSlots());
-        try {
-            model.addPlayer("3");
-        } catch (NoPermissionException | NameAlreadyBoundException e) {
-            fail();
-        }
+        assertTrue(model.addPlayer("3"));
         assertEquals(0, model.getAvailablePlayerSlots());
         assertEquals(GameState.UNINITIALIZED, model.getGameState());
-        try {
-            model.initializeGame();
-        } catch (NoPermissionException e) {
-            fail();
-        }
-        model.startGame();
+
+        assertTrue(model.initializeGame());
+        assertTrue(model.startGame());
+
         assertEquals(3, model.playersManager.getPlayers().size());
         assertEquals(GameState.STARTED, model.getGameState());
-        assertThrows(NoPermissionException.class, () -> model.initializeGame());
+        assertFalse(model.initializeGame());
         fMotherNature = model.motherNatureIndex;
+        assertEquals(0,model.islandsManager.getIslandGroup(fMotherNature).getIslands().get(0).getNumStudents());
+        assertEquals(0,model.islandsManager.getIslandGroup((fMotherNature + 6) % 12).getIslands().get(0).getNumStudents());
         numTowersAndStudent();
         playAssistantCard();
     }
@@ -99,25 +95,19 @@ class GameModelTest {
     void playAssistantCard() {
         assertEquals(GamePhase.PLANNING, model.roundManager.getGamePhase());
         Player[] expectedOrder = new Player[3];
-        try {
-            expectedOrder[2] = model.playersManager.getCurrentPlayer();
-            model.playAssistantCard(AssistantCard.SEVEN);
-        } catch (Exception e) {
-            fail();
-        }
-        try {
-            expectedOrder[1] = model.playersManager.getCurrentPlayer();
-            model.playAssistantCard(AssistantCard.FIVE);
-        } catch (Exception e) {
-            fail();
-        }
-        assertThrows(Exception.class, () -> model.playAssistantCard(AssistantCard.FIVE));
-        try {
-            expectedOrder[0] = model.playersManager.getCurrentPlayer();
-            model.playAssistantCard(AssistantCard.FOUR);
-        } catch (Exception e) {
-            fail();
-        }
+
+        expectedOrder[2] = model.playersManager.getCurrentPlayer();
+        assertTrue(model.playAssistantCard(AssistantCard.SEVEN));
+
+
+        expectedOrder[1] = model.playersManager.getCurrentPlayer();
+        assertTrue(model.playAssistantCard(AssistantCard.FIVE));
+
+        assertFalse(model.playAssistantCard(AssistantCard.FIVE));
+
+        expectedOrder[0] = model.playersManager.getCurrentPlayer();
+        assertTrue(model.playAssistantCard(AssistantCard.FOUR));
+
         model.playersManager.calculatePlayerOrder();
         for (int i = 0; i < model.preset.getPlayersNumber(); i++) {
             assertEquals(expectedOrder[i], model.playersManager.getPlayers().get(i));
@@ -132,13 +122,10 @@ class GameModelTest {
     @Test
     void moveStudentsRefillEntrance() {
         Player current = model.playersManager.getCurrentPlayer();
-        try {
-            model.moveStudentToHall(0);
-        } catch (Exception e) {
-            fail();
-        }
-        assertThrows(Exception.class, () -> model.moveStudentToHall(0));
-        assertThrows(Exception.class, () -> model.moveStudentToHall(model.preset.getEntranceCapacity()));
+        assertTrue(model.moveStudentToHall(0));
+
+        assertFalse(model.moveStudentToHall(0));
+        assertFalse(model.moveStudentToHall(model.preset.getEntranceCapacity()));
         boolean check = false;
         for (StudentColor s : StudentColor.values()) {
             if (model.playersManager.getSchoolBoard().getStudentsInHall(s) == 1) {
@@ -149,41 +136,34 @@ class GameModelTest {
             }
         }
         assertTrue(check);
-        try {
-            model.moveStudentToHall(2);
-        } catch (Exception e) {
-            fail();
-        }
-        try {
-            model.moveStudentToHall(4);
-        } catch (Exception e) {
-            fail();
-        }
-        assertEquals(GamePhase.MOVE_STUDENTS, model.roundManager.getGamePhase());
-        try {
-            model.moveStudentToHall(5);
-        } catch (Exception e) {
-            fail();
-        }
-        assertThrows(Exception.class, () -> model.moveStudentToHall(6));
+        assertTrue(model.moveStudentToHall(2));
+        assertTrue(model.moveStudentToHall(4));
+
+
+        assertTrue(model.moveStudentToHall(5));
+
+        assertNotEquals(GamePhase.MOVE_STUDENTS, model.roundManager.getGamePhase());
+        assertEquals(GamePhase.MOVE_MOTHER_NATURE, model.roundManager.getGamePhase());
+        assertFalse(model.moveStudentToHall(6));
+        assertFalse(model.moveStudentToHall(7));
+        assertFalse(model.moveStudentToHall(6));
         int numOfNull = 0;
         for (StudentColor s : model.playersManager.getSchoolBoard(current).getStudentsInEntrance()) {
             if (s == null)
                 numOfNull++;
         }
         assertEquals(model.preset.getMaxNumMoves(), numOfNull);
-        try {
-            model.getStudentsFromCloud(2);
 
-            for (StudentColor s : model.clouds.get(2).getStudents()) {
-                assertNull(s);
-            }
-        } catch (LimitExceededException e) {
-            fail();
-        }
+
         assertEquals(GamePhase.MOVE_MOTHER_NATURE, model.roundManager.getGamePhase());
-        assertThrows(LimitExceededException.class, () -> model.getStudentsFromCloud(5));
+        assertFalse(model.getStudentsFromCloud(5));
 
+        model.roundManager.startChooseCloudPhase();
+        assertTrue(model.getStudentsFromCloud(2));
+
+        for (StudentColor s : model.clouds.get(2).getStudents()) {
+            assertNull(s);
+        }
         //check the implementation of the getStudentsFromCloud
         numOfNull = 0;
         ArrayList<StudentColor> entrance = model.playersManager.getSchoolBoard(current).getStudentsInEntrance();
@@ -192,9 +172,6 @@ class GameModelTest {
                 numOfNull++;
         }
         assertEquals(0, numOfNull);
-        //assertTrue(model.playersManager.getSchoolBoard(current).getStudentsInEntrance().containsAll(toAdd));
-
-
     }
 
     /**
@@ -204,46 +181,28 @@ class GameModelTest {
     @Test
     void moveStudentsMoveMotherNature() {
         model.roundManager.startActionPhase();
-        model.roundManager.clearMoves();
         model.playersManager.nextPlayer();
-        try {
-            model.moveStudentToIsland(1, 4, 0);
-        } catch (Exception e) {
-            fail();
-        }
-        assertThrows(Exception.class, () -> model.moveStudentToIsland(1, 4, 1));
-        assertThrows(Exception.class, () -> model.moveStudentToIsland(1, 4, 0));
-        try {
-            model.moveStudentToIsland(2, 4, 0);
-        } catch (Exception e) {
-            fail();
-        }
-        try {
-            model.moveStudentToIsland(3, 4, 0);
-        } catch (Exception e) {
-            fail();
-        }
+        assertTrue(model.moveStudentToIsland(1, 4));
+
+        assertFalse(model.moveStudentToIsland(1, 4));
+        assertFalse(model.moveStudentToIsland(1, 4));
+        assertTrue(model.moveStudentToIsland(2, 4));
+
+        assertTrue(model.moveStudentToIsland(3, 4));
+
         int oldMotherNature = model.motherNatureIndex;
-        assertThrows(LimitExceededException.class, () -> model.moveMotherNature(1));
+        assertFalse(model.moveMotherNature(1));
         assertEquals(oldMotherNature, model.motherNatureIndex);
 
-        try {
-            model.moveStudentToIsland(5, 4, 0);
-        } catch (Exception e) {
-            fail();
-        }
+        assertTrue(model.moveStudentToIsland(5, 4));
 
         assertEquals(GamePhase.MOVE_MOTHER_NATURE, model.roundManager.getGamePhase());
 
-
         int maxMoves = model.playersManager.getPlayedCard(model.playersManager.getCurrentPlayer()).getMoves();
-        assertThrows(LimitExceededException.class, () -> model.moveMotherNature(maxMoves + 1));
+        assertFalse(model.moveMotherNature(maxMoves + 1));
         assertEquals(oldMotherNature, model.motherNatureIndex);
-        try {
-            model.moveMotherNature(maxMoves);
-        } catch (LimitExceededException e) {
-            fail();
-        }
+        assertTrue(model.moveMotherNature(maxMoves));
+
         assertEquals((oldMotherNature + maxMoves) % model.islandsManager.getNumIslandGroups(), model.motherNatureIndex);
     }
 
@@ -263,8 +222,8 @@ class GameModelTest {
             assertEquals(0, i.getNumStudents());
         }
 
-        model.islandsManager.addStudent(StudentColor.BLUE, fMotherNature, 0);
-        model.islandsManager.addStudent(StudentColor.BLUE,fMotherNature,0);
+        model.islandsManager.addStudent(StudentColor.BLUE, fMotherNature);
+        model.islandsManager.addStudent(StudentColor.BLUE,fMotherNature);
 
         for (Player p : players) {
             for (StudentColor s : StudentColor.values()) {
@@ -272,11 +231,8 @@ class GameModelTest {
             }
         }
 
-        try {
-            model.playersManager.getSchoolBoard().addToHall(StudentColor.BLUE);
-        } catch (LimitExceededException e) {
-            fail();
-        }
+        assertTrue(model.playersManager.getSchoolBoard().addToHall(StudentColor.BLUE));
+
         assertEquals(1, model.playersManager.getSchoolBoard().getStudentsInHall(StudentColor.BLUE));
         for (Player p : players) {
             if (!p.equals(curr))
@@ -298,12 +254,9 @@ class GameModelTest {
 
         next = model.playersManager.getCurrentPlayer();
 
-        try {
-            model.playersManager.getSchoolBoard(next).addToHall(StudentColor.BLUE);
-            model.playersManager.getSchoolBoard(next).addToHall(StudentColor.BLUE);
-        } catch (LimitExceededException e) {
-            fail();
-        }
+        assertTrue(model.playersManager.getSchoolBoard(next).addToHall(StudentColor.BLUE));
+        assertTrue(model.playersManager.getSchoolBoard(next).addToHall(StudentColor.BLUE));
+
         //Check the swap of the professor
         model.checkProfessor(StudentColor.BLUE);
         assertFalse(model.playersManager.getSchoolBoard(curr).getProfessors().contains(StudentColor.BLUE));
@@ -372,82 +325,73 @@ class GameModelTest {
             model.checkMergeIslandGroups(i - 1);
         }
         model.swapTowers(nTower, test);
-        assertEquals(model.playersManager.getCurrentPlayer(), model.roundManager.getWinner());
-        GameModel m1 = new GameModel(GamePreset.THREE);
-        try {
-            m1.addPlayer("1");
-        } catch (NoPermissionException | NameAlreadyBoundException e) {
-            fail();
-        }
-        curr = m1.playersManager.getCurrentPlayer();
-        try {
-            m1.addPlayer("2");
-        } catch (NoPermissionException | NameAlreadyBoundException e) {
-            fail();
-        }
-        try {
-            m1.addPlayer("3");
-        } catch (NoPermissionException | NameAlreadyBoundException e) {
-            fail();
-        }
-        try {
-            m1.initializeGame();
-        } catch (NoPermissionException e) {
-            fail();
+
+        for(Player p : model.playersManager.getPlayers()){
+            if(p.equals(model.playersManager.getCurrentPlayer()))
+                assertTrue(model.roundManager.getWinners().contains(model.playersManager.getSchoolBoard(p).getTower()));
+            else{
+                assertFalse(model.roundManager.getWinners().contains(model.playersManager.getSchoolBoard(p).getTower()));
+            }
         }
 
-        try {
-            m1.playersManager.getSchoolBoard().removeTowers(5);
-        } catch (LimitExceededException e) {
-            fail();
-        }
+
+        GameModel m1 = new GameModel(GamePreset.THREE);
+        assertTrue(m1.addPlayer("1"));
+
+        curr = m1.playersManager.getCurrentPlayer();
+        assertTrue(m1.addPlayer("2"));
+        assertTrue(m1.addPlayer("3"));
+
+        assertTrue(m1.initializeGame());
+        m1.gameState = GameState.STARTED;
+        m1.roundManager.nextRound();
+        assertTrue(m1.playersManager.getSchoolBoard().removeTowers(5));
 
         for(AssistantCard a : AssistantCard.values()) {
             if (!a.equals(AssistantCard.TEN))
                 m1.playersManager.currentPlayerPlayed(a);
         }
+        assertTrue(true);
+        assertTrue(m1.playAssistantCard(AssistantCard.TEN));
 
-        try {
-            m1.playAssistantCard(AssistantCard.TEN);
-        } catch (Exception e) {
-            fail();
+        m1.nextRound();
+
+        for(Player p : m1.playersManager.getPlayers()){
+            if(p.equals(curr))
+                assertTrue(m1.roundManager.getWinners().contains(m1.playersManager.getSchoolBoard(p).getTower()));
+            else{
+                assertFalse(m1.roundManager.getWinners().contains(m1.playersManager.getSchoolBoard(p).getTower()));
+            }
         }
-        m1.endActionPhase();
-        assertEquals(curr,m1.roundManager.getWinner());
 
 
         GameModel m2 = new GameModel(GamePreset.TWO);
-        try {
-            m2.addPlayer("1");
-        } catch (NoPermissionException | NameAlreadyBoundException e) {
-            fail();
-        }
-        try {
-            m2.addPlayer("2");
-        } catch (NoPermissionException | NameAlreadyBoundException e) {
-            fail();
-        }
-        try {
-            m2.initializeGame();
-        } catch (NoPermissionException e) {
-            fail();
-        }
+        assertTrue(m2.addPlayer("1"));
 
-        try {
-            m2.playersManager.getSchoolBoard().removeTowers(5);
-            curr = m2.playersManager.getCurrentPlayer();
-        } catch (LimitExceededException e) {
-            fail();
-        }
+        assertTrue(m2.addPlayer("2"));
+        assertTrue(m2.initializeGame());
+
+        assertTrue(m2.playersManager.getSchoolBoard().removeTowers(5));
+        curr = m2.playersManager.getCurrentPlayer();
+
         do{
             for(Cloud c : m2.clouds){
                 c.popStudents();
             }
-            m2.endActionPhase();
+            m2.nextRound();
         }
         while(!m2.bag.isEmpty());
-        m2.endActionPhase();
-        assertEquals(curr,m2.roundManager.getWinner());
+        assertTrue(true);
+        m2.nextRound();
+        assertFalse(m2.roundManager.getWinners().isEmpty());
+
+        for(Player p : m2.playersManager.getPlayers()){
+            if(p.equals(curr))
+                assertTrue(m2.roundManager.getWinners().contains(m2.playersManager.getSchoolBoard(p).getTower()));
+            else{
+                assertFalse(m2.roundManager.getWinners().contains(m2.playersManager.getSchoolBoard(p).getTower()));
+            }
+        }
 
     }
 }

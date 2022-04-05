@@ -16,10 +16,7 @@ class CloudTest {
     void get_add_pop_Students(){
         Cloud testCloud = new Cloud(3);
 
-        for (int i = 0; i < 3; i++) {
-            assertNull(testCloud.popStudents().get(i));
-        }
-
+        assertTrue(testCloud.popStudents().isEmpty());
         testCloud.addStudent(StudentColor.PINK, 0);
         testCloud.addStudent(StudentColor.RED, 1);
         testCloud.addStudent(StudentColor.YELLOW, 2);
@@ -28,12 +25,9 @@ class CloudTest {
         assertSame(testCloud.getStudents().get(1), StudentColor.RED);
         assertSame(testCloud.getStudents().get(2), StudentColor.YELLOW);
 
-        assertThrows(IndexOutOfBoundsException.class, ()-> testCloud.addStudent(StudentColor.BLUE, 4));
 
         testCloud.popStudents();
 
-        for (int i = 0; i < 3; i++) {
-            assertNull(testCloud.popStudents().get(i));
-        }
+        assertTrue(testCloud.popStudents().isEmpty());
     }
 }

@@ -2,23 +2,34 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enums.CharacterType;
 import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.util.LinkedPairList;
+import it.polimi.ingsw.util.Pair;
 
-import javax.naming.LimitExceededException;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+/**
+ * Jester character card.
+ */
 public class Jester extends CharacterCard {
 
+    /**
+     * Students on the card.
+     */
     private final EnumMap<StudentColor, Integer> students = new EnumMap<>(StudentColor.class);
 
+    /**
+     * Creates jester.
+     */
     public Jester() {
         super(CharacterType.JESTER, 1);
         for (StudentColor s: StudentColor.values())
             students.put(s, 0);
     }
 
+    /**
+     * Initializes the character card. It gets 6 students from the bag.
+     * @param effectHandler handler for the effects.
+     */
     @Override
     public void initialize(EffectHandler effectHandler) {
         for (int i = 0; i < 6; i++) {
@@ -27,40 +38,44 @@ public class Jester extends CharacterCard {
         }
     }
 
+    /**
+     * Applies the effect of the character card if the parameters are correct.
+     * Can exchange at most 3 students from this card with the ones in the entrance.
+     * @param effectHandler handler for the effects.
+     * @param pairs parameters for the effect.
+     * @return if the effect was applied.
+     */
     @Override
-    public void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
-        Set<Map.Entry<StudentColor, List<Integer>>> entrySet = pairs.entrySet();
-        int num = 0;
-        for (Map.Entry<StudentColor, List<Integer>> entry: entrySet) {
-            num += entry.getValue().size();
-            if (students.get(entry.getKey()) < entry.getValue().size())
-                return;
-        }
-        if (num > 3)
-            return;
-        for (Map.Entry<StudentColor, List<Integer>> entry: entrySet) {
-            StudentColor s = entry.getKey();
-            List<Integer> entranceIndexes = entry.getValue();
-            for (Integer entranceIndex : entranceIndexes) {
-                StudentColor ss = effectHandler.getStudentFromEntrance(entranceIndex);
-                try {
-                    effectHandler.addStudentOnEntrance(s, entranceIndex);
-                } catch (LimitExceededException ignored) {
-                }
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
+        if (areMovesValid(effectHandler, pairs, 3, new EnumMap<>(students))) {
+            for (Pair<StudentColor, Integer> pair: pairs) {
+                StudentColor s = pair.getFirst();
+                Integer entranceIndex = pair.getSecond();
+                StudentColor onEntrance = effectHandler.popStudentFromEntrance(entranceIndex);
+                effectHandler.addStudentOnEntrance(s, entranceIndex);
                 students.put(s, students.get(s) - 1);
-                students.put(ss, students.get(s) + 1);
+                students.put(onEntrance, students.get(onEntrance) + 1);
             }
+            additionalCost++;
+            appliedEffect = true;
+            return true;
         }
-        additionalCost++;
+        return false;
     }
 
+    /**
+     * @return if it contains students.
+     */
     @Override
     public boolean containsStudents() {
         return true;
     }
 
+    /**
+     * @return the students on the card
+     */
     @Override
     public EnumMap<StudentColor, Integer> getStudents() {
-        return students;
+        return new EnumMap<>(students);
     }
 }

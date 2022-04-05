@@ -2,6 +2,9 @@ package it.polimi.ingsw.enums;
 
 import it.polimi.ingsw.model.cards.*;
 
+/**
+ * enumeration of CharacterCard types; each type has related instance
+ */
 public enum CharacterType {
     FRIAR {
         @Override

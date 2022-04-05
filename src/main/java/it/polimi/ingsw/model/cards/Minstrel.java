@@ -2,40 +2,45 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enums.CharacterType;
 import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.util.LinkedPairList;
+import it.polimi.ingsw.util.Pair;
 
-import javax.naming.LimitExceededException;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+/**
+ * Minstrel character card.
+ */
 public class Minstrel extends CharacterCard {
 
+    /**
+     * Creates minstrel.
+     */
     public Minstrel() {
         super(CharacterType.MINSTREL, 1);
     }
 
+    /**
+     * Applies the effect of the character card if the parameters are correct.
+     * Can exchange up to 2 students between the entrance and the hall.
+     * @param effectHandler handler for the effects.
+     * @param pairs parameters for the effect.
+     * @return if the effect was applied.
+     */
     @Override
-    public void applyEffect(EffectHandler effectHandler, EnumMap<StudentColor, List<Integer>> pairs) {
-        Set<Map.Entry<StudentColor, List<Integer>>> entrySet = pairs.entrySet();
-        int num = 0;
-        for (Map.Entry<StudentColor, List<Integer>> entry: entrySet) {
-            num += entry.getValue().size();
+    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
+        if (areMovesValid(effectHandler, pairs, 2, effectHandler.getHall())) {
+            for (Pair<StudentColor, Integer> pair: pairs) {
+                int entranceIndex = pair.getSecond();
+                StudentColor s = pair.getFirst();
+                StudentColor onEntrance = effectHandler.popStudentFromEntrance(entranceIndex);
+                effectHandler.addStudentOnEntrance(s, entranceIndex);
+                effectHandler.removeStudentFromHall(s);
+                effectHandler.addStudentToHall(onEntrance);
+            }
+            additionalCost++;
+            appliedEffect = true;
+            return true;
         }
-        if (num > 3)
-            return;
-        for (Map.Entry<StudentColor, List<Integer>> entry: entrySet) {
-            StudentColor s = effectHandler.getStudentFromEntrance(entry.getValue().get(0));
-            try {
-                try {
-                    effectHandler.addStudentToHall(s);
-                } catch (LimitExceededException e) {
-                    effectHandler.addStudentOnEntrance(s, entry.getValue().get(0));
-                }
-                effectHandler.addStudentOnEntrance(entry.getKey(), entry.getValue().get(0));
-            } catch (LimitExceededException ignored) {}
-
-        }
-        additionalCost++;
+        return false;
     }
+
+
 }

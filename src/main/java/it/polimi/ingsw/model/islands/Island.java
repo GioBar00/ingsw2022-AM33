@@ -6,8 +6,14 @@ import it.polimi.ingsw.enums.Tower;
 import java.util.EnumMap;
 
 public class Island {
+    /**
+     * tower positioned on the island (while there is none is null)
+     */
     private Tower tower;
-    private final EnumMap<StudentColor, Integer> students;
+    /**
+     * enumMap to keep trace of the number of students of each type
+     */
+    final EnumMap<StudentColor, Integer> students;
 
     public Island(){
         students = new EnumMap<>(StudentColor.class);
@@ -38,15 +44,18 @@ public class Island {
      * @param s type of the student to be added
      */
     void addStudent(StudentColor s){
-        students.replace(s, students.get(s) + 1);
+        students.put(s, students.get(s) + 1);
     }
 
     /**
      * calculates the total number of students on the island, regardless of color
      * @return total number of students
      */
-    public int getNumStudents(){
-        return students.get(StudentColor.GREEN) + students.get(StudentColor.RED) + students.get(StudentColor.YELLOW) + students.get(StudentColor.PINK) + students.get(StudentColor.BLUE);
+    public int getNumStudents() {
+        int num = 0;
+        for (StudentColor s: StudentColor.values())
+            num += students.get(s);
+        return num;
     }
 
     /**
@@ -54,7 +63,7 @@ public class Island {
      * @param s type of the student
      * @return number of student of type s
      */
-    int getNumStudents(StudentColor s){
+    public int getNumStudents(StudentColor s){
         return students.get(s);
     }
 }

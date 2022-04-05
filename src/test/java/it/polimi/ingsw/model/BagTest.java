@@ -5,14 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class BagTest {
 
     /**
-     * the tests checks the addictions to the bag are done correctly and proceeds to check if the
+     * the tests check the addictions to the bag are done correctly and proceeds to check if the
      * method popRandomStudent() works correctly (extracting the right number of students and
      * throwing the right exception
      */
@@ -35,7 +34,20 @@ class BagTest {
 
         for(int i = 0; i < 4; i++)  testBag.popRandomStudent();
 
-        assertThrows(NoSuchElementException.class, testBag::popRandomStudent);
+        assertNull(testBag.popRandomStudent());
     }
 
+    @Test
+    void checkEmptiness(){
+        Bag testBag = new Bag();
+        LinkedList<StudentColor> studentToAdd;
+        studentToAdd = new LinkedList<>(Arrays.asList(StudentColor.values()));
+
+        assertTrue(testBag.isEmpty());
+        testBag.addStudents(studentToAdd);
+        assertFalse(testBag.isEmpty());
+
+        testBag.empty();
+        assertTrue(testBag.isEmpty());
+    }
 }
