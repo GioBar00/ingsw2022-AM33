@@ -16,7 +16,6 @@ class CloudTest {
     void get_add_pop_Students(){
         Cloud testCloud = new Cloud(3);
 
-
         assertTrue(testCloud.popStudents().isEmpty());
         testCloud.addStudent(StudentColor.PINK, 0);
         testCloud.addStudent(StudentColor.RED, 1);

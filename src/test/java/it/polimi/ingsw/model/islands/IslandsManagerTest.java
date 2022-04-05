@@ -62,6 +62,7 @@ public class IslandsManagerTest {
         }
 
         im.setTower(Tower.GREY, 0);
+        assertEquals(Tower.GREY, im.getTower(0));
 
         // on the IslandGroup there are students of all types and a grey tower, but the student only has two profs
         // and a different tower

@@ -7,7 +7,7 @@ import java.util.EnumMap;
 
 public class Island {
     private Tower tower;
-    private final EnumMap<StudentColor, Integer> students;
+    final EnumMap<StudentColor, Integer> students;
 
     public Island(){
         students = new EnumMap<>(StudentColor.class);

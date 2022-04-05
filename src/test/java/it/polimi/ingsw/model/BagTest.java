@@ -37,4 +37,17 @@ class BagTest {
         assertNull(testBag.popRandomStudent());
     }
 
+    @Test
+    void checkEmptiness(){
+        Bag testBag = new Bag();
+        LinkedList<StudentColor> studentToAdd;
+        studentToAdd = new LinkedList<>(Arrays.asList(StudentColor.values()));
+
+        assertTrue(testBag.isEmpty());
+        testBag.addStudents(studentToAdd);
+        assertFalse(testBag.isEmpty());
+
+        testBag.empty();
+        assertTrue(testBag.isEmpty());
+    }
 }
