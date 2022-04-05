@@ -90,7 +90,7 @@ class GameModel implements Game {
         motherNatureIndex = ThreadLocalRandom.current().nextInt(0, islandsManager.getNumIslandGroups());
         for (int i = 0; i < islandsManager.getNumIslandGroups(); i++) {
             if (i % 6 != motherNatureIndex % 6) {
-                islandsManager.getIslandGroup(i).addStudent(0, bag.popRandomStudent());
+                islandsManager.getIslandGroup(i).addStudent(bag.popRandomStudent());
             }
         }
 
@@ -210,17 +210,16 @@ class GameModel implements Game {
      * if it is the correct game state and if the indexes are valid.
      * @param entranceIndex of the slot occupied by the student that will be moved
      * @param islandGroupIndex of the IslandGroup that contains the selected island
-     * @param islandIndex of the Island on which the student will be moved
      * @return if the student was moved successfully.
      */
-    public boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) {
+    public boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex) {
         if (gameState != GameState.STARTED || !roundManager.canMoveStudents())
             return false;
 
         SchoolBoard currSch = playersManager.getSchoolBoard();
         StudentColor moved = currSch.getStudentInEntrance(entranceIndex);
         if (moved != null) {
-            if (islandsManager.addStudent(moved, islandGroupIndex, islandIndex)) {
+            if (islandsManager.addStudent(moved, islandGroupIndex)) {
                 currSch.removeFromEntrance(entranceIndex);
                 roundManager.addMoves();
                 return true;

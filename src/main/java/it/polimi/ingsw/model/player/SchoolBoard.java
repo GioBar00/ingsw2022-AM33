@@ -5,11 +5,29 @@ import it.polimi.ingsw.enums.Tower;
 import java.util.*;
 
 public class SchoolBoard {
+    /**
+     * maximum number of towers in the game
+     */
     private final int maxNumTowers;
+    /**
+     * current number of towers present on the board
+     */
     private int numTowers;
+    /**
+     * type of towers on the board
+     */
     private final Tower tower;
+    /**
+     * enumMap to keep track of the number of players for each color present on the Hall
+     */
     private final EnumMap<StudentColor, Integer> studentsHall;
+    /**
+     * ArrayList of student present in the entrance
+     */
     private final ArrayList<StudentColor> entrance;
+    /**
+     * enumSet of professors currently controlled by the player that owns the schoolBoard
+     */
     private final EnumSet<StudentColor> professors;
 
     /**

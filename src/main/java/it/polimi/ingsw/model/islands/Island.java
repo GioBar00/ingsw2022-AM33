@@ -6,7 +6,13 @@ import it.polimi.ingsw.enums.Tower;
 import java.util.EnumMap;
 
 public class Island {
+    /**
+     * tower positioned on the island (while there is none is null)
+     */
     private Tower tower;
+    /**
+     * enumMap to keep trace of the number of students of each type
+     */
     final EnumMap<StudentColor, Integer> students;
 
     public Island(){

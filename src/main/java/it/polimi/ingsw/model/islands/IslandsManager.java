@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 
 public class IslandsManager {
+    /**
+     * array of all islandGroups that are part of the game (at the very beginning they are 12)
+     */
     private final ArrayList<IslandGroup> islandGroups;
 
     public IslandsManager() {
@@ -56,14 +59,13 @@ public class IslandsManager {
      * method to add a student on a specific Island inside a specific IslandGroup if the indexes are valid.
      * @param s: type of student to be added
      * @param index_group: index of the IslandGroup
-     * @param index_island: index of the Island
      * @return if the student was added successfully.
      */
-    public boolean addStudent(StudentColor s, int index_group, int index_island) {
-        if (index_group < 0 || index_island < 0 || index_group >= islandGroups.size() || index_island >= islandGroups.get(index_group).size())
+    public boolean addStudent(StudentColor s, int index_group) {
+        if (index_group < 0 || index_group >= islandGroups.size())
             return false;
 
-        islandGroups.get(index_group).addStudent(index_island, s);
+        islandGroups.get(index_group).addStudent(s);
         return true;
     }
 

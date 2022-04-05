@@ -66,10 +66,9 @@ public interface Game {
      * moves it to a selected island that is part of a selected IslandGroup.
      * @param entranceIndex of the slot occupied by the student that will be moved.
      * @param islandGroupIndex of the IslandGroup that contains the selected island.
-     * @param islandIndex of the Island on which the student will be moved.
      * @return if the student was moved successfully.
      */
-    boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex);
+    boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex);
 
     /**
      * Moves mother nature by num.

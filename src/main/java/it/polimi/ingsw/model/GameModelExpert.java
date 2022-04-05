@@ -187,14 +187,13 @@ class GameModelExpert implements Game, EffectHandler {
      * moves it to a selected island that is part of a selected IslandGroup only if the player is not activating a card.
      * @param entranceIndex of the slot occupied by the student that will be moved.
      * @param islandGroupIndex of the IslandGroup that contains the selected island.
-     * @param islandIndex of the Island on which the student will be moved.
      * @return if the student was moved successfully.
      */
     @Override
-    public boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex, int islandIndex) {
+    public boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex) {
         if (characterCardActivating != null)
             return false;
-        return model.moveStudentToIsland(entranceIndex, islandGroupIndex, islandIndex);
+        return model.moveStudentToIsland(entranceIndex, islandGroupIndex);
     }
 
     /**
@@ -304,7 +303,7 @@ class GameModelExpert implements Game, EffectHandler {
      */
     @Override
     public boolean addStudentToIsland(StudentColor s, int islandGroupIndex, int islandIndex) {
-        return model.islandsManager.addStudent(s, islandGroupIndex, islandIndex);
+        return model.islandsManager.addStudent(s, islandGroupIndex);
     }
 
     /**

@@ -1,5 +1,8 @@
 package it.polimi.ingsw.enums;
 
+/**
+ * enumeration for assistant cards: contains data for number of card, its value and number of moves
+ */
 public enum AssistantCard {
     ONE(1,1), TWO(2,1), THREE(3,2), FOUR(4,2),
     FIVE(5,3), SIX(6,3), SEVEN(7,4) , EIGHT(8,4),

@@ -7,10 +7,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Player{
+    /**
+     * nickname of the player
+     */
     private final String nickname;
+    /**
+     * wizard of the player
+     */
     private final Wizard wizard;
+    /**
+     * assistantCards of the player
+     */
     private final ArrayList<AssistantCard> assistantCards;
+    /**
+     * assistantCard currently player by the player
+     */
     private AssistantCard playedCard;
+    /**
+     * schoolBoard of the player
+     */
     private final SchoolBoard schoolBoard;
 
     /**

@@ -219,20 +219,9 @@ class CharacterCardsEffectTest {
         
         testEffectForNullAndEmptyPair(friar);
         testEffectForNullAndEmptyList(friar, s);
-        // test only one index
-        second.add(0);
-        assertFalse(friar.applyEffect(gme, pairs));
-        checkStudentsAreEqual(initialStudents, friar.getStudents());
-        second.clear();
         // test wrong island group index
         second.add(-1);
         second.add(0);
-        assertFalse(friar.applyEffect(gme, pairs));
-        checkStudentsAreEqual(initialStudents, friar.getStudents());
-        second.clear();
-        // test wrong island index
-        second.add(0);
-        second.add(-1);
         assertFalse(friar.applyEffect(gme, pairs));
         checkStudentsAreEqual(initialStudents, friar.getStudents());
         second.clear();

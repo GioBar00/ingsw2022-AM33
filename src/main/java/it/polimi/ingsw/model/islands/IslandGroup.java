@@ -7,7 +7,13 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 
 public class IslandGroup{
+    /**
+     * array of the islands that are part of the group
+     */
     private final ArrayList<Island> islands = new ArrayList<>();
+    /**
+     * boolean value to specify whether the card is blocked (herbalist card effect)
+     */
     private boolean isBlocked;
 
     public IslandGroup() {
@@ -64,12 +70,19 @@ public class IslandGroup{
     }
 
     /**
-     * method to add a student on a specific island of the IslandGroup
-     * @param index of the island
+     * method to add a student to the island inside the islandGroup that has the least amount of students
      * @param s type of student
      */
-    public void addStudent(int index, StudentColor s){
-        islands.get(index).addStudent(s);
+    public void addStudent(StudentColor s){
+        // chooses the island with the least amount of student
+        int indexMin = 0;
+        for(int i = 1; i < islands.size(); i++){
+            if(islands.get(i).getNumStudents() < islands.get(indexMin).getNumStudents()){
+                indexMin = i;
+            }
+        }
+
+        islands.get(indexMin).addStudent(s);
     }
 
     /**

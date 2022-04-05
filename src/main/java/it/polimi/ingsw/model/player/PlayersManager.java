@@ -11,10 +11,21 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PlayersManager {
-
+    /**
+     * index of the current player in the array playerOrderIndexes
+     */
     private Integer currentPlayerOrderIndex;
+    /**
+     * array to keep track of the order of the player
+     */
     private final Integer[] playerOrderIndexes;
+    /**
+     * players that are part of the game
+     */
     private final ArrayList<Player> players;
+    /**
+     * number of player currently present in the game
+     */
     private final Integer numPlayers;
     /**
      * Constructor of PlayerManager

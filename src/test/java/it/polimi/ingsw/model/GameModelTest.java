@@ -172,19 +172,19 @@ class GameModelTest {
     void moveStudentsMoveMotherNature() {
         model.roundManager.startActionPhase();
         model.playersManager.nextPlayer();
-        assertTrue(model.moveStudentToIsland(1, 4, 0));
+        assertTrue(model.moveStudentToIsland(1, 4));
 
-        assertFalse(model.moveStudentToIsland(1, 4, 1));
-        assertFalse(model.moveStudentToIsland(1, 4, 0));
-        assertTrue(model.moveStudentToIsland(2, 4, 0));
+        assertFalse(model.moveStudentToIsland(1, 4));
+        assertFalse(model.moveStudentToIsland(1, 4));
+        assertTrue(model.moveStudentToIsland(2, 4));
 
-        assertTrue(model.moveStudentToIsland(3, 4, 0));
+        assertTrue(model.moveStudentToIsland(3, 4));
 
         int oldMotherNature = model.motherNatureIndex;
         assertFalse(model.moveMotherNature(1));
         assertEquals(oldMotherNature, model.motherNatureIndex);
 
-        assertTrue(model.moveStudentToIsland(5, 4, 0));
+        assertTrue(model.moveStudentToIsland(5, 4));
 
         assertEquals(GamePhase.MOVE_MOTHER_NATURE, model.roundManager.getGamePhase());
 
@@ -212,8 +212,8 @@ class GameModelTest {
             assertEquals(0, i.getNumStudents());
         }
 
-        model.islandsManager.addStudent(StudentColor.BLUE, fMotherNature, 0);
-        model.islandsManager.addStudent(StudentColor.BLUE,fMotherNature,0);
+        model.islandsManager.addStudent(StudentColor.BLUE, fMotherNature);
+        model.islandsManager.addStudent(StudentColor.BLUE,fMotherNature);
 
         for (Player p : players) {
             for (StudentColor s : StudentColor.values()) {

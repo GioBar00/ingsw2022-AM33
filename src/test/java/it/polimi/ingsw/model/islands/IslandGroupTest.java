@@ -17,14 +17,56 @@ class IslandGroupTest {
     void CalcInfluenceGeneralTest(){
         IslandGroup ig1 = new IslandGroup();
         ig1.setTower(Tower.BLACK);
-        ig1.addStudent(0, StudentColor.GREEN);
-        ig1.addStudent(0, StudentColor.BLUE);
+        ig1.addStudent(StudentColor.GREEN);
+        ig1.addStudent(StudentColor.BLUE);
 
         EnumSet<StudentColor> profs = EnumSet.of(StudentColor.BLUE, StudentColor.GREEN);
 
         assertEquals(3, ig1.calcInfluence(Tower.BLACK, profs));
         assertEquals(2, ig1.calcInfluence(profs));
         assertNotEquals(ig1.calcInfluence(Tower.BLACK, profs), ig1.calcInfluence(profs));
+    }
+
+    /**
+     * the test checks that, whenever a student is added to an IslandGroup, it's positioned on the island that currently
+     * contains the least amount of students
+     */
+    @Test
+    void getIslandWithMinStudents(){
+        IslandGroup ig1 = new IslandGroup();
+        IslandGroup ig2 = new IslandGroup();
+        IslandGroup ig3 = new IslandGroup();
+
+        assertEquals(1, ig1.size());
+        assertEquals(1, ig2.size());
+        assertEquals(1, ig3.size());
+
+        ig1.setTower(Tower.WHITE);
+        for(StudentColor s: StudentColor.values()){
+            ig1.addStudent(s);
+        }
+
+        ig2.setTower(Tower.WHITE);
+        ig2.addStudent(StudentColor.BLUE);
+        ig2.addStudent(StudentColor.GREEN);
+
+        ig3.setTower(Tower.WHITE);
+
+        ig1.mergeWith(ig2);
+        ig1.mergeWith(ig3);
+
+        assertEquals(ig1.size(), 3);
+
+        ig1.addStudent(StudentColor.RED);
+
+        assertEquals(1, ig1.getIslands().get(2).getNumStudents(StudentColor.RED));
+
+        ig1.addStudent(StudentColor.RED);
+
+        assertEquals(2, ig1.getIslands().get(2).getNumStudents(StudentColor.RED));
+
+        ig1.addStudent(StudentColor.PINK);
+        assertEquals(1, ig1.getIslands().get(1).getNumStudents(StudentColor.PINK));
     }
 
     /**
@@ -36,12 +78,12 @@ class IslandGroupTest {
         IslandGroup ig1 = new IslandGroup();
         IslandGroup ig2 = new IslandGroup();
 
-        ig1.addStudent(0, StudentColor.BLUE);
-        ig1.addStudent(0, StudentColor.RED);
-        ig1.addStudent(0, StudentColor.PINK);
+        ig1.addStudent(StudentColor.BLUE);
+        ig1.addStudent(StudentColor.RED);
+        ig1.addStudent(StudentColor.PINK);
 
-        ig2.addStudent(0, StudentColor.YELLOW);
-        ig2.addStudent(0, StudentColor.GREEN);
+        ig2.addStudent(StudentColor.YELLOW);
+        ig2.addStudent(StudentColor.GREEN);
 
         ig1.mergeWith(ig2);
 

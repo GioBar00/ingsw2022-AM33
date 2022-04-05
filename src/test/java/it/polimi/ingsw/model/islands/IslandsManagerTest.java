@@ -58,7 +58,7 @@ public class IslandsManagerTest {
         EnumSet<StudentColor> professors = EnumSet.of(StudentColor.BLUE, StudentColor.GREEN);
 
         for (StudentColor s: StudentColor.values()) {
-            im.getIslandGroup(0).addStudent(0, s);
+            im.getIslandGroup(0).addStudent(s);
         }
 
         im.setTower(Tower.GREY, 0);
@@ -86,7 +86,7 @@ public class IslandsManagerTest {
         assertEquals(11, im.getNumIslandGroups());
 
         for (StudentColor s: StudentColor.values()) {
-            im.getIslandGroup(0).addStudent(1, s);
+            im.getIslandGroup(0).addStudent(s);
         }
 
         assertEquals(im.calcInfluence(Tower.BLACK, professors, 0), 6);
