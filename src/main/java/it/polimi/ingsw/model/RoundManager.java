@@ -1,8 +1,11 @@
 package it.polimi.ingsw.model;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+
+import it.polimi.ingsw.enums.GamePhase;
+import it.polimi.ingsw.enums.GamePreset;
+import it.polimi.ingsw.enums.Tower;
+
+import java.util.EnumSet;
 
 class RoundManager {
     private GamePhase gamePhase;
@@ -10,57 +13,113 @@ class RoundManager {
     private boolean lastRound = false;
     private final int maxNumMoves;
     private int numMoves = 0;
-    Integer currentPlayerOrderIndex = 0;
-    Integer[] playerOrderIndexes;
+    private EnumSet<Tower> winners;
 
-    RoundManager(Integer numPlayers) {
+    RoundManager(GamePreset preset) {
         gamePhase = GamePhase.PLANNING;
-        roundNum = 1;
-        if (numPlayers == 3)
-            maxNumMoves = 4;
-        else
-            maxNumMoves = 3;
-        playerOrderIndexes = new Integer[numPlayers];
-        playerOrderIndexes[0] = ThreadLocalRandom.current().nextInt(0, numPlayers);
-        calculateClockwiseOrder();
+        roundNum = 0;
+        maxNumMoves = preset.getMaxNumMoves();
+        winners = EnumSet.noneOf(Tower.class);
+
     }
 
+    /**
+     * Gets the current game phase.
+     * @return the current game phase.
+     */
     GamePhase getGamePhase() {
         return gamePhase;
     }
 
+    /**
+     * Gets the current round number.
+     * @return the current round number.
+     */
     int getRoundNum() {
         return roundNum;
     }
 
+    /**
+     * Returns if it is the last round.
+     * @return if it is the last round.
+     */
     boolean isLastRound() {
         return lastRound;
     }
 
     /**
-     * Calculate clockwise order starting from playerOrderIndex[0].
-     * Ex: 3 2 0 1 --> 3 0 1 2
+     * Declares that it is the last round.
      */
-    private void calculateClockwiseOrder() {
-        for(int i = 1; i < playerOrderIndexes.length; i++) {
-            playerOrderIndexes[i] = (playerOrderIndexes[i - 1] + 1) % playerOrderIndexes.length;
+    void setLastRound(){
+        lastRound = true;
+    }
+
+    /**
+     * Sets the winner.
+     * @param t tower of the winner
+     */
+    void setWinner(Tower t) {
+        winners = EnumSet.of(t);
+    }
+
+    /**
+     * Sets the winners.
+     * @param ts towers of the winners.
+     */
+    void setWinners(EnumSet<Tower> ts) {
+        winners = ts;
+    }
+
+    /**
+     * Gets the winners.
+     * @return the winners.
+     */
+    EnumSet<Tower> getWinners() {
+        return EnumSet.copyOf(winners);
+    }
+
+    /**
+     * If not the last round, starts the next round.
+     */
+    void nextRound() {
+        if(!lastRound) {
+            gamePhase = GamePhase.PLANNING;
+            roundNum++;
         }
     }
 
     /**
-     * Calculates players' order based on the assistant card they played.
-     * If they played the same assistant card, goes first the one who played it.
-     * @param players array of players in the game.
+     * Starts the action phase
      */
-    void calculatePlayerOrder(Player[] players) {
-        List<Integer> ordered = Arrays.asList(playerOrderIndexes);
-        ordered.sort((i1, i2) -> {
-            int r = players[i1].getAssistantCard().getValue().compareTo(players[i2].getAssistantCard().getValue());
-            if(r == 0)
-                return Integer.compare(ordered.indexOf(i1), ordered.indexOf(i1));
-            return r;
-        });
-        ordered.toArray(playerOrderIndexes);
+    void startActionPhase(){
+        gamePhase = GamePhase.MOVE_STUDENTS;
+        numMoves = 0;
     }
 
+    /**
+     * Adds one move to the ones made by the current player.
+     * If the maximum amount of moves were made then "move mother nature" phase starts.
+     */
+    void addMoves() {
+        numMoves++;
+        if(numMoves == maxNumMoves)
+            gamePhase = GamePhase.MOVE_MOTHER_NATURE;
+    }
+
+    /**
+     * Starts the "choose cloud" phase.
+     */
+    void startChooseCloudPhase() {
+        gamePhase = GamePhase.CHOOSE_CLOUD;
+    }
+
+    /**
+     * Returns if the current player has some moves left if it is the correct phase.
+     * @return if the current player can move students.
+     */
+    boolean canMoveStudents(){
+        if(!gamePhase.equals(GamePhase.MOVE_STUDENTS))
+            return false;
+        return numMoves < maxNumMoves;
+    }
 }

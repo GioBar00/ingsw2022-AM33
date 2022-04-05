@@ -1,42 +1,48 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.enums.GamePhase;
+import it.polimi.ingsw.enums.GamePreset;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class RoundManagerTest {
-
+    /**
+     * for every type of GamePreset (TWO, THREE, FOUR), the test checks that the RoundManager changes the phases of
+     * the game in the right order; it also controls that the last round can be set correctly
+     */
     @Test
-    void calculatePlayerOrder() {
-        // check with different cards
-        Player[] players = {
-                new Player("p1", Wizard.ONE, new SchoolBoard(7, Tower.BLACK, 8)),
-                new Player("p2", Wizard.TWO, new SchoolBoard(7, Tower.WHITE, 8)),
-                new Player("p3", Wizard.THREE, new SchoolBoard(7, Tower.BLACK, 0)),
-                new Player("p4", Wizard.FOUR, new SchoolBoard(7, Tower.WHITE, 0))
-        };
-        players[0].playAssistantCard(AssistantCard.ONE);
-        players[1].playAssistantCard(AssistantCard.FIVE);
-        players[2].playAssistantCard(AssistantCard.EIGHT);
-        players[3].playAssistantCard(AssistantCard.FOUR);
-        RoundManager rm = new RoundManager(players.length);
-        rm.playerOrderIndexes = new Integer[]{0, 1, 2, 3};
-        rm.calculatePlayerOrder(players);
-        Integer[] expected = new Integer[]{0, 3, 1, 2};
-        for(int i = 0; i < rm.playerOrderIndexes.length; i++) {
-            assertEquals(rm.playerOrderIndexes[i], expected[i]);
-        }
-
-        // check with some equal cards
-        players[0].playAssistantCard(AssistantCard.THREE);
-        players[1].playAssistantCard(AssistantCard.TEN);
-        players[2].playAssistantCard(AssistantCard.SIX);
-        players[3].playAssistantCard(AssistantCard.THREE);
-        rm.playerOrderIndexes = new Integer[]{3, 1, 2, 0};
-        rm.calculatePlayerOrder(players);
-        expected = new Integer[]{3, 0, 2, 1};
-        for(int i = 0; i < rm.playerOrderIndexes.length; i++) {
-            assertEquals(rm.playerOrderIndexes[i], expected[i]);
+    void roundPhaseOrder(){
+        for (GamePreset gp: GamePreset.values()) {
+            RoundManager roundManagerTest = new RoundManager(gp);
+            // check of initial set up > phase: PLANNING
+            assertEquals(roundManagerTest.getGamePhase(), GamePhase.PLANNING);
+            assertFalse(roundManagerTest.isLastRound());
+            assertEquals(0, roundManagerTest.getRoundNum());
+            // phase: MOVE STUDENTS
+            roundManagerTest.startActionPhase();
+            assertNotEquals(roundManagerTest.getGamePhase(), GamePhase.PLANNING);
+            assertEquals(roundManagerTest.getGamePhase(), GamePhase.MOVE_STUDENTS);
+            // phase: MOVE_MOTHER_NATURE
+            for(int i = 0; i < gp.getMaxNumMoves(); i ++){
+                assertTrue(roundManagerTest.canMoveStudents());
+                roundManagerTest.addMoves();
+            }
+            assertNotEquals(roundManagerTest.getGamePhase(), GamePhase.MOVE_STUDENTS);
+            assertEquals(roundManagerTest.getGamePhase(), GamePhase.MOVE_MOTHER_NATURE);
+            // phase: CHOOSE CLOUD
+            roundManagerTest.startChooseCloudPhase();
+            assertNotEquals(roundManagerTest.getGamePhase(), GamePhase.MOVE_MOTHER_NATURE);
+            assertEquals(roundManagerTest.getGamePhase(), GamePhase.CHOOSE_CLOUD);
+            // go to the next round
+            roundManagerTest.nextRound();
+            assertNotEquals(roundManagerTest.getGamePhase(), GamePhase.CHOOSE_CLOUD);
+            assertEquals(roundManagerTest.getGamePhase(), GamePhase.PLANNING);
+            assertEquals(1, roundManagerTest.getRoundNum());
+            // set last round
+            assertFalse(roundManagerTest.isLastRound());
+            roundManagerTest.setLastRound();
+            assertTrue(roundManagerTest.isLastRound());
         }
     }
 }

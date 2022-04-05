@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
-import java.util.Collection;
+import it.polimi.ingsw.enums.StudentColor;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -13,17 +14,25 @@ class Bag {
         students = new LinkedList<>();
     }
 
-    void addStudents(Collection<StudentColor> newStudents){
+    /**
+     * adds a group of students to the bag
+     * @param newStudents group of students
+     */
+    void addStudents(List<StudentColor> newStudents){
         students.addAll(newStudents);
     }
 
-    StudentColor popRandomStudent() throws NoSuchElementException{
+    /**
+     * extracts a random student from the bag
+     * @return student extracted, null if empty
+     */
+    StudentColor popRandomStudent() {
         int extracted;
         StudentColor temp;
 
         if(students.size() != 0) {
             extracted = ThreadLocalRandom.current().nextInt(0, students.size());
-        } else throw new NoSuchElementException();
+        } else return null;
 
         temp = students.get(extracted);
         students.remove(extracted);
@@ -31,10 +40,17 @@ class Bag {
         return temp;
     }
 
+    /**
+     * calculates whether the Bag is empty or not
+     * @return true if the Bag is empty, false otherwise
+     */
     boolean isEmpty(){
         return students.isEmpty();
     }
 
+    /**
+     * removes all the students from the bag.
+     */
     void empty(){
         students.clear();
     }
