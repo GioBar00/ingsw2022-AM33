@@ -110,6 +110,16 @@ public interface EffectHandler {
     int getStudentsInHall(StudentColor s);
 
     /**
+     * @return the student hall of the current player.
+     */
+    default EnumMap<StudentColor, Integer> getHall() {
+        EnumMap<StudentColor, Integer> hallCopy = new EnumMap<>(StudentColor.class);
+        for (StudentColor s: StudentColor.values())
+            hallCopy.put(s, getStudentsInHall(s));
+        return hallCopy;
+    }
+
+    /**
      * Tries to remove the ideal amount of students from the hall of all players and puts them back in the bag.
      * If there aren't enough students, removes only the available ones.
      * @param s student color of student to remove.

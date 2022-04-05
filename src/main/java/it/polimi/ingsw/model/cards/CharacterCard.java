@@ -134,6 +134,8 @@ public abstract class CharacterCard {
             if (index == null || index < 0 || index >= entrance.size())
                 return false;
             StudentColor onEntrance = entrance.get(index);
+            if (onEntrance == null)
+                return false;
             entrance.set(index, s);
             copy.put(s, copy.get(s) - 1);
             copy.put(onEntrance, copy.get(onEntrance) + 1);

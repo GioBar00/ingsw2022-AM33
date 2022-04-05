@@ -30,7 +30,7 @@ public class Herald extends CharacterCard {
     public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
         for (Pair<StudentColor, List<Integer>> pair: pairs) {
             List<Integer> second = pair.getSecond();
-            if (second != null && second.size() > 0 && effectHandler.calcInfluenceOnIslandGroup(second.get(0))) {
+            if (second != null && second.size() > 0 && second.get(0) != null && effectHandler.calcInfluenceOnIslandGroup(second.get(0))) {
                 additionalCost++;
                 appliedEffect = true;
                 return true;

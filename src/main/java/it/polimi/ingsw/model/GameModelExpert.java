@@ -19,45 +19,45 @@ class GameModelExpert implements Game, EffectHandler {
     /**
      * GameModel to change in expert mode.
      */
-    private final GameModel model;
+    final GameModel model;
 
     /**
      * Reserve of coins in the game.
      */
-    private int reserve;
+    int reserve;
     /**
      * Number of coins for each player.
      */
-    private final Map<Player, Integer> playerCoins = new HashMap<>();
+    final Map<Player, Integer> playerCoins = new HashMap<>();
 
     /**
      * Character cards in the game.
      */
-    private final ArrayList<CharacterCard> characterCards;
+    final ArrayList<CharacterCard> characterCards;
     /**
      * Character card that is being activated.
      */
-    private CharacterCard characterCardActivating;
+    CharacterCard characterCardActivating;
     /**
      * If a card was activated this turn.
      */
-    private boolean activatedACharacterCard = false;
+    boolean activatedACharacterCard = false;
     /**
      * Additional movement that mother nature can make.
      */
-    private int additionalMotherNatureMovement = 0;
+    int additionalMotherNatureMovement = 0;
     /**
      * If to skip counting towers for influence.
      */
-    private boolean skipTowers = false;
+    boolean skipTowers = false;
     /**
      * Additional influence points to add to current player.
      */
-    private int additionalInfluence = 0;
+    int additionalInfluence = 0;
     /**
      * Student colors to skip during influence counting.
      */
-    private final EnumSet<StudentColor> skipStudentColors = EnumSet.noneOf(StudentColor.class);
+    final EnumSet<StudentColor> skipStudentColors = EnumSet.noneOf(StudentColor.class);
 
     /**
      * Changes mode to expert, gets 3 random character cards and initialises reserve.
@@ -325,11 +325,8 @@ class GameModelExpert implements Game, EffectHandler {
                 for (StudentColor studentColor: StudentColor.values()) {
                     if (playerProfs.contains(studentColor) && currSB.getStudentsInHall(studentColor) >= sb.getStudentsInHall(studentColor)) {
                         profs.put(studentColor, players.indexOf(p));
-                        try {
-                            sb.removeProfessor(studentColor);
-                            currSB.addProfessor(studentColor);
-                        } catch (Exception ignored) {}
-
+                        sb.removeProfessor(studentColor);
+                        currSB.addProfessor(studentColor);
                     }
                 }
             }
@@ -348,10 +345,8 @@ class GameModelExpert implements Game, EffectHandler {
         SchoolBoard currSB = model.playersManager.getSchoolBoard();
         for (StudentColor sc: StudentColor.values()) {
             if (original.containsKey(sc)) {
-                try {
-                    currSB.removeProfessor(sc);
-                    model.playersManager.getSchoolBoard(players.get(original.get(sc))).addProfessor(sc);
-                } catch (Exception ignored) {}
+                currSB.removeProfessor(sc);
+                model.playersManager.getSchoolBoard(players.get(original.get(sc))).addProfessor(sc);
             }
         }
     }
@@ -365,24 +360,28 @@ class GameModelExpert implements Game, EffectHandler {
     public boolean calcInfluenceOnIslandGroup(int islandGroupIndex) {
         if (islandGroupIndex < 0 || islandGroupIndex >= model.islandsManager.getNumIslandGroups())
             return false;
-
+        CharacterCard herbalist = null;
+        for (CharacterCard c: characterCards)
+            if (c.canHandleBlocks()) {
+                herbalist = c;
+                break;
+            }
         if (model.islandsManager.getIslandGroup(islandGroupIndex).isBlocked()) {
+            if (herbalist == null)
+                return false;
             model.islandsManager.getIslandGroup(islandGroupIndex).setBlocked(false);
-            for (CharacterCard c: characterCards)
-                if (c.canHandleBlocks())
-                    c.addNumBlocks(1);
+            herbalist.addNumBlocks(1);
             return true;
         }
         Tower newTower = model.checkInfluence(islandGroupIndex, skipTowers, additionalInfluence, skipStudentColors);
         if (newTower != null && newTower != model.islandsManager.getTower(islandGroupIndex)) {
             model.swapTowers(islandGroupIndex, newTower);
             int numBlocks = model.checkMergeIslandGroups(islandGroupIndex);
-            for (CharacterCard c: characterCards)
-                if (c.canHandleBlocks()) {
-                    c.addNumBlocks(numBlocks);
-                    return true;
-                }
-
+            if (numBlocks > 0) {
+                if (herbalist == null)
+                    return false;
+                herbalist.addNumBlocks(numBlocks);
+            }
         }
         return true;
     }

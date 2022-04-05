@@ -45,7 +45,7 @@ public class Herbalist extends CharacterCard {
         for (Pair<StudentColor, List<Integer>> pair: pairs) {
             if (numBlocks > 0) {
                 List<Integer> second = pair.getSecond();
-                if (second != null && second.size() > 0 && effectHandler.blockIslandGroup(second.get(0))) {
+                if (second != null && second.size() > 0 && second.get(0) != null && effectHandler.blockIslandGroup(second.get(0))) {
                     additionalCost++;
                     numBlocks--;
                     appliedEffect = true;

@@ -186,7 +186,9 @@ public class SchoolBoard {
      * @param s type of Student
      * @return number of specific type of Student in the hall
      */
-    public int getStudentsInHall(StudentColor s) { return studentsHall.get(s); }
+    public int getStudentsInHall(StudentColor s) {
+        return studentsHall.get(s);
+    }
 
     /**
      * Moves a specific Student from entrance to hall if the entrance index is valid and there is space in the hall.
@@ -239,7 +241,7 @@ public class SchoolBoard {
      * @return if the student was successfully added to the hall.
      */
     public boolean addToHall(StudentColor s) {
-        if (studentsHall.get(s) < 12){
+        if (studentsHall.get(s) < 10){
             studentsHall.put(s, studentsHall.get(s) + 1);
             return true;
         }

@@ -29,10 +29,7 @@ public class Minstrel extends CharacterCard {
      */
     @Override
     public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, List<Integer>> pairs) {
-        EnumMap<StudentColor, Integer> hallCopy = new EnumMap<>(StudentColor.class);
-        for (StudentColor s: StudentColor.values())
-            hallCopy.put(s, effectHandler.getStudentsInHall(s));
-        if (areMovesValid(effectHandler, pairs, 2, hallCopy)) {
+        if (areMovesValid(effectHandler, pairs, 2, effectHandler.getHall())) {
             for (Pair<StudentColor, List<Integer>> pair: pairs) {
                 int index = pair.getSecond().get(0);
                 StudentColor s = pair.getFirst();

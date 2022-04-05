@@ -54,7 +54,7 @@ public class Island {
      * @param s type of the student
      * @return number of student of type s
      */
-    int getNumStudents(StudentColor s){
+    public int getNumStudents(StudentColor s){
         return students.get(s);
     }
 }
