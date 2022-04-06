@@ -35,12 +35,19 @@ class GameModelTeams extends GameModel {
     @Override
     void swapTowers(int islandGroupIndex, Tower newTower) {
         Tower oldTower = islandsManager.getTower(islandGroupIndex);
+        String leaderNick;
+        int teamLeaderIndex = 0;
 
-        if (newTower != oldTower) {
-            int teamLeaderIndex;
-            if (newTower.equals(Tower.BLACK)) {
-                teamLeaderIndex = 1;
-            } else teamLeaderIndex = 0;
+        if (newTower != oldTower){
+            leaderNick = playersManager.getTeams().get(newTower).get(0).getNickname();
+            for(int i = 0; i < playersManager.getPreset().getPlayersNumber(); i++){
+                if (leaderNick.equals(playersManager.getPlayers().get(i).getNickname())){
+                    if (playersManager.getSchoolBoard(playersManager.getPlayers().get(i)).getNumTowers() != 0){
+                        teamLeaderIndex = i;
+                        break;
+                    }
+                }
+            }
 
             SchoolBoard newSchoolBoard = playersManager.getSchoolBoard(playersManager.getPlayers().get(teamLeaderIndex));
 

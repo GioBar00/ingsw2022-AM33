@@ -296,6 +296,15 @@ public class PlayersManager {
             for (Player p: teams.get(t))
                 if (p.getNickname().equals(nickname)){
                     // player already in a team
+                    if (p.getSchoolBoard().getNumTowers() != 0){
+                        // if the player is the leader who is currently holding the towers swap them with the second player
+                        int tempTowerNum = p.getSchoolBoard().getNumTowers();
+                        for (Player nextLeader : teams.get(t)){
+                            if (!nextLeader.equals(p))
+                                nextLeader.getSchoolBoard().setMaxNumTowers(8);
+                                nextLeader.getSchoolBoard().addTowers(tempTowerNum);
+                        }
+                    }
                     teams.get(t).remove(p);
                     players.remove(p);
                     addPlayer(nickname, tower);

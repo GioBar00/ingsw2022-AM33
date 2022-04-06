@@ -392,6 +392,7 @@ class GameModelTest {
                 assertFalse(m2.roundManager.getWinners().contains(m2.playersManager.getSchoolBoard(p).getTower()));
             }
         }
-
     }
+
+
 }

@@ -158,7 +158,6 @@ class GameModelExpertTest {
         assertTrue(m.initializeGame());
         assertTrue(m.startGame());
 
-
         gameModel.islandsManager.getIslandGroup(0).setBlocked(true);
 
         int oldBlocks = herbalist.getNumBlocks();

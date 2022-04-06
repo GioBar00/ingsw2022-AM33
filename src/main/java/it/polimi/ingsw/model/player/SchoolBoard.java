@@ -8,7 +8,7 @@ public class SchoolBoard {
     /**
      * maximum number of towers in the game
      */
-    private final int maxNumTowers;
+    private int maxNumTowers;
     /**
      * current number of towers present on the board
      */
@@ -49,6 +49,13 @@ public class SchoolBoard {
             studentsHall.put(s,0);
         }
         this.professors = EnumSet.noneOf(StudentColor.class);
+    }
+
+    /**
+     * @param maxNumTowers new maximum number of towers
+     */
+    public void setMaxNumTowers(int maxNumTowers){
+        this.maxNumTowers = maxNumTowers;
     }
 
     /**

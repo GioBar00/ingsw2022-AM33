@@ -136,5 +136,4 @@ class PlayersManagerTest {
         assertEquals("Pl2",pm.getPlayers().get(1).getNickname());
         assertEquals("Pl3",pm.getPlayers().get(2).getNickname());
     }
-
 }
