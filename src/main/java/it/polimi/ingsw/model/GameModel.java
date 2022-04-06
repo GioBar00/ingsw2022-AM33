@@ -381,7 +381,7 @@ class GameModel implements Game {
      * @return the tower that belongs to the player/players with the most influence
      */
     Tower checkInfluence(int islandGroupIndex, boolean skipTowers, int additionalInfluence, EnumSet<StudentColor> skipStudentColor) {
-        EnumMap<Tower, List<Player>> playersByTower = groupPlayersByTower();
+        EnumMap<Tower, List<Player>> playersByTower = playersManager.getTeams();
 
         int maxInfluence;
         EnumSet<StudentColor> profs;
@@ -428,26 +428,6 @@ class GameModel implements Game {
     }
 
     /**
-     * Groups players by tower color.
-     * @return players grouped by tower color.
-     */
-    EnumMap<Tower, List<Player>> groupPlayersByTower() {
-        EnumMap<Tower, List<Player>> playersByTower = new EnumMap<>(Tower.class);
-        for (Player p: playersManager.getPlayers()) {
-            Tower tower = playersManager.getSchoolBoard(p).getTower();
-            if (!playersByTower.containsKey(tower)) {
-                LinkedList<Player> pl = new LinkedList<>();
-                pl.add(p);
-                playersByTower.put(tower, pl);
-            }
-            else {
-                playersByTower.get(tower).add(p);
-            }
-        }
-        return playersByTower;
-    }
-
-    /**
      * the method is called after calculating the influence, whenever there is a change in the Player that
      * holds the most influence on the IslandGroup; the method removes the current towers from the IslandGroup, puts
      * them back on the SchoolBoard of the Player that they belong to, selects the current most influential Player
@@ -460,7 +440,7 @@ class GameModel implements Game {
         Tower oldTower = islandsManager.getTower(islandGroupIndex);
 
         if (newTower != oldTower) {
-            EnumMap<Tower, List<Player>> playersByTower = groupPlayersByTower();
+            EnumMap<Tower, List<Player>> playersByTower = playersManager.getTeams();
             SchoolBoard newSchoolBoard = playersManager.getSchoolBoard(playersByTower.get(newTower).get(0));
             int size = islandsManager.getIslandGroup(islandGroupIndex).size();
             if (oldTower != null) {
@@ -568,7 +548,7 @@ class GameModel implements Game {
      * If still equal then there is a draw.
      */
     void calculateWinners() {
-        EnumMap<Tower, List<Player>> playersByTower = groupPlayersByTower();
+        EnumMap<Tower, List<Player>> playersByTower = playersManager.getTeams();
 
         EnumSet<Tower> winners = EnumSet.noneOf(Tower.class);
         int minNumTower = playersManager.getPreset().getTowersNumber() + 1;

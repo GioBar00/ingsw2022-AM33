@@ -25,6 +25,7 @@ public class PlayersManager {
      * players that are part of the game
      */
     private final ArrayList<Player> players;
+
     /**
      * map of the teams corresponding to each tower
      */
@@ -55,6 +56,13 @@ public class PlayersManager {
      */
     public GamePreset getPreset() {
         return preset;
+    }
+
+    /**
+     * @return teams.
+     */
+    public EnumMap<Tower, List<Player>> getTeams() {
+        return new EnumMap<>(teams);
     }
 
     /**
