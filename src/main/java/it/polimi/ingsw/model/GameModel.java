@@ -486,17 +486,19 @@ class GameModel implements Game {
      * @return the number of blocks (prohibit cards) that need to be removed from the IslandGroup and put
      * back on the "Herbalist" card
      */
-    int checkMergeIslandGroups(Integer islandGroupIndex) {
+    int checkMergeIslandGroups(int islandGroupIndex) {
         int numBlocks = 0;
         boolean bothBlocked;
 
-        Integer previous = Math.floorMod(islandGroupIndex - 1, islandsManager.getNumIslandGroups());
-        Integer next = Math.floorMod(islandGroupIndex + 1, islandsManager.getNumIslandGroups());
+        int previous = Math.floorMod(islandGroupIndex - 1, islandsManager.getNumIslandGroups());
+        int next = Math.floorMod(islandGroupIndex + 1, islandsManager.getNumIslandGroups());
 
         bothBlocked = islandsManager.getIslandGroup(previous).isBlocked() && islandsManager.getIslandGroup(next).isBlocked();
 
         if (islandsManager.checkMergeNext(islandGroupIndex)) {
             numBlocks += fixIslandGroupsIndexes(bothBlocked, islandGroupIndex, next);
+            if (next == 0)
+                islandGroupIndex--;
         }
 
         bothBlocked = islandsManager.getIslandGroup(islandGroupIndex).isBlocked() && islandsManager.getIslandGroup(previous).isBlocked();
@@ -511,12 +513,11 @@ class GameModel implements Game {
         return numBlocks;
     }
 
-    private int fixIslandGroupsIndexes(boolean bothBlocked, Integer index, Integer next) {
+    private int fixIslandGroupsIndexes(boolean bothBlocked, int index, int next) {
         int numBlocks = 0;
         if (bothBlocked)
             numBlocks++;
         if (next == 0) {
-            //FIXME: pass by reference
             index--;
             motherNatureIndex--;
             if (motherNatureIndex < 0)

@@ -36,12 +36,12 @@ public class IslandsManagerTest {
         assertTrue(im.checkMergeNext(0));
         assertTrue(im.checkMergePrevious(0));
         // group 0 should merge with both 1 and 11
-        assertEquals(3, im.getIslandGroup(0).size());
+        assertEquals(3, im.getIslandGroup(im.getNumIslandGroups() - 1).size());
         assertEquals(10, im.getNumIslandGroups());
 
         // tries the case of a merge between the last and first islandGroups when the num of groups changes
         im.setTower(Tower.WHITE, 0);
-        im.setTower(Tower.WHITE, im.getNumIslandGroups()-1);
+        im.setTower(Tower.WHITE, im.getNumIslandGroups() - 1);
 
         assertTrue(im.checkMergeNext(im.getNumIslandGroups() - 1));
     }

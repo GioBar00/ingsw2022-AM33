@@ -26,7 +26,7 @@ class GameModelExpertTest {
         GameModel gameModel = new GameModel(preset);
         GameModelExpert m = new GameModelExpert(gameModel);
 
-        assertFalse(m.changeTeam("lallo", Tower.WHITE));
+        assertFalse(m.changeTeam("se", Tower.WHITE));
         assertEquals(GameMode.EXPERT, m.getGameMode());
         assertEquals(20, m.reserve);
         assertFalse(m.initializeGame());
