@@ -476,15 +476,17 @@ class GameModel implements Game {
         bothBlocked = islandsManager.getIslandGroup(previous).isBlocked() && islandsManager.getIslandGroup(next).isBlocked();
 
         if (islandsManager.checkMergeNext(islandGroupIndex)) {
-            numBlocks += fixIslandGroupsIndexes(bothBlocked, islandGroupIndex, next);
-            if (next == 0)
-                islandGroupIndex--;
+            if (bothBlocked)
+                numBlocks++;
+            islandGroupIndex = fixIslandGroupsIndexes(islandGroupIndex, next);
         }
 
         bothBlocked = islandsManager.getIslandGroup(islandGroupIndex).isBlocked() && islandsManager.getIslandGroup(previous).isBlocked();
 
         if (islandsManager.checkMergePrevious(islandGroupIndex)) {
-            numBlocks += fixIslandGroupsIndexes(bothBlocked, previous, islandGroupIndex);
+            if (bothBlocked)
+                numBlocks++;
+            fixIslandGroupsIndexes(previous, islandGroupIndex);
         }
 
         if (islandsManager.getNumIslandGroups() <= 3)
@@ -493,10 +495,13 @@ class GameModel implements Game {
         return numBlocks;
     }
 
-    private int fixIslandGroupsIndexes(boolean bothBlocked, int index, int next) {
-        int numBlocks = 0;
-        if (bothBlocked)
-            numBlocks++;
+    /**
+     * fixes mother nature's index when two island groups are merged
+     * @param index of the first island group
+     * @param next index of the next island group.
+     * @return new index of the merged island groups.
+     */
+    private int fixIslandGroupsIndexes(int index, int next) {
         if (next == 0) {
             index--;
             motherNatureIndex--;
@@ -506,7 +511,7 @@ class GameModel implements Game {
         if (motherNatureIndex > index) {
             motherNatureIndex--;
         }
-        return numBlocks;
+        return index;
     }
 
     /**
