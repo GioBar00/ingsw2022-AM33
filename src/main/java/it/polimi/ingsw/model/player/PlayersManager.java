@@ -1,12 +1,9 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.enums.AssistantCard;
-import it.polimi.ingsw.enums.GamePhase;
 import it.polimi.ingsw.enums.Tower;
 import it.polimi.ingsw.enums.Wizard;
 
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NoPermissionException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -49,7 +46,7 @@ public class PlayersManager {
     }
 
     /**
-     * Starting from a random Player calcute a clockwise order
+     * Starting from a random Player, calculate a clockwise order
      */
     public void setFirstPlayer(int firstPlayer){
         for(int i = 0; i < numPlayers; i ++){
@@ -61,7 +58,9 @@ public class PlayersManager {
      * Calculates the number of available slots for players to enter.
      * @return number of available slots
      */
-    public int getAvailablePlayerSlots() {return numPlayers - players.size();}
+    public int getAvailablePlayerSlots() {
+        return numPlayers - players.size();
+    }
 
     /**
      * Method for getting the last Player of the current round
