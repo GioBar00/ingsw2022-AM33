@@ -1,9 +1,11 @@
 package it.polimi.ingsw.enums;
 
+import java.util.EnumSet;
+
 public enum GamePreset {
-    TWO(2,8, 2,7, 3, 3),
-    THREE(3,6, 3,9, 4, 4),
-    FOUR(4,8, 4,7, 3, 3);
+    TWO(2,8, 2,7, 3, 3, EnumSet.of(Tower.WHITE, Tower.BLACK)),
+    THREE(3,6, 3,9, 4, 4, EnumSet.of(Tower.WHITE, Tower.BLACK, Tower.GREY)),
+    FOUR(4,8, 4,7, 3, 3, EnumSet.of(Tower.WHITE, Tower.BLACK));
 
     private final int playersNumber;
     private final int towersNumber;
@@ -11,14 +13,16 @@ public enum GamePreset {
     private final int entranceCapacity;
     private final int cloudCapacity;
     private final int maxNumMoves;
+    private final EnumSet<Tower> towers;
 
-    GamePreset(int numPlayers, int towersValue, int cloudsNumber, int entranceValue, int cloudCapacity, int maxNumMoves){
+    GamePreset(int numPlayers, int towersValue, int cloudsNumber, int entranceValue, int cloudCapacity, int maxNumMoves, EnumSet<Tower> towers){
         this.playersNumber = numPlayers;
         this.towersNumber = towersValue;
         this.cloudsNumber = cloudsNumber;
         this.entranceCapacity = entranceValue;
         this.cloudCapacity = cloudCapacity;
         this.maxNumMoves = maxNumMoves;
+        this.towers = towers;
     }
 
     public int getPlayersNumber() {
@@ -43,5 +47,9 @@ public enum GamePreset {
 
     public int getMaxNumMoves() {
         return maxNumMoves;
+    }
+
+    public EnumSet<Tower> getTowers() {
+        return EnumSet.copyOf(towers);
     }
 }

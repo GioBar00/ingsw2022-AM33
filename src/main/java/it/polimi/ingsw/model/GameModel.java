@@ -13,7 +13,7 @@ class GameModel implements Game {
     GameMode gameMode;
     GameState gameState;
     final GamePreset preset;
-    RoundManager roundManager;
+    final RoundManager roundManager;
     final PlayersManager playersManager;
     final IslandsManager islandsManager;
     final Bag bag;
