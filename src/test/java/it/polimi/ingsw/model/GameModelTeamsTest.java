@@ -18,12 +18,18 @@ class GameModelTeamsTest {
     void addPlayer() {
         GameModel gmTeams = new GameModelTeams();
 
-
         assertTrue(gmTeams.addPlayer("whiteLeader"));
-        assertFalse( gmTeams.addPlayer("whiteLeader"));
+        assertFalse(gmTeams.addPlayer("whiteLeader"));
         assertTrue(gmTeams.addPlayer("blackLeader"));
         assertTrue(gmTeams.addPlayer("whiteOther"));
         assertTrue(gmTeams.addPlayer("blackOther"));
+
+        assertTrue(gmTeams.changeTeam("whiteLeader", Tower.WHITE));
+        assertTrue(gmTeams.changeTeam("blackLeader", Tower.BLACK));
+        assertTrue(gmTeams.changeTeam("whiteOther", Tower.WHITE));
+        assertTrue(gmTeams.changeTeam("blackOther", Tower.BLACK));
+        assertFalse(gmTeams.changeTeam("lallo", Tower.BLACK));
+        assertFalse(gmTeams.changeTeam("whiteLeader", Tower.GREY));
 
         Player pl1 = gmTeams.playersManager.getPlayers().get(0);
         Player pl2 = gmTeams.playersManager.getPlayers().get(1);
@@ -62,6 +68,11 @@ class GameModelTeamsTest {
         assertTrue(gmTeams.addPlayer("blackLeader"));
         assertTrue(gmTeams.addPlayer("whiteOther"));
         assertTrue(gmTeams.addPlayer("blackOther"));
+
+        assertTrue(gmTeams.changeTeam("whiteLeader", Tower.WHITE));
+        assertTrue(gmTeams.changeTeam("blackLeader", Tower.BLACK));
+        assertTrue(gmTeams.changeTeam("whiteOther", Tower.WHITE));
+        assertTrue(gmTeams.changeTeam("blackOther", Tower.BLACK));
 
         Player pl1 = gmTeams.playersManager.getPlayers().get(0);
         Player pl2 = gmTeams.playersManager.getPlayers().get(1);

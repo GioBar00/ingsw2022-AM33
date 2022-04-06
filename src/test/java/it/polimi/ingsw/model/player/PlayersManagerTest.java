@@ -1,12 +1,13 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.enums.AssistantCard;
+import it.polimi.ingsw.enums.GamePreset;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayersManagerTest {
-    PlayersManager pm = new PlayersManager(3);
+    PlayersManager pm = new PlayersManager(GamePreset.THREE);
 
     /**
      * Test the methods addPlayer, tries to add a new player when there's no space left and to add a player with an existing nickname
@@ -14,13 +15,13 @@ class PlayersManagerTest {
     @Test
     void CreatePm(){
         //TestingAdd
-        assertTrue(pm.addPlayer("Pl1",6,9));
+        assertTrue(pm.addPlayer("Pl1"));
 
-        assertTrue(pm.addPlayer("Pl2",6,9));
-        assertFalse(pm.addPlayer("Pl1",1,1));
+        assertTrue(pm.addPlayer("Pl2"));
+        assertFalse(pm.addPlayer("Pl1"));
         assertEquals(1,pm.getAvailablePlayerSlots());
-        assertTrue(pm.addPlayer("Pl3",6,9));
-        assertFalse(pm.addPlayer("Pl4",0,0));
+        assertTrue(pm.addPlayer("Pl3"));
+        assertFalse(pm.addPlayer("Pl4"));
     }
 
     /**
@@ -28,9 +29,9 @@ class PlayersManagerTest {
      */
     @Test
     void playersManagerTest() {
-        assertTrue(pm.addPlayer("Pl1",6,9));
-        assertTrue(pm.addPlayer("Pl2",6,9));
-        assertTrue(pm.addPlayer("Pl3",6,9));
+        assertTrue(pm.addPlayer("Pl1"));
+        assertTrue(pm.addPlayer("Pl2"));
+        assertTrue(pm.addPlayer("Pl3"));
 
         //Check slots
         assertEquals(0,pm.getAvailablePlayerSlots());
@@ -55,9 +56,9 @@ class PlayersManagerTest {
      */
     @Test
     void SortingTest(){
-        assertTrue(pm.addPlayer("Pl1",6,9));
-        assertTrue(pm.addPlayer("Pl2",6,9));
-        assertTrue(pm.addPlayer("Pl3",6,9));
+        assertTrue(pm.addPlayer("Pl1"));
+        assertTrue(pm.addPlayer("Pl2"));
+        assertTrue(pm.addPlayer("Pl3"));
 
         assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
         pm.nextPlayer();
@@ -87,9 +88,9 @@ class PlayersManagerTest {
      */
     @Test
     void clockwiseTest (){
-        assertTrue(pm.addPlayer("Pl1",6,9));
-        assertTrue(pm.addPlayer("Pl2",6,9));
-        assertTrue(pm.addPlayer("Pl3",6,9));
+        assertTrue(pm.addPlayer("Pl1"));
+        assertTrue(pm.addPlayer("Pl2"));
+        assertTrue(pm.addPlayer("Pl3"));
 
         assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
         pm.nextPlayer();
@@ -116,9 +117,9 @@ class PlayersManagerTest {
      */
     @Test
     void firstPlayerTest(){
-        assertTrue(pm.addPlayer("Pl1",6,9));
-        assertTrue(pm.addPlayer("Pl2",6,9));
-        assertTrue(pm.addPlayer("Pl3",6,9));
+        assertTrue(pm.addPlayer("Pl1"));
+        assertTrue(pm.addPlayer("Pl2"));
+        assertTrue(pm.addPlayer("Pl3"));
 
         pm.setFirstPlayer(2 - 1);
         assertEquals("Pl2",pm.getPlayers().get(0).getNickname());

@@ -26,6 +26,7 @@ class GameModelExpertTest {
         GameModel gameModel = new GameModel(preset);
         GameModelExpert m = new GameModelExpert(gameModel);
 
+        assertFalse(m.changeTeam("lallo", Tower.WHITE));
         assertEquals(GameMode.EXPERT, m.getGameMode());
         assertEquals(20, m.reserve);
         assertFalse(m.initializeGame());
@@ -99,7 +100,7 @@ class GameModelExpertTest {
         for (int i = 0; i < preset.getMaxNumMoves(); i++) {
             assertTrue(m.moveStudentToIsland(i, firstMotherNature));
         }
-        gameModel.motherNatureIndex = (firstMotherNature + 11) % 12;
+        gameModel.motherNatureIndex = (firstMotherNature + 11) % gameModel.islandsManager.getNumIslandGroups();
 
         assertTrue(m.moveMotherNature(1));
         assertEquals(expected, gameModel.islandsManager.getTower(gameModel.motherNatureIndex));

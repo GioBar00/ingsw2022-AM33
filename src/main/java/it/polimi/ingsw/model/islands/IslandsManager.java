@@ -105,7 +105,7 @@ public class IslandsManager {
             previous = index - 1;
         }
 
-        return mergeIslandGroups(index, previous);
+        return mergeIslandGroups(previous, index);
     }
 
     /**
@@ -134,7 +134,6 @@ public class IslandsManager {
                 return true;
             }
         }
-
         return false;
     }
 }

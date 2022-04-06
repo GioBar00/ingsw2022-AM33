@@ -1,9 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.enums.AssistantCard;
-import it.polimi.ingsw.enums.GameMode;
-import it.polimi.ingsw.enums.GameState;
-import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.enums.*;
 import it.polimi.ingsw.util.LinkedPairList;
 
 /**
@@ -97,6 +94,10 @@ public interface Game {
      * @return if the effect was applied successfully.
      */
     default boolean applyEffect(LinkedPairList<StudentColor, Integer> pairs) {
+        return false;
+    }
+
+    default boolean changeTeam(String nickname, Tower tower) {
         return false;
     }
 }

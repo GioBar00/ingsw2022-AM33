@@ -12,8 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 class GameModel implements Game {
     GameMode gameMode;
     GameState gameState;
-    final GamePreset preset;
-    final RoundManager roundManager;
+    RoundManager roundManager;
     final PlayersManager playersManager;
     final IslandsManager islandsManager;
     final Bag bag;
@@ -23,9 +22,8 @@ class GameModel implements Game {
     //TODO JavaDOC
     GameModel(GamePreset preset) {
         gameMode = GameMode.EASY;
-        this.preset = preset;
         roundManager = new RoundManager(preset);
-        playersManager = new PlayersManager(preset.getPlayersNumber());
+        playersManager = new PlayersManager(preset);
         clouds = new ArrayList<>(preset.getCloudsNumber());
         bag = new Bag();
 
@@ -70,7 +68,7 @@ class GameModel implements Game {
     public boolean addPlayer(String nickname) {
         if (gameState != GameState.UNINITIALIZED)
             return false;
-        return playersManager.addPlayer(nickname, preset.getTowersNumber(), preset.getEntranceCapacity());
+        return playersManager.addPlayer(nickname);
     }
 
     /**
@@ -98,7 +96,7 @@ class GameModel implements Game {
             bag.addStudents(Collections.nCopies(24, s));
         }
         for(Cloud c: clouds){
-            for(int i = 0; i < preset.getCloudCapacity(); i++){
+            for(int i = 0; i < playersManager.getPreset().getCloudCapacity(); i++){
                 c.addStudent(bag.popRandomStudent(), i);
             }
         }
@@ -113,7 +111,7 @@ class GameModel implements Game {
     private void initializeSchoolBoards() {
         for (Player p : playersManager.getPlayers()) {
             SchoolBoard sb = playersManager.getSchoolBoard(p);
-            for (int i = 0; i < preset.getEntranceCapacity(); i++) {
+            for (int i = 0; i < playersManager.getPreset().getEntranceCapacity(); i++) {
                 sb.addToEntrance(bag.popRandomStudent());
             }
         }
@@ -127,7 +125,7 @@ class GameModel implements Game {
         if (gameState != GameState.INITIALIZED)
             return false;
 
-        int i = ThreadLocalRandom.current().nextInt(0, preset.getPlayersNumber());
+        int i = ThreadLocalRandom.current().nextInt(0, playersManager.getPreset().getPlayersNumber());
         playersManager.setFirstPlayer(i);
         roundManager.nextRound();
         gameState = GameState.STARTED;
@@ -292,7 +290,7 @@ class GameModel implements Game {
             return false;
         if (roundManager.getGamePhase() != GamePhase.CHOOSE_CLOUD)
             return false;
-        if (cloudIndex < 0 || cloudIndex >= preset.getCloudsNumber())
+        if (cloudIndex < 0 || cloudIndex >= playersManager.getPreset().getCloudsNumber())
             return false;
 
         List<StudentColor> studs = clouds.get(cloudIndex).popStudents();
@@ -488,40 +486,45 @@ class GameModel implements Game {
      * @return the number of blocks (prohibit cards) that need to be removed from the IslandGroup and put
      * back on the "Herbalist" card
      */
-    int checkMergeIslandGroups(int islandGroupIndex) {
+    int checkMergeIslandGroups(Integer islandGroupIndex) {
         int numBlocks = 0;
         boolean bothBlocked;
 
-        int previous = Math.floorMod(islandGroupIndex - 1, islandsManager.getNumIslandGroups());
-        int next = Math.floorMod(islandGroupIndex + 1, islandsManager.getNumIslandGroups());
+        Integer previous = Math.floorMod(islandGroupIndex - 1, islandsManager.getNumIslandGroups());
+        Integer next = Math.floorMod(islandGroupIndex + 1, islandsManager.getNumIslandGroups());
 
         bothBlocked = islandsManager.getIslandGroup(previous).isBlocked() && islandsManager.getIslandGroup(next).isBlocked();
 
         if (islandsManager.checkMergeNext(islandGroupIndex)) {
-            if (bothBlocked)
-                numBlocks++;
-            if (motherNatureIndex > islandGroupIndex) {
-                motherNatureIndex--;
-                if (motherNatureIndex < 0)
-                    motherNatureIndex = islandsManager.getNumIslandGroups() - 1;
-            }
+            numBlocks += fixIslandGroupsIndexes(bothBlocked, islandGroupIndex, next);
         }
 
         bothBlocked = islandsManager.getIslandGroup(islandGroupIndex).isBlocked() && islandsManager.getIslandGroup(previous).isBlocked();
 
         if (islandsManager.checkMergePrevious(islandGroupIndex)) {
-            if (bothBlocked)
-                numBlocks++;
-            if (motherNatureIndex >= islandGroupIndex) {
-                motherNatureIndex--;
-                if (motherNatureIndex < 0)
-                    motherNatureIndex = islandsManager.getNumIslandGroups() - 1;
-            }
+            numBlocks += fixIslandGroupsIndexes(bothBlocked, previous, islandGroupIndex);
         }
 
         if (islandsManager.getNumIslandGroups() <= 3)
             calculateWinners();
 
+        return numBlocks;
+    }
+
+    private int fixIslandGroupsIndexes(boolean bothBlocked, Integer index, Integer next) {
+        int numBlocks = 0;
+        if (bothBlocked)
+            numBlocks++;
+        if (next == 0) {
+            //FIXME: pass by reference
+            index--;
+            motherNatureIndex--;
+            if (motherNatureIndex < 0)
+                motherNatureIndex = islandsManager.getNumIslandGroups() - 1;
+        }
+        if (motherNatureIndex > index) {
+            motherNatureIndex--;
+        }
         return numBlocks;
     }
 
@@ -548,7 +551,7 @@ class GameModel implements Game {
      */
     void refillClouds() {
         for (Cloud c: clouds) {
-            for (int i = 0; i < preset.getCloudCapacity(); i++) {
+            for (int i = 0; i < playersManager.getPreset().getCloudCapacity(); i++) {
                 StudentColor s = bag.popRandomStudent();
                 if (s == null) {
                     roundManager.setLastRound();
@@ -567,7 +570,7 @@ class GameModel implements Game {
         EnumMap<Tower, List<Player>> playersByTower = groupPlayersByTower();
 
         EnumSet<Tower> winners = EnumSet.noneOf(Tower.class);
-        int minNumTower = preset.getTowersNumber() + 1;
+        int minNumTower = playersManager.getPreset().getTowersNumber() + 1;
         for (Map.Entry<Tower, List<Player>> entry: playersByTower.entrySet()) {
             int numTower = 0;
             for (Player p: entry.getValue())

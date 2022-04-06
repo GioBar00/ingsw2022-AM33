@@ -12,11 +12,8 @@ class GameModelTeams extends GameModel {
     }
 
     /**
-     * the method adds players to the playersManager and forms teams based on the order of arrival of the clients:
-     * - the first and third player will be part of TEAM WHITE
-     * - the second and fourth player will be part of TEAM BLACK
-     * in each team the first player to be added will be the leader (whose SchoolBoard will have 8 towers),
-     * the latter will have no towers but refer to the color of the Tower of the team;
+     * the method adds the to-be player to the lobby and waits for the client to choose a preferred team before adding
+     * it as a player
      * @param nickname unique identifier of a player
      * @return if the player was added successfully.
      */
@@ -25,19 +22,7 @@ class GameModelTeams extends GameModel {
         if (gameState != GameState.UNINITIALIZED)
             return false;
 
-        int towerNumber;
-
-        if(playersManager.getPlayers().size() < 2) {
-            towerNumber = preset.getTowersNumber();
-        } else towerNumber = 0;
-
-        // TEAM WHITE > before being added to the game, the size of already existing players is an even number
-        if(playersManager.getPlayers().size() % 2 == 0) {
-            return playersManager.addPlayer(nickname, Tower.WHITE, towerNumber, preset.getEntranceCapacity());
-        }
-        // TEAM BLACK > before being added to the game, the size of already existing players is an odd number
-        return playersManager.addPlayer(nickname, Tower.BLACK, towerNumber, preset.getEntranceCapacity());
-
+        return playersManager.addToLobby(nickname);
     }
 
     /**
@@ -70,5 +55,18 @@ class GameModelTeams extends GameModel {
                 gameState = GameState.ENDED;
             }
         }
+    }
+
+
+    /**
+     * the method changes the team to which the player belongs; if the player didn't previously belong to any team,
+     * it's added as a new member
+     * @param nickname of the player
+     * @param tower of the new team
+     * @return true if the change was successful
+     */
+    @Override
+    public boolean changeTeam(String nickname, Tower tower) {
+        return playersManager.changeTeam(nickname, tower);
     }
 }

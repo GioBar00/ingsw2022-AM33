@@ -62,7 +62,7 @@ class GameModelTest {
      */
     void numTowersAndStudent() {
         int numStud = model.bag.students.size();
-        int numTowers = model.preset.getTowersNumber() * model.preset.getPlayersNumber();
+        int numTowers = model.playersManager.getPreset().getTowersNumber() * model.playersManager.getPreset().getPlayersNumber();
         assert model.playersManager.getPlayers() != null;
         for (Player p : model.playersManager.getPlayers()) {
             numStud += model.playersManager.getSchoolBoard(p).getStudentsInEntrance().stream().filter(Objects::nonNull).toArray().length;
@@ -76,7 +76,7 @@ class GameModelTest {
             for (int j = 0; j < model.islandsManager.getIslandGroup(i).size(); j++)
                 numStud += model.islandsManager.getIslandGroup(i).getIslands().get(j).getNumStudents();
         assertEquals(130, numStud);
-        assertEquals(model.preset.getCloudsNumber(), model.clouds.size());
+        assertEquals(model.playersManager.getPreset().getCloudsNumber(), model.clouds.size());
 
         for (Player p : model.playersManager.getPlayers()) {
             numTowers = numTowers - model.playersManager.getSchoolBoard(p).getNumTowers();
@@ -109,7 +109,7 @@ class GameModelTest {
         assertTrue(model.playAssistantCard(AssistantCard.FOUR));
 
         model.playersManager.calculatePlayerOrder();
-        for (int i = 0; i < model.preset.getPlayersNumber(); i++) {
+        for (int i = 0; i < model.playersManager.getPreset().getPlayersNumber(); i++) {
             assertEquals(expectedOrder[i], model.playersManager.getPlayers().get(i));
         }
 
@@ -125,7 +125,7 @@ class GameModelTest {
         assertTrue(model.moveStudentToHall(0));
 
         assertFalse(model.moveStudentToHall(0));
-        assertFalse(model.moveStudentToHall(model.preset.getEntranceCapacity()));
+        assertFalse(model.moveStudentToHall(model.playersManager.getPreset().getEntranceCapacity()));
         boolean check = false;
         for (StudentColor s : StudentColor.values()) {
             if (model.playersManager.getSchoolBoard().getStudentsInHall(s) == 1) {
@@ -152,7 +152,7 @@ class GameModelTest {
             if (s == null)
                 numOfNull++;
         }
-        assertEquals(model.preset.getMaxNumMoves(), numOfNull);
+        assertEquals(model.playersManager.getPreset().getMaxNumMoves(), numOfNull);
 
 
         assertEquals(GamePhase.MOVE_MOTHER_NATURE, model.roundManager.getGamePhase());
@@ -167,7 +167,7 @@ class GameModelTest {
         //check the implementation of the getStudentsFromCloud
         numOfNull = 0;
         ArrayList<StudentColor> entrance = model.playersManager.getSchoolBoard(current).getStudentsInEntrance();
-        for (int i = 0; i < model.preset.getEntranceCapacity(); i++) {
+        for (int i = 0; i < model.playersManager.getPreset().getEntranceCapacity(); i++) {
             if (entrance.get(i) == null)
                 numOfNull++;
         }

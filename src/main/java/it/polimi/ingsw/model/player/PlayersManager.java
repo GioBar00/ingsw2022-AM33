@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.enums.AssistantCard;
+import it.polimi.ingsw.enums.GamePreset;
 import it.polimi.ingsw.enums.Tower;
 import it.polimi.ingsw.enums.Wizard;
 
@@ -8,6 +9,10 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PlayersManager {
+    /**
+     * preset of the current game
+     */
+    private final GamePreset preset;
     /**
      * index of the current player in the array playerOrderIndexes
      */
@@ -21,37 +26,51 @@ public class PlayersManager {
      */
     private final ArrayList<Player> players;
     /**
-     * number of player currently present in the game
+     * map of the teams corresponding to each tower
      */
-    private final Integer numPlayers;
+    private final EnumMap<Tower, List<Player>> teams = new EnumMap<>(Tower.class);
+    /**
+     * list of the players waiting to be added to the game
+     */
+    private final List<String> lobby = new ArrayList<>();
     /**
      * Constructor of PlayerManager
-     * @param numPlayers is the number of player that can be allocated
+     * @param preset of the current game
      */
-    public PlayersManager(int numPlayers){
-            this.numPlayers = numPlayers;
+    public PlayersManager(GamePreset preset){
+            this.preset = preset;
             this.currentPlayerOrderIndex = 0;
-            this.playerOrderIndexes = new Integer[numPlayers];
-            this.players = new ArrayList<>(numPlayers);
-            for(int i= 0; i < numPlayers; i++ ){
+            this.playerOrderIndexes = new Integer[preset.getPlayersNumber()];
+            this.players = new ArrayList<>(preset.getPlayersNumber());
+            for (int i= 0; i < preset.getPlayersNumber(); i++ ) {
                 playerOrderIndexes[i] = i;
             }
+            for (Tower t: preset.getTowers()) {
+                teams.put(t, new LinkedList<>());
+            }
+    }
+
+    /**
+     * @return current preset
+     */
+    public GamePreset getPreset() {
+        return preset;
     }
 
     /**
      * Change state of current player to his next
      */
     public void nextPlayer(){
-        currentPlayerOrderIndex = (currentPlayerOrderIndex + 1) % numPlayers;
+        currentPlayerOrderIndex = (currentPlayerOrderIndex + 1) % preset.getPlayersNumber();
     }
 
     /**
      * Starting from a random Player, calculate a clockwise order
      */
     public void setFirstPlayer(int firstPlayer){
-        for(int i = 0; i < numPlayers; i ++){
+        for(int i = 0; i < preset.getPlayersNumber(); i ++){
             playerOrderIndexes[i] = firstPlayer;
-            firstPlayer = (firstPlayer + 1) % numPlayers;
+            firstPlayer = (firstPlayer + 1) % preset.getPlayersNumber();
         }
     }
     /**
@@ -59,7 +78,7 @@ public class PlayersManager {
      * @return number of available slots
      */
     public int getAvailablePlayerSlots() {
-        return numPlayers - players.size();
+        return preset.getPlayersNumber() - players.size() - lobby.size();
     }
 
     /**
@@ -67,7 +86,7 @@ public class PlayersManager {
      * @return last Player
      */
     public Player getLastPlayer(){
-        return players.get(playerOrderIndexes[numPlayers - 1]);
+        return players.get(playerOrderIndexes[preset.getPlayersNumber() - 1]);
     }
 
     /**
@@ -75,20 +94,16 @@ public class PlayersManager {
      * @param nickname unique identifier of a player
      * @return if the player was added successfully.
      */
-    public boolean addPlayer(String nickname, int numTowers, int entranceCapacity) {
+    public boolean addPlayer(String nickname) {
         // get random tower from available ones
-        List<Tower> availableTowers = new LinkedList<>(Arrays.asList(Tower.values()));
-
-        if (numPlayers == 2) {
-            availableTowers.remove(Tower.GREY);
-        }
+        List<Tower> availableTowers = new LinkedList<>(preset.getTowers().stream().toList());
 
         for (Player p: players)
             availableTowers.removeIf(x -> x.equals(p.getSchoolBoard().getTower()));
 
         if (availableTowers.size() > 0) {
             int towerIndex = ThreadLocalRandom.current().nextInt(0, availableTowers.size());
-            return addPlayer(nickname, availableTowers.get(towerIndex), numTowers, entranceCapacity);
+            return addPlayer(nickname, availableTowers.get(towerIndex));
         }
         return false;
     }
@@ -98,7 +113,7 @@ public class PlayersManager {
      * @param nickname unique identifier of a player
      * @return if the player was added successfully.
      */
-    public boolean addPlayer(String nickname, Tower tower, int numTowers, int entranceCapacity) {
+    public boolean addPlayer(String nickname, Tower tower) {
         if (getAvailablePlayerSlots() > 0) {
             // get random wizard from available ones
             List<Wizard> availableWizards = new LinkedList<>(Arrays.asList(Wizard.values()));
@@ -110,8 +125,14 @@ public class PlayersManager {
 
             int wizardIndex = ThreadLocalRandom.current().nextInt(0, availableWizards.size());
 
-            SchoolBoard sb = new SchoolBoard(entranceCapacity, tower, numTowers);
-            players.add(new Player(nickname, availableWizards.get(wizardIndex), sb));
+            int numTowers = teams.get(tower).size() > 0 ?
+                    0 :
+                    preset.getTowersNumber();
+
+            SchoolBoard sb = new SchoolBoard(preset.getEntranceCapacity(), tower, numTowers);
+            Player p = new Player(nickname, availableWizards.get(wizardIndex), sb);
+            players.add(p);
+            teams.get(tower).add(p);
             return true;
         }
         return false;
@@ -191,7 +212,7 @@ public class PlayersManager {
      * @return  a list of all the players
      */
     public ArrayList<Player> getPlayers(){
-        ArrayList<Player> ret = new ArrayList<>(numPlayers);
+        ArrayList<Player> ret = new ArrayList<>(preset.getPlayersNumber());
         for (int i = 0; i < players.size(); i++) {
             ret.add(players.get(playerOrderIndexes[i]));
         }
@@ -222,5 +243,58 @@ public class PlayersManager {
         for(Player p: players){
             p.clearPlayedCard();
         }
+    }
+
+    /**
+     * adds a client to the lobby, checking that the nickname isn't already used
+     * @param nickname of the to-be player that enters the lobby
+     * @return true if the nickname is available
+     */
+    public boolean addToLobby(String nickname){
+        if (getAvailablePlayerSlots() == 0)
+            return false;
+        for (String s: lobby) {
+            if(s.equals(nickname))
+                return false;
+        }
+        for (Player p: players) {
+            if(p.getNickname().equals(nickname))
+                return false;
+        }
+        lobby.add(nickname);
+        return true;
+    }
+
+    /**
+     * the method changes the team to which the player belongs; if the player didn't previously belong to any team,
+     * it's added as a new member
+     * @param nickname of the player
+     * @param tower of the new team
+     * @return true if the change was successful
+     */
+    public boolean changeTeam(String nickname, Tower tower){
+        if (!preset.getTowers().contains(tower))
+            return false;
+
+        for (String s: lobby)
+            if (s.equals(nickname)) {
+                // player not in a team yet
+                lobby.remove(nickname);
+                addPlayer(nickname, tower);
+                return true;
+            }
+
+        for (Tower t: teams.keySet()) {
+            for (Player p: teams.get(t))
+                if (p.getNickname().equals(nickname)){
+                    // player already in a team
+                    teams.get(t).remove(p);
+                    players.remove(p);
+                    addPlayer(nickname, tower);
+                    return true;
+                }
+        }
+
+        return false;
     }
 }
