@@ -1,9 +1,9 @@
 package it.polimi.ingsw.model.player;
 
-import it.polimi.ingsw.enums.AssistantCard;
-import it.polimi.ingsw.enums.GamePreset;
-import it.polimi.ingsw.enums.Tower;
-import it.polimi.ingsw.enums.Wizard;
+import it.polimi.ingsw.model.enums.AssistantCard;
+import it.polimi.ingsw.model.enums.GamePreset;
+import it.polimi.ingsw.model.enums.Tower;
+import it.polimi.ingsw.model.enums.Wizard;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;

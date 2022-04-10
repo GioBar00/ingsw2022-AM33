@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.enums.Tower;
+import it.polimi.ingsw.model.enums.Tower;
 import it.polimi.ingsw.model.player.Player;
 import org.junit.jupiter.api.Test;
 
@@ -170,6 +170,7 @@ class GameModelTeamsTest {
                 newLeader = p;
         }
 
+        assert newLeader != null;
         assertEquals(8, gmTeams.playersManager.getSchoolBoard(newLeader).getNumTowers());
 
     }

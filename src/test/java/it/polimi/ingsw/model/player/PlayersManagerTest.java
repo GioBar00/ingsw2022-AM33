@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.player;
 
-import it.polimi.ingsw.enums.AssistantCard;
-import it.polimi.ingsw.enums.GamePreset;
+import it.polimi.ingsw.model.enums.AssistantCard;
+import it.polimi.ingsw.model.enums.GamePreset;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

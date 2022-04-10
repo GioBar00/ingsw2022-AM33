@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.cards;
 
-import it.polimi.ingsw.enums.CharacterType;
-import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.model.enums.CharacterType;
+import it.polimi.ingsw.model.enums.StudentColor;
 import it.polimi.ingsw.util.LinkedPairList;
 
 /**

@@ -1,8 +1,9 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.enums.*;
+import it.polimi.ingsw.model.enums.*;
 import it.polimi.ingsw.model.cards.CharacterCard;
 import it.polimi.ingsw.model.cards.EffectHandler;
+import it.polimi.ingsw.model.enums.*;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.SchoolBoard;
 import it.polimi.ingsw.util.LinkedPairList;

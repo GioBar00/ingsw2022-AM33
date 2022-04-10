@@ -1,8 +1,8 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.enums.GamePreset;
-import it.polimi.ingsw.enums.GameState;
-import it.polimi.ingsw.enums.Tower;
+import it.polimi.ingsw.model.enums.GamePreset;
+import it.polimi.ingsw.model.enums.GameState;
+import it.polimi.ingsw.model.enums.Tower;
 import it.polimi.ingsw.model.player.SchoolBoard;
 
 

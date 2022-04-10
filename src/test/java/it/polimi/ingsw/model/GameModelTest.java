@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.enums.*;
+import it.polimi.ingsw.model.enums.*;
 import it.polimi.ingsw.model.islands.Island;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.util.LinkedPairList;

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.islands;
 
-import it.polimi.ingsw.enums.StudentColor;
-import it.polimi.ingsw.enums.Tower;
+import it.polimi.ingsw.model.enums.StudentColor;
+import it.polimi.ingsw.model.enums.Tower;
 
 import java.util.EnumMap;
 

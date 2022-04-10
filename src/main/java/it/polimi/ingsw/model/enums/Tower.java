@@ -1,4 +1,4 @@
-package it.polimi.ingsw.enums;
+package it.polimi.ingsw.model.enums;
 
 /**
  * types of towers, by color

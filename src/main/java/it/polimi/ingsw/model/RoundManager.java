@@ -1,9 +1,9 @@
 package it.polimi.ingsw.model;
 
 
-import it.polimi.ingsw.enums.GamePhase;
-import it.polimi.ingsw.enums.GamePreset;
-import it.polimi.ingsw.enums.Tower;
+import it.polimi.ingsw.model.enums.GamePhase;
+import it.polimi.ingsw.model.enums.GamePreset;
+import it.polimi.ingsw.model.enums.Tower;
 
 import java.util.EnumSet;
 

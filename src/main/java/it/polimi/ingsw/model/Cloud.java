@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.enums.StudentColor;
+import it.polimi.ingsw.model.enums.StudentColor;
 
 import java.util.ArrayList;
 import java.util.Collections;

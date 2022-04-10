@@ -1,12 +1,12 @@
 package it.polimi.ingsw.model.player;
 
-import it.polimi.ingsw.enums.AssistantCard;
-import it.polimi.ingsw.enums.Wizard;
+import it.polimi.ingsw.model.enums.AssistantCard;
+import it.polimi.ingsw.model.enums.Wizard;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Player{
+public class Player {
     /**
      * nickname of the player
      */

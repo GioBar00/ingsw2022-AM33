@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.enums.*;
+import it.polimi.ingsw.model.enums.*;
+import it.polimi.ingsw.model.enums.*;
 import it.polimi.ingsw.util.LinkedPairList;
 
 /**

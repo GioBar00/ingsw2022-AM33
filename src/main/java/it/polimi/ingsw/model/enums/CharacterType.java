@@ -1,4 +1,4 @@
-package it.polimi.ingsw.enums;
+package it.polimi.ingsw.model.enums;
 
 import it.polimi.ingsw.model.cards.*;
 

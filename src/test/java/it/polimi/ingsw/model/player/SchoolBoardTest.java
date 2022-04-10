@@ -1,8 +1,8 @@
 package it.polimi.ingsw.model.player;
 
-import it.polimi.ingsw.enums.GamePreset;
-import it.polimi.ingsw.enums.StudentColor;
-import it.polimi.ingsw.enums.Tower;
+import it.polimi.ingsw.model.enums.GamePreset;
+import it.polimi.ingsw.model.enums.StudentColor;
+import it.polimi.ingsw.model.enums.Tower;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

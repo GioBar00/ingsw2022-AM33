@@ -1,4 +1,4 @@
-package it.polimi.ingsw.enums;
+package it.polimi.ingsw.model.enums;
 
 /**
  * enumeration for assistant cards: contains data for number of card, its value and number of moves
