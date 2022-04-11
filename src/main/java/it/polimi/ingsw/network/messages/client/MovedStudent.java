@@ -3,14 +3,35 @@ package it.polimi.ingsw.network.messages.client;
 import it.polimi.ingsw.network.messages.Move;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 
+/**
+ * This message signifies that the player moved a student.
+ */
 public class MovedStudent extends Move {
 
-    private final MoveLocation from;
-    private final Integer fromIndex;
+    /**
+     * from where the student was moved.
+     */
+    final MoveLocation from;
+    /**
+     * from which index the student was moved.
+     */
+    final Integer fromIndex;
+    /**
+     * to where the student was moved.
+     */
+    final MoveLocation to;
+    /**
+     * to which index the student was moved.
+     */
+    final Integer toIndex;
 
-    private final MoveLocation to;
-    private final Integer toIndex;
-
+    /**
+     * Creates the message.
+     * @param from location.
+     * @param fromIndex location index.
+     * @param to location.
+     * @param toIndex location index.
+     */
     public MovedStudent(MoveLocation from, Integer fromIndex, MoveLocation to, Integer toIndex) {
         this.from = from;
         this.fromIndex = fromIndex;
@@ -18,28 +39,40 @@ public class MovedStudent extends Move {
         this.toIndex = toIndex;
     }
 
+    /**
+     * @return from location.
+     */
     public MoveLocation getFrom() {
         return from;
     }
-
+    /**
+     * @return from location index.
+     */
     public Integer getFromIndex() {
         return fromIndex;
     }
-
+    /**
+     * @return to location.
+     */
     public MoveLocation getTo() {
         return to;
     }
-
+    /**
+     * @return to location index.
+     */
     public Integer getToIndex() {
         return toIndex;
     }
 
+    /**
+     * @return if the message is valid.
+     */
     @Override
     public boolean isValid() {
         if(from != null && to != null) {
-            if (from.requiresIndex() && fromIndex == null)
+            if (from.requiresFromIndex() && fromIndex == null)
                 return false;
-            return !to.requiresIndex() || toIndex != null;
+            return !to.requiresToIndex() || toIndex != null;
         }
         return false;
     }

@@ -38,11 +38,11 @@ public class Farmer extends CharacterCard {
     }
 
     /**
-     * Ends the effect of the character card. It reverts the effect.
+     * Reverts the effect of the character card.
      * @param effectHandler handler for the effects.
      */
     @Override
-    public void endEffect(EffectHandler effectHandler) {
+    public void revertEffect(EffectHandler effectHandler) {
         if (appliedEffect) {
             effectHandler.restoreProfsToOriginalPlayer(original);
             appliedEffect = false;

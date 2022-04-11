@@ -123,17 +123,17 @@ class GameModelExpertTest {
             assertFalse(m.applyEffect(new LinkedPairList<>()));
             assertFalse(m.activateCharacterCard(10));
             assertFalse(m.activateCharacterCard(-1));
-            m.playerCoins.remove(gameModel.playersManager.getCurrentPlayer());
-            m.playerCoins.put(gameModel.playersManager.getCurrentPlayer(), 0);
+            m.playerCoins.remove(gameModel.playersManager.getCurrentPlayer().getNickname());
+            m.playerCoins.put(gameModel.playersManager.getCurrentPlayer().getNickname(), 0);
 
             assertFalse(m.activateCharacterCard(0));
 
-            m.playerCoins.remove(gameModel.playersManager.getCurrentPlayer());
-            m.playerCoins.put(gameModel.playersManager.getCurrentPlayer(), 10);
+            m.playerCoins.remove(gameModel.playersManager.getCurrentPlayer().getNickname());
+            m.playerCoins.put(gameModel.playersManager.getCurrentPlayer().getNickname(), 10);
 
             assertTrue(m.activateCharacterCard(0));
             assertFalse(m.activateCharacterCard(0));
-            assertEquals(10 - m.characterCards.get(0).getCost(), m.playerCoins.get(gameModel.playersManager.getCurrentPlayer()));
+            assertEquals(10 - m.characterCards.get(0).getCost(), m.playerCoins.get(gameModel.playersManager.getCurrentPlayer().getNickname()));
             assertEquals(currentReserve + m.characterCards.get(0).getCost() - 1, m.reserve);
 
             assertFalse(m.moveStudentToIsland(0, 0));
@@ -165,8 +165,8 @@ class GameModelExpertTest {
         gameModel.roundManager.startActionPhase();
 
         Player current = gameModel.playersManager.getCurrentPlayer();
-        m.playerCoins.remove(current);
-        m.playerCoins.put(current, herbalist.getCost());
+        m.playerCoins.remove(current.getNickname());
+        m.playerCoins.put(current.getNickname(), herbalist.getCost());
         m.activateCharacterCard(0);
         LinkedPairList<StudentColor, Integer> pairs = new LinkedPairList<>();
 

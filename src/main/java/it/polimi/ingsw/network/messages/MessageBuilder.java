@@ -3,12 +3,19 @@ package it.polimi.ingsw.network.messages;
 import com.google.gson.*;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveType;
-import it.polimi.ingsw.network.messages.server.MoveStudent;
 
 import java.lang.reflect.Type;
 
+/**
+ * Serializes and Deserializes messages in Json.
+ */
 public final class MessageBuilder {
 
+    /**
+     * Serializes the message to Json.
+     * @param m message to serialize.
+     * @return the serialized message.
+     */
     public String toJson(Message m) {
         Gson g = new GsonBuilder()
                 .setPrettyPrinting()
@@ -17,6 +24,11 @@ public final class MessageBuilder {
         return g.toJson(m, Message.class);
     }
 
+    /**
+     * Deserializes the serialized message.
+     * @param json the serialized message
+     * @return the deserialized message or an invalid message if the serialized message is invalid.
+     */
     public Message fromJson(String json) {
         Gson g = new GsonBuilder()
                 .registerTypeAdapter(Message.class, new MessageDeserializer())
@@ -28,6 +40,9 @@ public final class MessageBuilder {
         return new Message();
     }
 
+    /**
+     * Custom serializer for Message class.
+     */
     public static class MessageSerializer implements JsonSerializer<Message> {
 
         @Override
@@ -43,6 +58,9 @@ public final class MessageBuilder {
         }
     }
 
+    /**
+     * Custom deserializer for Message class.
+     */
     public static class MessageDeserializer implements JsonDeserializer<Message> {
 
         @Override
@@ -68,6 +86,9 @@ public final class MessageBuilder {
         }
     }
 
+    /**
+     * Custom serializer for Move class.
+     */
     public static class MoveSerializer implements JsonSerializer<Move> {
 
         @Override
@@ -82,6 +103,9 @@ public final class MessageBuilder {
         }
     }
 
+    /**
+     * Custom deserializer for Move class.
+     */
     public static class MoveDeserializer implements JsonDeserializer<Move> {
 
         @Override
@@ -98,11 +122,11 @@ public final class MessageBuilder {
                             return des;
                         }
                     } catch (IllegalArgumentException ignored) {
-                        return new MoveStudent();
+                        return new Move();
                     }
                 }
             }
-            return new MoveStudent();
+            return new Move();
         }
     }
 }

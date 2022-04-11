@@ -1,0 +1,47 @@
+package it.polimi.ingsw.network.messages.server;
+
+import it.polimi.ingsw.model.enums.StudentColor;
+import it.polimi.ingsw.network.messages.Message;
+
+import java.util.EnumSet;
+
+/**
+ * This message tells the player to choose a student color.
+ */
+public class ChooseStudentColor extends Message {
+
+    /**
+     * available student colors.
+     */
+    private final EnumSet<StudentColor> availableStudentColors;
+
+    /**
+     * Creates message.
+     * @param availableStudentColors available student colors.
+     */
+    public ChooseStudentColor(EnumSet<StudentColor> availableStudentColors) {
+        this.availableStudentColors = availableStudentColors;
+    }
+
+    /**
+     * Creates message with all student colors available.
+     */
+    public ChooseStudentColor() {
+        this(EnumSet.allOf(StudentColor.class));
+    }
+
+    /**
+     * @return available student colors.
+     */
+    public EnumSet<StudentColor> getAvailableStudentColors() {
+        return EnumSet.copyOf(availableStudentColors);
+    }
+
+    /**
+     * @return if the message is valid.
+     */
+    @Override
+    public boolean isValid() {
+        return availableStudentColors != null;
+    }
+}

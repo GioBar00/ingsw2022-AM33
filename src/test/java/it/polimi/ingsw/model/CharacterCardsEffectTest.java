@@ -129,7 +129,7 @@ class CharacterCardsEffectTest {
         gme.skipTowers = false;
         centaur.applyEffect(gme, null);
         assertTrue(gme.skipTowers);
-        centaur.endEffect(gme);
+        centaur.revertEffect(gme);
         assertFalse(gme.skipTowers);
 
         assertEquals(1, centaur.getAdditionalCost());
@@ -183,7 +183,7 @@ class CharacterCardsEffectTest {
         assertFalse(schoolBoardCurrent.getProfessors().contains(StudentColor.PINK));
         assertTrue(schoolBoardCurrent.getProfessors().contains(StudentColor.GREEN));
 
-        farmer.endEffect(gme);
+        farmer.revertEffect(gme);
 
         assertTrue(schoolBoardCurrent.getProfessors().contains(StudentColor.RED));
         assertFalse(schoolBoardCurrent.getProfessors().contains(StudentColor.BLUE));
@@ -256,7 +256,7 @@ class CharacterCardsEffectTest {
         assertTrue(gme.skipStudentColors.contains(StudentColor.RED));
         
         // check end effect
-        harvester.endEffect(gme);
+        harvester.revertEffect(gme);
         assertFalse(gme.skipStudentColors.contains(StudentColor.BLUE));
         assertFalse(gme.skipStudentColors.contains(StudentColor.RED));
 
@@ -485,7 +485,7 @@ class CharacterCardsEffectTest {
         int initialAdditionalInfluence = gme.additionalInfluence;
         assertTrue(knight.applyEffect(gme, null));
         assertEquals(initialAdditionalInfluence + 2, gme.additionalInfluence);
-        knight.endEffect(gme);
+        knight.revertEffect(gme);
         assertEquals(initialAdditionalInfluence, gme.additionalInfluence);
 
         assertEquals(1, knight.getAdditionalCost());
@@ -502,7 +502,7 @@ class CharacterCardsEffectTest {
         int initialAdditionalMotherNatureMovement = gme.additionalMotherNatureMovement;
         assertTrue(mailman.applyEffect(gme, null));
         assertEquals(initialAdditionalMotherNatureMovement + 2, gme.additionalMotherNatureMovement);
-        mailman.endEffect(gme);
+        mailman.revertEffect(gme);
         assertEquals(initialAdditionalMotherNatureMovement, gme.additionalMotherNatureMovement);
 
         assertEquals(1, mailman.getAdditionalCost());

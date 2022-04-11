@@ -3,7 +3,6 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.enums.*;
 import it.polimi.ingsw.model.cards.CharacterCard;
 import it.polimi.ingsw.model.cards.EffectHandler;
-import it.polimi.ingsw.model.enums.*;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.SchoolBoard;
 import it.polimi.ingsw.util.LinkedPairList;
@@ -29,7 +28,7 @@ class GameModelExpert implements Game, EffectHandler {
     /**
      * Number of coins for each player.
      */
-    final Map<Player, Integer> playerCoins = new HashMap<>();
+    final Map<String, Integer> playerCoins = new HashMap<>();
 
     /**
      * Character cards in the game.
@@ -114,7 +113,7 @@ class GameModelExpert implements Game, EffectHandler {
         if (model.addPlayer(nickname)) {
             List<Player> players = model.playersManager.getPlayers();
             Player p = players.get(players.size() - 1);
-            playerCoins.put(p, 0);
+            playerCoins.put(p.getNickname(), 0);
             return true;
         }
         return false;
@@ -129,7 +128,7 @@ class GameModelExpert implements Game, EffectHandler {
     public boolean initializeGame() {
         if (model.initializeGame()) {
             for (Player p: model.playersManager.getPlayers()) {
-                playerCoins.put(p, 1);
+                playerCoins.put(p.getNickname(), 1);
                 reserve--;
             }
             for (CharacterCard c: characterCards)
@@ -175,7 +174,7 @@ class GameModelExpert implements Game, EffectHandler {
 
             if (model.playersManager.getSchoolBoard(p).getStudentsInHall(sc) % 3 == 0) {
                 if (reserve > 0) {
-                    playerCoins.put(p, playerCoins.get(p) + 1);
+                    playerCoins.put(p.getNickname(), playerCoins.get(p.getNickname()) + 1);
                     reserve--;
                 }
             }
@@ -223,7 +222,7 @@ class GameModelExpert implements Game, EffectHandler {
      */
     void endTurn() {
         for (CharacterCard c: characterCards)
-            c.endEffect(this);
+            c.revertEffect(this);
         activatedACharacterCard = false;
     }
 
@@ -257,10 +256,10 @@ class GameModelExpert implements Game, EffectHandler {
             return false;
         Player curr = model.playersManager.getCurrentPlayer();
         int totalCost = characterCards.get(index).getTotalCost();
-        if (playerCoins.get(curr) < totalCost)
+        if (playerCoins.get(curr.getNickname()) < totalCost)
             return false;
 
-        playerCoins.put(curr, playerCoins.get(curr) - totalCost);
+        playerCoins.put(curr.getNickname(), playerCoins.get(curr.getNickname()) - totalCost);
         reserve += totalCost - 1;
         characterCardActivating = characterCards.get(index);
         activatedACharacterCard = true;
@@ -278,6 +277,22 @@ class GameModelExpert implements Game, EffectHandler {
             return false;
 
         if (characterCardActivating.applyEffect(this, pairs)) {
+            if (characterCardActivating.hasAppliedEffect())
+                characterCardActivating = null;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Ends the effect of the activated character card.
+     * @return if the effect was ended correctly.
+     */
+    @Override
+    public boolean endEffect() {
+        if (characterCardActivating == null)
+            return false;
+        if (characterCardActivating.endEffect()) {
             characterCardActivating = null;
             return true;
         }

@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.enums.*;
-import it.polimi.ingsw.model.enums.*;
 import it.polimi.ingsw.util.LinkedPairList;
 
 /**
@@ -98,6 +97,20 @@ public interface Game {
         return false;
     }
 
+    /**
+     * Ends the effect of the activated character card.
+     * @return if the effect was ended correctly.
+     */
+    default boolean endEffect() {
+        return false;
+    }
+
+    /**
+     * Changes team of the player.
+     * @param nickname of the player.
+     * @param tower team to change to.
+     * @return if the team was changed successfully.
+     */
     default boolean changeTeam(String nickname, Tower tower) {
         return false;
     }

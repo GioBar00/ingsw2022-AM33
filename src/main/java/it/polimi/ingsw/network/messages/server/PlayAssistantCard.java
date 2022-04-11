@@ -1,22 +1,40 @@
 package it.polimi.ingsw.network.messages.server;
 
+import it.polimi.ingsw.model.enums.AssistantCard;
 import it.polimi.ingsw.network.messages.Message;
 
-import java.util.List;
+import java.util.EnumSet;
 
+/**
+ * This message tells the player to play an assistant card.
+ */
 public class PlayAssistantCard extends Message {
-    private final List<Integer> playableAssistantCardsIndexes;
 
-    public PlayAssistantCard(List<Integer> cardIndexes) {
-        playableAssistantCardsIndexes = cardIndexes;
+    /**
+     * playable assistant cards.
+     */
+    private final EnumSet<AssistantCard> playableAssistantCards;
+
+    /**
+     * Creates message.
+     * @param cards playable assistant cards.
+     */
+    public PlayAssistantCard(EnumSet<AssistantCard> cards) {
+        playableAssistantCards = cards;
     }
 
-    public List<Integer> getPlayableAssistantCardsIndexes() {
-        return playableAssistantCardsIndexes;
+    /**
+     * @return playable assistant cards.
+     */
+    public EnumSet<AssistantCard> getPlayableAssistantCards() {
+        return EnumSet.copyOf(playableAssistantCards);
     }
 
+    /**
+     * @return if the message is valid.
+     */
     @Override
     public boolean isValid() {
-        return playableAssistantCardsIndexes != null;
+        return playableAssistantCards != null;
     }
 }

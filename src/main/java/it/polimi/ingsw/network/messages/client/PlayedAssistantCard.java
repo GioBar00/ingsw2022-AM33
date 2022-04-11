@@ -1,22 +1,38 @@
 package it.polimi.ingsw.network.messages.client;
 
+import it.polimi.ingsw.model.enums.AssistantCard;
 import it.polimi.ingsw.network.messages.Message;
 
+/**
+ * This message signifies that the player played an assistant card.
+ */
 public class PlayedAssistantCard extends Message {
 
-    private final Integer assistantCardIndex;
+    /**
+     * assistant card that was played.
+     */
+    private final AssistantCard assistantCard;
 
-    public PlayedAssistantCard(Integer index) {
-        assistantCardIndex = index;
+    /**
+     * Creates the message
+     * @param card played.
+     */
+    public PlayedAssistantCard(AssistantCard card) {
+        assistantCard = card;
     }
 
-    public int getAssistantCardIndex() {
-        return assistantCardIndex;
+    /**
+     * @return played assistant card.
+     */
+    public AssistantCard getAssistantCard() {
+        return assistantCard;
     }
 
-
+    /**
+     * @return if the message is valid.
+     */
     @Override
     public boolean isValid() {
-        return assistantCardIndex != null;
+        return assistantCard != null;
     }
 }

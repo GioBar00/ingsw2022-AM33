@@ -28,15 +28,40 @@ public abstract class CharacterCard {
      * if the effect of the card was applied.
      */
     boolean appliedEffect = false;
+    /**
+     * current choices number.
+     */
+    int currentChoicesNumber = 0;
+    /**
+     * required choices number to complete the effect.
+     */
+    final int requiredChoicesNumber;
+    /**
+     * maximum choices number to complete the effect.
+     */
+    final int maximumChoicesNumber;
+
+    /**
+     * Constructs the card with no required choices.
+     * @param type of the card.
+     * @param cost of the card.
+     */
+    CharacterCard(CharacterType type, int cost) {
+        this(type, cost, 0, 0);
+    }
 
     /**
      * Constructs the card.
      * @param type of the card.
      * @param cost of the card.
+     * @param requiredChoicesNumber of the card.
+     * @param maximumChoicesNumber of the card.
      */
-    protected CharacterCard(CharacterType type, int cost) {
+    CharacterCard(CharacterType type, int cost, int requiredChoicesNumber, int maximumChoicesNumber) {
         this.type = type;
         this.cost = cost;
+        this.requiredChoicesNumber = requiredChoicesNumber;
+        this.maximumChoicesNumber = maximumChoicesNumber;
     }
 
     /**
@@ -75,12 +100,31 @@ public abstract class CharacterCard {
     public abstract boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs);
 
     /**
-     * Ends the effect of the character card.
+     * Ends the effect if at least the required choices were make.
+     * @return if the effect was ended correctly.
+     */
+    public boolean endEffect() {
+        if (currentChoicesNumber >= requiredChoicesNumber) {
+            appliedEffect = true;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Reverts the effect of the character card if the effect is not permanent.
      * @param effectHandler handler for the effects.
      */
-    public void endEffect(EffectHandler effectHandler) {
+    public void revertEffect(EffectHandler effectHandler) {
         if (appliedEffect)
             appliedEffect = false;
+    }
+
+    /**
+     * @return if card has applied effect.
+     */
+    public boolean hasAppliedEffect() {
+        return appliedEffect;
     }
 
     /**

@@ -9,21 +9,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum MessageType {
-    INVALID(Message.class),
+    INVALID(null),
 
-    PLAY_ASSISTANT_CARDS(PlayAssistantCard.class),
+    PLAY_ASSISTANT_CARD(PlayAssistantCard.class),
     MOVE_STUDENT(MoveStudent.class),
     SWAP_STUDENTS(SwapStudents.class),
-    MULTIPLE_MOVES(MultipleMoves.class),
+    MULTIPLE_POSSIBLE_MOVES(MultiplePossibleMoves.class),
     MOVE_MOTHER_NATURE(MoveMotherNature.class),
     CHOOSE_CLOUD(ChooseCloud.class),
+    CHOOSE_ISLAND(ChooseIsland.class),
+    CHOOSE_STUDENT_COLOR(ChooseStudentColor.class),
 
     PLAYED_ASSISTANT_CARD(PlayedAssistantCard.class),
     MOVED_STUDENT(MovedStudent.class),
     SWAPPED_STUDENT(SwappedStudent.class),
     MOVED_MOTHER_NATURE(MovedMotherNature.class),
     CHOSEN_CLOUD(ChosenCloud.class),
-    ACTIVATED_CHARACTER_CARD(ActivatedCharacterCard.class);
+    CHOSEN_ISLAND(ChosenIsland.class),
+    CHOSEN_STUDENT_COLOR(ChosenStudentColor.class),
+    ACTIVATED_CHARACTER_CARD(ActivatedCharacterCard.class),
+    CONCLUDE_CHARACTER_CARD_EFFECT(ConcludeCharacterCardEffect.class);
 
     private static final Map<Class<? extends Message>, MessageType> LOOKUP_MAP;
 
@@ -31,6 +36,7 @@ public enum MessageType {
         LOOKUP_MAP = new HashMap<>();
         for (MessageType m: MessageType.values())
             LOOKUP_MAP.put(m.getMessageClass(), m);
+        LOOKUP_MAP.put(Message.class, INVALID);
         LOOKUP_MAP.put(Move.class, INVALID);
     }
 
