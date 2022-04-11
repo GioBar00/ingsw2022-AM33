@@ -98,6 +98,13 @@ public interface Game {
         return false;
     }
 
+    /**
+     * the method changes the team to which the player belongs; if the player didn't previously belong to any team,
+     * it's added as a new member
+     * @param nickname of the player
+     * @param tower of the new team
+     * @return true if the change was successful
+     */
     default boolean changeTeam(String nickname, Tower tower) {
         return false;
     }

@@ -8,6 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 class Cloud {
+    /**
+     * students present on the cloud
+     */
     private final ArrayList<StudentColor> students;
 
     Cloud(int capacity) {

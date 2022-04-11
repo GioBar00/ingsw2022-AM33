@@ -7544,8 +7544,8 @@
 								"$ref": "AAAAAAFF+qBtyKM79qY="
 							},
 							"font": "Arial;13;0",
-							"left": 3440,
-							"top": 1272,
+							"left": 3536,
+							"top": 1592,
 							"width": 100,
 							"height": 50,
 							"text": "FACTORY METHOD"
@@ -7564,7 +7564,7 @@
 								"$ref": "AAAAAAF/qDNkYMP+8Rg="
 							},
 							"lineStyle": 1,
-							"points": "3505:1479;3491:1322"
+							"points": "3529:1538;3567:1591"
 						},
 						{
 							"_type": "UMLPackageView",

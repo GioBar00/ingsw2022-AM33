@@ -6,7 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-class Bag {
+class Bag{
+    /**
+     * students currently in the bag
+     */
     LinkedList<StudentColor> students;
 
     public Bag() {
