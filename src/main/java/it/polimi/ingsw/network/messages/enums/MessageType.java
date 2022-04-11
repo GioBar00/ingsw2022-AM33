@@ -1,5 +1,6 @@
 package it.polimi.ingsw.network.messages.enums;
 
+import it.polimi.ingsw.model.enums.GamePreset;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.Move;
 import it.polimi.ingsw.network.messages.client.*;
@@ -10,7 +11,7 @@ import java.util.Map;
 
 public enum MessageType {
     INVALID(null),
-
+    // server messages
     PLAY_ASSISTANT_CARD(PlayAssistantCard.class),
     MOVE_STUDENT(MoveStudent.class),
     SWAP_STUDENTS(SwapStudents.class),
@@ -19,7 +20,10 @@ public enum MessageType {
     CHOOSE_CLOUD(ChooseCloud.class),
     CHOOSE_ISLAND(ChooseIsland.class),
     CHOOSE_STUDENT_COLOR(ChooseStudentColor.class),
-
+    COMM_MESSAGE(CommMessage.class),
+    CURRENT_TEAMS(CurrentTeams.class),
+    CURRENT_GAME_STATE(CurrentTeams.class),
+    // client messages
     PLAYED_ASSISTANT_CARD(PlayedAssistantCard.class),
     MOVED_STUDENT(MovedStudent.class),
     SWAPPED_STUDENT(SwappedStudent.class),
@@ -28,7 +32,10 @@ public enum MessageType {
     CHOSEN_ISLAND(ChosenIsland.class),
     CHOSEN_STUDENT_COLOR(ChosenStudentColor.class),
     ACTIVATED_CHARACTER_CARD(ActivatedCharacterCard.class),
-    CONCLUDE_CHARACTER_CARD_EFFECT(ConcludeCharacterCardEffect.class);
+    CONCLUDE_CHARACTER_CARD_EFFECT(ConcludeCharacterCardEffect.class),
+    CHOOSE_NUMBER_OF_PLAYERS(ChooseNumberOfPlayers.class),
+    CHOOSE_TEAM(ChooseTeam.class),
+    LOGIN(Login.class);
 
     private static final Map<Class<? extends Message>, MessageType> LOOKUP_MAP;
 
