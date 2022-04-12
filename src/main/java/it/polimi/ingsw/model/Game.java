@@ -29,12 +29,6 @@ public interface Game {
      */
     boolean addPlayer(String nickname);
 
-    /**
-     * Initializes the game.
-     * Add the remaining student on the bag.
-     * @return if the initialization was successful.
-     */
-    boolean initializeGame();
 
     /**
      * Starts the game.
@@ -78,6 +72,12 @@ public interface Game {
      * @return if the students were taken correctly from the cloud and added to the entrance.
      */
     boolean getStudentsFromCloud(int cloudIndex);
+
+    /**
+     * used to get the current player
+     * @return the nickname of the current player
+     */
+    String getCurrentPlayer();
 
     /**
      * Activates character card at index.

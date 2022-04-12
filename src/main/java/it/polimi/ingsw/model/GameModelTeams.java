@@ -3,7 +3,11 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.enums.GamePreset;
 import it.polimi.ingsw.model.enums.GameState;
 import it.polimi.ingsw.model.enums.Tower;
+import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.SchoolBoard;
+
+import java.util.EnumMap;
+import java.util.List;
 
 
 class GameModelTeams extends GameModel {
@@ -64,6 +68,22 @@ class GameModelTeams extends GameModel {
         }
     }
 
+    /**
+     * Starts the Game and randomly selects the first Player if the game is initialized.
+     * @return if the game started successfully.
+     */
+    @Override
+    public boolean startGame(){
+        EnumMap<Tower, List<Player>> teams = playersManager.getTeams();
+        for(Tower t: teams.keySet()){
+            if(teams.get(t).size() != 2)
+                return false;
+        }
+        if(teams.keySet().size()!= 2)
+            return false;
+
+        return super.startGame();
+    }
 
     /**
      * the method changes the team to which the player belongs; if the player didn't previously belong to any team,

@@ -25,6 +25,7 @@ public enum MessageType {
     COMM_MESSAGE(CommMessage.class),
     CURRENT_TEAMS(CurrentTeams.class),
     CURRENT_GAME_STATE(CurrentTeams.class),
+
     // client messages
     PLAYED_ASSISTANT_CARD(PlayedAssistantCard.class),
     MOVED_STUDENT(MovedStudent.class),
@@ -35,9 +36,10 @@ public enum MessageType {
     CHOSEN_STUDENT_COLOR(ChosenStudentColor.class),
     ACTIVATED_CHARACTER_CARD(ActivatedCharacterCard.class),
     CONCLUDE_CHARACTER_CARD_EFFECT(ConcludeCharacterCardEffect.class),
-    CHOOSE_NUMBER_OF_PLAYERS(ChooseNumberOfPlayers.class),
+    CHOOSE_GAME(ChooseGame.class),
     CHOOSE_TEAM(ChooseTeam.class),
-    LOGIN(Login.class);
+    LOGIN(Login.class),
+    START_GAME(StartGame.class);
 
     private static final Map<Class<? extends Message>, MessageType> LOOKUP_MAP;
 

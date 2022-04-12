@@ -16,7 +16,7 @@ public final class MessageBuilder {
      * @param m message to serialize.
      * @return the serialized message.
      */
-    public String toJson(Message m) {
+    public static String toJson(Message m) {
         Gson g = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(Message.class, new MessageSerializer())
@@ -29,7 +29,7 @@ public final class MessageBuilder {
      * @param json the serialized message
      * @return the deserialized message or an invalid message if the serialized message is invalid.
      */
-    public Message fromJson(String json) {
+    public static Message fromJson(String json) {
         Gson g = new GsonBuilder()
                 .registerTypeAdapter(Message.class, new MessageDeserializer())
                 .create();

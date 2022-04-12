@@ -33,23 +33,22 @@ class GameModelTest {
     @BeforeEach
     void creationTest() {
         model = new GameModel(GamePreset.THREE);
-        assertFalse(model.initializeGame());
+        assertFalse(model.startGame());
         assertTrue(model.addPlayer("1"));
 
-        assertFalse(model.initializeGame());
+        assertFalse(model.startGame());
         assertTrue(model.addPlayer("2"));
-        assertFalse(model.initializeGame());
+        assertFalse(model.startGame());
         assertEquals(1, model.getAvailablePlayerSlots());
         assertTrue(model.addPlayer("3"));
         assertEquals(0, model.getAvailablePlayerSlots());
         assertEquals(GameState.UNINITIALIZED, model.getGameState());
 
-        assertTrue(model.initializeGame());
         assertTrue(model.startGame());
 
         assertEquals(3, model.playersManager.getPlayers().size());
         assertEquals(GameState.STARTED, model.getGameState());
-        assertFalse(model.initializeGame());
+        assertFalse(model.startGame());
         fMotherNature = model.motherNatureIndex;
         assertEquals(0,model.islandsManager.getIslandGroup(fMotherNature).getIslands().get(0).getNumStudents());
         assertEquals(0,model.islandsManager.getIslandGroup((fMotherNature + 6) % 12).getIslands().get(0).getNumStudents());
@@ -338,13 +337,14 @@ class GameModelTest {
         GameModel m1 = new GameModel(GamePreset.THREE);
         assertTrue(m1.addPlayer("1"));
 
-        curr = m1.playersManager.getCurrentPlayer();
+
         assertTrue(m1.addPlayer("2"));
         assertTrue(m1.addPlayer("3"));
 
-        assertTrue(m1.initializeGame());
+        assertTrue(m1.startGame());
         m1.gameState = GameState.STARTED;
         m1.roundManager.nextRound();
+        curr = m1.playersManager.getCurrentPlayer();
         assertTrue(m1.playersManager.getSchoolBoard().removeTowers(5));
 
         for(AssistantCard a : AssistantCard.values()) {
@@ -369,7 +369,7 @@ class GameModelTest {
         assertTrue(m2.addPlayer("1"));
 
         assertTrue(m2.addPlayer("2"));
-        assertTrue(m2.initializeGame());
+        assertTrue(m2.startGame());
 
         assertTrue(m2.playersManager.getSchoolBoard().removeTowers(5));
         curr = m2.playersManager.getCurrentPlayer();

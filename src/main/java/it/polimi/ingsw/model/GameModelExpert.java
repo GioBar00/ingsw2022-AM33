@@ -122,20 +122,14 @@ class GameModelExpert implements Game, EffectHandler {
     /**
      * Initializes the game. Initializes the cards and gives one coin to each player.
      * Add the remaining student on the bag.
-     * @return if the initialization was successful.
      */
-    @Override
-    public boolean initializeGame() {
-        if (model.initializeGame()) {
-            for (Player p: model.playersManager.getPlayers()) {
-                playerCoins.put(p.getNickname(), 1);
-                reserve--;
-            }
-            for (CharacterCard c: characterCards)
-                c.initialize(this);
-            return true;
+     void initializeGame() {
+        for (Player p: model.playersManager.getPlayers()) {
+            playerCoins.put(p.getNickname(), 1);
+            reserve--;
         }
-        return false;
+        for (CharacterCard c: characterCards)
+            c.initialize(this);
     }
 
     /**
@@ -144,7 +138,11 @@ class GameModelExpert implements Game, EffectHandler {
      */
     @Override
     public boolean startGame() {
-        return model.startGame();
+        if(model.startGame()){
+            this.initializeGame();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -241,6 +239,14 @@ class GameModelExpert implements Game, EffectHandler {
             return true;
         }
         return false;
+    }
+
+    /**
+     * used to get the current player
+     * @return the nickname of the current player
+     */
+    public String getCurrentPlayer(){
+        return model.getCurrentPlayer();
     }
 
     /**

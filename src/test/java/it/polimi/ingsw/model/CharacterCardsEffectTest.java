@@ -30,7 +30,7 @@ class CharacterCardsEffectTest {
         gme.addPlayer("1");
         gme.addPlayer("2");
         gme.addPlayer("3");
-        gme.initializeGame();
+        gme.startGame();
     }
 
     /**

@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.CharacterParameters;
+import it.polimi.ingsw.model.cards.Friar;
+import it.polimi.ingsw.model.cards.Minstrel;
 import it.polimi.ingsw.model.enums.*;
 import it.polimi.ingsw.model.cards.Herbalist;
 import it.polimi.ingsw.model.player.Player;
@@ -30,7 +32,8 @@ class GameModelExpertTest {
         assertFalse(m.changeTeam("se", Tower.WHITE));
         assertEquals(GameMode.EXPERT, m.getGameMode());
         assertEquals(20, m.reserve);
-        assertFalse(m.initializeGame());
+        assertFalse(m.startGame());
+
         for (int i = 0; i < preset.getPlayersNumber(); i++) {
             String nick = Integer.toString(i);
             assertTrue(m.addPlayer(nick));
@@ -42,12 +45,12 @@ class GameModelExpertTest {
         int currentReserve = 20 - preset.getPlayersNumber();
 
         assertEquals(GameState.UNINITIALIZED, m.getGameState());
-        assertFalse(m.startGame());
-        assertTrue(m.initializeGame());
-        assertEquals(currentReserve, m.reserve);
-        assertEquals(GameState.INITIALIZED, m.getGameState());
-        assertFalse(m.playAssistantCard(AssistantCard.FOUR));
         assertTrue(m.startGame());
+        Friar friar = new Friar();
+        m.characterCards.set(0, friar);
+        m.characterCards.get(0).initialize(m);
+        assertEquals(currentReserve, m.reserve);
+        assertFalse(m.startGame());
         assertEquals(GameState.STARTED, m.getGameState());
 
         ArrayList<AssistantCard> played = new ArrayList<>(preset.getPlayersNumber());
@@ -140,8 +143,7 @@ class GameModelExpertTest {
             assertFalse(m.moveStudentToIsland(0, 0));
             assertFalse(m.moveStudentToHall(1));
             assertFalse(m.getStudentsFromCloud(2));
-            //LinkedPairList<> test
-            //assertFalse(m.applyEffect(new LinkedPairList<>()));
+
         }
     }
 
@@ -156,7 +158,7 @@ class GameModelExpertTest {
             assertTrue(m.addPlayer("" + i));
         }
 
-        assertTrue(m.initializeGame());
+
         assertTrue(m.startGame());
 
         gameModel.islandsManager.getIslandGroup(0).setBlocked(true);

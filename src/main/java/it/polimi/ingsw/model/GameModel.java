@@ -76,7 +76,7 @@ class GameModel implements Game {
      * Add the remaining student on the bag.
      * @return if game is UNINITIALIZED or all players have entered.
      */
-    public boolean initializeGame() {
+    boolean initializeGame() {
         if (gameState != GameState.UNINITIALIZED || playersManager.getAvailablePlayerSlots() != 0)
             return false;
 
@@ -122,14 +122,17 @@ class GameModel implements Game {
      * @return if the game started successfully.
      */
     public boolean startGame() {
-        if (gameState != GameState.INITIALIZED)
-            return false;
+        if(initializeGame()) {
+            if (gameState != GameState.INITIALIZED)
+                return false;
 
-        int i = ThreadLocalRandom.current().nextInt(0, playersManager.getPreset().getPlayersNumber());
-        playersManager.setFirstPlayer(i);
-        roundManager.nextRound();
-        gameState = GameState.STARTED;
-        return true;
+            int i = ThreadLocalRandom.current().nextInt(0, playersManager.getPreset().getPlayersNumber());
+            playersManager.setFirstPlayer(i);
+            roundManager.nextRound();
+            gameState = GameState.STARTED;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -512,6 +515,14 @@ class GameModel implements Game {
             motherNatureIndex--;
         }
         return index;
+    }
+
+    /**
+     * used to get the current player
+     * @return the nickname of the current player
+     */
+    public String getCurrentPlayer(){
+        return playersManager.getCurrentPlayer().getNickname();
     }
 
     /**
