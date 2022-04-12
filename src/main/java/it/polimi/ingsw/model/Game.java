@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.cards.CharacterParameters;
 import it.polimi.ingsw.model.enums.*;
-import it.polimi.ingsw.util.LinkedPairList;
 
 /**
  * Game interface. It exposes the methods to change the state of the game.
@@ -90,10 +90,10 @@ public interface Game {
 
     /**
      * Applies the effect of the activated character card.
-     * @param pairs parameters to use in the effect.
+     * @param parameters to use in the effect.
      * @return if the effect was applied successfully.
      */
-    default boolean applyEffect(LinkedPairList<StudentColor, Integer> pairs) {
+    default boolean applyEffect(CharacterParameters parameters) {
         return false;
     }
 

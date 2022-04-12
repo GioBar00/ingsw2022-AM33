@@ -1,8 +1,6 @@
 package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.enums.CharacterType;
-import it.polimi.ingsw.model.enums.StudentColor;
-import it.polimi.ingsw.util.LinkedPairList;
 
 /**
  * Centaur character card.
@@ -19,15 +17,17 @@ public class Centaur extends CharacterCard {
     /**
      * Applies the effect of the character card. It sets to ignore the towers this turn.
      * @param effectHandler handler for the effects.
-     * @param pairs parameters for the effect.
+     * @param parameters for the effect.
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
-        effectHandler.ignoreTowers(true);
-        additionalCost++;
-        appliedEffect = true;
-        return true;
+    public boolean applyEffect(EffectHandler effectHandler, CharacterParameters parameters) {
+        if (!appliedEffect) {
+            effectHandler.ignoreTowers(true);
+            endEffect();
+            return true;
+        }
+        return false;
     }
 
     /**

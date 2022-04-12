@@ -2,9 +2,11 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.enums.CharacterType;
 import it.polimi.ingsw.model.enums.StudentColor;
-import it.polimi.ingsw.util.LinkedPairList;
+import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.server.ChooseStudentColor;
 import it.polimi.ingsw.util.Pair;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 
 /**
@@ -16,31 +18,30 @@ public class Harvester extends CharacterCard {
      * Creates harvester
      */
     public Harvester() {
-        super(CharacterType.HARVESTER, 3);
+        super(CharacterType.HARVESTER, 3, 1);
     }
 
     /**
      * Applies the effect of the character card if the parameters are correct.
      * Adds a student color to the ones to skip.
      * @param effectHandler handler for the effects.
-     * @param pairs parameters for the effect.
+     * @param parameters for the effect.
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
-        for (Pair<StudentColor, Integer> pair: pairs) {
-            StudentColor s = pair.getFirst();
+    public boolean applyEffect(EffectHandler effectHandler, CharacterParameters parameters) {
+        if (!appliedEffect && parameters != null) {
+            StudentColor s = parameters.getStudentColor();
             if (s == null)
                 return false;
             EnumSet<StudentColor> skipStudentColors = effectHandler.getSkippedStudentColors();
             if (skipStudentColors.contains(s))
                 return false;
             skipStudentColors.add(s);
-            additionalCost++;
-            appliedEffect = true;
+            currentChoicesNumber++;
+            endEffect();
             return true;
         }
-
         return false;
     }
 
@@ -54,5 +55,14 @@ public class Harvester extends CharacterCard {
             effectHandler.getSkippedStudentColors().clear();
             appliedEffect = false;
         }
+    }
+
+    /**
+     * @param effectHandler effect handler.
+     * @return choose student color message.
+     */
+    @Override
+    public Message getCommandMessage(EffectHandler effectHandler) {
+        return new ChooseStudentColor(EnumSet.copyOf(Arrays.asList(StudentColor.values())));
     }
 }

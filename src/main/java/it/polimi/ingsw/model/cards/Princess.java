@@ -2,10 +2,12 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.enums.CharacterType;
 import it.polimi.ingsw.model.enums.StudentColor;
-import it.polimi.ingsw.util.LinkedPairList;
-import it.polimi.ingsw.util.Pair;
+import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.enums.MoveLocation;
+import it.polimi.ingsw.network.messages.server.MoveStudent;
 
 import java.util.EnumMap;
+import java.util.Set;
 
 /**
  * Princess character card.
@@ -21,7 +23,7 @@ public class Princess extends CharacterCard {
      * Creates princess.
      */
     public Princess() {
-        super(CharacterType.PRINCESS, 2);
+        super(CharacterType.PRINCESS, 2, 1);
         for (StudentColor s: StudentColor.values())
             students.put(s, 0);
     }
@@ -42,27 +44,38 @@ public class Princess extends CharacterCard {
      * Applies the effect of the character card if the parameters are correct.
      * Gets one student from the card, adds it to the hall and then gets one student from the bag.
      * @param effectHandler handler for the effects.
-     * @param pairs parameters for the effect.
+     * @param parameters for the effect.
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
-        for (Pair<StudentColor, Integer> entry: pairs) {
-            StudentColor s = entry.getFirst();
+    public boolean applyEffect(EffectHandler effectHandler, CharacterParameters parameters) {
+        if (!appliedEffect && parameters != null) {
+            StudentColor s = parameters.getStudentColor();
             if (s != null && students.get(s) > 0) {
                 if (effectHandler.addStudentToHall(s)) {
                     students.put(s, students.get(s) - 1);
-                    additionalCost++;
                     s = effectHandler.getStudentFromBag();
                     if (s != null)
                         students.put(s, students.get(s) + 1);
-                    appliedEffect = true;
+                    currentChoicesNumber++;
+                    endEffect();
                     return true;
                 }
             }
-            return false;
         }
         return false;
+    }
+
+    /**
+     * @param effectHandler effect handler.
+     * @return move student message from card to hall.
+     */
+    @Override
+    public Message getCommandMessage(EffectHandler effectHandler) {
+        Set<Integer> availableStudents = CharacterCard.getAvailableStudentsOrdinal(students);
+        EnumMap<StudentColor, Integer> students = effectHandler.getHall();
+        availableStudents.removeIf(i -> students.get(StudentColor.retrieveStudentColorByOrdinal(i)) >= 10);
+        return new MoveStudent(MoveLocation.CARD, availableStudents, MoveLocation.HALL, null);
     }
 
     /**

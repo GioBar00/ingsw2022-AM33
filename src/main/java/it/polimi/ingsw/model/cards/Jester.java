@@ -2,7 +2,9 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.enums.CharacterType;
 import it.polimi.ingsw.model.enums.StudentColor;
-import it.polimi.ingsw.util.LinkedPairList;
+import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.enums.MoveLocation;
+import it.polimi.ingsw.network.messages.server.SwapStudents;
 import it.polimi.ingsw.util.Pair;
 
 import java.util.*;
@@ -21,7 +23,7 @@ public class Jester extends CharacterCard {
      * Creates jester.
      */
     public Jester() {
-        super(CharacterType.JESTER, 1);
+        super(CharacterType.JESTER, 1, 1, 3);
         for (StudentColor s: StudentColor.values())
             students.put(s, 0);
     }
@@ -42,25 +44,41 @@ public class Jester extends CharacterCard {
      * Applies the effect of the character card if the parameters are correct.
      * Can exchange at most 3 students from this card with the ones in the entrance.
      * @param effectHandler handler for the effects.
-     * @param pairs parameters for the effect.
+     * @param parameters for the effect.
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
-        if (areMovesValid(effectHandler, pairs, 3, new EnumMap<>(students))) {
-            for (Pair<StudentColor, Integer> pair: pairs) {
-                StudentColor s = pair.getFirst();
-                Integer entranceIndex = pair.getSecond();
-                StudentColor onEntrance = effectHandler.popStudentFromEntrance(entranceIndex);
-                effectHandler.addStudentOnEntrance(s, entranceIndex);
-                students.put(s, students.get(s) - 1);
-                students.put(onEntrance, students.get(onEntrance) + 1);
-            }
-            additionalCost++;
-            appliedEffect = true;
+    public boolean applyEffect(EffectHandler effectHandler, CharacterParameters parameters) {
+        if (!appliedEffect && parameters != null) {
+            StudentColor s = parameters.getStudentColor();
+            if (s == null || students.get(s) <= 0)
+                return false;
+            Integer entranceIndex = parameters.getIndex();
+            if (entranceIndex == null)
+                return false;
+            StudentColor onEntrance = effectHandler.popStudentFromEntrance(entranceIndex);
+            if (onEntrance == null)
+                return false;
+            effectHandler.addStudentOnEntrance(s, entranceIndex);
+            students.put(s, students.get(s) - 1);
+            students.put(onEntrance, students.get(onEntrance) + 1);
+            currentChoicesNumber++;
+            if (currentChoicesNumber >= maximumChoicesNumber)
+                endEffect();
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param effectHandler effect handler.
+     * @return swap students message between card and entrance.
+     */
+    @Override
+    public Message getCommandMessage(EffectHandler effectHandler) {
+        Set<Integer> availableStudents = CharacterCard.getAvailableStudentsOrdinal(students);
+        Set<Integer> entranceIndexes = CharacterCard.getAvailableEntranceIndexes(effectHandler);
+        return new SwapStudents(MoveLocation.CARD, availableStudents, MoveLocation.ENTRANCE, entranceIndexes);
     }
 
     /**

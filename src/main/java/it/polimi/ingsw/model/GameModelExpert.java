@@ -1,11 +1,11 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.cards.CharacterParameters;
 import it.polimi.ingsw.model.enums.*;
 import it.polimi.ingsw.model.cards.CharacterCard;
 import it.polimi.ingsw.model.cards.EffectHandler;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.SchoolBoard;
-import it.polimi.ingsw.util.LinkedPairList;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -245,6 +245,7 @@ class GameModelExpert implements Game, EffectHandler {
 
     /**
      * Activates character card at index if the player has not already activated another card, the index is valid and the player has enough coins.
+     * If the card requires no choices from the player, the effect is applied immediately.
      * @param index of the character card to activate.
      * @return if the activation was successful.
      */
@@ -263,20 +264,22 @@ class GameModelExpert implements Game, EffectHandler {
         reserve += totalCost - 1;
         characterCardActivating = characterCards.get(index);
         activatedACharacterCard = true;
+        if (characterCardActivating.getRequiredChoicesNumber() == 0)
+            applyEffect(null);
         return true;
     }
 
     /**
      * Applies the effect of the activated character card if the player activated a card.
-     * @param pairs parameters to use in the effect.
+     * @param parameters to use in the effect.
      * @return if the effect was applied successfully.
      */
     @Override
-    public boolean applyEffect(LinkedPairList<StudentColor, Integer> pairs) {
+    public boolean applyEffect(CharacterParameters parameters) {
         if (characterCardActivating == null)
             return false;
 
-        if (characterCardActivating.applyEffect(this, pairs)) {
+        if (characterCardActivating.applyEffect(this, parameters)) {
             if (characterCardActivating.hasAppliedEffect())
                 characterCardActivating = null;
             return true;
@@ -466,7 +469,7 @@ class GameModelExpert implements Game, EffectHandler {
      * @return the students in the entrance.
      */
     @Override
-    public ArrayList<StudentColor> getStudentsInEntrance() {
+    public List<StudentColor> getStudentsInEntrance() {
         return model.playersManager.getSchoolBoard().getStudentsInEntrance();
     }
 
@@ -547,5 +550,17 @@ class GameModelExpert implements Game, EffectHandler {
     @Override
     public EnumSet<StudentColor> getSkippedStudentColors() {
         return skipStudentColors;
+    }
+
+    /**
+     * @return the available island indexes.
+     */
+    @Override
+    public Set<Integer> getAvailableIslandIndexes() {
+        int num = model.islandsManager.getNumIslandGroups();
+        Set<Integer> availableIslandIndexes = new HashSet<>();
+        for (int i = 0; i < num; i++)
+            availableIslandIndexes.add(i);
+        return availableIslandIndexes;
     }
 }

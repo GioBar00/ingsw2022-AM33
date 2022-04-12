@@ -2,8 +2,11 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.enums.CharacterType;
 import it.polimi.ingsw.model.enums.StudentColor;
-import it.polimi.ingsw.util.LinkedPairList;
+import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.server.ChooseIsland;
 import it.polimi.ingsw.util.Pair;
+
+import java.util.Set;
 
 
 /**
@@ -20,7 +23,7 @@ public class Herbalist extends CharacterCard {
      * Creates the herbalist
      */
     public Herbalist() {
-        super(CharacterType.HERBALIST, 2);
+        super(CharacterType.HERBALIST, 2, 1);
     }
 
     /**
@@ -36,24 +39,34 @@ public class Herbalist extends CharacterCard {
      * Applies the effect of the character card if the parameters are correct.
      * It blocks an island group.
      * @param effectHandler handler for the effects.
-     * @param pairs parameters for the effect.
+     * @param parameters for the effect.
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
-        for (Pair<StudentColor, Integer> pair: pairs) {
+    public boolean applyEffect(EffectHandler effectHandler, CharacterParameters parameters) {
+        if (!appliedEffect && parameters != null) {
             if (numBlocks > 0) {
-                Integer islandGroupIndex = pair.getSecond();
+                Integer islandGroupIndex = parameters.getIndex();
                 if (islandGroupIndex != null && effectHandler.blockIslandGroup(islandGroupIndex)) {
-                    additionalCost++;
                     numBlocks--;
-                    appliedEffect = true;
+                    currentChoicesNumber++;
+                    endEffect();
                     return true;
                 }
             }
             return false;
         }
         return false;
+    }
+
+    /**
+     * @param effectHandler effect handler.
+     * @return choose island message.
+     */
+    @Override
+    public Message getCommandMessage(EffectHandler effectHandler) {
+        Set<Integer> islandIndexes = effectHandler.getAvailableIslandIndexes();
+        return new ChooseIsland(islandIndexes);
     }
 
     /**

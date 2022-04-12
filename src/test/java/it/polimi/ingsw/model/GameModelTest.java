@@ -25,7 +25,7 @@ class GameModelTest {
     void interfaceTesting(){
         Game m = new GameModel(GamePreset.THREE);
         assertFalse(m.activateCharacterCard(4));
-        assertFalse(m.applyEffect(new LinkedPairList<>()));
+        assertFalse(m.applyEffect(null));
     }
     /**
      * Test the creation of a three payers game and the setting up of the match

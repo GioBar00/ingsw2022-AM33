@@ -2,11 +2,9 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.enums.CharacterType;
 import it.polimi.ingsw.model.enums.StudentColor;
-import it.polimi.ingsw.util.LinkedPairList;
-import it.polimi.ingsw.util.Pair;
+import it.polimi.ingsw.network.messages.Message;
 
-import java.util.EnumMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Abstract class of a character card.
@@ -49,7 +47,15 @@ public abstract class CharacterCard {
     CharacterCard(CharacterType type, int cost) {
         this(type, cost, 0, 0);
     }
-
+    /**
+     * Constructs the card with required choices.
+     * @param type of the card.
+     * @param cost of the card.
+     * @param requiredChoicesNumber of the card.
+     */
+    CharacterCard(CharacterType type, int cost, int requiredChoicesNumber) {
+        this(type, cost, requiredChoicesNumber, requiredChoicesNumber);
+    }
     /**
      * Constructs the card.
      * @param type of the card.
@@ -86,6 +92,13 @@ public abstract class CharacterCard {
     }
 
     /**
+     * @return requires choices number.
+     */
+    public int getRequiredChoicesNumber() {
+        return requiredChoicesNumber;
+    }
+
+    /**
      * Initializes the character card.
      * @param effectHandler handler for the effects.
      */
@@ -94,17 +107,18 @@ public abstract class CharacterCard {
     /**
      * Applies the effect of the character card.
      * @param effectHandler handler for the effects.
-     * @param pairs parameters for the effect.
+     * @param parameters for the effect.
      * @return if the effect was applied.
      */
-    public abstract boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs);
+    public abstract boolean applyEffect(EffectHandler effectHandler, CharacterParameters parameters);
 
     /**
      * Ends the effect if at least the required choices were make.
      * @return if the effect was ended correctly.
      */
     public boolean endEffect() {
-        if (currentChoicesNumber >= requiredChoicesNumber) {
+        if (!appliedEffect && currentChoicesNumber >= requiredChoicesNumber) {
+            additionalCost++;
             appliedEffect = true;
             return true;
         }
@@ -116,8 +130,11 @@ public abstract class CharacterCard {
      * @param effectHandler handler for the effects.
      */
     public void revertEffect(EffectHandler effectHandler) {
-        if (appliedEffect)
+        if (appliedEffect) {
             appliedEffect = false;
+            currentChoicesNumber = 0;
+        }
+
     }
 
     /**
@@ -125,6 +142,14 @@ public abstract class CharacterCard {
      */
     public boolean hasAppliedEffect() {
         return appliedEffect;
+    }
+
+    /**
+     * @param effectHandler effect handler.
+     * @return message to send to the client.
+     */
+    public Message getCommandMessage(EffectHandler effectHandler) {
+        return null;
     }
 
     /**
@@ -155,33 +180,25 @@ public abstract class CharacterCard {
     }
 
     /**
-     * Checks if the parameters are correct for "move effects" with multiple choices.
-     * @param effectHandler handler for the effects.
-     * @param pairs parameters.
-     * @param maxSize of the parameters.
-     * @param copy of the students to modify.
-     * @return if the moves are valid.
+     * @return an ordinal student set of the available students.
      */
-    boolean areMovesValid(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs, int maxSize, EnumMap<StudentColor, Integer> copy) {
-        if (pairs == null || pairs.size() == 0 || pairs.size() > maxSize)
-            return false;
-        List<StudentColor> entrance = effectHandler.getStudentsInEntrance();
-
-        for (Pair<StudentColor, Integer> pair: pairs) {
-            StudentColor s = pair.getFirst();
-            if (s == null || copy.get(s) <= 0)
-                return false;
-            Integer index = pair.getSecond();
-            if (index == null || index < 0 || index >= entrance.size())
-                return false;
-            StudentColor onEntrance = entrance.get(index);
-            if (onEntrance == null)
-                return false;
-            entrance.set(index, s);
-            copy.put(s, copy.get(s) - 1);
-            copy.put(onEntrance, copy.get(onEntrance) + 1);
-        }
-        return true;
+    static Set<Integer> getAvailableStudentsOrdinal(EnumMap<StudentColor, Integer> students) {
+        Set<Integer> availableStudents = new HashSet<>();
+        for (Map.Entry<StudentColor, Integer> entry: students.entrySet())
+            if (students.get(entry.getKey()) > 0)
+                availableStudents.add(entry.getKey().ordinal());
+        return availableStudents;
     }
 
+    /**
+     * @return the available entrance indexes.
+     */
+    static Set<Integer> getAvailableEntranceIndexes(EffectHandler effectHandler) {
+        List<StudentColor> entrance = effectHandler.getStudentsInEntrance();
+        Set<Integer> availableEntranceIndexes = new HashSet<>();
+        for (int i = 0; i < entrance.size(); i++)
+            if (entrance.get(i) != null)
+                availableEntranceIndexes.add(i);
+        return availableEntranceIndexes;
+    }
 }

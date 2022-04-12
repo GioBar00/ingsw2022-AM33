@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.enums.*;
-import it.polimi.ingsw.model.enums.*;
 import it.polimi.ingsw.model.islands.IslandsManager;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.PlayersManager;
@@ -122,7 +121,7 @@ class GameModel implements Game {
      * Starts the Game and randomly selects the first Player if the game is initialized.
      * @return if the game started successfully.
      */
-    public boolean startGame(){
+    public boolean startGame() {
         if (gameState != GameState.INITIALIZED)
             return false;
 

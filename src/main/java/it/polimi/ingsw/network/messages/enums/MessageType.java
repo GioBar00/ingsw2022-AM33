@@ -1,6 +1,5 @@
 package it.polimi.ingsw.network.messages.enums;
 
-import it.polimi.ingsw.model.enums.GamePreset;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.Move;
 import it.polimi.ingsw.network.messages.client.*;
@@ -9,6 +8,9 @@ import it.polimi.ingsw.network.messages.server.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Enum that represents the type of message
+ */
 public enum MessageType {
     INVALID(null),
     // server messages
@@ -49,16 +51,29 @@ public enum MessageType {
 
     private final Class<? extends Message> messageClass;
 
+    /**
+     * Constructor
+     * @param c the class of the message
+     */
     MessageType(Class<? extends Message> c) {
         messageClass = c;
     }
 
+    /**
+     * Returns the class of the message
+     * @return the class of the message
+     */
     public Class<? extends Message> getMessageClass() {
         return messageClass;
     }
 
-    public static MessageType retrieveByMessageClass(Message c) {
-        return LOOKUP_MAP.get(c.getClass());
+    /**
+     * Returns the type of the message
+     * @param message the message
+     * @return the type of the message
+     */
+    public static MessageType retrieveByMessageClass(Message message) {
+        return LOOKUP_MAP.get(message.getClass());
     }
 }
 

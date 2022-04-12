@@ -2,10 +2,11 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.enums.CharacterType;
 import it.polimi.ingsw.model.enums.StudentColor;
-import it.polimi.ingsw.util.LinkedPairList;
-import it.polimi.ingsw.util.Pair;
+import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.enums.MoveLocation;
+import it.polimi.ingsw.network.messages.server.MoveStudent;
 
-import java.util.EnumMap;
+import java.util.*;
 
 /**
  * Friar character card.
@@ -21,7 +22,7 @@ public class Friar extends CharacterCard {
      * Creates the friar.
      */
     public Friar() {
-        super(CharacterType.FRIAR, 1);
+        super(CharacterType.FRIAR, 1, 1);
         for (StudentColor s: StudentColor.values())
             students.put(s, 0);
     }
@@ -42,27 +43,38 @@ public class Friar extends CharacterCard {
      * Applies the effect of the character card if the parameters are correct.
      * Gets one student from the card, adds it on the chosen island and then gets one student from the bag.
      * @param effectHandler handler for the effects.
-     * @param pairs parameters for the effect.
+     * @param parameters for the effect.
      * @return if the effect was applied.
      */
     @Override
-    public boolean applyEffect(EffectHandler effectHandler, LinkedPairList<StudentColor, Integer> pairs) {
-        for (Pair<StudentColor, Integer> pair: pairs) {
-            StudentColor s = pair.getFirst();
-            Integer islandGroupIndex = pair.getSecond();
+    public boolean applyEffect(EffectHandler effectHandler, CharacterParameters parameters) {
+        if (!appliedEffect && parameters != null) {
+            StudentColor s = parameters.getStudentColor();
+            Integer islandGroupIndex = parameters.getIndex();
             if (s != null && students.get(s) > 0 && islandGroupIndex != null) {
                 if (effectHandler.addStudentToIsland(s, islandGroupIndex)) {
                     students.put(s, students.get(s) - 1);
-                    additionalCost++;
                     s = effectHandler.getStudentFromBag();
                     students.put(s, students.get(s) + 1);
-                    appliedEffect = true;
+                    currentChoicesNumber++;
+                    endEffect();
                     return true;
                 }
             }
             return false;
         }
         return false;
+    }
+
+    /**
+     * @param effectHandler effect handler.
+     * @return move student message from card to island.
+     */
+    @Override
+    public Message getCommandMessage(EffectHandler effectHandler) {
+        Set<Integer> availableStudents = CharacterCard.getAvailableStudentsOrdinal(students);
+        Set<Integer> islandIndexes = effectHandler.getAvailableIslandIndexes();
+        return new MoveStudent(MoveLocation.CARD, availableStudents, MoveLocation.ISLAND, islandIndexes);
     }
 
     /**

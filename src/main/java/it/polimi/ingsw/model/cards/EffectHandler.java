@@ -2,9 +2,10 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.enums.StudentColor;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Handler for the effect of the character cards.
@@ -72,7 +73,7 @@ public interface EffectHandler {
      * Gets the students in the entrance of the current player's school board.
      * @return the students in the entrance.
      */
-    ArrayList<StudentColor> getStudentsInEntrance();
+    List<StudentColor> getStudentsInEntrance();
 
     /**
      * Adds a student to the entrance of current player's school board.
@@ -130,4 +131,9 @@ public interface EffectHandler {
      * @return the current student colors skipped.
      */
     EnumSet<StudentColor> getSkippedStudentColors();
+
+    /**
+     * @return the available island indexes.
+     */
+    Set<Integer> getAvailableIslandIndexes();
 }

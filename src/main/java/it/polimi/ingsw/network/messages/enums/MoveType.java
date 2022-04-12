@@ -9,6 +9,9 @@ import it.polimi.ingsw.network.messages.server.SwapStudents;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Enum that represents the type of move
+ */
 public enum MoveType {
     MOVE(MoveStudent.class),
     SWAP(SwapStudents.class),
@@ -30,10 +33,17 @@ public enum MoveType {
         this.moveClass = moveClass;
     }
 
+    /**
+     * @return the class of the move
+     */
     public Class<? extends Move> getMoveClass() {
         return moveClass;
     }
 
+    /**
+     * @param m the move
+     * @return the move type
+     */
     public static MoveType retrieveByMove(Move m) {
         return LOOKUP_MAP.get(m.getClass());
     }

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.cards.CharacterParameters;
 import it.polimi.ingsw.model.enums.*;
 import it.polimi.ingsw.model.cards.Herbalist;
 import it.polimi.ingsw.model.player.Player;
@@ -120,7 +121,7 @@ class GameModelExpertTest {
                 }
             }
 
-            assertFalse(m.applyEffect(new LinkedPairList<>()));
+            assertFalse(m.applyEffect(null));
             assertFalse(m.activateCharacterCard(10));
             assertFalse(m.activateCharacterCard(-1));
             m.playerCoins.remove(gameModel.playersManager.getCurrentPlayer().getNickname());
@@ -168,12 +169,12 @@ class GameModelExpertTest {
         m.playerCoins.remove(current.getNickname());
         m.playerCoins.put(current.getNickname(), herbalist.getCost());
         m.activateCharacterCard(0);
-        LinkedPairList<StudentColor, Integer> pairs = new LinkedPairList<>();
 
+        CharacterParameters parameters;
 
-        pairs.add(new Pair<>(null, 2));
+        parameters = new CharacterParameters(2);
 
-        assertTrue(m.applyEffect(pairs));
+        assertTrue(m.applyEffect(parameters));
         assertTrue(gameModel.islandsManager.getIslandGroup(2).isBlocked());
 
         assertEquals(oldBlocks - 1, herbalist.getNumBlocks());
