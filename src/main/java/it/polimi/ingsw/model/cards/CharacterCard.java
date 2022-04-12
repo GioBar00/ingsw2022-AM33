@@ -201,4 +201,11 @@ public abstract class CharacterCard {
                 availableEntranceIndexes.add(i);
         return availableEntranceIndexes;
     }
+
+    /**
+     * @return type of the card
+     */
+    public CharacterType getType() {
+        return type;
+    }
 }

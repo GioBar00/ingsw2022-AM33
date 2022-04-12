@@ -6,6 +6,9 @@ import it.polimi.ingsw.model.cards.CharacterCard;
 import it.polimi.ingsw.model.cards.EffectHandler;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.SchoolBoard;
+import it.polimi.ingsw.network.messages.messagesView.CharacterCardView;
+import it.polimi.ingsw.network.messages.messagesView.GameView;
+import it.polimi.ingsw.network.messages.messagesView.PlayerView;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -251,7 +254,6 @@ class GameModelExpert implements Game, EffectHandler {
 
     /**
      * Activates character card at index if the player has not already activated another card, the index is valid and the player has enough coins.
-     * If the card requires no choices from the player, the effect is applied immediately.
      * @param index of the character card to activate.
      * @return if the activation was successful.
      */
@@ -280,7 +282,6 @@ class GameModelExpert implements Game, EffectHandler {
      * @param parameters to use in the effect.
      * @return if the effect was applied successfully.
      */
-    @Override
     public boolean applyEffect(CharacterParameters parameters) {
         if (characterCardActivating == null)
             return false;
@@ -475,7 +476,7 @@ class GameModelExpert implements Game, EffectHandler {
      * @return the students in the entrance.
      */
     @Override
-    public List<StudentColor> getStudentsInEntrance() {
+    public ArrayList<StudentColor> getStudentsInEntrance() {
         return model.playersManager.getSchoolBoard().getStudentsInEntrance();
     }
 
@@ -556,6 +557,32 @@ class GameModelExpert implements Game, EffectHandler {
     @Override
     public EnumSet<StudentColor> getSkippedStudentColors() {
         return skipStudentColors;
+    }
+
+    public GameView getGameView(Player destPlayer){
+        GameView gameView = new GameView(getGameMode(), getGameState(), model.playersManager, model.roundManager, model.islandsManager, destPlayer, reserve, model.motherNatureIndex);
+        setCoinsInView(gameView);
+        setCharacterCardsView(gameView, destPlayer);
+        return gameView;
+    }
+
+    public void setCoinsInView(GameView gameView){
+        for (PlayerView pv: gameView.getPlayersView()) {
+            pv.setCoins(playerCoins.get(pv.getNickname()));
+        }
+    }
+
+    public void setCharacterCardsView(GameView gameView, Player destPlayer){
+        for (CharacterCard cc: characterCards) {
+            CharacterCardView ccv = new CharacterCardView(cc.getType());
+            ccv.setOriginalCost(cc.getCost());
+            ccv.setAdditionalCost(cc.getAdditionalCost());
+            // if it's the destPlayer turn and the game is not in the planning stage and the destPlayer has enough coins to
+            // use the CharacterCard, then the card is available for use
+            if (model.playersManager.getCurrentPlayer().equals(destPlayer) && !model.roundManager.getGamePhase().equals(GamePhase.PLANNING) && cc.getTotalCost() <= playerCoins.get(destPlayer.getNickname()))
+                ccv.setCanBeUsed(true);
+            gameView.getCharacterCardView().add(ccv);
+        }
     }
 
     /**

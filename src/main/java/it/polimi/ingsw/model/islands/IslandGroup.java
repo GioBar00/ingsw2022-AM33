@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.islands;
 
+import it.polimi.ingsw.network.messages.messagesView.IslandGroupView;
 import it.polimi.ingsw.model.enums.StudentColor;
 import it.polimi.ingsw.model.enums.Tower;
 
@@ -130,5 +131,14 @@ public class IslandGroup{
         // add second island group to the first island group
         this.islands.addAll(ig1.islands);
         // the model will then call a function to delete ig1
+    }
+
+    IslandGroupView getIslandGroupView(){
+        IslandGroupView islandGroupView = new IslandGroupView();
+        for (Island i: islands) {
+            islandGroupView.getIslands().add(i.getIslandView());
+        }
+        islandGroupView.setBlocked(isBlocked);
+        return islandGroupView;
     }
 }

@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.enums.Tower;
 
 import java.util.EnumSet;
 
-class RoundManager {
+public class RoundManager {
     private GamePhase gamePhase;
     private int roundNum;
     private boolean lastRound = false;
@@ -27,7 +27,7 @@ class RoundManager {
      * Gets the current game phase.
      * @return the current game phase.
      */
-    GamePhase getGamePhase() {
+    public GamePhase getGamePhase() {
         return gamePhase;
     }
 

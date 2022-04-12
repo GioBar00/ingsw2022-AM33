@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.enums.*;
+import it.polimi.ingsw.network.messages.messagesView.PlayerView;
+import it.polimi.ingsw.network.messages.messagesView.GameView;
 import it.polimi.ingsw.model.islands.IslandsManager;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.PlayersManager;
@@ -599,4 +601,15 @@ class GameModel implements Game {
         gameState = GameState.ENDED;
     }
 
+    public GameView getGameView(Player destPlayer){
+        GameView gameView = new GameView(getGameMode(), getGameState(), playersManager, roundManager, islandsManager, destPlayer,0, motherNatureIndex);
+        setCoinsInView(gameView);
+        return gameView;
+    }
+
+    public void setCoinsInView(GameView gameView){
+        for (PlayerView pv: gameView.getPlayersView()) {
+            pv.setCoins(0);
+        }
+    }
 }

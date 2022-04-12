@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model.player;
 
+import it.polimi.ingsw.network.messages.messagesView.PlayerView;
+import it.polimi.ingsw.network.messages.messagesView.SchoolBoardView;
 import it.polimi.ingsw.model.enums.AssistantCard;
+import it.polimi.ingsw.model.enums.GamePreset;
 import it.polimi.ingsw.model.enums.Wizard;
 
 import java.util.ArrayList;
@@ -101,5 +104,31 @@ public class Player {
      */
     public ArrayList<AssistantCard> getHand(){
         return new ArrayList<>(assistantCards);
+    }
+
+    public PlayerView getPlayerView(boolean isDestPlayer, GamePreset preset){
+        SchoolBoardView schoolBoardView = schoolBoard.getSchoolBoardView(preset);
+        PlayerView playerView = new PlayerView(getNickname(), getWizard(), schoolBoardView);
+        if (isDestPlayer){
+            playerView.playAssistantCard(playedCard);
+            int i = 10;
+            for (AssistantCard as : AssistantCard.values()) {
+                if(!assistantCards.contains(as)) {
+                    playerView.getHand().remove(as);
+                    i --;
+                }
+            }
+            playerView.setNumAssistantCards(i);
+        }else{
+            int i;
+            for(i = 0; i < 10; i++){
+                if (assistantCards.get(i) == null){
+                    break;
+                }
+            }
+            playerView.setNumAssistantCards(i);
+            playerView.getHand().clear();
+        }
+        return playerView;
     }
 }

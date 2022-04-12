@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.islands;
 
+import it.polimi.ingsw.network.messages.messagesView.IslandView;
 import it.polimi.ingsw.model.enums.StudentColor;
 import it.polimi.ingsw.model.enums.Tower;
 
@@ -65,5 +66,15 @@ public class Island {
      */
     public int getNumStudents(StudentColor s){
         return students.get(s);
+    }
+
+    public IslandView getIslandView (){
+        IslandView islandView = new IslandView();
+        islandView.setTower(getTower());
+        for (StudentColor s: StudentColor.values()) {
+            for (int i = 0; i < getNumStudents(s); i++)
+                islandView.addStudent(s);
+        }
+        return islandView;
     }
 }

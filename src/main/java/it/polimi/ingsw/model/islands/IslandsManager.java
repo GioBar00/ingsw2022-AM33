@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.islands;
 
+import it.polimi.ingsw.network.messages.messagesView.IslandGroupView;
 import it.polimi.ingsw.model.enums.StudentColor;
 import it.polimi.ingsw.model.enums.Tower;
 
@@ -126,6 +127,12 @@ public class IslandsManager {
         return mergeIslandGroups(index, next);
     }
 
+    /**
+     * the method merges two islandGroups together
+     * @param index1 of the first islandGroup
+     * @param index2 of the second islandGroup
+     * @return true if the merge was successful
+     */
     private boolean mergeIslandGroups(int index1, int index2) {
         if(islandGroups.get(index2).getTower() != null){
             if(islandGroups.get(index2).getTower().equals(islandGroups.get(index1).getTower())){
@@ -135,5 +142,13 @@ public class IslandsManager {
             }
         }
         return false;
+    }
+
+    public ArrayList<IslandGroupView> getIslandsView(){
+        ArrayList<IslandGroupView> islandsView = new ArrayList<>();
+        for (IslandGroup ig: islandGroups) {
+            islandsView.add(ig.getIslandGroupView());
+        }
+        return islandsView;
     }
 }

@@ -1,9 +1,7 @@
 package it.polimi.ingsw.model.player;
 
-import it.polimi.ingsw.model.enums.AssistantCard;
-import it.polimi.ingsw.model.enums.GamePreset;
-import it.polimi.ingsw.model.enums.Tower;
-import it.polimi.ingsw.model.enums.Wizard;
+import it.polimi.ingsw.network.messages.messagesView.PlayerView;
+import it.polimi.ingsw.model.enums.*;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -313,5 +311,15 @@ public class PlayersManager {
         }
 
         return false;
+    }
+
+
+    public ArrayList<PlayerView> getPlayersView(Player destPlayer){
+        ArrayList<PlayerView> playersView = new ArrayList<>();
+        for(Player p : players){
+            PlayerView addition = p.getPlayerView(p.equals(destPlayer), getPreset());
+            playersView.add(addition);
+        }
+        return playersView;
     }
 }

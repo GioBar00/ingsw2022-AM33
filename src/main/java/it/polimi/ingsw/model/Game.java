@@ -1,7 +1,10 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.network.messages.messagesView.GameView;
 import it.polimi.ingsw.model.cards.CharacterParameters;
 import it.polimi.ingsw.model.enums.*;
+import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.util.LinkedPairList;
 
 /**
  * Game interface. It exposes the methods to change the state of the game.
@@ -114,4 +117,6 @@ public interface Game {
     default boolean changeTeam(String nickname, Tower tower) {
         return false;
     }
+
+    default GameView getGameView(Player destPlayer){return null;}
 }
