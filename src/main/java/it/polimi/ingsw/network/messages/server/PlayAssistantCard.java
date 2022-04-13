@@ -35,6 +35,6 @@ public class PlayAssistantCard extends Message {
      */
     @Override
     public boolean isValid() {
-        return playableAssistantCards != null;
+        return playableAssistantCards != null && !playableAssistantCards.isEmpty();
     }
 }

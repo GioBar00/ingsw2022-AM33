@@ -33,9 +33,13 @@ public final class MessageBuilder {
         Gson g = new GsonBuilder()
                 .registerTypeAdapter(Message.class, new MessageDeserializer())
                 .create();
-        Message m = g.fromJson(json, Message.class);
-        if (m != null && m.isValid())
-            return m;
+        try {
+            Message m = g.fromJson(json, Message.class);
+            if (m != null && m.isValid())
+                return m;
+        } catch (Exception ignored) {
+            return new Message();
+        }
 
         return new Message();
     }

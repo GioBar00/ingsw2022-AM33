@@ -2,7 +2,7 @@ package it.polimi.ingsw.network.messages.enums;
 
 import it.polimi.ingsw.network.messages.Move;
 import it.polimi.ingsw.network.messages.client.MovedStudent;
-import it.polimi.ingsw.network.messages.client.SwappedStudent;
+import it.polimi.ingsw.network.messages.client.SwappedStudents;
 import it.polimi.ingsw.network.messages.server.MoveStudent;
 import it.polimi.ingsw.network.messages.server.SwapStudents;
 
@@ -17,7 +17,7 @@ public enum MoveType {
     SWAP(SwapStudents.class),
 
     MOVED(MovedStudent.class),
-    SWAPPED(SwappedStudent.class);
+    SWAPPED(SwappedStudents.class);
 
     private static final Map<Class<? extends Move>, MoveType> LOOKUP_MAP;
 

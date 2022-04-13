@@ -4,18 +4,18 @@ import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 
 public class CommMessage extends Message {
-    String message;
+    CommMsgType type;
 
     public CommMessage(CommMsgType type) {
-        this.message = type.getMessage();
+        this.type = type;
     }
 
-    public String getMessage() {
-        return message;
+    public CommMsgType getType() {
+        return type;
     }
 
     @Override
     public boolean isValid() {
-        return message != null;
+        return type != null;
     }
 }

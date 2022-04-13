@@ -1,5 +1,6 @@
 package it.polimi.ingsw.network.messages.client;
 
+import it.polimi.ingsw.model.enums.StudentColor;
 import it.polimi.ingsw.network.messages.Move;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 
@@ -72,7 +73,16 @@ public class MovedStudent extends Move {
         if(from != null && to != null) {
             if (from.requiresFromIndex() && fromIndex == null)
                 return false;
-            return !to.requiresToIndex() || toIndex != null;
+            if (to.requiresToIndex() && toIndex == null)
+                return false;
+            if (from != MoveLocation.ENTRANCE) {
+                try {
+                    StudentColor s = StudentColor.retrieveStudentColorByOrdinal(fromIndex);
+                } catch (Exception ignored) {
+                    return false;
+                }
+            }
+            return true;
         }
         return false;
     }

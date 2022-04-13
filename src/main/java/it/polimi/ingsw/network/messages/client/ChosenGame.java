@@ -5,10 +5,10 @@ import it.polimi.ingsw.model.enums.GameMode;
 import it.polimi.ingsw.model.enums.GamePreset;
 import it.polimi.ingsw.network.messages.Message;
 
-public class ChooseGame extends Message {
+public class ChosenGame extends Message {
     GamePreset preset;
     GameMode mode;
-    public ChooseGame(GamePreset preset, GameMode mode) {
+    public ChosenGame(GamePreset preset, GameMode mode) {
         this.preset = preset;
         this.mode = mode;
     }

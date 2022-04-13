@@ -6,8 +6,6 @@ import it.polimi.ingsw.model.cards.Minstrel;
 import it.polimi.ingsw.model.enums.*;
 import it.polimi.ingsw.model.cards.Herbalist;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.util.LinkedPairList;
-import it.polimi.ingsw.util.Pair;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -143,7 +141,6 @@ class GameModelExpertTest {
             assertFalse(m.moveStudentToIsland(0, 0));
             assertFalse(m.moveStudentToHall(1));
             assertFalse(m.getStudentsFromCloud(2));
-
         }
     }
 

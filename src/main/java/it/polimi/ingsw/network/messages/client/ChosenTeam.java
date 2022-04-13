@@ -4,10 +4,10 @@ package it.polimi.ingsw.network.messages.client;
 import it.polimi.ingsw.model.enums.Tower;
 import it.polimi.ingsw.network.messages.Message;
 
-public class ChooseTeam extends Message {
+public class ChosenTeam extends Message {
     private final Tower tower;
 
-    public ChooseTeam(Tower tower) {
+    public ChosenTeam(Tower tower) {
         this.tower = tower;
     }
 

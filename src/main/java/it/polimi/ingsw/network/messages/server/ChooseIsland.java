@@ -34,6 +34,6 @@ public class ChooseIsland extends Message {
      */
     @Override
     public boolean isValid() {
-        return availableIslandIndexes != null;
+        return availableIslandIndexes != null && !availableIslandIndexes.isEmpty();
     }
 }

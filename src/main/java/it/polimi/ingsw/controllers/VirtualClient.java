@@ -56,17 +56,17 @@ public class VirtualClient implements Runnable{
                         else{ sendInvalidMessage(); }
                         break;
 
-                    case CHOOSE_GAME:
+                    case CHOSEN_GAME:
 
                     case LOGIN:
                         sendInvalidMessage();
                         break;
 
-                    case CHOOSE_TEAM:
-                        assert m instanceof ChooseTeam;
-                        ChooseTeam chooseTeam = (ChooseTeam) m;
-                        if(chooseTeam.isValid()){
-                            if(!controller.changeTeam(nickname,chooseTeam.getTower()))
+                    case CHOSEN_TEAM:
+                        assert m instanceof ChosenTeam;
+                        ChosenTeam chosenTeam = (ChosenTeam) m;
+                        if(chosenTeam.isValid()){
+                            if(!controller.changeTeam(nickname, chosenTeam.getTower()))
                                 sendNegativeAnswer(0);
                         }else{ sendInvalidMessage(); }
                         break;
@@ -125,7 +125,7 @@ public class VirtualClient implements Runnable{
                         else{ sendInvalidMessage(); }
                         break;
 
-                    case MOVED_STUDENT, SWAPPED_STUDENT:
+                    case MOVED_STUDENT, SWAPPED_STUDENTS:
                         MovedStudent movedStudent = (MovedStudent) m;
                         if (movedStudent.isValid()) {
                             switch (movedStudent.getFrom()) {

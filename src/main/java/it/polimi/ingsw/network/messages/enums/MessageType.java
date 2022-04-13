@@ -3,6 +3,7 @@ package it.polimi.ingsw.network.messages.enums;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.Move;
 import it.polimi.ingsw.network.messages.client.*;
+import it.polimi.ingsw.network.messages.messagesView.GameView;
 import it.polimi.ingsw.network.messages.server.*;
 
 import java.util.HashMap;
@@ -24,20 +25,20 @@ public enum MessageType {
     CHOOSE_STUDENT_COLOR(ChooseStudentColor.class),
     COMM_MESSAGE(CommMessage.class),
     CURRENT_TEAMS(CurrentTeams.class),
-    CURRENT_GAME_STATE(CurrentTeams.class),
+    CURRENT_GAME_STATE(GameView.class),
 
     // client messages
     PLAYED_ASSISTANT_CARD(PlayedAssistantCard.class),
     MOVED_STUDENT(MovedStudent.class),
-    SWAPPED_STUDENT(SwappedStudent.class),
+    SWAPPED_STUDENTS(SwappedStudents.class),
     MOVED_MOTHER_NATURE(MovedMotherNature.class),
     CHOSEN_CLOUD(ChosenCloud.class),
     CHOSEN_ISLAND(ChosenIsland.class),
     CHOSEN_STUDENT_COLOR(ChosenStudentColor.class),
     ACTIVATED_CHARACTER_CARD(ActivatedCharacterCard.class),
     CONCLUDE_CHARACTER_CARD_EFFECT(ConcludeCharacterCardEffect.class),
-    CHOOSE_GAME(ChooseGame.class),
-    CHOOSE_TEAM(ChooseTeam.class),
+    CHOSEN_GAME(ChosenGame.class),
+    CHOSEN_TEAM(ChosenTeam.class),
     LOGIN(Login.class),
     START_GAME(StartGame.class);
 

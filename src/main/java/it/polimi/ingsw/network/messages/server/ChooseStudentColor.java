@@ -24,13 +24,6 @@ public class ChooseStudentColor extends Message {
     }
 
     /**
-     * Creates message with all student colors available.
-     */
-    public ChooseStudentColor() {
-        this(EnumSet.allOf(StudentColor.class));
-    }
-
-    /**
      * @return available student colors.
      */
     public EnumSet<StudentColor> getAvailableStudentColors() {
@@ -42,6 +35,6 @@ public class ChooseStudentColor extends Message {
      */
     @Override
     public boolean isValid() {
-        return availableStudentColors != null;
+        return availableStudentColors != null && !availableStudentColors.isEmpty();
     }
 }

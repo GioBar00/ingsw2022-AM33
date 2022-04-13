@@ -33,6 +33,6 @@ public class ChooseCloud extends Message {
      */
     @Override
     public boolean isValid() {
-        return availableCloudIndexes != null;
+        return availableCloudIndexes != null && !availableCloudIndexes.isEmpty();
     }
 }

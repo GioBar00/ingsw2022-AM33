@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.enums.AssistantCard;
 import it.polimi.ingsw.model.enums.Tower;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
-import it.polimi.ingsw.network.messages.client.ChooseGame;
+import it.polimi.ingsw.network.messages.client.ChosenGame;
 import it.polimi.ingsw.network.messages.client.Login;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
@@ -120,8 +120,8 @@ public class Controller {
 
                     line = in.nextLine();
                     message = MessageBuilder.fromJson(line);
-                    if (MessageType.retrieveByMessageClass(message).equals(MessageType.CHOOSE_TEAM)) {
-                        ChooseGame choice = (ChooseGame) message;
+                    if (MessageType.retrieveByMessageClass(message).equals(MessageType.CHOSEN_TEAM)) {
+                        ChosenGame choice = (ChosenGame) message;
                         if (choice.isValid()) {
                             do {
                                 model = GameBuilder.getGame(choice.getPreset(), choice.getMode());
