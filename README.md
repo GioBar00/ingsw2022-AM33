@@ -3,9 +3,9 @@
 
 ## Eriantys
 
-<img src="https://www.craniocreations.it/wp-content/uploads/2021/06/Eriantys_scatola3Dombra.png" width=192px height=192 px align="right" />
+<img src="https://www.craniocreations.it/wp-content/uploads/2021/06/Eriantys_scatola3Dombra.png" width=256px height=256px align="right" />
 
-The project consists in developing a software version of the board game [Eriantys](https://www.craniocreations.it/prodotto/eriantys/).
+The project consists in developing a software version of the board game [Eriantys](https://www.craniocreations.it/prodotto/eriantys/).</br>
 The project includes:
 - initial UML diagrams;
 - final UML diagrams, automatically generated from the source code;
