@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.messages.server;
 
-import it.polimi.ingsw.model.enums.Tower;
-import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.server.model.enums.Tower;
+import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.messagesView.TeamsView;
 

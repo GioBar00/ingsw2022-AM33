@@ -1,8 +1,8 @@
 package it.polimi.ingsw.network.messages.server;
 
-import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.server.model.Game;
 import it.polimi.ingsw.network.messages.messagesView.GameView;
-import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.network.messages.Message;
 
 public class CurrentGameState extends Message {

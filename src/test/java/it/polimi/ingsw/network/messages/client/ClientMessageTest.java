@@ -1,9 +1,9 @@
 package it.polimi.ingsw.network.messages.client;
 
-import it.polimi.ingsw.model.enums.*;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
+import it.polimi.ingsw.server.model.enums.*;
 import org.junit.jupiter.api.Test;
 
 import static it.polimi.ingsw.network.messages.MessageBuilderTest.toAndFromJson;

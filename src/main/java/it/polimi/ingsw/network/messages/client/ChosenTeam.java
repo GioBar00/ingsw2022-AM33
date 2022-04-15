@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.messages.client;
 
 
-import it.polimi.ingsw.model.enums.Tower;
+import it.polimi.ingsw.server.model.enums.Tower;
 import it.polimi.ingsw.network.messages.Message;
 
 public class ChosenTeam extends Message {

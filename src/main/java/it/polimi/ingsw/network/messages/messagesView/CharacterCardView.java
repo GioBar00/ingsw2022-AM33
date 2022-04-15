@@ -1,6 +1,6 @@
 package it.polimi.ingsw.network.messages.messagesView;
 
-import it.polimi.ingsw.model.enums.CharacterType;
+import it.polimi.ingsw.server.model.enums.CharacterType;
 
 public class CharacterCardView {
     private final CharacterType type;

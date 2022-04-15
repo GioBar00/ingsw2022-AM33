@@ -1,9 +1,7 @@
 package it.polimi.ingsw.network.messages.messagesView;
 
-import it.polimi.ingsw.model.enums.StudentColor;
-import it.polimi.ingsw.model.enums.Tower;
-import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.model.player.PlayersManager;
+import it.polimi.ingsw.server.model.enums.StudentColor;
+import it.polimi.ingsw.server.model.enums.Tower;
 
 import java.util.ArrayList;
 import java.util.Collections;

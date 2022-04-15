@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.messages.messagesView;
 
-import it.polimi.ingsw.model.enums.GamePreset;
-import it.polimi.ingsw.model.enums.Tower;
+import it.polimi.ingsw.server.model.enums.GamePreset;
+import it.polimi.ingsw.server.model.enums.Tower;
 
 import java.util.EnumMap;
 import java.util.LinkedList;

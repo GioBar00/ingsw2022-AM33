@@ -1,6 +1,6 @@
 package it.polimi.ingsw.network.messages.client;
 
-import it.polimi.ingsw.model.enums.StudentColor;
+import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 
 /**

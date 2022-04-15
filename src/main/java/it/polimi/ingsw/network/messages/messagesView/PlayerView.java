@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.messages.messagesView;
 
-import it.polimi.ingsw.model.enums.AssistantCard;
-import it.polimi.ingsw.model.enums.Wizard;
+import it.polimi.ingsw.server.model.enums.AssistantCard;
+import it.polimi.ingsw.server.model.enums.Wizard;
 
 import java.util.ArrayList;
 import java.util.Collections;

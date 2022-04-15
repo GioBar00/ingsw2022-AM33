@@ -1,8 +1,8 @@
 package it.polimi.ingsw.network.messages.client;
 
 
-import it.polimi.ingsw.model.enums.GameMode;
-import it.polimi.ingsw.model.enums.GamePreset;
+import it.polimi.ingsw.server.model.enums.GameMode;
+import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.network.messages.Message;
 
 public class ChosenGame extends Message {

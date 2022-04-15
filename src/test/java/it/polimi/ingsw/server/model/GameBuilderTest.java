@@ -1,0 +1,28 @@
+package it.polimi.ingsw.server.model;
+
+import it.polimi.ingsw.server.model.Game;
+import it.polimi.ingsw.server.model.GameBuilder;
+import it.polimi.ingsw.server.model.enums.GameMode;
+import it.polimi.ingsw.server.model.enums.GamePreset;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Test Class for checking the creation of a new Game
+ */
+class GameBuilderTest {
+
+    /**
+     * Tries to create a new game with the right preset
+     */
+    @Test
+    void getGame() {
+        Game brandNew = GameBuilder.getGame(GamePreset.TWO, GameMode.EASY);
+        assertEquals(GameMode.EASY,brandNew.getGameMode());
+        brandNew = GameBuilder.getGame(GamePreset.THREE, GameMode.EASY);
+        assertEquals(GameMode.EASY,brandNew.getGameMode());
+        brandNew = GameBuilder.getGame(GamePreset.FOUR, GameMode.EXPERT);
+        assertEquals(GameMode.EXPERT,brandNew.getGameMode());
+    }
+}

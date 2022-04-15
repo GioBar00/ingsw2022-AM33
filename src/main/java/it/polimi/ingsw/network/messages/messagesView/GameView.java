@@ -1,10 +1,13 @@
 package it.polimi.ingsw.network.messages.messagesView;
 
-import it.polimi.ingsw.model.RoundManager;
-import it.polimi.ingsw.model.enums.*;
-import it.polimi.ingsw.model.islands.IslandsManager;
-import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.model.player.PlayersManager;
+import it.polimi.ingsw.server.model.RoundManager;
+import it.polimi.ingsw.server.model.enums.GameMode;
+import it.polimi.ingsw.server.model.enums.GamePhase;
+import it.polimi.ingsw.server.model.enums.GamePreset;
+import it.polimi.ingsw.server.model.enums.GameState;
+import it.polimi.ingsw.server.model.islands.IslandsManager;
+import it.polimi.ingsw.server.model.player.Player;
+import it.polimi.ingsw.server.model.player.PlayersManager;
 import it.polimi.ingsw.network.messages.Message;
 
 import java.util.*;
