@@ -1,6 +1,7 @@
 package it.polimi.ingsw.network.messages.server;
 
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
+import it.polimi.ingsw.server.model.enums.StudentColor;
 
 import java.util.Set;
 
@@ -26,9 +27,29 @@ public class SwapStudents extends MoveStudent {
     @Override
     public boolean isValid() {
         if(from != null && to != null) {
-            if (from.requiresIndex() && fromIndexesSet == null)
+            if (from.requiresIndex() && (fromIndexesSet == null || fromIndexesSet.isEmpty()))
                 return false;
-            return !to.requiresIndex() || toIndexesSet != null;
+            if (to.requiresIndex() && (toIndexesSet == null || toIndexesSet.isEmpty()))
+                return false;
+            if (from != MoveLocation.ENTRANCE) {
+                try {
+                    for (Integer i : fromIndexesSet) {
+                        StudentColor s = StudentColor.retrieveStudentColorByOrdinal(i);
+                    }
+                } catch (Exception ignored) {
+                    return false;
+                }
+            }
+            if (to != MoveLocation.ENTRANCE) {
+                try {
+                    for (Integer i : toIndexesSet) {
+                        StudentColor s = StudentColor.retrieveStudentColorByOrdinal(i);
+                    }
+                } catch (Exception ignored) {
+                    return false;
+                }
+            }
+            return true;
         }
         return false;
     }

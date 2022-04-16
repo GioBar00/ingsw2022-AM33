@@ -36,7 +36,7 @@ public class MultiplePossibleMoves extends Message {
      */
     @Override
     public boolean isValid() {
-        if (possibleMoves != null) {
+        if (possibleMoves != null && !possibleMoves.isEmpty()) {
             for (Move move: possibleMoves)
                 if (move == null || !move.isValid())
                     return false;

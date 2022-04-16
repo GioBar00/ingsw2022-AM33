@@ -1,14 +1,14 @@
 package it.polimi.ingsw.network.messages.server;
 
+import it.polimi.ingsw.network.messages.Move;
+import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import org.junit.jupiter.api.Test;
 
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static it.polimi.ingsw.network.messages.MessageBuilderTest.toAndFromJson;
 import static org.junit.jupiter.api.Assertions.*;
@@ -136,5 +136,170 @@ class ServerMessagesTest {
         original = new PlayAssistantCard(EnumSet.noneOf(AssistantCard.class));
         m = toAndFromJson(original);
         assertFalse(m.isValid());
+    }
+
+    /**
+     * Tests the {@link it.polimi.ingsw.network.messages.server.MoveStudent} message.
+     */
+    @Test
+    void moveStudent() {
+        Set<Integer> fromIndexes = new HashSet<>();
+        fromIndexes.add(1);
+        fromIndexes.add(2);
+        Set<Integer> toIndexes = new HashSet<>();
+        toIndexes.add(3);
+        toIndexes.add(4);
+        MoveStudent original = new MoveStudent(MoveLocation.CARD, fromIndexes, MoveLocation.ISLAND, toIndexes);
+        Message m = toAndFromJson(original);
+        assertTrue(m.isValid());
+        assertTrue(m instanceof MoveStudent);
+        assertEquals(original.getFrom(), ((MoveStudent) m).getFrom());
+        assertEquals(original.getTo(), ((MoveStudent) m).getTo());
+        assertEquals(original.getFromIndexesSet(), ((MoveStudent) m).getFromIndexesSet());
+        assertEquals(original.getToIndexesSet(), ((MoveStudent) m).getToIndexesSet());
+        // test null from
+        original = new MoveStudent(null, fromIndexes, MoveLocation.ISLAND, toIndexes);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test null to
+        original = new MoveStudent(MoveLocation.CARD, fromIndexes, null, toIndexes);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test null fromIndexes
+        original = new MoveStudent(MoveLocation.CARD, null, MoveLocation.ISLAND, toIndexes);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test null toIndexes
+        original = new MoveStudent(MoveLocation.CARD, fromIndexes, MoveLocation.ISLAND, null);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test empty fromIndexes
+        original = new MoveStudent(MoveLocation.CARD, new HashSet<>(), MoveLocation.ISLAND, toIndexes);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test empty toIndexes
+        original = new MoveStudent(MoveLocation.CARD, fromIndexes, MoveLocation.ISLAND, new HashSet<>());
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test valid null toIndexes
+        original = new MoveStudent(MoveLocation.CARD, fromIndexes, MoveLocation.HALL, null);
+        m = toAndFromJson(original);
+        assertTrue(m.isValid());
+        // test invalid students
+        fromIndexes.add(5);
+        original = new MoveStudent(MoveLocation.CARD, fromIndexes, MoveLocation.ISLAND, toIndexes);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+    }
+
+    /**
+     * Tests the {@link it.polimi.ingsw.network.messages.server.SwapStudents} message.
+     */
+    @Test
+    void swapStudents() {
+        Set<Integer> fromIndexes = new HashSet<>();
+        fromIndexes.add(1);
+        fromIndexes.add(2);
+        Set<Integer> toIndexes = new HashSet<>();
+        toIndexes.add(3);
+        toIndexes.add(4);
+        SwapStudents original = new SwapStudents(MoveLocation.CARD, fromIndexes, MoveLocation.ISLAND, toIndexes);
+        Message m = toAndFromJson(original);
+        assertTrue(m.isValid());
+        assertTrue(m instanceof SwapStudents);
+        assertEquals(original.getFrom(), ((SwapStudents) m).getFrom());
+        assertEquals(original.getTo(), ((SwapStudents) m).getTo());
+        assertEquals(original.getFromIndexesSet(), ((SwapStudents) m).getFromIndexesSet());
+        assertEquals(original.getToIndexesSet(), ((SwapStudents) m).getToIndexesSet());
+        // test null from
+        original = new SwapStudents(null, fromIndexes, MoveLocation.ISLAND, toIndexes);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test null to
+        original = new SwapStudents(MoveLocation.CARD, fromIndexes, null, toIndexes);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test null fromIndexes
+        original = new SwapStudents(MoveLocation.CARD, null, MoveLocation.ISLAND, toIndexes);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test null toIndexes
+        original = new SwapStudents(MoveLocation.CARD, fromIndexes, MoveLocation.ISLAND, null);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test empty fromIndexes
+        original = new SwapStudents(MoveLocation.CARD, new HashSet<>(), MoveLocation.ISLAND, toIndexes);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test empty toIndexes
+        original = new SwapStudents(MoveLocation.CARD, fromIndexes, MoveLocation.ISLAND, new HashSet<>());
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test invalid from students
+        fromIndexes.add(5);
+        original = new SwapStudents(MoveLocation.CARD, fromIndexes, MoveLocation.ISLAND, toIndexes);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test invalid to students
+        fromIndexes.remove(5);
+        toIndexes.add(5);
+        original = new SwapStudents(MoveLocation.CARD, fromIndexes, MoveLocation.ISLAND, toIndexes);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test required toIndexes for HALL
+        original = new SwapStudents(MoveLocation.CARD, fromIndexes, MoveLocation.HALL, null);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+    }
+
+    /**
+     * Tests the {@link it.polimi.ingsw.network.messages.server.MultiplePossibleMoves} message.
+     */
+    @Test
+    void multiplePossibleMoves() {
+        List<Move> moves = new LinkedList<>();
+        Set<Integer> entranceIndexes = new HashSet<>();
+        entranceIndexes.add(1);
+        entranceIndexes.add(5);
+        Set<Integer> islandIndexes = new HashSet<>();
+        islandIndexes.add(2);
+        islandIndexes.add(3);
+        moves.add(new MoveStudent(MoveLocation.ENTRANCE, entranceIndexes, MoveLocation.ISLAND, islandIndexes));
+        moves.add(new MoveStudent(MoveLocation.ENTRANCE, entranceIndexes, MoveLocation.HALL, null));
+        MultiplePossibleMoves original = new MultiplePossibleMoves(moves);
+        Message m = toAndFromJson(original);
+        assertTrue(m.isValid());
+        // test equals original moves
+        for (Move move : ((MultiplePossibleMoves) m).getPossibleMoves()) {
+            MoveStudent moveStudent = (MoveStudent) move;
+            boolean found = false;
+            for (Move originalMove : moves) {
+                MoveStudent originalMoveStudent = (MoveStudent) originalMove;
+                if (moveStudent.getFrom().equals(originalMoveStudent.getFrom()) &&
+                        moveStudent.getTo().equals(originalMoveStudent.getTo()) &&
+                        moveStudent.getFromIndexesSet().equals(originalMoveStudent.getFromIndexesSet())){
+                    if (moveStudent.getToIndexesSet() == null || moveStudent.getToIndexesSet().equals(originalMoveStudent.getToIndexesSet())) {
+                        found = true;
+                        moves.remove(originalMove);
+                        break;
+                    }
+                }
+            }
+            assertTrue(found);
+        }
+        // test null moves
+        original = new MultiplePossibleMoves(null);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test empty moves
+        original = new MultiplePossibleMoves(new LinkedList<>());
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+        // test invalid moves
+        moves.add(new MoveStudent(MoveLocation.ENTRANCE, null, MoveLocation.ISLAND, islandIndexes));
+        original = new MultiplePossibleMoves(moves);
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
+
     }
 }
