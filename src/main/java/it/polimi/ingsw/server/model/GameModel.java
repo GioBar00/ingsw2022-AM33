@@ -525,6 +525,15 @@ class GameModel extends MessageListenerSubscriber implements Game {
     }
 
     /**
+     * Return the phase of the Game
+     * @return GamePhase
+     */
+    @Override
+    public GamePhase getPhase() {
+        return roundManager.getGamePhase();
+    }
+
+    /**
      * Advances the Game to the next round.
      * If it is the last round it checks the winner.
      */

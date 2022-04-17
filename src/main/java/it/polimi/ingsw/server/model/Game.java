@@ -2,11 +2,8 @@ package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.network.messages.messagesView.GameView;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
+import it.polimi.ingsw.server.model.enums.*;
 import it.polimi.ingsw.server.model.player.Player;
-import it.polimi.ingsw.server.model.enums.AssistantCard;
-import it.polimi.ingsw.server.model.enums.GameMode;
-import it.polimi.ingsw.server.model.enums.GameState;
-import it.polimi.ingsw.server.model.enums.Tower;
 
 /**
  * Game interface. It exposes the methods to change the state of the game.
@@ -79,10 +76,16 @@ public interface Game {
     boolean getStudentsFromCloud(int cloudIndex);
 
     /**
-     * used to get the current player
+     * Used to get the current player
      * @return the nickname of the current player
      */
     String getCurrentPlayer();
+
+    /**
+     * Return the phase of the Game
+     * @return GamePhase
+     */
+    GamePhase getPhase();
 
     /**
      * Activates character card at index.
@@ -121,4 +124,6 @@ public interface Game {
     }
 
     default GameView getGameView(Player destPlayer){return null;}
+
+
 }

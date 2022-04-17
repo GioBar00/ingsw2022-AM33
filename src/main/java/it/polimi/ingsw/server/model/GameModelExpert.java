@@ -253,6 +253,15 @@ class GameModelExpert implements Game, EffectHandler {
     }
 
     /**
+     * Return the phase of the Game
+     * @return GamePhase
+     */
+    @Override
+    public GamePhase getPhase() {
+        return model.getPhase();
+    }
+
+    /**
      * Activates character card at index if the player has not already activated another card, the index is valid and the player has enough coins.
      * @param index of the character card to activate.
      * @return if the activation was successful.

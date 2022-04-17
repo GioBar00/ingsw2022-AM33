@@ -1,29 +1,16 @@
 package it.polimi.ingsw.server.controllers;
 
+import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.client.*;
+import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.server.listeners.MessageEvent;
 import it.polimi.ingsw.server.listeners.MessageListener;
 import it.polimi.ingsw.server.model.Game;
 import it.polimi.ingsw.server.model.GameBuilder;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
-import it.polimi.ingsw.server.model.enums.AssistantCard;
-import it.polimi.ingsw.server.model.enums.GameState;
+import it.polimi.ingsw.server.model.enums.GameMode;
+import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.Tower;
-import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.MessageBuilder;
-import it.polimi.ingsw.network.messages.client.ChosenGame;
-import it.polimi.ingsw.network.messages.client.Login;
-import it.polimi.ingsw.network.messages.enums.CommMsgType;
-import it.polimi.ingsw.network.messages.enums.MessageType;
-import it.polimi.ingsw.network.messages.server.CommMessage;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.HashMap;
-import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Controller class manages the first request for each client. If the request is valid instantiates a client handler.
@@ -38,277 +25,253 @@ public class Controller implements MessageListener {
     private Game model;
 
     /**
-     * a collection of player nickname and their request handler
-     */
-    private final HashMap<String, VirtualClient> virtualClients;
-
-    /**
-     * tcp port of the controller
-     */
-    private final int port;
-
-    /**
      * the first player who has the rights to start the match
      */
-    private String master;
+    private final String master;
 
     /**
      * Default constructor of class Controller
      */
-    public Controller(){
+    public Controller() {
         model = null;
-        virtualClients = new HashMap<>();
-        port = 0;
         master = null;
     }
 
-    public void handleRequest() {
-        ExecutorService executor = Executors.newCachedThreadPool();
-        ServerSocket serverSocket;
+    /**
+     * Method used for know if the model is instantiated
+     * @return true if the model is instantiated
+     */
+    public boolean isInstantiated() {
+        return model != null;
+    }
 
-        try {
-            serverSocket = new ServerSocket(port);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-            return;
-        }
-        System.out.println("Server ready");
-        while (true) {
-            try {
-                Socket socket = serverSocket.accept();
-                String nickname = handleFirstConnection(socket);
-                if(nickname != null) {
-                    boolean openVirtualClient = false;
-                    do {
-                        try {
-                            VirtualClient vc = new VirtualClient(this, nickname, socket);
-                            virtualClients.put(nickname, vc);
-                            openVirtualClient = true;
-                            executor.submit(vc);
-                        } catch (IOException ignored) {
-                        }
-                    } while (!openVirtualClient);
-                }
-            } catch(IOException e) {
+    /**
+     * Setter of the model. Calls the GameBuilder
+     * @param preset is the number of players for the game
+     * @param mode is the mode of the game
+     */
+    public void setModel(GamePreset preset, GameMode mode) {
+        model = GameBuilder.getGame(preset, mode);
+    }
+
+    /**
+     * Method for sett a new player inside the model
+     * @param nickname the nickname of the new player
+     * @return True if the player has been added. False if the game is full or the nickname is already choosen
+     */
+    public boolean addPlayer(String nickname) {
+        return model.addPlayer(nickname);
+    }
+
+
+    /**
+     * Override methods from MessageListener Interface.
+     * When a Virtual Client receives a valid message notify the controller that analyze the message and apply the
+     * request to the model (if it's possible).
+     * onMessage method is divided into 5 different methods; each of the methods handle a specific game phase.
+     * @param event of the received message
+     */
+    @Override
+    public void onMessage(MessageEvent event) {
+        VirtualClient vc = (VirtualClient)event.getSource();
+        Message msg = event.getMessage();
+        switch (model.getGameState()) {
+            case UNINITIALIZED:
+                handleGameSetup(vc, msg);
                 break;
-            }
+            case STARTED:
+                if (canPlay(vc.getNickname())){
+                    vc.sendNotYourTurnMessage();
+                }else {
+                    switch (model.getPhase()) {
+                        case PLANNING -> handlePlanningPhase(vc, msg);
 
-        }
-        executor.shutdown();
-    }
+                        case MOVE_STUDENTS -> handleMoveStudentPhase(vc, msg);
 
-    private String handleFirstConnection(Socket socket) {
-        try {
-            Scanner in = new Scanner(socket.getInputStream());
-            PrintWriter out = new PrintWriter(socket.getOutputStream());
+                        case MOVE_MOTHER_NATURE -> handleMoveMotherNaturePhase(vc, msg);
 
-            String line = in.nextLine();
-
-            Message message = MessageBuilder.fromJson(line);
-            if (MessageType.retrieveByMessageClass(message).equals(MessageType.LOGIN)) {
-                Login mex = (Login) message;
-
-                String nickname = mex.getNickname();
-                //nickname not null
-                if (mex.isValid()) {
-                    out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_NULL_NICKNAME)));
-                    out.flush();
-                    socket.close();
-                    return null;
-                }
-                //model didn't exist
-                if (model == null) {
-                    out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.CHOOSE_NUM_PLAYERS)));
-                    out.flush();
-
-                    line = in.nextLine();
-                    message = MessageBuilder.fromJson(line);
-                    if (MessageType.retrieveByMessageClass(message).equals(MessageType.CHOSEN_TEAM)) {
-                        ChosenGame choice = (ChosenGame) message;
-                        if (choice.isValid()) {
-                            do {
-                                model = GameBuilder.getGame(choice.getPreset(), choice.getMode());
-                            }
-                            while (!model.addPlayer(nickname));
-                            master = nickname;
-                            return nickname;
-                        }
-
+                        case CHOOSE_CLOUD -> handleChooseCloudPhase(vc, msg);
                     }
-                    out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE)));
-                    out.flush();
-                    socket.close();
-                    return null;
                 }
+                    break;
+            case ENDED:
+                vc.sendImpossibleMessage();
+                break;
+        }
 
-                //model exists
-                if (model.addPlayer(nickname)) {
-                    return nickname;
-                } else {
-                    out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE)));
-                    out.flush();
-                    socket.close();
-                    return null;
+
+    }
+
+    /**
+     * Handle the messages during the setup phase
+     * @param vc is the Virtual Client bonded with the request
+     * @param msg is the Message
+     */
+    private void handleGameSetup(VirtualClient vc, Message msg) {
+
+        switch (MessageType.retrieveByMessageClass(msg)) {
+            case CHOSEN_TEAM -> {
+                ChosenTeam chosenTeam = (ChosenTeam)msg;
+                if(!this.changeTeam(vc.getNickname(),chosenTeam.getTower()))
+                    vc.sendImpossibleMessage();
+            }
+            case START_GAME -> {
+                if(!this.startGame(vc.getNickname()))
+                    vc.sendImpossibleMessage();
+            }
+            default -> vc.sendImpossibleMessage();
+        }
+    }
+
+    /**
+     * Handle the messages during the planning phase
+     * @param vc is the Virtual Client bonded with the request
+     * @param msg is the Message
+     */
+    private void handlePlanningPhase(VirtualClient vc, Message msg) {
+        if (MessageType.retrieveByMessageClass(msg) == MessageType.PLAYED_ASSISTANT_CARD) {
+            PlayedAssistantCard playedAssistantCard = (PlayedAssistantCard) msg;
+            if(!model.playAssistantCard(playedAssistantCard.getAssistantCard()))
+                vc.sendImpossibleMessage();
+        } else {
+            vc.sendImpossibleMessage();
+        }
+    }
+
+    /**
+     * Handle the messages during the "move student" phase
+     * @param vc is the Virtual Client bonded with the request
+     * @param msg is the Message
+     */
+    private void handleMoveStudentPhase(VirtualClient vc, Message msg) {
+        switch (MessageType.retrieveByMessageClass(msg)){
+            case MOVE_STUDENT,SWAP_STUDENTS -> {
+                MovedStudent movedStudent = (MovedStudent) msg;
+                CharacterParameters parameters;
+
+                switch (movedStudent.getFrom()) {
+
+                    case ENTRANCE:
+                        switch (movedStudent.getTo()) {
+                            case HALL -> {
+                                if(!model.moveStudentToHall(movedStudent.getFromIndex()))
+                                    vc.sendImpossibleMessage();
+                            }
+                            case ISLAND -> {
+                                if(!model.moveStudentToIsland(movedStudent.getFromIndex(), movedStudent.getToIndex()))
+                                    vc.sendImpossibleMessage();
+                            }
+                            default -> vc.sendImpossibleMessage();
+                        }
+                        break;
+
+                    case CARD:
+                        switch (movedStudent.getTo()) {
+                            case ISLAND, ENTRANCE, HALL -> {
+                                parameters = CharacterChoiceAdapter.convert(movedStudent);
+                                if(!model.applyEffect(parameters))
+                                    vc.sendImpossibleMessage();
+                            }
+                        }
+                    default: vc.sendImpossibleMessage();
+
+                        break;
+
+                    case HALL:
+                        parameters = CharacterChoiceAdapter.convert(movedStudent);
+                        if(!model.applyEffect(parameters))
+                            vc.sendImpossibleMessage();
+                        break;
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
-    int playCard(String nickname, AssistantCard a) {
-        if(canPlay(nickname))
-            return -1;
-        synchronized (this){
-            if (model.playAssistantCard(a)) {
-                updateView();
-                return 1;
+            case ACTIVATED_CHARACTER_CARD -> {
+                ActivatedCharacterCard activatedCharacterCard = (ActivatedCharacterCard) msg;
+                if(!model.activateCharacterCard(activatedCharacterCard.getCharacterCardIndex()))
+                    vc.sendImpossibleMessage();
             }
-            return 0;
-        }
 
-    }
-
-    int moveStudentToHall(String nickname, int entranceIndex) {
-        if(canPlay(nickname))
-            return -1;
-        synchronized (this){
-            if (model.moveStudentToHall(entranceIndex)) {
-                updateView();
-                return 1;
+            case CHOOSE_ISLAND ->{
+                ChosenIsland chosenIsland = (ChosenIsland) msg;
+                CharacterParameters parameters = CharacterChoiceAdapter.convert(chosenIsland);
+                if(!model.applyEffect(parameters))
+                    vc.sendImpossibleMessage();
             }
-            return 0;
-        }
-    }
 
-    int moveStudentToIsland(String nickname, int entranceIndex, int islandIndex) {
-        if(canPlay(nickname))
-            return -1;
-        synchronized (this){
-            if (model.moveStudentToIsland(entranceIndex, islandIndex)) {
-                updateView();
-                return 1;
+            case CHOOSE_STUDENT_COLOR -> {
+                ChosenStudentColor chosenStudentColor = (ChosenStudentColor)msg;
+                CharacterParameters parameters = CharacterChoiceAdapter.convert(chosenStudentColor);
+                if(!model.applyEffect(parameters))
+                    vc.sendImpossibleMessage();
             }
-            return 0;
-        }
-    }
 
-    int moveMotherNature(String nickname, int nMoves) {
-        if(canPlay(nickname))
-            return -1;
-        synchronized (this){
-            if (model.moveMotherNature(nMoves)) {
-                updateView();
-                return 1;
+            case CONCLUDE_CHARACTER_CARD_EFFECT -> {
+                if(!model.endEffect())
+                    vc.sendImpossibleMessage();
             }
-            return 0;
+
+            default -> vc.sendImpossibleMessage();
         }
     }
 
-    int chooseCloud(String nickname, int index) {
-        if(canPlay(nickname))
-            return -1;
-        synchronized (this){
-            if(model.getStudentsFromCloud(index)){
-                updateView();
-                return 1;
-            }
-            return 0;
+    /**
+     * Handle the messages during the "move mother nature" phase
+     * @param vc is the Virtual Client bonded with the request
+     * @param msg is the Message
+     */
+    private void handleMoveMotherNaturePhase(VirtualClient vc, Message msg) {
+        if(MessageType.retrieveByMessageClass(msg) == MessageType.MOVED_MOTHER_NATURE){
+            MovedMotherNature movedMotherNature = (MovedMotherNature)msg;
+            if (model.moveMotherNature(movedMotherNature.getNumMoves()))
+                vc.sendImpossibleMessage();
         }
+        else vc.sendImpossibleMessage();
     }
 
-
-    int startGame(String nickname) {
-        if(nickname.equals(master)){
-            if(model.startGame())
-                return 1;
+    /**
+     * Handle the messages during the "choose cloud" phase
+     * @param vc is the Virtual Client bonded with the request
+     * @param msg is the Message
+     */
+    private void handleChooseCloudPhase(VirtualClient vc, Message msg) {
+        if(MessageType.retrieveByMessageClass(msg) == MessageType.CHOSEN_CLOUD){
+            ChosenCloud chosenCloud = (ChosenCloud) msg;
+            if(model.getStudentsFromCloud(chosenCloud.getCloudIndex()))
+                vc.sendImpossibleMessage();
         }
-        return -1;
+        else vc.sendImpossibleMessage();
     }
 
-    synchronized boolean changeTeam(String nickname, Tower tower) {
-        return  model.changeTeam(nickname,tower);
-    }
-
-    int playCharacterCard(String nickname, int cardIndex) {
-        if(canPlay(nickname))
-            return -1;
-        synchronized (this){
-            if (model.activateCharacterCard(cardIndex)) {
-                updateView();
-                return 1;
-            }
-            return 0;
+    /**
+     * Method used by onMessage for starting the game
+     * @param nickname who try to call this method
+     * @return true if the game is started. False if the game can't start or who request this method doesn't have
+     * the rights
+     */
+    private boolean startGame(String nickname) {
+        if (nickname.equals(master)) {
+            return model.startGame();
         }
+        return false;
     }
 
-    int applyEffect(String nickname, CharacterParameters parameters) {
-        if(canPlay(nickname))
-            return -1;
-        synchronized (this){
-            if (model.applyEffect(parameters)) {
-                updateView();
-                return 1;
-            }
-            return 0;
-        }
-    }
+    /**
+     * Tries to change the team of one player
+     * @param nickname of the player who wants to change team
+     * @param tower the team he wants to join
+     * @return true if team has been changed false if not.
+     */
+     private synchronized boolean changeTeam(String nickname, Tower tower) {
+        return model.changeTeam(nickname, tower);
+     }
 
-    int concludeCharacterCardEffect(String nickname) {
-        if(canPlay(nickname))
-            return -1;
-        synchronized (this){
-            if(model.endEffect())
-                return 1;
-            else return 0;
-        }
-    }
-
-    //TODO add methods model and virtualClient
-    void updateView() {
-        //model.get
-        for(VirtualClient vc : virtualClients.values()){
-            //todo
-        }
-        //vc.sendView();
-    }
-
+    /**
+     * Used for know if is a player turn
+     * @param nickname the player who send a message
+     * @return true if the player is the current player
+     */
     private boolean canPlay(String nickname) {
         return !nickname.equals(model.getCurrentPlayer());
     }
 
-
-    @Override
-    public void onMessage(MessageEvent event) {
-        VirtualClient c = (VirtualClient) event.getSource();
-        Message msg = event.getMessage();
-
-        switch (model.getGameState()) {
-            case UNINITIALIZED:
-                handleGameSetup(event);
-            case STARTED:
-//                switch (model.getPhase()) {
-//
-//                }
-        }
-
-
-    }
-
-    void handleGameSetup(MessageEvent event) {
-        Message msg = event.getMessage();
-        switch (MessageType.retrieveByMessageClass(msg)) {
-            case CHOSEN_TEAM -> {
-                //TODO
-                break;
-            }
-            // default:
-        }
-    }
 }

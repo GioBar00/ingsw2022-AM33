@@ -1,46 +1,45 @@
 package it.polimi.ingsw.server.controllers;
 
+import it.polimi.ingsw.network.messages.client.ChosenIsland;
+import it.polimi.ingsw.network.messages.client.ChosenStudentColor;
+import it.polimi.ingsw.network.messages.client.MovedStudent;
+import it.polimi.ingsw.network.messages.server.ChooseStudentColor;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 
+/**
+ * Static class used to convert a message into a CharacterParamters
+ */
 public class CharacterChoiceAdapter {
-    boolean activatedCard;
 
-    CharacterChoiceAdapter(){
-        activatedCard = false;
-    }
-    void setActivatedCard() {
-        activatedCard = true;
-    }
 
-    void resetActivatedCard() {
-        activatedCard = false;
-    }
+    /**
+     * Convert a ChosenIsland message into the proper CharacterParameters
+     * @param message is an instance of ChosenIsland
+     * @return the proper CharacterParameters
+     */
+    static CharacterParameters convert(ChosenIsland message) {
+            return new CharacterParameters(message.getIslandIndex());
 
-    CharacterParameters chooseIsland(int index) {
-        if(activatedCard)
-            return new CharacterParameters(index);
-        else return null;
     }
 
-    CharacterParameters chooseColor(StudentColor color) {
-        if(activatedCard)
-            return new CharacterParameters(color);
-        else return null;
+    /**
+     * Convert a ChosenStudentColor message into the proper CharacterParameters
+     * @param message is an instance of ChosenStudentColor
+     * @return the proper CharacterParameters
+     */
+    static CharacterParameters convert(ChosenStudentColor message) {
+            return new CharacterParameters(message.getStudentColor());
     }
 
-    CharacterParameters fromCard(int cardIndex, int index) {
-        if(activatedCard) {
-            return new CharacterParameters(StudentColor.retrieveStudentColorByOrdinal(cardIndex),index);
-        }
-        return null;
+    /**
+     * Convert a MovedStudent message into the proper CharacterParameters
+     * @param message is an instance of MovedStudent
+     * @return the proper CharacterParameters
+     */
+    static CharacterParameters convert(MovedStudent message) {
+            return new CharacterParameters(StudentColor.retrieveStudentColorByOrdinal(message.getFromIndex()), message.getToIndex());
     }
 
-    CharacterParameters fromHall(int hallIndex, int index) {
-        if(activatedCard) {
-            return new CharacterParameters(StudentColor.retrieveStudentColorByOrdinal(hallIndex),index);
-        }
-        return null;
-    }
 
 }

@@ -1,243 +1,199 @@
 package it.polimi.ingsw.server.controllers;
 
-import it.polimi.ingsw.server.listeners.MessageEvent;
-import it.polimi.ingsw.server.listeners.MessageListener;
-import it.polimi.ingsw.server.listeners.MessageListenerSubscriber;
-import it.polimi.ingsw.server.model.Game;
-import it.polimi.ingsw.server.model.cards.CharacterParameters;
-import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
-import it.polimi.ingsw.network.messages.client.*;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
-import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.server.listeners.*;
+import it.polimi.ingsw.server.timer.MyTimer;
+import it.polimi.ingsw.server.timer.VirtualClientStopConnection;
+import it.polimi.ingsw.server.timer.VirtualClientTimeout;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Class for handle connection between a specified player and the server. Virtual Client forward valid request to the
+ * controller
+ */
+public class VirtualClient extends MessageListenerSubscriber implements Runnable, MessageListener, CallableTimerTask {
 
-public class VirtualClient extends MessageListenerSubscriber implements Runnable, MessageListener {
+    /**
+     * Nickname of the player who interfaces this VirtualClient
+     */
     private final String nickname;
+
+    /**
+     * Socket of the connection
+     */
     private final Socket socket;
-    private final Controller controller;
+
+    /**
+     * input scanner for incoming messages
+     */
     private final Scanner in;
+
+    /**
+     * output printer for outgoing messages
+     */
     private final PrintWriter out;
-    private final CharacterChoiceAdapter adapter;
 
-    private final List<MessageListener> listeners = new LinkedList<>();
+    /**
+     * Value for checking the time validity of a reply
+     */
+    private boolean notAlive = false;
 
-    public VirtualClient(Controller controller,String nickname,Socket socket) throws IOException {
-        this.controller = controller;
+    /**
+     * Listener used in case of lost connection
+     */
+    private ConnectionListener connectionListener;
+
+
+    /**
+     * Constructor of VirtualClient
+     * @param nickname the nickname of the player that interfaces with this VirtualClient
+     * @param socket socket of the connection
+     * @param connectionListener the listener of ConnectionEvent
+     */
+    public VirtualClient(String nickname,Socket socket,ConnectionListener connectionListener) throws IOException {
         this.nickname = nickname;
         this.socket = socket;
+
         in = new Scanner(this.socket.getInputStream());
         out = new PrintWriter(this.socket.getOutputStream());
-        adapter = new CharacterChoiceAdapter();
 
 
+        this.connectionListener = connectionListener;
     }
 
+    /**
+     * Removes the ConnectionListener bonded to this class
+     */
+    public void removeListener(){
+        this.connectionListener = null;
+    }
 
+    /**
+     * Nickname getter
+     * @return the nickname
+     */
+    public String getNickname() {
+        return nickname;
+    }
+
+    /**
+     * Set if the connection time is no more valid
+     */
+    public void setNotAlive() {
+        notAlive = true;
+    }
+
+    /**
+     * Override Method from runnable interface
+     */
     @Override
     public void run() {
         messagesHandler();
     }
 
+    /**
+     * Handles the incoming messages. Checks if the message is valid. If the message is valid notify the listener
+     */
     private void messagesHandler() {
-        CharacterParameters parameters;
+        MyTimer timer = new MyTimer(new VirtualClientTimeout(this, 60));
+        String line;
         while(true){
-                String line = in.nextLine();
-                Message m = MessageBuilder.fromJson(line);
-                int value;
-                switch (MessageType.retrieveByMessageClass(m)){
-                    case ACTIVATED_CHARACTER_CARD :
-                        ActivatedCharacterCard activatedCharacterCard = (ActivatedCharacterCard) m;
-                        if(activatedCharacterCard.isValid()){
-                            value = controller.playCharacterCard(nickname,activatedCharacterCard.getCharacterCardIndex());
-                            sendNegativeAnswer(value);
-                            if(value == 1)
-                                adapter.setActivatedCard();
-                        }
-                        else{ sendInvalidMessage(); }
-                        break;
+            timer.startTimer();
+            synchronized (in){
+                line = in.nextLine();
+            }
+            timer.stopTask();
+            Message m = MessageBuilder.fromJson(line);
+            if(m.isValid()){
+                notifyListeners(new MessageEvent(this, m));
+            }
+            else sendInvalidMessage();
+        }
 
-                    case CHOSEN_GAME:
+    }
 
-                    case LOGIN:
-                        sendInvalidMessage();
-                        break;
+    /**
+     * Send a Communication Message(ERROR_NOT_YOUR_TURN) to the client
+     */
+    public void sendNotYourTurnMessage(){
+        out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN)));
+        out.flush();
+    }
 
-                    case CHOSEN_TEAM:
-                        assert m instanceof ChosenTeam;
-                        ChosenTeam chosenTeam = (ChosenTeam) m;
-                        if(chosenTeam.isValid()){
-                            if(!controller.changeTeam(nickname, chosenTeam.getTower()))
-                                sendNegativeAnswer(0);
-                        }else{ sendInvalidMessage(); }
-                        break;
-
-                    case CHOSEN_CLOUD :
-                        ChosenCloud chosenCloud = (ChosenCloud) m;
-                        if(chosenCloud.isValid()){
-                            value = controller.chooseCloud(nickname,chosenCloud.getCloudIndex());
-                            sendNegativeAnswer(value);
-                        }
-                        else{ sendInvalidMessage(); }
-                        break;
-
-                    case CHOOSE_ISLAND:
-                        ChosenIsland chosenIsland = (ChosenIsland) m;
-                        if(chosenIsland.isValid()){
-                            parameters = adapter.chooseIsland(chosenIsland.getIslandIndex());
-                            if(parameters == null){
-                                sendImpossibleMessage();
-                            }else{
-                                value = controller.applyEffect(nickname, parameters);
-                                sendNegativeAnswer(value);
-                            }
-                        }else sendInvalidMessage();
-                        break;
-
-                    case CHOOSE_STUDENT_COLOR:
-                        ChosenStudentColor chosenStudentColor = (ChosenStudentColor)m;
-                        if(chosenStudentColor.isValid()) {
-                            parameters = adapter.chooseColor(chosenStudentColor.getStudentColor());
-                            if (parameters == null) {
-                                sendImpossibleMessage();
-                            } else {
-                                value = controller.applyEffect(nickname, parameters);
-                                sendNegativeAnswer(value);
-                            }
-                        }else sendInvalidMessage();
-                        break;
-
-                    case CONCLUDE_CHARACTER_CARD_EFFECT:
-                        ConcludeCharacterCardEffect concludeCharacterCardEffect = (ConcludeCharacterCardEffect)m;
-                        if(concludeCharacterCardEffect.isValid()) {
-                            value = controller.concludeCharacterCardEffect(nickname);
-                            if (value == 1)
-                                adapter.resetActivatedCard();
-                            sendNegativeAnswer(value);
-                        }else sendInvalidMessage();
-                        break;
-
-                    case MOVED_MOTHER_NATURE :
-                        MovedMotherNature movedMotherNature = (MovedMotherNature)m;
-                        if(movedMotherNature.isValid()){
-                            value = controller.moveMotherNature(nickname,movedMotherNature.getNumMoves());
-                            sendNegativeAnswer(value);
-                        }
-                        else{ sendInvalidMessage(); }
-                        break;
-
-                    case MOVED_STUDENT, SWAPPED_STUDENTS:
-                        MovedStudent movedStudent = (MovedStudent) m;
-                        if (movedStudent.isValid()) {
-                            switch (movedStudent.getFrom()) {
-
-                                case ENTRANCE:
-                                    switch (movedStudent.getTo()) {
-                                        case HALL -> {
-                                            value = controller.moveStudentToHall(nickname, movedStudent.getFromIndex());
-                                            sendNegativeAnswer(value);
-                                        }
-                                        case ISLAND -> {
-                                            value = controller.moveStudentToIsland(nickname, movedStudent.getFromIndex(), movedStudent.getToIndex());
-                                            sendNegativeAnswer(value);
-                                        }
-                                    }
-                                    break;
-
-                                case CARD:
-                                    switch (movedStudent.getTo()) {
-                                        case ISLAND , ENTRANCE-> {
-                                            parameters = adapter.fromCard(movedStudent.getFromIndex(), movedStudent.getToIndex());
-                                            if (parameters == null) {
-                                                sendImpossibleMessage();
-                                            } else {
-                                                value = controller.applyEffect(nickname, parameters);
-                                                sendNegativeAnswer(value);
-                                            }
-                                        }
-                                        case HALL -> {
-                                            parameters = adapter.chooseColor(StudentColor.retrieveStudentColorByOrdinal(movedStudent.getFromIndex()));
-                                            if (parameters == null) {
-                                                sendImpossibleMessage();
-                                            } else {
-                                                value = controller.applyEffect(nickname, parameters);
-                                                sendNegativeAnswer(value);
-                                            }
-                                        }
-                                    }
-                                    break;
-
-                                case HALL:
-                                    parameters= adapter.fromHall(movedStudent.getFromIndex(), movedStudent.getFromIndex());
-                                    if(parameters == null){
-                                        sendImpossibleMessage();
-                                    }else{
-                                        value = controller.applyEffect(nickname, parameters);
-                                        sendNegativeAnswer(value);
-                                    }
-                                    break;
-                            }
-                        }
-                        break;
-
-                    case PLAYED_ASSISTANT_CARD :
-                        PlayedAssistantCard playedAssistantCard = (PlayedAssistantCard) m;
-                        if (playedAssistantCard.isValid()) {
-                            value = controller.playCard(nickname, playedAssistantCard.getAssistantCard());
-                            sendNegativeAnswer(value);
-                        } else {  sendInvalidMessage(); }
-                        break;
-
-
-                    case START_GAME :
-                        StartGame startGame = (StartGame)m;
-                        if(startGame.isValid()){
-                            value = controller.startGame(nickname);
-                            sendNegativeAnswer(value);
-                        }else sendInvalidMessage();
-                        break;
-
-
-                }
-
+    /**
+     * Send a Communication Message(ERROR_INVALID_MESSAGE) to the client
+     */
+    private void sendInvalidMessage() {
+        synchronized (out) {
+            out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE)));
+            out.flush();
         }
     }
 
-    private void sendNegativeAnswer(int value) {
-        if(value == -1){
-            out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN)));
-            out.flush();
-        }
-        if(value == 0){
+    /**
+     * Send a Communication Message(ERROR_IMPOSSIBLE_MOVE) to the client
+     */
+    public void sendImpossibleMessage() {
+        synchronized (out) {
             out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE)));
             out.flush();
         }
     }
 
-    private void sendInvalidMessage() {
-        out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE)));
-        out.flush();
+    /**
+     * Called by the TimeTask for checking if the client is still alive.
+     * Send a request message to the client and wait for a reply. If the reply didn't arrive the VirtualClient close the
+     * connection and notify the Server
+     */
+    public void endOfTime() {
+        MyTimer timer = new MyTimer(new VirtualClientStopConnection(this, 60));
+        String line;
+        synchronized (in){
+            synchronized (out) {
+                out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.CONNECTION_ALIVE)));
+                out.flush();
+
+                timer.startTimer();
+
+                do {
+                    line = in.nextLine();
+                    if (line != null) {
+                        timer.stopTask();
+                        timer.killTimer();
+                        return;
+                    }
+                } while (!notAlive);
+
+                timer.killTimer();
+
+
+                in.close();
+                out.close();
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                connectionListener.onConnectionEvent(new ConnectionEvent(this));
+            }
+        }
+
     }
 
-    private void sendImpossibleMessage() {
-        out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE)));
-        out.flush();
-    }
-
+    //TODO
     @Override
     public void onMessage(MessageEvent event) {
-        if (nickname.equals(((Game) event.getSource()).getCurrentPlayer())) {
 
-        }
     }
+
+
 }
 
