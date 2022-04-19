@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.listeners.MessageEvent;
+import it.polimi.ingsw.server.listeners.MessageListener;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.cards.CharacterCard;
 import it.polimi.ingsw.server.model.cards.EffectHandler;
@@ -604,5 +606,35 @@ class GameModelExpert implements Game, EffectHandler {
         for (int i = 0; i < num; i++)
             availableIslandIndexes.add(i);
         return availableIslandIndexes;
+    }
+
+    /**
+     * Adds a message listener.
+     *
+     * @param listener the listener to add
+     */
+    @Override
+    public void addListener(MessageListener listener) {
+        model.addListener(listener);
+    }
+
+    /**
+     * Removes a message listener.
+     *
+     * @param listener the listener to remove
+     */
+    @Override
+    public void removeListener(MessageListener listener) {
+        model.removeListener(listener);
+    }
+
+    /**
+     * Notifies all listeners.
+     *
+     * @param event of the message to notify
+     */
+    @Override
+    public void notifyListeners(MessageEvent event) {
+        model.notifyListeners(event);
     }
 }

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.network.messages.messagesView.GameView;
+import it.polimi.ingsw.server.listeners.MessageListenerSubscriber;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.enums.*;
 import it.polimi.ingsw.server.model.player.Player;
@@ -8,7 +9,7 @@ import it.polimi.ingsw.server.model.player.Player;
 /**
  * Game interface. It exposes the methods to change the state of the game.
  */
-public interface Game {
+public interface Game extends MessageListenerSubscriber {
     /**
      * @return current game mode.
      */

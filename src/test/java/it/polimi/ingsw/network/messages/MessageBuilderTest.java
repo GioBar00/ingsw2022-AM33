@@ -25,8 +25,18 @@ public class MessageBuilderTest {
         Message m = MessageBuilder.fromJson(json);
         assertFalse(m.isValid());
 
-        // with invalid enum.
+        // with invalid enum
         json = "{\"type\":\"PLAYED_ASSISTANT_CARD\",\"message\":{\"assistantCard\":\"FIFTY\"}}";
+        m = MessageBuilder.fromJson(json);
+        assertFalse(m.isValid());
+
+        // invalid message type
+        json = "{\"type\":\"INVALID_MESSAGE\",\"message\":{\"assistantCard\":\"ONE\"}}";
+        m = MessageBuilder.fromJson(json);
+        assertFalse(m.isValid());
+
+        // invalid move type
+        json = "{\"type\":\"MULTIPLE_POSSIBLE_MOVES\",\"message\":{\"possibleMoves\":[{\"type\":\"INVALID_MOVE\",\"move\":{\"from\":\"ENTRANCE\",\"fromIndexesSet\":[1,5],\"to\":\"HALL\"}}]}}";
         m = MessageBuilder.fromJson(json);
         assertFalse(m.isValid());
     }

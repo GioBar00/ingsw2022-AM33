@@ -1,41 +1,25 @@
 package it.polimi.ingsw.server.listeners;
 
-import java.util.LinkedList;
-import java.util.List;
-
 /**
- * This class is used to manage message listeners.
+ * Interface for the message listener subscriber.
  */
-public abstract class MessageListenerSubscriber {
-
-    /**
-     * List of message listeners.
-     */
-    private final List<MessageListener> listeners = new LinkedList<>();
+public interface MessageListenerSubscriber {
 
     /**
      * Adds a message listener.
      * @param listener the listener to add
      */
-    public void addListener(MessageListener listener) {
-        listeners.add(listener);
-    }
+    void addListener(MessageListener listener);
 
     /**
      * Removes a message listener.
      * @param listener the listener to remove
      */
-    public void removeListener(MessageListener listener) {
-        listeners.remove(listener);
-    }
+    void removeListener(MessageListener listener);
 
     /**
      * Notifies all listeners.
      * @param event of the message to notify
      */
-    public void notifyListeners(MessageEvent event) {
-        for (MessageListener listener : listeners) {
-            listener.onMessage(event);
-        }
-    }
+    void notifyListeners(MessageEvent event);
 }

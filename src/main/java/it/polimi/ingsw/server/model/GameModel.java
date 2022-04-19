@@ -1,8 +1,8 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.server.listeners.MessageListenerSubscriber;
 import it.polimi.ingsw.network.messages.messagesView.PlayerView;
 import it.polimi.ingsw.network.messages.messagesView.GameView;
+import it.polimi.ingsw.server.listeners.ConcreteMessageListenerSubscriber;
 import it.polimi.ingsw.server.model.islands.IslandsManager;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.player.PlayersManager;
@@ -12,17 +12,48 @@ import it.polimi.ingsw.server.model.enums.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-class GameModel extends MessageListenerSubscriber implements Game {
+/**
+ * This class represents the game model.
+ */
+class GameModel extends ConcreteMessageListenerSubscriber implements Game {
+    /**
+     * Game mode.
+     */
     GameMode gameMode;
+    /**
+     * Game state.
+     */
     GameState gameState;
+    /**
+     * Round manager.
+     */
     RoundManager roundManager;
+    /**
+     * Players manager.
+     */
     final PlayersManager playersManager;
+    /**
+     * Islands manager.
+     */
     final IslandsManager islandsManager;
+    /**
+     * Bag.
+     */
     final Bag bag;
+    /**
+     * Current mother nature index.
+     */
     int motherNatureIndex;
-    final ArrayList<Cloud> clouds;
+    /**
+     * Clouds list.
+     */
+    final List<Cloud> clouds;
 
-    //TODO JavaDOC
+    /**
+     * Constructor.
+     *
+     * @param preset the game preset
+     */
     GameModel(GamePreset preset) {
         gameMode = GameMode.EASY;
         roundManager = new RoundManager(preset);

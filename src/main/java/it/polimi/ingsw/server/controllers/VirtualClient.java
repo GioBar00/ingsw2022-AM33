@@ -18,7 +18,7 @@ import java.util.Scanner;
  * Class for handle connection between a specified player and the server. Virtual Client forward valid request to the
  * controller
  */
-public class VirtualClient extends MessageListenerSubscriber implements Runnable, MessageListener, CallableTimerTask {
+public class VirtualClient extends ConcreteMessageListenerSubscriber implements Runnable, MessageListener, CallableTimerTask {
 
     /**
      * Nickname of the player who interfaces this VirtualClient
