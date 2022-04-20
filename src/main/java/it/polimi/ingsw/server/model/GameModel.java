@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.listeners.ConcreteMessageListenerSubscriber;
 import it.polimi.ingsw.server.listeners.MessageListenerSubscriber;
 import it.polimi.ingsw.network.messages.messagesView.PlayerView;
 import it.polimi.ingsw.network.messages.messagesView.GameView;
@@ -15,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * This class represents the game model.
  */
-class GameModel extends ConcreteMessageListenerSubscriber implements Game {
+public class GameModel extends ConcreteMessageListenerSubscriber implements Game {
     /**
      * Game mode.
      */
@@ -54,7 +55,7 @@ class GameModel extends ConcreteMessageListenerSubscriber implements Game {
      *
      * @param preset the game preset
      */
-    GameModel(GamePreset preset) {
+    public GameModel(GamePreset preset) {
         gameMode = GameMode.EASY;
         roundManager = new RoundManager(preset);
         playersManager = new PlayersManager(preset);

@@ -68,7 +68,7 @@ public class GameModelExpert implements Game, EffectHandler {
      * Changes mode to expert, gets 3 random character cards and initialises reserve.
      * @param model GameModel to make expert.
      */
-    GameModelExpert(GameModel model) {
+    public GameModelExpert(GameModel model) {
         this.model = model;
         model.gameMode = GameMode.EXPERT;
 
