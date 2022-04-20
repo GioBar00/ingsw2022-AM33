@@ -12,7 +12,7 @@ import it.polimi.ingsw.server.model.enums.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-class GameModel extends MessageListenerSubscriber implements Game {
+public class GameModel extends MessageListenerSubscriber implements Game {
     GameMode gameMode;
     GameState gameState;
     RoundManager roundManager;
@@ -23,7 +23,7 @@ class GameModel extends MessageListenerSubscriber implements Game {
     final ArrayList<Cloud> clouds;
 
     //TODO JavaDOC
-    GameModel(GamePreset preset) {
+    public GameModel(GamePreset preset) {
         gameMode = GameMode.EASY;
         roundManager = new RoundManager(preset);
         playersManager = new PlayersManager(preset);
@@ -607,15 +607,25 @@ class GameModel extends MessageListenerSubscriber implements Game {
         gameState = GameState.ENDED;
     }
 
+    /**
+     * @param destPlayer the player to whom the gameView will be sent
+     * @return the current gameView
+     */
     public GameView getGameView(Player destPlayer){
-        GameView gameView = new GameView(getGameMode(), getGameState(), playersManager, roundManager, islandsManager, destPlayer,0, motherNatureIndex);
-        setCoinsInView(gameView);
-        return gameView;
+        return new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex);
     }
 
-    public void setCoinsInView(GameView gameView){
-        for (PlayerView pv: gameView.getPlayersView()) {
-            pv.setCoins(0);
-        }
+    /**
+     * @return playerManager, for tests purposes
+     */
+    public PlayersManager getPlayersManager() {
+        return playersManager;
+    }
+
+    /**
+     * @return roundManager, for tests purposes
+     */
+    public RoundManager getRoundManager() {
+        return roundManager;
     }
 }

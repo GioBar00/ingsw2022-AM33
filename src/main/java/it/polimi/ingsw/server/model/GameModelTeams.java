@@ -10,8 +10,8 @@ import java.util.EnumMap;
 import java.util.List;
 
 
-class GameModelTeams extends GameModel {
-    GameModelTeams() {
+public class GameModelTeams extends GameModel {
+    public GameModelTeams() {
         super(GamePreset.FOUR);
     }
 
@@ -96,4 +96,6 @@ class GameModelTeams extends GameModel {
     public boolean changeTeam(String nickname, Tower tower) {
         return playersManager.changeTeam(nickname, tower);
     }
+
+
 }

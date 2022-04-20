@@ -9,48 +9,37 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 
 public class SchoolBoardView {
-    private int numTowers;
+    private final int numTowers;
     private final Tower tower;
     private final EnumMap<StudentColor, Integer> studentsHall;
     private final ArrayList<StudentColor> entrance;
+    private final EnumSet<StudentColor> professors;
 
-    public SchoolBoardView(int entranceCapacity, Tower tower, int numTowers){
-        this.tower = tower;
+    public SchoolBoardView(int numTowers, Tower tower, EnumMap<StudentColor, Integer> studentsHall, ArrayList<StudentColor> entrance, EnumSet<StudentColor> professors) {
         this.numTowers = numTowers;
-        this.entrance = new ArrayList<>();
-
-        entrance.addAll(Collections.nCopies(entranceCapacity, null));
-
-        this.studentsHall = new EnumMap<>(StudentColor.class);
-        for(StudentColor s : StudentColor.values()){
-            studentsHall.put(s,0);
-        }
-        EnumSet<StudentColor> professors = EnumSet.noneOf(StudentColor.class);
+        this.tower = tower;
+        this.studentsHall = studentsHall;
+        this.entrance = entrance;
+        this.professors = professors;
     }
 
-    public boolean addToEntrance(StudentColor s, int index) {
-        if (index < 0 || index >= entrance.size())
-            return false;
-        if (entrance.get(index) != null)
-            return false;
-        entrance.set(index, s);
-        return true;
+    public int getNumTowers() {
+        return numTowers;
     }
 
-    public boolean addToHall(StudentColor s) {
-        if (studentsHall.get(s) < 10){
-            studentsHall.put(s, studentsHall.get(s) + 1);
-            return true;
-        }
-        return false;
+    public Tower getTower() {
+        return tower;
     }
 
-    public boolean removeTowers(int num) {
-        numTowers = numTowers - num;
-        if(numTowers <= 0){
-            numTowers = 0;
-            return false;
-        }
-        return true;
+    public EnumMap<StudentColor, Integer> getStudentsHall() {
+        return studentsHall;
+    }
+
+    public ArrayList<StudentColor> getEntrance() {
+        return entrance;
+    }
+
+    public EnumSet<StudentColor> getProfessors() {
+        return professors;
     }
 }

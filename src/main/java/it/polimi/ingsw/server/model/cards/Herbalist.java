@@ -88,6 +88,7 @@ public class Herbalist extends CharacterCard {
      * For Tests only
      * @return num of blocks on the card.
      */
+    @Override
     public int getNumBlocks() {
         return numBlocks;
     }

@@ -17,7 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Changes mode of the Game to expert mode.
  * Composite pattern.
  */
-class GameModelExpert implements Game, EffectHandler {
+public class GameModelExpert implements Game, EffectHandler {
 
     /**
      * GameModel to change in expert mode.
@@ -66,7 +66,7 @@ class GameModelExpert implements Game, EffectHandler {
      * Changes mode to expert, gets 3 random character cards and initialises reserve.
      * @param model GameModel to make expert.
      */
-    GameModelExpert(GameModel model) {
+    public GameModelExpert(GameModel model) {
         this.model = model;
         model.gameMode = GameMode.EXPERT;
 
@@ -568,30 +568,41 @@ class GameModelExpert implements Game, EffectHandler {
         return skipStudentColors;
     }
 
+    /**
+     * @param destPlayer the player to whom the gameView will be sent
+     * @return the current game view
+     */
     public GameView getGameView(Player destPlayer){
-        GameView gameView = new GameView(getGameMode(), getGameState(), model.playersManager, model.roundManager, model.islandsManager, destPlayer, reserve, model.motherNatureIndex);
-        setCoinsInView(gameView);
-        setCharacterCardsView(gameView, destPlayer);
-        return gameView;
+        return new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
+                model.islandsManager.getIslandsView(), model.playersManager.getPlayersView(destPlayer), model.motherNatureIndex,
+                reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins);
     }
 
-    public void setCoinsInView(GameView gameView){
-        for (PlayerView pv: gameView.getPlayersView()) {
-            pv.setCoins(playerCoins.get(pv.getNickname()));
-        }
-    }
-
-    public void setCharacterCardsView(GameView gameView, Player destPlayer){
+    /**
+     * creates the character card view
+     * @param destPlayerNick the nickname of player to which the characterCardsView will be sent
+     * @return data on the current available characterCards
+     */
+    public ArrayList<CharacterCardView> getCharacterCardsView(String destPlayerNick){
+        ArrayList<CharacterCardView> characterCardsView = new ArrayList<>(3);
         for (CharacterCard cc: characterCards) {
-            CharacterCardView ccv = new CharacterCardView(cc.getType());
-            ccv.setOriginalCost(cc.getCost());
-            ccv.setAdditionalCost(cc.getAdditionalCost());
-            // if it's the destPlayer turn and the game is not in the planning stage and the destPlayer has enough coins to
-            // use the CharacterCard, then the card is available for use
-            if (model.playersManager.getCurrentPlayer().equals(destPlayer) && !model.roundManager.getGamePhase().equals(GamePhase.PLANNING) && cc.getTotalCost() <= playerCoins.get(destPlayer.getNickname()))
-                ccv.setCanBeUsed(true);
-            gameView.getCharacterCardView().add(ccv);
+            int ogCost = cc.getCost();
+            int addCost = cc.getAdditionalCost();
+            boolean canUse = false;
+            int numBlocks = 0;
+            if (cc.canHandleBlocks())
+                numBlocks = cc.getNumBlocks();
+            EnumMap<StudentColor, Integer> students = null;
+            if (cc.containsStudents())
+                students = cc.getStudents();
+            if (model.playersManager.getCurrentPlayer().getNickname().equals(destPlayerNick) && !model.roundManager.getGamePhase().equals(GamePhase.PLANNING) && cc.getTotalCost() <= playerCoins.get(destPlayerNick))
+                canUse = true;
+
+            CharacterCardView ccv = new CharacterCardView(cc.getType(), canUse, ogCost, addCost, numBlocks, students);
+
+            characterCardsView.add(ccv);
         }
+        return characterCardsView;
     }
 
     /**
@@ -604,5 +615,33 @@ class GameModelExpert implements Game, EffectHandler {
         for (int i = 0; i < num; i++)
             availableIslandIndexes.add(i);
         return availableIslandIndexes;
+    }
+
+    /**
+     * @return the characterCards arraylist for test purposes
+     */
+    public ArrayList<CharacterCard> getCharacterCards() {
+        return characterCards;
+    }
+
+    /**
+     * @return coins reserve, for test purposes
+     */
+    public int getReserve() {
+        return reserve;
+    }
+
+    /**
+     * @return map of player coins, for test purposes
+     */
+    public Map<String, Integer> getPlayerCoins() {
+        return playerCoins;
+    }
+
+    /**
+     * @return model, for test purposes
+     */
+    public GameModel getModel() {
+        return model;
     }
 }

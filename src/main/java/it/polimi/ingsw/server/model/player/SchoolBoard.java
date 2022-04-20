@@ -275,16 +275,10 @@ public class SchoolBoard {
         return false;
     }
 
-    public SchoolBoardView getSchoolBoardView(GamePreset preset){
-        SchoolBoardView schoolBoardView = new SchoolBoardView(preset.getEntranceCapacity(), getTower(), preset.getTowersNumber());
-        for (int i = 0; i < getEntranceCapacity(); i++) {
-            schoolBoardView.addToEntrance(getStudentInEntrance(i), i);
-        }
-        for (StudentColor s : StudentColor.values()) {
-            for (int i = 0; i < getStudentsInHall(s); i++)
-                schoolBoardView.addToHall(s);
-        }
-        schoolBoardView.removeTowers(preset.getTowersNumber() - getNumTowers());
-        return schoolBoardView;
+    /**
+     * @return the current SchoolBoardView
+     */
+    public SchoolBoardView getSchoolBoardView(){
+        return new SchoolBoardView(numTowers, tower, studentsHall, entrance, professors);
     }
 }

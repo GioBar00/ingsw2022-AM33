@@ -91,7 +91,7 @@ public class RoundManager {
     /**
      * Starts the action phase
      */
-    void startActionPhase(){
+    public void startActionPhase(){
         gamePhase = GamePhase.MOVE_STUDENTS;
         numMoves = 0;
     }

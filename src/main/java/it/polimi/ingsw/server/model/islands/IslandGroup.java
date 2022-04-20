@@ -1,11 +1,13 @@
 package it.polimi.ingsw.server.model.islands;
 
 import it.polimi.ingsw.network.messages.messagesView.IslandGroupView;
+import it.polimi.ingsw.network.messages.messagesView.IslandView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 public class IslandGroup{
     /**
@@ -133,12 +135,14 @@ public class IslandGroup{
         // the model will then call a function to delete ig1
     }
 
-    IslandGroupView getIslandGroupView(){
-        IslandGroupView islandGroupView = new IslandGroupView();
+    /**
+     * @return the islandGroup current View
+     */
+    public IslandGroupView getIslandGroupView(){
+        List<IslandView> islandView = new ArrayList<>();
         for (Island i: islands) {
-            islandGroupView.getIslands().add(i.getIslandView());
+            islandView.add(i.getIslandView());
         }
-        islandGroupView.setBlocked(isBlocked);
-        return islandGroupView;
+        return new IslandGroupView(islandView, isBlocked);
     }
 }

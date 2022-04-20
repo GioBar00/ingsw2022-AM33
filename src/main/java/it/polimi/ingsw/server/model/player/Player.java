@@ -106,29 +106,24 @@ public class Player {
         return new ArrayList<>(assistantCards);
     }
 
-    public PlayerView getPlayerView(boolean isDestPlayer, GamePreset preset){
-        SchoolBoardView schoolBoardView = schoolBoard.getSchoolBoardView(preset);
-        PlayerView playerView = new PlayerView(getNickname(), getWizard(), schoolBoardView);
+    /**
+     * @param isDestPlayer whether the player considered to build the view is the one to whom the gameView will be sent
+     * @return the playerView of the current player
+     */
+    public PlayerView getPlayerView(boolean isDestPlayer){
+        SchoolBoardView sbView = getSchoolBoard().getSchoolBoardView();
+        ArrayList<AssistantCard> assistantCardsView = null;
+        int numAssistantCards = 10;
+
         if (isDestPlayer){
-            playerView.playAssistantCard(playedCard);
-            int i = 10;
-            for (AssistantCard as : AssistantCard.values()) {
-                if(!assistantCards.contains(as)) {
-                    playerView.getHand().remove(as);
-                    i --;
-                }
-            }
-            playerView.setNumAssistantCards(i);
-        }else{
-            int i;
-            for(i = 0; i < 10; i++){
-                if (assistantCards.get(i) == null){
-                    break;
-                }
-            }
-            playerView.setNumAssistantCards(i);
-            playerView.getHand().clear();
+            assistantCardsView = assistantCards;
         }
-        return playerView;
+        for (AssistantCard as : AssistantCard.values()) {
+            if(!assistantCards.contains(as)) {
+                numAssistantCards --;
+            }
+        }
+
+        return new PlayerView(nickname, wizard, assistantCardsView, playedCard, numAssistantCards, sbView);
     }
 }

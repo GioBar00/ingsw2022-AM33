@@ -208,4 +208,11 @@ public abstract class CharacterCard {
     public CharacterType getType() {
         return type;
     }
+
+    /**
+     * @return num of blocks
+     */
+    public int getNumBlocks(){
+        return 0;
+    }
 }

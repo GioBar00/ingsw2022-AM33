@@ -68,13 +68,10 @@ public class Island {
         return students.get(s);
     }
 
+    /**
+     * @return the current islandView
+     */
     public IslandView getIslandView (){
-        IslandView islandView = new IslandView();
-        islandView.setTower(getTower());
-        for (StudentColor s: StudentColor.values()) {
-            for (int i = 0; i < getNumStudents(s); i++)
-                islandView.addStudent(s);
-        }
-        return islandView;
+        return new IslandView(tower, students);
     }
 }

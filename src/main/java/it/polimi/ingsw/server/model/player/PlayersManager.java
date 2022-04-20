@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.player;
 
 import it.polimi.ingsw.network.messages.messagesView.PlayerView;
+import it.polimi.ingsw.network.messages.messagesView.TeamsView;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.Tower;
@@ -316,11 +317,14 @@ public class PlayersManager {
         return false;
     }
 
-
+    /**
+     * @param destPlayer the player to whom the view is going to be sent
+     * @return the array of current playerViews
+     */
     public ArrayList<PlayerView> getPlayersView(Player destPlayer){
         ArrayList<PlayerView> playersView = new ArrayList<>();
         for(Player p : players){
-            PlayerView addition = p.getPlayerView(p.equals(destPlayer), getPreset());
+            PlayerView addition = p.getPlayerView(p.equals(destPlayer));
             playersView.add(addition);
         }
         return playersView;

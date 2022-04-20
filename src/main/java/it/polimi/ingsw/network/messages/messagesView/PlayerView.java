@@ -4,45 +4,45 @@ import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.Wizard;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class PlayerView {
     private final String nickname;
+    private final Wizard wizard;
     private final ArrayList<AssistantCard> assistantCards;
-    private AssistantCard playedCard;
-    private int coins;
-    private int numAssistantCards;
+    private final AssistantCard playedCard;
+    private final int numAssistantCards;
+    private final SchoolBoardView schoolBoardView;
 
-    public PlayerView(String nickname, Wizard wizard, SchoolBoardView schoolBoardView){
+    public PlayerView(String nickname, Wizard wizard,ArrayList<AssistantCard> assistantCards, AssistantCard playedCard, int numAssistantCards, SchoolBoardView schoolBoardView) {
         this.nickname = nickname;
-        this.assistantCards = new ArrayList<>();
-        Collections.addAll(assistantCards, AssistantCard.values());
-        this.playedCard = null;
-        this.coins = 0;
-        this.numAssistantCards = 0;
-    }
-
-    public boolean playAssistantCard (AssistantCard card) {
-        if(!assistantCards.contains(card))
-            return false;
-        playedCard = card;
-        assistantCards.remove(card);
-        return true;
-    }
-
-    public ArrayList<AssistantCard> getHand(){
-        return new ArrayList<>(assistantCards);
-    }
-
-    public void setCoins(int coins) {
-        this.coins = coins;
-    }
-
-    public void setNumAssistantCards(int numAssistantCards) {
+        this.wizard = wizard;
+        this.assistantCards = assistantCards;
+        this.playedCard = playedCard;
         this.numAssistantCards = numAssistantCards;
+        this.schoolBoardView = schoolBoardView;
     }
 
     public String getNickname() {
         return nickname;
+    }
+
+    public Wizard getWizard() {
+        return wizard;
+    }
+
+    public ArrayList<AssistantCard> getAssistantCards() {
+        return assistantCards;
+    }
+
+    public AssistantCard getPlayedCard() {
+        return playedCard;
+    }
+
+    public int getNumAssistantCards() {
+        return numAssistantCards;
+    }
+
+    public SchoolBoardView getSchoolBoardView() {
+        return schoolBoardView;
     }
 }
