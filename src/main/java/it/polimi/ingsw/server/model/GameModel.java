@@ -12,18 +12,49 @@ import it.polimi.ingsw.server.model.enums.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class GameModel extends MessageListenerSubscriber implements Game {
+/**
+ * This class represents the game model.
+ */
+class GameModel extends ConcreteMessageListenerSubscriber implements Game {
+    /**
+     * Game mode.
+     */
     GameMode gameMode;
+    /**
+     * Game state.
+     */
     GameState gameState;
+    /**
+     * Round manager.
+     */
     RoundManager roundManager;
+    /**
+     * Players manager.
+     */
     final PlayersManager playersManager;
+    /**
+     * Islands manager.
+     */
     final IslandsManager islandsManager;
+    /**
+     * Bag.
+     */
     final Bag bag;
+    /**
+     * Current mother nature index.
+     */
     int motherNatureIndex;
-    final ArrayList<Cloud> clouds;
+    /**
+     * Clouds list.
+     */
+    final List<Cloud> clouds;
 
-    //TODO JavaDOC
-    public GameModel(GamePreset preset) {
+    /**
+     * Constructor.
+     *
+     * @param preset the game preset
+     */
+    GameModel(GamePreset preset) {
         gameMode = GameMode.EASY;
         roundManager = new RoundManager(preset);
         playersManager = new PlayersManager(preset);

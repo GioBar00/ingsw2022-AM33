@@ -57,7 +57,7 @@ public class Controller implements MessageListener {
     /**
      * Method for sett a new player inside the model
      * @param nickname the nickname of the new player
-     * @return True if the player has been added. False if the game is full or the nickname is already choosen
+     * @return True if the player has been added. False if the game is full or the nickname is already chosen
      */
     public boolean addPlayer(String nickname) {
         return model.addPlayer(nickname);

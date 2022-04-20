@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.listeners.MessageEvent;
+import it.polimi.ingsw.server.listeners.MessageListener;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.cards.CharacterCard;
 import it.polimi.ingsw.server.model.cards.EffectHandler;
@@ -66,7 +68,7 @@ public class GameModelExpert implements Game, EffectHandler {
      * Changes mode to expert, gets 3 random character cards and initialises reserve.
      * @param model GameModel to make expert.
      */
-    public GameModelExpert(GameModel model) {
+    GameModelExpert(GameModel model) {
         this.model = model;
         model.gameMode = GameMode.EXPERT;
 
@@ -643,5 +645,35 @@ public class GameModelExpert implements Game, EffectHandler {
      */
     public GameModel getModel() {
         return model;
+    }
+
+    /**
+     * Adds a message listener.
+     *
+     * @param listener the listener to add
+     */
+    @Override
+    public void addListener(MessageListener listener) {
+        model.addListener(listener);
+    }
+
+    /**
+     * Removes a message listener.
+     *
+     * @param listener the listener to remove
+     */
+    @Override
+    public void removeListener(MessageListener listener) {
+        model.removeListener(listener);
+    }
+
+    /**
+     * Notifies all listeners.
+     *
+     * @param event of the message to notify
+     */
+    @Override
+    public void notifyListeners(MessageEvent event) {
+        model.notifyListeners(event);
     }
 }
