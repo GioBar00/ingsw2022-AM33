@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.timer;
 
-import it.polimi.ingsw.server.controllers.CallableTimerTask;
-import it.polimi.ingsw.server.controllers.VirtualClient;
+import it.polimi.ingsw.server.controller.CallableTimerTask;
+import it.polimi.ingsw.server.VirtualClient;
 
 import java.util.TimerTask;
 

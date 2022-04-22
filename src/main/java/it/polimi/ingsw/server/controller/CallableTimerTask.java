@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server.controllers;
+package it.polimi.ingsw.server.controller;
 
 /**
  * Interface for methods exposed to TimerTask

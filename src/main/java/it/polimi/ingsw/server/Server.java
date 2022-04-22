@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.server.controllers.Controller;
+import it.polimi.ingsw.server.controller.Controller;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.client.ChosenGame;
@@ -8,7 +8,6 @@ import it.polimi.ingsw.network.messages.client.Login;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
-import it.polimi.ingsw.server.controllers.VirtualClient;
 import it.polimi.ingsw.server.listeners.ConnectionEvent;
 import it.polimi.ingsw.server.listeners.ConnectionListener;
 

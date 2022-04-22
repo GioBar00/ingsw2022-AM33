@@ -9,7 +9,7 @@ public class StartGame extends Message {
     /**
      * Default value of the message
      */
-    boolean startGame;
+    private boolean startGame;
 
     /**
      * This message is built when someone wants to start the game so the flag value is set on true

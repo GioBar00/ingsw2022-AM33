@@ -1,9 +1,10 @@
-package it.polimi.ingsw.server.controllers;
+package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.server.controller.CallableTimerTask;
 import it.polimi.ingsw.server.listeners.*;
 import it.polimi.ingsw.server.timer.MyTimer;
 import it.polimi.ingsw.server.timer.VirtualClientStopConnection;

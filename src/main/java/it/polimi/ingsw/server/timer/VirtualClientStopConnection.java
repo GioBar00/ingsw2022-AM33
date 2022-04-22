@@ -1,7 +1,6 @@
 package it.polimi.ingsw.server.timer;
 
-import it.polimi.ingsw.server.controllers.CallableTimerTask;
-import it.polimi.ingsw.server.controllers.VirtualClient;
+import it.polimi.ingsw.server.controller.CallableTimerTask;
 
 import java.util.TimerTask;
 
@@ -45,8 +44,8 @@ public class VirtualClientStopConnection extends TimerTask {
         boolean stop = i > maxRetries;
         i++;
         if (stop) {
-            this.cancel();
             vc.setNotAlive();
+            this.cancel();
         }
     }
 }

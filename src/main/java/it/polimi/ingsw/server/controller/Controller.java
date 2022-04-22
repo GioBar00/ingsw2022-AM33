@@ -1,8 +1,9 @@
-package it.polimi.ingsw.server.controllers;
+package it.polimi.ingsw.server.controller;
 
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.client.*;
 import it.polimi.ingsw.network.messages.enums.MessageType;
+import it.polimi.ingsw.server.VirtualClient;
 import it.polimi.ingsw.server.listeners.MessageEvent;
 import it.polimi.ingsw.server.listeners.MessageListener;
 import it.polimi.ingsw.server.model.Game;

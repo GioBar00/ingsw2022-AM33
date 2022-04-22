@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server.controllers;
+package it.polimi.ingsw.server.controller;
 
 import it.polimi.ingsw.network.messages.client.ChosenIsland;
 import it.polimi.ingsw.network.messages.client.ChosenStudentColor;
