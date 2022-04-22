@@ -13,7 +13,7 @@ import java.util.List;
 public class CurrentTeams extends Message {
     private final TeamsView teamsView;
 
-    public CurrentTeams(EnumMap<Tower, List<Player>> teams) {
+    public CurrentTeams(EnumMap<Tower, List<Player>> teams, List<String> lobby) {
         EnumMap<Tower, List<String>> teamsString = new EnumMap<>(Tower.class);
         for (Tower t: teams.keySet()) {
             teamsString.put(t, new LinkedList<>());
@@ -23,7 +23,7 @@ public class CurrentTeams extends Message {
             }
             teamsString.put(t, playerNicks);
         }
-        this.teamsView = new TeamsView(teamsString);
+        this.teamsView = new TeamsView(teamsString, lobby);
     }
 
     public TeamsView getTeamsView() {

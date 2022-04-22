@@ -45,4 +45,44 @@ public class GameView extends Message {
         this.characterCardView = characterCardView;
         this.playerCoins = playerCoins;
     }
+
+    public GameMode getMode() {
+        return mode;
+    }
+
+    public GamePreset getPreset() {
+        return preset;
+    }
+
+    public GameState getState() {
+        return state;
+    }
+
+    public GamePhase getPhase() {
+        return phase;
+    }
+
+    public List<IslandGroupView> getIslandsView() {
+        return islandsView;
+    }
+
+    public List<PlayerView> getPlayersView() {
+        return playersView;
+    }
+
+    public Integer getMotherNatureIndex() {
+        return motherNatureIndex;
+    }
+
+    public Integer getReserve() {
+        return reserve;
+    }
+
+    public List<CharacterCardView> getCharacterCardView() {
+        return characterCardView;
+    }
+
+    public Map<String, Integer> getPlayerCoins() {
+        return playerCoins;
+    }
 }

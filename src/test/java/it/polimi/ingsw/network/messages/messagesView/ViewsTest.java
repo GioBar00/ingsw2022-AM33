@@ -13,6 +13,7 @@ import it.polimi.ingsw.server.model.player.SchoolBoard;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -118,7 +119,8 @@ class ViewsTest {
             assertNull(pv.getPlayedCard());
         }
 
-        TeamsView tv = new CurrentTeams(gmTeams.getPlayersManager().getTeams()).getTeamsView();
+        TeamsView tv = new CurrentTeams(gmTeams.getPlayersManager().getTeams(), gmTeams.getPlayersManager().getLobby()).getTeamsView();
+        List<String> lobby = tv.getLobby();
 
         assertFalse(tv.getTeams().isEmpty());
         assertEquals(2, tv.getTeams().get(Tower.WHITE).size());
@@ -127,6 +129,7 @@ class ViewsTest {
         assertEquals(2, tv.getTeams().get(Tower.BLACK).size());
         assertTrue(tv.getTeams().get(Tower.BLACK).contains("blackLeader"));
         assertTrue(tv.getTeams().get(Tower.BLACK).contains("blackOther"));
+        assertEquals(0, lobby.size());
     }
 
     /**

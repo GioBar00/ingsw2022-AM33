@@ -104,7 +104,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         if (gameState != GameState.UNINITIALIZED)
             return false;
         if (playersManager.addPlayer(nickname)) {
-            notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeams())));
+            notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeams(), playersManager.getLobby())));
             return true;
         }
         return false;
@@ -759,5 +759,12 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     void notifyPersonalizedGameView() {
         for (Player p: playersManager.getPlayers())
             notifyListener(p.getNickname(), new MessageEvent(this, getGameView(p)));
+    }
+
+    /**
+     * @return islandsManager, for tests purposes
+     */
+    public IslandsManager getIslandsManager() {
+        return islandsManager;
     }
 }

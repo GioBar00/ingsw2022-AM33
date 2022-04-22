@@ -7,12 +7,18 @@ import java.util.List;
 
 public class TeamsView {
     private final EnumMap<Tower, List<String>> teams;
+    private final List<String> lobby;
 
-    public TeamsView(EnumMap<Tower, List<String>> teams){
+    public TeamsView(EnumMap<Tower, List<String>> teams, List<String> lobby){
         this.teams = teams;
+        this.lobby = lobby;
     }
 
     public EnumMap<Tower, List<String>> getTeams() {
         return teams;
+    }
+
+    public List<String> getLobby() {
+        return lobby;
     }
 }

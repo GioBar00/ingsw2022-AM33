@@ -328,4 +328,11 @@ public class PlayersManager {
         }
         return playersView;
     }
+
+    /**
+     * @return the lobby
+     */
+    public List<String> getLobby() {
+        return lobby;
+    }
 }
