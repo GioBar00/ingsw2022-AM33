@@ -80,7 +80,7 @@ public class Controller implements MessageListener {
                 handleGameSetup(vc, msg);
                 break;
             case STARTED:
-                if (canPlay(vc.getNickname())){
+                if (canPlay(vc.getIdentifier())){
                     vc.sendNotYourTurnMessage();
                 }else {
                     switch (model.getPhase()) {
@@ -112,11 +112,11 @@ public class Controller implements MessageListener {
         switch (MessageType.retrieveByMessageClass(msg)) {
             case CHOSEN_TEAM -> {
                 ChosenTeam chosenTeam = (ChosenTeam)msg;
-                if(!this.changeTeam(vc.getNickname(),chosenTeam.getTower()))
+                if(!this.changeTeam(vc.getIdentifier(),chosenTeam.getTower()))
                     vc.sendImpossibleMessage();
             }
             case START_GAME -> {
-                if(!this.startGame(vc.getNickname()))
+                if(!this.startGame(vc.getIdentifier()))
                     vc.sendImpossibleMessage();
             }
             default -> vc.sendImpossibleMessage();

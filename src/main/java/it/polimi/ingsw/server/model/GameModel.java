@@ -1,9 +1,9 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.server.listeners.ConcreteMessageListenerSubscriber;
-import it.polimi.ingsw.server.listeners.MessageListenerSubscriber;
-import it.polimi.ingsw.network.messages.messagesView.PlayerView;
 import it.polimi.ingsw.network.messages.messagesView.GameView;
+import it.polimi.ingsw.server.listeners.MessageEvent;
 import it.polimi.ingsw.server.model.islands.IslandsManager;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.player.PlayersManager;
@@ -103,7 +103,11 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     public boolean addPlayer(String nickname) {
         if (gameState != GameState.UNINITIALIZED)
             return false;
-        return playersManager.addPlayer(nickname);
+        if (playersManager.addPlayer(nickname)) {
+            notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeams())));
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -155,7 +159,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * Starts the Game and randomly selects the first Player if the game is initialized.
      * @return if the game started successfully.
      */
-    public boolean startGame() {
+    public boolean executeStartGame() {
         if(initializeGame()) {
             int i = ThreadLocalRandom.current().nextInt(0, playersManager.getPreset().getPlayersNumber());
             playersManager.setFirstPlayer(i);
@@ -167,12 +171,27 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     }
 
     /**
+     * Starts the Game and randomly selects the first Player if the game is initialized.
+     * Notifies the listeners.
+     *
+     * @return if the game started successfully.
+     */
+    public boolean startGame() {
+        if (executeStartGame()) {
+            notifyPersonalizedGameView();
+            //FIXME: possible moves
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Try to play an assistant card. If someone has already played it check that the current player hasn't other cards playable.
      * Checks if the player had that card in hand and if it is the correct phase to play a card.
      * @param assistantCard the card the player wants to play
      * @return if the card was played successfully.
      */
-    public boolean playAssistantCard(AssistantCard assistantCard) {
+    boolean executePlayAssistantCard(AssistantCard assistantCard) {
         if (gameState != GameState.STARTED || roundManager.getGamePhase() != GamePhase.PLANNING)
             return false;
 
@@ -209,7 +228,24 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
 
 
         playersManager.nextPlayer();
+
         return true;
+    }
+
+    /**
+     * Try to play an assistant card. If someone has already played it check that the current player hasn't other cards playable.
+     * Checks if the player had that card in hand and if it is the correct phase to play a card.
+     * Notifies the listeners.
+     * @param assistantCard the card the player wants to play
+     * @return if the card was played successfully.
+     */
+    public boolean playAssistantCard(AssistantCard assistantCard) {
+        if (executePlayAssistantCard(assistantCard)) {
+            notifyPersonalizedGameView();
+            //FIXME: possible moves
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -218,7 +254,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param entranceIndex of the student that will be moved to the Hall
      * @return if the student was successfully moved to the hall.
      */
-    public boolean moveStudentToHall(int entranceIndex) {
+    boolean executeMoveStudentToHall(int entranceIndex) {
         if (gameState != GameState.STARTED || !roundManager.canMoveStudents())
             return false;
 
@@ -237,6 +273,22 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     }
 
     /**
+     * Moves a student from the Entrance to the Hall of the current player if the player can play, the hall is not full and the index is valid.
+     * then proceeds to check if the professors need to be re-distributed between the players
+     * Notifies the listeners.
+     * @param entranceIndex of the student that will be moved to the Hall
+     * @return if the student was successfully moved to the hall.
+     */
+    public boolean moveStudentToHall(int entranceIndex) {
+        if (executeMoveStudentToHall(entranceIndex)) {
+            notifyPersonalizedGameView();
+            //FIXME: possible moves
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Selects a student from the Entrance of the current Player's SchoolBoard, removes it from there and
      * moves it to a selected island that is part of a selected IslandGroup. Checks if the player can play,
      * if it is the correct game state and if the indexes are valid.
@@ -244,7 +296,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param islandGroupIndex of the IslandGroup that contains the selected island
      * @return if the student was moved successfully.
      */
-    public boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex) {
+    boolean executeMoveStudentToIsland(int entranceIndex, int islandGroupIndex) {
         if (gameState != GameState.STARTED || !roundManager.canMoveStudents())
             return false;
 
@@ -262,12 +314,36 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     }
 
     /**
+     * Selects a student from the Entrance of the current Player's SchoolBoard, removes it from there and
+     * moves it to a selected island that is part of a selected IslandGroup. Checks if the player can play,
+     * if it is the correct game state and if the indexes are valid.
+     * Notifies the listeners.
+     * @param entranceIndex of the slot occupied by the student that will be moved
+     * @param islandGroupIndex of the IslandGroup that contains the selected island
+     * @return if the student was moved successfully.
+     */
+    public boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex) {
+        if (executeMoveStudentToIsland(entranceIndex, islandGroupIndex)) {
+            notifyPersonalizedGameView();
+            //FIXME: possible moves
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Moves mother nature with a maximum movement of the number in the assistant card played.
+     * Notifies the listeners.
      * @param num of moves that MotherNature should make.
      * @return if the move ended successfully.
      */
     public boolean moveMotherNature(int num) {
-        return moveMotherNature(num, playersManager.getPlayedCard().getMoves());
+        if (moveMotherNature(num, playersManager.getPlayedCard().getMoves())) {
+            notifyPersonalizedGameView();
+            //FIXME: possible moves
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -319,7 +395,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param cloudIndex of the selected cloud
      * @return if the students were taken correctly from the cloud and added to the entrance.
      */
-    public boolean getStudentsFromCloud(int cloudIndex) {
+    public boolean executeGetStudentsFromCloud(int cloudIndex) {
         if (gameState != GameState.STARTED)
             return false;
         if (roundManager.getGamePhase() != GamePhase.CHOOSE_CLOUD)
@@ -339,6 +415,22 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         nextTurn();
 
         return true;
+    }
+
+    /**
+     * Moves the student currently residing on a cloud to the Entrance of the current Player if the game state and phase are correct,
+     * if the index is valid and if the cloud is not empty.
+     * Notifies the listeners.
+     * @param cloudIndex of the selected cloud
+     * @return if the students were taken correctly from the cloud and added to the entrance.
+     */
+    public boolean getStudentsFromCloud(int cloudIndex) {
+        if (executeGetStudentsFromCloud(cloudIndex)) {
+            notifyPersonalizedGameView();
+            //FIXME: possible moves
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -643,7 +735,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param destPlayer the player to whom the gameView will be sent
      * @return the current gameView
      */
-    public GameView getGameView(Player destPlayer){
+    public GameView getGameView(Player destPlayer) {
         return new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex);
     }
 
@@ -659,5 +751,13 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      */
     public RoundManager getRoundManager() {
         return roundManager;
+    }
+
+    /**
+     * Notifies each player about the new game state.
+     */
+    void notifyPersonalizedGameView() {
+        for (Player p: playersManager.getPlayers())
+            notifyListener(p.getNickname(), new MessageEvent(this, getGameView(p)));
     }
 }

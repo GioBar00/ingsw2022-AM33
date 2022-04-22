@@ -190,8 +190,8 @@ public class Server implements ConnectionListener {
     synchronized public void onConnectionEvent(ConnectionEvent event) {
             VirtualClient vc =(VirtualClient)event.getSource();
             executor.remove(vc);
-            virtualClients.remove(vc.getNickname());
-            virtualClients.put(vc.getNickname(),null);
+            virtualClients.remove(vc.getIdentifier());
+            virtualClients.put(vc.getIdentifier(),null);
             vc.removeListener();
             //TODO remove model
             //TODO skip turn for that player !!IMPORTANT!! manage the case of player is the master and the party isn't started

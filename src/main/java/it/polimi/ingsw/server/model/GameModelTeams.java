@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.network.messages.server.CurrentTeams;
+import it.polimi.ingsw.server.listeners.MessageEvent;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.GameState;
 import it.polimi.ingsw.server.model.enums.Tower;
@@ -27,6 +29,7 @@ public class GameModelTeams extends GameModel {
             return false;
 
         return playersManager.addToLobby(nickname);
+        //FIXME: notify listeners with lobby
     }
 
     /**
@@ -94,7 +97,12 @@ public class GameModelTeams extends GameModel {
      */
     @Override
     public boolean changeTeam(String nickname, Tower tower) {
-        return playersManager.changeTeam(nickname, tower);
+        if (playersManager.changeTeam(nickname, tower)) {
+            //FIXME: add lobby
+            notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeams())));
+            return true;
+        }
+        return false;
     }
 
 

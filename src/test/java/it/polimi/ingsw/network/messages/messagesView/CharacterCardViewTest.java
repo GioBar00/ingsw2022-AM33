@@ -5,10 +5,9 @@ import it.polimi.ingsw.server.model.GameModelExpert;
 import it.polimi.ingsw.server.model.cards.*;
 import it.polimi.ingsw.server.model.enums.CharacterType;
 import it.polimi.ingsw.server.model.enums.GamePreset;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -71,7 +70,7 @@ class CharacterCardViewTest {
 
             initializeCharacterCardOnGameModel(characterCard);
 
-            ArrayList<CharacterCardView> ccv = gme.getCharacterCardsView(gme.getModel().getPlayersManager().getPlayers().get(0).getNickname());
+            List<CharacterCardView> ccv = gme.getCharacterCardsView(gme.getModel().getPlayersManager().getPlayers().get(0).getNickname());
             CharacterCardView ccv1 = ccv.get(0);
 
             assertEquals(ct, ccv1.getType());

@@ -13,13 +13,16 @@ public class CharacterCardView {
     private final int numBlocks;
     private final EnumMap<StudentColor, Integer> student;
 
-    public CharacterCardView(CharacterType type, boolean canBeUsed, int originalCost, int additionalCost, int numBlocks, EnumMap<StudentColor, Integer> students) {
+    private final boolean isActivating;
+
+    public CharacterCardView(CharacterType type, boolean canBeUsed, int originalCost, int additionalCost, int numBlocks, EnumMap<StudentColor, Integer> students, boolean isActivating) {
         this.type = type;
         this.canBeUsed = canBeUsed;
         this.originalCost = originalCost;
         this.additionalCost = additionalCost;
         this.numBlocks = numBlocks;
         this.student = students;
+        this.isActivating = isActivating;
     }
 
     public CharacterType getType() {

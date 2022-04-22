@@ -14,16 +14,16 @@ public class GameView extends Message {
     private final GameState state;
     private final GamePhase phase;
 
-    private final ArrayList<IslandGroupView> islandsView;
-    private final ArrayList<PlayerView> playersView;
+    private final List<IslandGroupView> islandsView;
+    private final List<PlayerView> playersView;
 
     private final Integer motherNatureIndex;
 
     private Integer reserve = 0;
-    private ArrayList<CharacterCardView> characterCardView = null;
+    private List<CharacterCardView> characterCardView = null;
     private Map<String, Integer> playerCoins = null;
 
-    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, ArrayList<IslandGroupView> islandsView, ArrayList<PlayerView> playersView, Integer motherNatureIndex) {
+    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex) {
         this.mode = mode;
         this.preset = preset;
         this.state = state;
@@ -33,7 +33,7 @@ public class GameView extends Message {
         this.motherNatureIndex = motherNatureIndex;
     }
 
-    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, ArrayList<IslandGroupView> islandsView, ArrayList<PlayerView> playersView, Integer motherNatureIndex, Integer reserve, ArrayList<CharacterCardView> characterCardView, Map<String, Integer> playerCoins) {
+    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, Integer reserve, List<CharacterCardView> characterCardView, Map<String, Integer> playerCoins) {
         this.mode = mode;
         this.preset = preset;
         this.state = state;

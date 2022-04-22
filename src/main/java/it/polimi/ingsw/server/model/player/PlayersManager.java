@@ -1,7 +1,6 @@
 package it.polimi.ingsw.server.model.player;
 
 import it.polimi.ingsw.network.messages.messagesView.PlayerView;
-import it.polimi.ingsw.network.messages.messagesView.TeamsView;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.Tower;
@@ -304,7 +303,7 @@ public class PlayersManager {
                         for (Player nextLeader : teams.get(t)){
                             if (!nextLeader.equals(p))
                                 nextLeader.getSchoolBoard().setMaxNumTowers(8);
-                                nextLeader.getSchoolBoard().addTowers(tempTowerNum);
+                            nextLeader.getSchoolBoard().addTowers(tempTowerNum);
                         }
                     }
                     teams.get(t).remove(p);

@@ -23,7 +23,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     /**
      * Nickname of the player who interfaces this VirtualClient
      */
-    private final String nickname;
+    private final String identifier;
 
     /**
      * Socket of the connection
@@ -53,12 +53,12 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
 
     /**
      * Constructor of VirtualClient
-     * @param nickname the nickname of the player that interfaces with this VirtualClient
+     * @param identifier the nickname of the player that interfaces with this VirtualClient
      * @param socket socket of the connection
      * @param connectionListener the listener of ConnectionEvent
      */
-    public VirtualClient(String nickname,Socket socket,ConnectionListener connectionListener) throws IOException {
-        this.nickname = nickname;
+    public VirtualClient(String identifier, Socket socket, ConnectionListener connectionListener) throws IOException {
+        this.identifier = identifier;
         this.socket = socket;
 
         in = new Scanner(this.socket.getInputStream());
@@ -76,11 +76,12 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     }
 
     /**
-     * Nickname getter
+     * Identifier getter
      * @return the nickname
      */
-    public String getNickname() {
-        return nickname;
+    @Override
+    public String getIdentifier() {
+        return identifier;
     }
 
     /**
