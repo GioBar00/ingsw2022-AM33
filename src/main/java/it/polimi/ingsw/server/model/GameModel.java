@@ -767,4 +767,11 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     public IslandsManager getIslandsManager() {
         return islandsManager;
     }
+
+    /**
+     * @return index of MotherNature, for tests purposes
+     */
+    public int getMotherNatureIndex() {
+        return motherNatureIndex;
+    }
 }

@@ -641,7 +641,7 @@ public class GameModelExpert implements Game, EffectHandler {
             if (model.playersManager.getCurrentPlayer().getNickname().equals(destPlayerNick)
                     && !model.roundManager.getGamePhase().equals(GamePhase.PLANNING)
                     && cc.getTotalCost() <= playerCoins.get(destPlayerNick)
-                    && !cc.hasAppliedEffect()
+                    && !activatedACharacterCard
                     && characterCardActivating == null)
                 canUse = true;
 
