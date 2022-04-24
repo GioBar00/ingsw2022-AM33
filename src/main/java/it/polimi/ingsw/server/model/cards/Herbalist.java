@@ -62,7 +62,7 @@ public class Herbalist extends CharacterCard {
      * @return choose island message.
      */
     @Override
-    public Message getCommandMessage(EffectHandler effectHandler) {
+    public Message getRequiredAction(EffectHandler effectHandler) {
         Set<Integer> islandIndexes = effectHandler.getAvailableIslandIndexes();
         return new ChooseIsland(islandIndexes);
     }

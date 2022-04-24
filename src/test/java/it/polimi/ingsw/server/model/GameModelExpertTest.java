@@ -1,7 +1,5 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.server.model.GameModel;
-import it.polimi.ingsw.server.model.GameModelExpert;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.cards.Friar;
 import it.polimi.ingsw.server.model.cards.Herbalist;
@@ -163,10 +161,12 @@ class GameModelExpertTest {
 
         int oldBlocks = herbalist.getNumBlocks();
 
-        gameModel.roundManager.startActionPhase();
+        // make players play an assistant card
+        for (int i = 0; i < m.model.playersManager.getPreset().getPlayersNumber(); i++) {
+            m.playAssistantCard(AssistantCard.values()[i]);
+        }
 
         Player current = gameModel.playersManager.getCurrentPlayer();
-        m.playerCoins.remove(current.getNickname());
         m.playerCoins.put(current.getNickname(), herbalist.getCost());
         m.activateCharacterCard(0);
 

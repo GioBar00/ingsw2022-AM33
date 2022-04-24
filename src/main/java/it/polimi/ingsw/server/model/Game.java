@@ -124,7 +124,13 @@ public interface Game extends MessageListenerSubscriber {
         return false;
     }
 
-    default GameView getGameView(Player destPlayer){return null;}
+    /**
+     * Skips the current player's turn.
+     * @return if the turn was skipped successfully.
+     */
+    boolean skipTurn();
+
+    GameView getGameView(Player destPlayer);
 
 
 }

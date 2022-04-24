@@ -74,7 +74,7 @@ public class Jester extends CharacterCard {
      * @return swap students message between card and entrance.
      */
     @Override
-    public Message getCommandMessage(EffectHandler effectHandler) {
+    public Message getRequiredAction(EffectHandler effectHandler) {
         Set<Integer> availableStudents = getAvailableStudentsOrdinal(students);
         Set<Integer> entranceIndexes = getAvailableEntranceIndexes(effectHandler);
         return new SwapStudents(MoveLocation.CARD, availableStudents, MoveLocation.ENTRANCE, entranceIndexes);

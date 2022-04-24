@@ -59,7 +59,7 @@ public class Minstrel extends CharacterCard {
      * @return swap student message between entrance and hall.
      */
     @Override
-    public Message getCommandMessage(EffectHandler effectHandler) {
+    public Message getRequiredAction(EffectHandler effectHandler) {
         List<StudentColor> entrance = effectHandler.getStudentsInEntrance();
         Set<Integer> availableStudents = getAvailableStudentsOrdinal(effectHandler.getHall());
         EnumMap<StudentColor, Integer> students = effectHandler.getHall();

@@ -71,7 +71,7 @@ public class Friar extends CharacterCard {
      * @return move student message from card to island.
      */
     @Override
-    public Message getCommandMessage(EffectHandler effectHandler) {
+    public Message getRequiredAction(EffectHandler effectHandler) {
         Set<Integer> availableStudents = CharacterCard.getAvailableStudentsOrdinal(students);
         Set<Integer> islandIndexes = effectHandler.getAvailableIslandIndexes();
         return new MoveStudent(MoveLocation.CARD, availableStudents, MoveLocation.ISLAND, islandIndexes);

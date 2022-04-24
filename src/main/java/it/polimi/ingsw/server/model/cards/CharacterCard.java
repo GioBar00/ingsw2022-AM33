@@ -148,7 +148,7 @@ public abstract class CharacterCard {
      * @param effectHandler effect handler.
      * @return message to send to the client.
      */
-    public Message getCommandMessage(EffectHandler effectHandler) {
+    public Message getRequiredAction(EffectHandler effectHandler) {
         return null;
     }
 

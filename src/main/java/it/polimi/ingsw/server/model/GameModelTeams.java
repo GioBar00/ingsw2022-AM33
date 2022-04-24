@@ -18,8 +18,7 @@ public class GameModelTeams extends GameModel {
     }
 
     /**
-     * the method adds the to-be player to the lobby and waits for the client to choose a preferred team before adding
-     * it as a player
+     * the method adds the to-be player to the lobby and waits for the client to choose a preferred team before adding it as a player
      * @param nickname unique identifier of a player
      * @return if the player was added successfully.
      */
@@ -28,8 +27,11 @@ public class GameModelTeams extends GameModel {
         if (gameState != GameState.UNINITIALIZED)
             return false;
 
-        return playersManager.addToLobby(nickname);
-        //FIXME: notify listeners with lobby
+        if (playersManager.addToLobby(nickname)) {
+            notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeamsView())));
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -98,7 +100,6 @@ public class GameModelTeams extends GameModel {
     @Override
     public boolean changeTeam(String nickname, Tower tower) {
         if (playersManager.changeTeam(nickname, tower)) {
-            //FIXME: add lobby
             notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeamsView())));
             return true;
         }

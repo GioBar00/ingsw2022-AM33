@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.server.listeners.MessageEvent;
 import it.polimi.ingsw.server.listeners.MessageListener;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
@@ -147,7 +148,7 @@ public class GameModelExpert implements Game, EffectHandler {
         if(model.executeStartGame()){
             this.initializeGame();
             model.notifyPersonalizedGameView();
-            //FIXME: notify possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -164,7 +165,7 @@ public class GameModelExpert implements Game, EffectHandler {
     public boolean playAssistantCard(AssistantCard assistantCard) {
         if (model.executePlayAssistantCard(assistantCard)) {
             model.notifyPersonalizedGameView();
-            //FIXME: notify possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -194,7 +195,7 @@ public class GameModelExpert implements Game, EffectHandler {
                 }
             }
             model.notifyPersonalizedGameView();
-            //FIXME: notify possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -215,7 +216,7 @@ public class GameModelExpert implements Game, EffectHandler {
             return false;
         if (model.executeMoveStudentToIsland(entranceIndex, islandGroupIndex)) {
             model.notifyPersonalizedGameView();
-            //FIXME: notify possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -239,7 +240,7 @@ public class GameModelExpert implements Game, EffectHandler {
                 endTurn();
             }
             model.notifyPersonalizedGameView();
-            //FIXME: notify possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -269,7 +270,7 @@ public class GameModelExpert implements Game, EffectHandler {
         if (model.executeGetStudentsFromCloud(cloudIndex)) {
             endTurn();
             model.notifyPersonalizedGameView();
-            //FIXME: notify possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -317,7 +318,7 @@ public class GameModelExpert implements Game, EffectHandler {
         if (characterCardActivating.getRequiredChoicesNumber() == 0)
             applyEffect(null);
         model.notifyPersonalizedGameView();
-        //FIXME: notify possible moves
+        notifyPossibleActions();
         return true;
     }
 
@@ -336,7 +337,7 @@ public class GameModelExpert implements Game, EffectHandler {
             if (characterCardActivating.hasAppliedEffect())
                 characterCardActivating = null;
             model.notifyPersonalizedGameView();
-            //FIXME: notify possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -355,7 +356,7 @@ public class GameModelExpert implements Game, EffectHandler {
         if (characterCardActivating.endEffect()) {
             characterCardActivating = null;
             model.notifyPersonalizedGameView();
-            //FIXME: notify possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -371,6 +372,21 @@ public class GameModelExpert implements Game, EffectHandler {
     @Override
     public boolean changeTeam(String nickname, Tower tower) {
         return model.changeTeam(nickname, tower);
+    }
+
+    /**
+     * Skips the current player's turn.
+     *
+     * @return if the turn was skipped successfully.
+     */
+    @Override
+    public boolean skipTurn() {
+        if (model.executeSkipTurn()) {
+            model.notifyPersonalizedGameView();
+            notifyPossibleActions();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -733,5 +749,20 @@ public class GameModelExpert implements Game, EffectHandler {
     @Override
     public void notifyListener(String identifier, MessageEvent event) {
         model.notifyListener(identifier, event);
+    }
+
+    /**
+     * Notifies the current player to perform an action.
+     */
+    void notifyPossibleActions() {
+        if (characterCardActivating != null) {
+            Message m = characterCardActivating.getRequiredAction(this);
+            if (m != null) {
+                Player curr = model.playersManager.getCurrentPlayer();
+                notifyListener(curr.getNickname(), new MessageEvent(this, m));
+            }
+        } else {
+            model.notifyPossibleActions();
+        }
     }
 }

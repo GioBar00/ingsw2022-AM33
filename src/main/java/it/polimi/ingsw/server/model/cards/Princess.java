@@ -71,7 +71,7 @@ public class Princess extends CharacterCard {
      * @return move student message from card to hall.
      */
     @Override
-    public Message getCommandMessage(EffectHandler effectHandler) {
+    public Message getRequiredAction(EffectHandler effectHandler) {
         Set<Integer> availableStudents = CharacterCard.getAvailableStudentsOrdinal(students);
         EnumMap<StudentColor, Integer> students = effectHandler.getHall();
         availableStudents.removeIf(i -> students.get(StudentColor.retrieveStudentColorByOrdinal(i)) >= 10);

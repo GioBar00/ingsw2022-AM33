@@ -1,6 +1,9 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.network.messages.server.CurrentTeams;
+import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.Move;
+import it.polimi.ingsw.network.messages.enums.MoveLocation;
+import it.polimi.ingsw.network.messages.server.*;
 import it.polimi.ingsw.server.listeners.ConcreteMessageListenerSubscriber;
 import it.polimi.ingsw.network.messages.messagesView.GameView;
 import it.polimi.ingsw.server.listeners.MessageEvent;
@@ -159,7 +162,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * Starts the Game and randomly selects the first Player if the game is initialized.
      * @return if the game started successfully.
      */
-    public boolean executeStartGame() {
+    boolean executeStartGame() {
         if(initializeGame()) {
             int i = ThreadLocalRandom.current().nextInt(0, playersManager.getPreset().getPlayersNumber());
             playersManager.setFirstPlayer(i);
@@ -179,7 +182,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     public boolean startGame() {
         if (executeStartGame()) {
             notifyPersonalizedGameView();
-            //FIXME: possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -242,7 +245,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     public boolean playAssistantCard(AssistantCard assistantCard) {
         if (executePlayAssistantCard(assistantCard)) {
             notifyPersonalizedGameView();
-            //FIXME: possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -282,7 +285,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     public boolean moveStudentToHall(int entranceIndex) {
         if (executeMoveStudentToHall(entranceIndex)) {
             notifyPersonalizedGameView();
-            //FIXME: possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -325,7 +328,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     public boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex) {
         if (executeMoveStudentToIsland(entranceIndex, islandGroupIndex)) {
             notifyPersonalizedGameView();
-            //FIXME: possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -340,7 +343,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     public boolean moveMotherNature(int num) {
         if (moveMotherNature(num, playersManager.getPlayedCard().getMoves())) {
             notifyPersonalizedGameView();
-            //FIXME: possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -427,7 +430,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     public boolean getStudentsFromCloud(int cloudIndex) {
         if (executeGetStudentsFromCloud(cloudIndex)) {
             notifyPersonalizedGameView();
-            //FIXME: possible moves
+            notifyPossibleActions();
             return true;
         }
         return false;
@@ -658,6 +661,33 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     }
 
     /**
+     * Skips the current player's turn.
+     *
+     * @return if the turn was skipped successfully.
+     */
+    boolean executeSkipTurn() {
+        if (gameState != GameState.STARTED)
+            return false;
+        nextTurn();
+        return true;
+    }
+
+    /**
+     * Skips the current player's turn.
+     *
+     * @return if the turn was skipped successfully.
+     */
+    @Override
+    public boolean skipTurn() {
+        if (executeSkipTurn()) {
+            notifyPersonalizedGameView();
+            notifyPossibleActions();
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Advances the Game to the next round.
      * If it is the last round it checks the winner.
      */
@@ -759,6 +789,80 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     void notifyPersonalizedGameView() {
         for (Player p: playersManager.getPlayers())
             notifyListener(p.getNickname(), new MessageEvent(this, getGameView(p)));
+    }
+
+    /**
+     * Notifies the current player to perform an action.
+     */
+    void notifyPossibleActions() {
+        if (gameState == GameState.STARTED && roundManager.getWinners().isEmpty()) {
+            switch (roundManager.getGamePhase()) {
+                case PLANNING -> notifyPlayAssistantCard();
+                case MOVE_STUDENTS -> notifyMultiplePossibleMoves();
+                case MOVE_MOTHER_NATURE -> notifyMoveMotherNature();
+                case CHOOSE_CLOUD -> notifyChooseCloud();
+            }
+        }
+    }
+
+    /**
+     * Notifies the current player to play an assistant card.
+     */
+    void notifyPlayAssistantCard() {
+        Player curr = playersManager.getCurrentPlayer();
+        notifyListener(curr.getNickname(), new MessageEvent(this, playersManager.getPossibleAssistantCards()));
+    }
+
+    /**
+     * Notifies the current player to move a student.
+     * Calculates the possible moves.
+     */
+    void notifyMultiplePossibleMoves() {
+        Player curr = playersManager.getCurrentPlayer();
+        SchoolBoard currSb = playersManager.getSchoolBoard();
+        Set<Integer> validEntranceIndexes = new HashSet<>();
+        Set<Integer> hallEntranceIndexes = new HashSet<>();
+
+        for (int i = 0; i < currSb.getEntranceCapacity(); i++) {
+            StudentColor s = currSb.getStudentInEntrance(i);
+            if (s != null) {
+                validEntranceIndexes.add(i);
+                if (currSb.getStudentsInHall(s) < 10)
+                    hallEntranceIndexes.add(i);
+            }
+        }
+
+        Set<Integer> islandIndexes = new HashSet<>();
+        for (int i = 0; i < islandsManager.getNumIslandGroups(); i++)
+            islandIndexes.add(i);
+
+        List<Move> moves = new LinkedList<>();
+        moves.add(new MoveStudent(MoveLocation.ENTRANCE, validEntranceIndexes, MoveLocation.ISLAND, islandIndexes));
+        moves.add(new MoveStudent(MoveLocation.ENTRANCE, hallEntranceIndexes, MoveLocation.HALL, null));
+        Message m = new MultiplePossibleMoves(moves);
+
+        notifyListener(curr.getNickname(), new MessageEvent(this, m));
+    }
+
+    /**
+     * Notifies the current player to move mother nature.
+     */
+    void notifyMoveMotherNature() {
+        Player curr = playersManager.getCurrentPlayer();
+        notifyListener(curr.getNickname(), new MessageEvent(this, new MoveMotherNature(playersManager.getPlayedCard().getMoves())));
+    }
+
+    /**
+     * Notifies the current player to choose a cloud.
+     */
+    void notifyChooseCloud() {
+        Player curr = playersManager.getCurrentPlayer();
+        Set<Integer> cloudIndexes = new HashSet<>();
+        for (int i = 0; i < clouds.size(); i++) {
+            if (clouds.get(i).getStudents().size() > 0)
+                cloudIndexes.add(i);
+        }
+        notifyListener(curr.getNickname(), new MessageEvent(this, new ChooseCloud(cloudIndexes)));
     }
 
     /**

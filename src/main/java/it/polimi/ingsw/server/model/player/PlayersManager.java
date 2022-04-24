@@ -1,11 +1,15 @@
 package it.polimi.ingsw.server.model.player;
 
+import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.Move;
+import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.messagesView.PlayerView;
 import it.polimi.ingsw.network.messages.messagesView.TeamsView;
-import it.polimi.ingsw.server.model.enums.AssistantCard;
-import it.polimi.ingsw.server.model.enums.GamePreset;
-import it.polimi.ingsw.server.model.enums.Tower;
-import it.polimi.ingsw.server.model.enums.Wizard;
+import it.polimi.ingsw.network.messages.server.MoveStudent;
+import it.polimi.ingsw.network.messages.server.MultiplePossibleMoves;
+import it.polimi.ingsw.network.messages.server.PlayAssistantCard;
+import it.polimi.ingsw.server.model.enums.*;
+import it.polimi.ingsw.util.LinkedPairList;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -342,5 +346,19 @@ public class PlayersManager {
      */
     public TeamsView getTeamsView(){
         return new TeamsView(teams, lobby);
+    }
+
+    /**
+     * Calculates the playable cards for the current player.
+     *
+     * @return play assistant card message.
+     */
+    public PlayAssistantCard getPossibleAssistantCards() {
+        EnumSet<AssistantCard> possibleCards = EnumSet.copyOf(getCurrentPlayer().getHand());
+        for (int i = currentPlayerOrderIndex - 1; i >= 0; i--) {
+            Player p = players.get(playerOrderIndexes[i]);
+            possibleCards.remove(p.getAssistantCard());
+        }
+        return new PlayAssistantCard(possibleCards);
     }
 }

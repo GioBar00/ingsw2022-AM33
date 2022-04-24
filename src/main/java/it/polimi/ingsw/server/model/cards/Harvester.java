@@ -61,7 +61,7 @@ public class Harvester extends CharacterCard {
      * @return choose student color message.
      */
     @Override
-    public Message getCommandMessage(EffectHandler effectHandler) {
+    public Message getRequiredAction(EffectHandler effectHandler) {
         return new ChooseStudentColor(EnumSet.copyOf(Arrays.asList(StudentColor.values())));
     }
 }
