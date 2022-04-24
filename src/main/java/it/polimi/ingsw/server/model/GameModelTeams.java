@@ -99,7 +99,7 @@ public class GameModelTeams extends GameModel {
     public boolean changeTeam(String nickname, Tower tower) {
         if (playersManager.changeTeam(nickname, tower)) {
             //FIXME: add lobby
-            notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeams(), playersManager.getLobby())));
+            notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeamsView())));
             return true;
         }
         return false;

@@ -28,7 +28,7 @@ class TeamsViewTest {
         assertTrue(gmTeams.changeTeam("blackLeader", Tower.BLACK));
         assertTrue(gmTeams.changeTeam("whiteOther", Tower.WHITE));
 
-        CurrentTeams ct = new CurrentTeams(gmTeams.getPlayersManager().getTeams(), gmTeams.getPlayersManager().getLobby());
+        CurrentTeams ct = new CurrentTeams(gmTeams.getPlayersManager().getTeamsView());
         TeamsView tv = ct.getTeamsView();
         List<String> lobby = ct.getTeamsView().getLobby();
 
@@ -45,7 +45,7 @@ class TeamsViewTest {
 
         assertTrue(gmTeams.changeTeam("blackOther", Tower.BLACK));
 
-        ct = new CurrentTeams (gmTeams.getPlayersManager().getTeams(), gmTeams.getPlayersManager().getLobby());
+        ct = new CurrentTeams (gmTeams.getPlayersManager().getTeamsView());
         tv = ct.getTeamsView();
         lobby = ct.getTeamsView().getLobby();
 

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.player;
 
 import it.polimi.ingsw.network.messages.messagesView.PlayerView;
+import it.polimi.ingsw.network.messages.messagesView.TeamsView;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.Tower;
@@ -334,5 +335,12 @@ public class PlayersManager {
      */
     public List<String> getLobby() {
         return lobby;
+    }
+
+    /**
+     * @return the teamsView
+     */
+    public TeamsView getTeamsView(){
+        return new TeamsView(teams, lobby);
     }
 }

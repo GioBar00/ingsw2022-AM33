@@ -3,12 +3,13 @@ package it.polimi.ingsw.network.messages.messagesView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
-public class SchoolBoardView {
+public class SchoolBoardView implements Serializable {
     private final int numTowers;
     private final Tower tower;
     private final EnumMap<StudentColor, Integer> studentsHall;

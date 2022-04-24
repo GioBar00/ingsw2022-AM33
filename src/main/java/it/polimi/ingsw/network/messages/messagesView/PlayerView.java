@@ -3,9 +3,10 @@ package it.polimi.ingsw.network.messages.messagesView;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.Wizard;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class PlayerView {
+public class PlayerView implements Serializable {
     private final String nickname;
     private final Wizard wizard;
     private final ArrayList<AssistantCard> assistantCards;

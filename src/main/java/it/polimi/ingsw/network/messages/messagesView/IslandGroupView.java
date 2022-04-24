@@ -2,10 +2,11 @@ package it.polimi.ingsw.network.messages.messagesView;
 
 import it.polimi.ingsw.server.model.enums.Tower;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IslandGroupView {
+public class IslandGroupView implements Serializable {
     private final List<IslandView> islands;
     private final boolean isBlocked;
 

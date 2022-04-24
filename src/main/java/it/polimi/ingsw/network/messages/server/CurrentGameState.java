@@ -5,11 +5,12 @@ import it.polimi.ingsw.network.messages.messagesView.GameView;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.network.messages.Message;
 
-public class CurrentGameState extends Message {
+
+public class CurrentGameState extends Message{
     private final GameView gameView;
 
-    public CurrentGameState(Game game, Player dest) {
-        gameView = game.getGameView(dest);
+    public CurrentGameState(GameView gameView) {
+        this.gameView = gameView;
     }
 
     public GameView getGameView() {
@@ -18,6 +19,10 @@ public class CurrentGameState extends Message {
 
     @Override
     public boolean isValid() {
-        return gameView != null;
+        if(gameView.getMode() == null || gameView.getPreset() == null || gameView.getPhase() == null || gameView.getState() == null)
+            return false;
+        if(gameView.getIslandsView() == null || gameView.getPlayersView() == null)
+            return false;
+        return true;
     }
 }

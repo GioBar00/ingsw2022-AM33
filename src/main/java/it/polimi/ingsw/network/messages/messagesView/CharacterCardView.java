@@ -3,9 +3,10 @@ package it.polimi.ingsw.network.messages.messagesView;
 import it.polimi.ingsw.server.model.enums.CharacterType;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 
+import java.io.Serializable;
 import java.util.EnumMap;
 
-public class CharacterCardView {
+public class CharacterCardView implements Serializable {
     private final CharacterType type;
     private final boolean canBeUsed;
     private final int originalCost;

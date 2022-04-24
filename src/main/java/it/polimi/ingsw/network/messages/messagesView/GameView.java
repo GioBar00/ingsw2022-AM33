@@ -6,9 +6,10 @@ import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.GameState;
 import it.polimi.ingsw.network.messages.Message;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class GameView extends Message {
+public class GameView extends Message implements Serializable {
     private final GameMode mode;
     private final GamePreset preset;
     private final GameState state;

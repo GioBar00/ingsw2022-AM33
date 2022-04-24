@@ -15,13 +15,17 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameViewTest {
-    // game and its components
+    /**
+     * game and its components
+     */
     GameModelExpert gmTest = new GameModelExpert(new GameModel(GamePreset.THREE));
     PlayersManager pmTest;
     IslandsManager imTest;
     ArrayList<Tower> playerTowers;
     ArrayList<CharacterType> allCharacters;
-    // gameView and its components
+    /**
+     *  gameView and its components
+     */
     GameView gameView;
     GameMode mode;
     GamePreset preset;
@@ -34,6 +38,9 @@ class GameViewTest {
     List<CharacterCardView> characterCardView;
     Map<String, Integer> playerCoins;
 
+    /**
+     * set up of the gameModel, before each test
+     */
     @BeforeEach
     void setUpInitial(){
         pmTest = gmTest.getModel().getPlayersManager();
@@ -46,11 +53,18 @@ class GameViewTest {
         allCharacters.addAll(Arrays.asList(CharacterType.values()));
     }
 
+    /**
+     * Replaces the character cards in the game and initializes the card.
+     * @param card to initialize.
+     */
     void initializeCharacterCardOnGameModel(CharacterCard card, int index) {
         gmTest.getCharacterCards().set(index, card);
         card.initialize(gmTest);
     }
 
+    /**
+     * @return a random CharacterType
+     */
     CharacterType getRandomCC(){
        int random = new Random().nextInt(allCharacters.size());
        CharacterType ct = allCharacters.get(random);
@@ -58,6 +72,10 @@ class GameViewTest {
        return ct;
     }
 
+    /**
+     * sets up the gameView and its components
+     * @param destPlayer the player to whom the gameView will be sent
+     */
     void setUpGameView(Player destPlayer){
         gameView = gmTest.getGameView(destPlayer);
 
@@ -73,8 +91,11 @@ class GameViewTest {
         playerCoins = gameView.getPlayerCoins();
     }
 
+    /**
+     * test for current gameView
+     */
     @Test
-    void currentGameStateTest1(){
+    void gameViewTest1(){
         // -------------------------------players + their schoolboard---------------------------------------------------
         // add students to the schoolBoards and keep track of the players' towers
         ArrayList<Tower> playerTowers = new ArrayList<>();

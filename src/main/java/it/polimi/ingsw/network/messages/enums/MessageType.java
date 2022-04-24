@@ -25,7 +25,7 @@ public enum MessageType {
     CHOOSE_STUDENT_COLOR(ChooseStudentColor.class),
     COMM_MESSAGE(CommMessage.class),
     CURRENT_TEAMS(CurrentTeams.class),
-    CURRENT_GAME_STATE(GameView.class),
+    CURRENT_GAME_STATE(CurrentGameState.class),
 
     // client messages
     PLAYED_ASSISTANT_CARD(PlayedAssistantCard.class),

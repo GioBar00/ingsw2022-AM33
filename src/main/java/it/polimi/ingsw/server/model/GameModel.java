@@ -104,7 +104,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         if (gameState != GameState.UNINITIALIZED)
             return false;
         if (playersManager.addPlayer(nickname)) {
-            notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeams(), playersManager.getLobby())));
+            notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeamsView())));
             return true;
         }
         return false;

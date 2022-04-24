@@ -119,7 +119,7 @@ class ViewsTest {
             assertNull(pv.getPlayedCard());
         }
 
-        TeamsView tv = new CurrentTeams(gmTeams.getPlayersManager().getTeams(), gmTeams.getPlayersManager().getLobby()).getTeamsView();
+        TeamsView tv = new CurrentTeams(gmTeams.getPlayersManager().getTeamsView()).getTeamsView();
         List<String> lobby = tv.getLobby();
 
         assertFalse(tv.getTeams().isEmpty());

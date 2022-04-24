@@ -3,9 +3,10 @@ package it.polimi.ingsw.network.messages.messagesView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
 
+import java.io.Serializable;
 import java.util.EnumMap;
 
-public class IslandView {
+public class IslandView implements Serializable {
     private final Tower tower;
     private final EnumMap<StudentColor, Integer> students;
 
