@@ -2,7 +2,7 @@ package it.polimi.ingsw.network.messages.server;
 
 import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
-import it.polimi.ingsw.network.messages.moves.MoveActionRequest;
+import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.network.messages.Message;

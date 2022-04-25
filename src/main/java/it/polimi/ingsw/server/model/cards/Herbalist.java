@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.model.cards;
 
+import it.polimi.ingsw.network.messages.ActionRequest;
 import it.polimi.ingsw.server.model.enums.CharacterType;
-import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
 
 import java.util.Set;
@@ -62,7 +62,7 @@ public class Herbalist extends CharacterCard {
      * @return choose island message.
      */
     @Override
-    public Message getRequiredAction(EffectHandler effectHandler) {
+    public ActionRequest getRequiredAction(EffectHandler effectHandler) {
         Set<Integer> islandIndexes = effectHandler.getAvailableIslandIndexes();
         return new ChooseIsland(islandIndexes);
     }

@@ -5,7 +5,7 @@ import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.client.*;
-import it.polimi.ingsw.network.messages.moves.InvalidMove;
+import it.polimi.ingsw.network.messages.InvalidMove;
 import it.polimi.ingsw.network.messages.server.*;
 
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.messages.enums;
 
-import it.polimi.ingsw.network.messages.moves.InvalidMove;
-import it.polimi.ingsw.network.messages.moves.Move;
+import it.polimi.ingsw.network.messages.InvalidMove;
+import it.polimi.ingsw.network.messages.Move;
 import it.polimi.ingsw.network.messages.actions.MovedStudent;
 import it.polimi.ingsw.network.messages.actions.SwappedStudents;
 import it.polimi.ingsw.network.messages.actions.requests.MoveStudent;

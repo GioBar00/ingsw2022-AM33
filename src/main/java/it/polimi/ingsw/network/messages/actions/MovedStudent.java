@@ -1,6 +1,6 @@
 package it.polimi.ingsw.network.messages.actions;
 
-import it.polimi.ingsw.network.messages.moves.MoveAction;
+import it.polimi.ingsw.network.messages.MoveAction;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 

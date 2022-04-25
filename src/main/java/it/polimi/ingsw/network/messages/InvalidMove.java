@@ -1,4 +1,4 @@
-package it.polimi.ingsw.network.messages.moves;
+package it.polimi.ingsw.network.messages;
 
 /**
  * This class represents a move that is not valid.

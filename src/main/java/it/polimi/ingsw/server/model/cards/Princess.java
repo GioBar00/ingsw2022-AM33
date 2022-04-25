@@ -1,8 +1,8 @@
 package it.polimi.ingsw.server.model.cards;
 
+import it.polimi.ingsw.network.messages.ActionRequest;
 import it.polimi.ingsw.server.model.enums.CharacterType;
 import it.polimi.ingsw.server.model.enums.StudentColor;
-import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.actions.requests.MoveStudent;
 
@@ -71,7 +71,7 @@ public class Princess extends CharacterCard {
      * @return move student message from card to hall.
      */
     @Override
-    public Message getRequiredAction(EffectHandler effectHandler) {
+    public ActionRequest getRequiredAction(EffectHandler effectHandler) {
         Set<Integer> availableStudents = CharacterCard.getAvailableStudentsOrdinal(students);
         EnumMap<StudentColor, Integer> students = effectHandler.getHall();
         availableStudents.removeIf(i -> students.get(StudentColor.retrieveStudentColorByOrdinal(i)) >= 10);

@@ -3,10 +3,6 @@ package it.polimi.ingsw.network.messages;
 import com.google.gson.*;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveType;
-import it.polimi.ingsw.network.messages.moves.InvalidMove;
-import it.polimi.ingsw.network.messages.moves.Move;
-import it.polimi.ingsw.network.messages.moves.MoveAction;
-import it.polimi.ingsw.network.messages.moves.MoveActionRequest;
 
 import java.lang.reflect.Type;
 

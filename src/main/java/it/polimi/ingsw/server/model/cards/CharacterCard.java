@@ -1,8 +1,8 @@
 package it.polimi.ingsw.server.model.cards;
 
+import it.polimi.ingsw.network.messages.ActionRequest;
 import it.polimi.ingsw.server.model.enums.CharacterType;
 import it.polimi.ingsw.server.model.enums.StudentColor;
-import it.polimi.ingsw.network.messages.Message;
 
 import java.util.*;
 
@@ -148,7 +148,7 @@ public abstract class CharacterCard {
      * @param effectHandler effect handler.
      * @return message to send to the client.
      */
-    public Message getRequiredAction(EffectHandler effectHandler) {
+    public ActionRequest getRequiredAction(EffectHandler effectHandler) {
         return null;
     }
 

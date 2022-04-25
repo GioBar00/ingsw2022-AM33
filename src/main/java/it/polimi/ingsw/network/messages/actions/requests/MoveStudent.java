@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.messages.actions.requests;
 
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
-import it.polimi.ingsw.network.messages.moves.MoveActionRequest;
+import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 
 import java.util.Set;

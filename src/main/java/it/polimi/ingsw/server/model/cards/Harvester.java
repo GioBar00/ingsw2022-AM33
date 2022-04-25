@@ -1,8 +1,8 @@
 package it.polimi.ingsw.server.model.cards;
 
+import it.polimi.ingsw.network.messages.ActionRequest;
 import it.polimi.ingsw.server.model.enums.CharacterType;
 import it.polimi.ingsw.server.model.enums.StudentColor;
-import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseStudentColor;
 
 import java.util.Arrays;
@@ -61,7 +61,7 @@ public class Harvester extends CharacterCard {
      * @return choose student color message.
      */
     @Override
-    public Message getRequiredAction(EffectHandler effectHandler) {
+    public ActionRequest getRequiredAction(EffectHandler effectHandler) {
         return new ChooseStudentColor(EnumSet.copyOf(Arrays.asList(StudentColor.values())));
     }
 }

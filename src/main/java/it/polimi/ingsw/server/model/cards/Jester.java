@@ -1,8 +1,8 @@
 package it.polimi.ingsw.server.model.cards;
 
+import it.polimi.ingsw.network.messages.ActionRequest;
 import it.polimi.ingsw.server.model.enums.CharacterType;
 import it.polimi.ingsw.server.model.enums.StudentColor;
-import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.actions.requests.SwapStudents;
 
@@ -74,7 +74,7 @@ public class Jester extends CharacterCard {
      * @return swap students message between card and entrance.
      */
     @Override
-    public Message getRequiredAction(EffectHandler effectHandler) {
+    public ActionRequest getRequiredAction(EffectHandler effectHandler) {
         Set<Integer> availableStudents = getAvailableStudentsOrdinal(students);
         Set<Integer> entranceIndexes = getAvailableEntranceIndexes(effectHandler);
         return new SwapStudents(MoveLocation.CARD, availableStudents, MoveLocation.ENTRANCE, entranceIndexes);

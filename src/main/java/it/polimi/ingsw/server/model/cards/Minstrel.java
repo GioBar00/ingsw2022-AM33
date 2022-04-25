@@ -1,8 +1,8 @@
 package it.polimi.ingsw.server.model.cards;
 
+import it.polimi.ingsw.network.messages.ActionRequest;
 import it.polimi.ingsw.server.model.enums.CharacterType;
 import it.polimi.ingsw.server.model.enums.StudentColor;
-import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.actions.requests.SwapStudents;
 
@@ -59,7 +59,7 @@ public class Minstrel extends CharacterCard {
      * @return swap student message between entrance and hall.
      */
     @Override
-    public Message getRequiredAction(EffectHandler effectHandler) {
+    public ActionRequest getRequiredAction(EffectHandler effectHandler) {
         List<StudentColor> entrance = effectHandler.getStudentsInEntrance();
         Set<Integer> availableStudents = getAvailableStudentsOrdinal(effectHandler.getHall());
         EnumMap<StudentColor, Integer> students = effectHandler.getHall();

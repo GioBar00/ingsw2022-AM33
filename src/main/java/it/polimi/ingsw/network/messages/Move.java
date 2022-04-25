@@ -1,4 +1,4 @@
-package it.polimi.ingsw.network.messages.moves;
+package it.polimi.ingsw.network.messages;
 
 import it.polimi.ingsw.network.messages.Message;
 

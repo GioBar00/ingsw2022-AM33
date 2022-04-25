@@ -6,7 +6,7 @@ import it.polimi.ingsw.network.messages.actions.requests.MoveMotherNature;
 import it.polimi.ingsw.network.messages.actions.requests.MoveStudent;
 import it.polimi.ingsw.network.messages.actions.requests.MultiplePossibleMoves;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
-import it.polimi.ingsw.network.messages.moves.MoveActionRequest;
+import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.server.*;
 import it.polimi.ingsw.server.listeners.ConcreteMessageListenerSubscriber;
 import it.polimi.ingsw.network.messages.views.GameView;
