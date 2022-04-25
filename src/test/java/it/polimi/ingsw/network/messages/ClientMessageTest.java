@@ -1,7 +1,11 @@
-package it.polimi.ingsw.network.messages.client;
+package it.polimi.ingsw.network.messages;
 
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
+import it.polimi.ingsw.network.messages.client.ChosenGame;
+import it.polimi.ingsw.network.messages.client.ChosenTeam;
+import it.polimi.ingsw.network.messages.client.Login;
+import it.polimi.ingsw.network.messages.client.StartGame;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.server.model.enums.*;

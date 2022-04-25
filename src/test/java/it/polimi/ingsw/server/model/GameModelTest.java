@@ -1,24 +1,90 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.server.model.Cloud;
-import it.polimi.ingsw.server.model.Game;
-import it.polimi.ingsw.server.model.GameModel;
+import it.polimi.ingsw.network.messages.ActionRequest;
+import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.server.listeners.MessageEvent;
+import it.polimi.ingsw.server.listeners.MessageListener;
 import it.polimi.ingsw.server.model.enums.*;
 import it.polimi.ingsw.server.model.islands.Island;
 import it.polimi.ingsw.server.model.player.Player;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
-import java.util.ArrayList;
-import java.util.Objects;
+import org.junit.jupiter.api.Test;
+
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+/**
+ * Tests for the GameModel class
+ */
 class GameModelTest {
+
+    /**
+     * Game model
+     */
     GameModel model;
-    int fMotherNature = 0;
+
+    /**
+     * Players notified about the CurrentGameState and CurrentTeams
+     */
+    Set<String> messagesNotified = new HashSet<>();
+
+    /**
+     * Players notified about ActionRequests.
+     */
+    Set<String> actionRequestNotified = new HashSet<>();
+
+    /**
+     * Adds a new listener to the model.
+     * @param identifier nickname of the player.
+     */
+    void addMessageListener(String identifier) {
+        model.addListener(new MessageListener() {
+            @Override
+            public String getIdentifier() {
+                return identifier;
+            }
+            @Override
+            public void onMessage(MessageEvent event) {
+                Message m = event.getMessage();
+                if (m instanceof ActionRequest)
+                    actionRequestNotified.add(identifier);
+                else
+                    messagesNotified.add(identifier);
+            }
+        });
+    }
+
+    /**
+     * Clears the notifications.
+     */
+    void clearNotifications() {
+        messagesNotified.clear();
+        actionRequestNotified.clear();
+    }
+
+    /**
+     * Checks that the CurrentGameState or CurrentTeams has been notified to each player.
+     * Checks that the ActionRequest has been notified only at the current player if the game has not ended.
+     */
+    void checkNotifications() {
+        for (Player p : model.playersManager.getPlayers())
+            assertTrue(messagesNotified.contains(p.getNickname()));
+        if (model.gameState == GameState.STARTED) {
+            assertEquals(1, actionRequestNotified.size());
+            assertTrue(actionRequestNotified.contains(model.playersManager.getCurrentPlayer().getNickname()));
+        } else if (model.gameState == GameState.ENDED)
+            assertTrue(actionRequestNotified.isEmpty());
+        clearNotifications();
+    }
+
+    /**
+     * Checks that no notification were sent.
+     */
+    void checkEmptyNotifications() {
+        assertTrue(messagesNotified.isEmpty());
+        assertTrue(actionRequestNotified.isEmpty());
+    }
 
     /**
      * Tests the return value for the Game interface if the match is not expert.
@@ -29,31 +95,33 @@ class GameModelTest {
         assertFalse(m.activateCharacterCard(4));
         assertFalse(m.applyEffect(null));
     }
+
     /**
      * Test the creation of a three payers game and the setting up of the match
      */
-    @BeforeEach
-    void creationTest() {
-        model = new GameModel(GamePreset.THREE);
-        assertFalse(model.startGame());
-        assertTrue(model.addPlayer("1"));
+    void createGameModel(GamePreset preset) {
+        model = new GameModel(preset);
 
-        assertFalse(model.startGame());
-        assertTrue(model.addPlayer("2"));
-        assertFalse(model.startGame());
-        assertEquals(1, model.getAvailablePlayerSlots());
-        assertTrue(model.addPlayer("3"));
-        assertEquals(0, model.getAvailablePlayerSlots());
+        for (int i = 0; i < preset.getPlayersNumber(); i++) {
+            assertFalse(model.startGame());
+            checkEmptyNotifications();
+
+            assertEquals(preset.getPlayersNumber() - i, model.getAvailablePlayerSlots());
+
+            addMessageListener(i + "");
+            assertTrue(model.addPlayer(i + ""));
+            checkNotifications();
+        }
+
         assertEquals(GameState.UNINITIALIZED, model.getGameState());
-
         assertTrue(model.startGame());
+        checkNotifications();
 
-        assertEquals(3, model.playersManager.getPlayers().size());
         assertEquals(GameState.STARTED, model.getGameState());
         assertFalse(model.startGame());
-        fMotherNature = model.motherNatureIndex;
-        assertEquals(0,model.islandsManager.getIslandGroup(fMotherNature).getIslands().get(0).getNumStudents());
-        assertEquals(0,model.islandsManager.getIslandGroup((fMotherNature + 6) % 12).getIslands().get(0).getNumStudents());
+        checkEmptyNotifications();
+        assertEquals(0,model.islandsManager.getIslandGroup(model.motherNatureIndex).getIslands().get(0).getNumStudents());
+        assertEquals(0,model.islandsManager.getIslandGroup((model.motherNatureIndex + 6) % 12).getIslands().get(0).getNumStudents());
         numTowersAndStudent();
         playAssistantCard();
     }
@@ -95,23 +163,25 @@ class GameModelTest {
      */
     void playAssistantCard() {
         assertEquals(GamePhase.PLANNING, model.roundManager.getGamePhase());
-        Player[] expectedOrder = new Player[3];
+        List<Player> players = new LinkedList<>(model.playersManager.getPlayers());
+        List<Player> expectedOrder = new ArrayList<>(players.size());
 
-        expectedOrder[2] = model.playersManager.getCurrentPlayer();
-        assertTrue(model.playAssistantCard(AssistantCard.SEVEN));
+        List<AssistantCard> values = List.of(AssistantCard.values());
 
+        for (int i = 0; i < players.size(); i++) {
+            expectedOrder.add(players.get(i));
+            AssistantCard card = values.get(values.size() - i - 1);
+            assertTrue(model.playAssistantCard(card));
+            checkNotifications();
+            assertFalse(model.playAssistantCard(card));
+            checkEmptyNotifications();
+        }
 
-        expectedOrder[1] = model.playersManager.getCurrentPlayer();
-        assertTrue(model.playAssistantCard(AssistantCard.FIVE));
+        players = model.playersManager.getPlayers();
+        Collections.reverse(expectedOrder);
 
-        assertFalse(model.playAssistantCard(AssistantCard.FIVE));
-
-        expectedOrder[0] = model.playersManager.getCurrentPlayer();
-        assertTrue(model.playAssistantCard(AssistantCard.FOUR));
-
-        model.playersManager.calculatePlayerOrder();
-        for (int i = 0; i < model.playersManager.getPreset().getPlayersNumber(); i++) {
-            assertEquals(expectedOrder[i], model.playersManager.getPlayers().get(i));
+        for (int i = 0; i < players.size(); i++) {
+            assertEquals(expectedOrder.get(i), players.get(i));
         }
 
     }
@@ -122,11 +192,15 @@ class GameModelTest {
      */
     @Test
     void moveStudentsRefillEntrance() {
+        createGameModel(GamePreset.THREE);
         Player current = model.playersManager.getCurrentPlayer();
         assertTrue(model.moveStudentToHall(0));
+        checkNotifications();
 
         assertFalse(model.moveStudentToHall(0));
+        checkEmptyNotifications();
         assertFalse(model.moveStudentToHall(model.playersManager.getPreset().getEntranceCapacity()));
+        checkEmptyNotifications();
         boolean check = false;
         for (StudentColor s : StudentColor.values()) {
             if (model.playersManager.getSchoolBoard().getStudentsInHall(s) == 1) {
@@ -157,10 +231,13 @@ class GameModelTest {
 
 
         assertEquals(GamePhase.MOVE_MOTHER_NATURE, model.roundManager.getGamePhase());
+        clearNotifications();
         assertFalse(model.getStudentsFromCloud(5));
+        checkEmptyNotifications();
 
         model.roundManager.startChooseCloudPhase();
         assertTrue(model.getStudentsFromCloud(2));
+        checkNotifications();
 
         for (StudentColor s : model.clouds.get(2).getStudents()) {
             assertNull(s);
@@ -181,18 +258,22 @@ class GameModelTest {
      */
     @Test
     void moveStudentsMoveMotherNature() {
+        createGameModel(GamePreset.THREE);
         model.roundManager.startActionPhase();
         model.playersManager.nextPlayer();
         assertTrue(model.moveStudentToIsland(1, 4));
-
+        checkNotifications();
         assertFalse(model.moveStudentToIsland(1, 4));
         assertFalse(model.moveStudentToIsland(1, 4));
+        checkEmptyNotifications();
         assertTrue(model.moveStudentToIsland(2, 4));
 
         assertTrue(model.moveStudentToIsland(3, 4));
 
         int oldMotherNature = model.motherNatureIndex;
+        clearNotifications();
         assertFalse(model.moveMotherNature(1));
+        checkEmptyNotifications();
         assertEquals(oldMotherNature, model.motherNatureIndex);
 
         assertTrue(model.moveStudentToIsland(5, 4));
@@ -202,7 +283,9 @@ class GameModelTest {
         int maxMoves = model.playersManager.getPlayedCard(model.playersManager.getCurrentPlayer()).getMoves();
         assertFalse(model.moveMotherNature(maxMoves + 1));
         assertEquals(oldMotherNature, model.motherNatureIndex);
+        clearNotifications();
         assertTrue(model.moveMotherNature(maxMoves));
+        checkNotifications();
 
         assertEquals((oldMotherNature + maxMoves) % model.islandsManager.getNumIslandGroups(), model.motherNatureIndex);
     }
@@ -214,17 +297,18 @@ class GameModelTest {
      */
     @Test
     void checkProfessor() {
+        createGameModel(GamePreset.THREE);
         ArrayList<Player> players = model.playersManager.getPlayers();
         Player curr = model.playersManager.getCurrentPlayer();
         Player next;
 
-        assertNull(model.islandsManager.getTower(fMotherNature));
-        for (Island i : model.islandsManager.getIslandGroup(fMotherNature).getIslands()) {
+        assertNull(model.islandsManager.getTower(model.motherNatureIndex));
+        for (Island i : model.islandsManager.getIslandGroup(model.motherNatureIndex).getIslands()) {
             assertEquals(0, i.getNumStudents());
         }
 
-        model.islandsManager.addStudent(StudentColor.BLUE, fMotherNature);
-        model.islandsManager.addStudent(StudentColor.BLUE,fMotherNature);
+        model.islandsManager.addStudent(StudentColor.BLUE, model.motherNatureIndex);
+        model.islandsManager.addStudent(StudentColor.BLUE,model.motherNatureIndex);
 
         for (Player p : players) {
             for (StudentColor s : StudentColor.values()) {
@@ -248,9 +332,9 @@ class GameModelTest {
         }
         model.playersManager.nextPlayer();
         int befTow = model.playersManager.getSchoolBoard(curr).getNumTowers();
-        model.checkInfluence(fMotherNature);
+        model.checkInfluence(model.motherNatureIndex);
 
-        assertEquals(model.playersManager.getSchoolBoard(curr).getTower(), model.islandsManager.getTower(fMotherNature));
+        assertEquals(model.playersManager.getSchoolBoard(curr).getTower(), model.islandsManager.getTower(model.motherNatureIndex));
         assertEquals(befTow - 1, model.playersManager.getSchoolBoard(curr).getNumTowers());
 
         next = model.playersManager.getCurrentPlayer();
@@ -266,8 +350,8 @@ class GameModelTest {
         //check the swap of towers
         int befNextTow = model.playersManager.getSchoolBoard(next).getNumTowers();
 
-        model.checkInfluence(fMotherNature);
-        assertEquals(model.playersManager.getSchoolBoard(next).getTower(), model.islandsManager.getTower(fMotherNature));
+        model.checkInfluence(model.motherNatureIndex);
+        assertEquals(model.playersManager.getSchoolBoard(next).getTower(), model.islandsManager.getTower(model.motherNatureIndex));
         assertEquals(befTow, model.playersManager.getSchoolBoard(curr).getNumTowers());
         assertEquals(befNextTow - 1,model.playersManager.getSchoolBoard(next).getNumTowers());
 
@@ -281,45 +365,43 @@ class GameModelTest {
      */
     @Test
     void checkMergeIslandGroups() {
-        GameModel m = new GameModel(GamePreset.THREE);
+        createGameModel(GamePreset.THREE);
         ArrayList<Island> old;
         int oldLength;
-        m.motherNatureIndex = 3;
-        m.islandsManager.setTower(Tower.WHITE,0);
-        m.islandsManager.setTower(Tower.BLACK,1);
-        m.islandsManager.setTower(Tower.WHITE,2);
-        m.islandsManager.setTower(Tower.WHITE,3);
-        m.islandsManager.setTower(Tower.BLACK,4);
-        old = m.islandsManager.getIslandGroup(2).getIslands();
-        oldLength = m.islandsManager.getNumIslandGroups();
-        m.checkMergeIslandGroups(2);
-        assertTrue(m.islandsManager.getIslandGroup(2).getIslands().containsAll(old));
-        assertEquals(oldLength - 1,m.islandsManager.getNumIslandGroups());
-        assertEquals(2,m.motherNatureIndex);
-        assertEquals(Tower.WHITE,m.islandsManager.getTower(0));
-        assertEquals(Tower.BLACK,m.islandsManager.getTower(1));
-        assertEquals(Tower.WHITE,m.islandsManager.getTower(2));
-        assertEquals(Tower.BLACK,m.islandsManager.getTower(3));
-        m.islandsManager.setTower(Tower.BLACK,2);
+        model.motherNatureIndex = 3;
+        model.islandsManager.setTower(Tower.WHITE,0);
+        model.islandsManager.setTower(Tower.BLACK,1);
+        model.islandsManager.setTower(Tower.WHITE,2);
+        model.islandsManager.setTower(Tower.WHITE,3);
+        model.islandsManager.setTower(Tower.BLACK,4);
+        old = model.islandsManager.getIslandGroup(2).getIslands();
+        oldLength = model.islandsManager.getNumIslandGroups();
+        model.checkMergeIslandGroups(2);
+        assertTrue(model.islandsManager.getIslandGroup(2).getIslands().containsAll(old));
+        assertEquals(oldLength - 1,model.islandsManager.getNumIslandGroups());
+        assertEquals(2,model.motherNatureIndex);
+        assertEquals(Tower.WHITE,model.islandsManager.getTower(0));
+        assertEquals(Tower.BLACK,model.islandsManager.getTower(1));
+        assertEquals(Tower.WHITE,model.islandsManager.getTower(2));
+        assertEquals(Tower.BLACK,model.islandsManager.getTower(3));
+        model.islandsManager.setTower(Tower.BLACK,2);
         old.clear();
-        old.addAll(m.islandsManager.getIslandGroup(2).getIslands());
-        old.addAll(m.islandsManager.getIslandGroup(3).getIslands());
-        oldLength = m.islandsManager.getNumIslandGroups();
-        m.checkMergeIslandGroups(2);
-        assertEquals(oldLength - 2,m.islandsManager.getNumIslandGroups());
-        assertEquals(1,m.motherNatureIndex);
+        old.addAll(model.islandsManager.getIslandGroup(2).getIslands());
+        old.addAll(model.islandsManager.getIslandGroup(3).getIslands());
+        oldLength = model.islandsManager.getNumIslandGroups();
+        model.checkMergeIslandGroups(2);
+        assertEquals(oldLength - 2,model.islandsManager.getNumIslandGroups());
+        assertEquals(1,model.motherNatureIndex);
     }
 
     /**
      * Checks the winner after the remove of all the tower in a player' school board.
-     * Checks the winner after the last round when all the player Cards have been played.
-     * Checks the winner after all the Students have been used.
      */
     @Test
-    void checkWinner() {
+    void checkWinByTower() {
+        createGameModel(GamePreset.THREE);
         Tower test = model.playersManager.getSchoolBoard().getTower();
         int nTower = model.playersManager.getSchoolBoard().getNumTowers();
-        Player curr;
         model.islandsManager.setTower(test, 0);
         for (int i = 1; i < nTower; i++) {
             model.swapTowers(i, test);
@@ -335,66 +417,68 @@ class GameModelTest {
             }
         }
 
+    }
 
-        GameModel m1 = new GameModel(GamePreset.THREE);
-        assertTrue(m1.addPlayer("1"));
+    /**
+     * Checks the winner after the last round when all the player Cards have been played.
+     */
+    @Test
+    void checkWinByAssistantCards() {
+        createGameModel(GamePreset.THREE);
+        Player curr = model.playersManager.getCurrentPlayer();
+        assertTrue(model.playersManager.getSchoolBoard().removeTowers(5));
 
-
-        assertTrue(m1.addPlayer("2"));
-        assertTrue(m1.addPlayer("3"));
-
-        assertTrue(m1.startGame());
-        m1.gameState = GameState.STARTED;
-        m1.roundManager.nextRound();
-        curr = m1.playersManager.getCurrentPlayer();
-        assertTrue(m1.playersManager.getSchoolBoard().removeTowers(5));
-
-        for(AssistantCard a : AssistantCard.values()) {
-            if (!a.equals(AssistantCard.TEN))
-                m1.playersManager.currentPlayerPlayed(a);
-        }
-        assertTrue(true);
-        assertTrue(m1.playAssistantCard(AssistantCard.TEN));
-
-        m1.nextRound();
-
-        for(Player p : m1.playersManager.getPlayers()){
-            if(p.equals(curr))
-                assertTrue(m1.roundManager.getWinners().contains(m1.playersManager.getSchoolBoard(p).getTower()));
-            else{
-                assertFalse(m1.roundManager.getWinners().contains(m1.playersManager.getSchoolBoard(p).getTower()));
+        model.roundManager.nextRound();
+        for (Player ignored : model.playersManager.getPlayers()) {
+            for(AssistantCard a : AssistantCard.values()) {
+                if (!a.equals(AssistantCard.ONE))
+                    model.playersManager.currentPlayerPlayed(a);
             }
+            clearNotifications();
+            assertTrue(model.playAssistantCard(AssistantCard.ONE));
+            checkNotifications();
         }
 
 
-        GameModel m2 = new GameModel(GamePreset.TWO);
-        assertTrue(m2.addPlayer("1"));
+        model.nextRound();
 
-        assertTrue(m2.addPlayer("2"));
-        assertTrue(m2.startGame());
 
-        assertTrue(m2.playersManager.getSchoolBoard().removeTowers(5));
-        curr = m2.playersManager.getCurrentPlayer();
-
-        do{
-            for(Cloud c : m2.clouds){
-                c.popStudents();
-            }
-            m2.nextRound();
-        }
-        while(!m2.bag.isEmpty());
-        assertTrue(true);
-        m2.nextRound();
-        assertFalse(m2.roundManager.getWinners().isEmpty());
-
-        for(Player p : m2.playersManager.getPlayers()){
+        for(Player p : model.playersManager.getPlayers()){
             if(p.equals(curr))
-                assertTrue(m2.roundManager.getWinners().contains(m2.playersManager.getSchoolBoard(p).getTower()));
+                assertTrue(model.roundManager.getWinners().contains(model.playersManager.getSchoolBoard(p).getTower()));
             else{
-                assertFalse(m2.roundManager.getWinners().contains(m2.playersManager.getSchoolBoard(p).getTower()));
+                assertFalse(model.roundManager.getWinners().contains(model.playersManager.getSchoolBoard(p).getTower()));
             }
         }
     }
 
+    /**
+     * Checks the winner after all the Students have been used.
+     */
+    @Test
+    void checkWinByStudents() {
+        createGameModel(GamePreset.TWO);
 
+        assertTrue(model.playersManager.getSchoolBoard().removeTowers(5));
+        Player curr = model.playersManager.getCurrentPlayer();
+
+        do{
+            for(Cloud c : model.clouds){
+                c.popStudents();
+            }
+            model.nextRound();
+        }
+        while(!model.bag.isEmpty());
+        assertTrue(true);
+        model.nextRound();
+        assertFalse(model.roundManager.getWinners().isEmpty());
+
+        for(Player p : model.playersManager.getPlayers()){
+            if(p.equals(curr))
+                assertTrue(model.roundManager.getWinners().contains(model.playersManager.getSchoolBoard(p).getTower()));
+            else{
+                assertFalse(model.roundManager.getWinners().contains(model.playersManager.getSchoolBoard(p).getTower()));
+            }
+        }
+    }
 }

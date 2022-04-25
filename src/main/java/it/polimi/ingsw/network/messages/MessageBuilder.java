@@ -27,6 +27,7 @@ public final class MessageBuilder {
 
     /**
      * Deserializes the serialized message.
+     * Gson 2.9.0 does not support deserializing records so normal classes were used instead.
      *
      * @param json the serialized message
      * @return the deserialized message or an invalid message if the serialized message is invalid.
@@ -83,10 +84,7 @@ public final class MessageBuilder {
                 if (jsonObject.has("type") && jsonObject.has("message")) {
                     try {
                         MessageType t = MessageType.valueOf(jsonObject.get("type").getAsString());
-                        Message des = g.fromJson(jsonObject.get("message"), t.getMessageClass());
-                        if (des.isValid()) {
-                            return des;
-                        }
+                        return g.fromJson(jsonObject.get("message"), t.getMessageClass());
                     } catch (Throwable ignored) {
                         return new InvalidMessage();
                     }
@@ -127,10 +125,7 @@ public final class MessageBuilder {
                 if (jsonObject.has("type") && jsonObject.has("move")) {
                     try {
                         MoveType t = MoveType.valueOf(jsonObject.get("type").getAsString());
-                        Move des = g.fromJson(jsonObject.get("move"), t.getMoveClass());
-                        if (des.isValid()) {
-                            return des;
-                        }
+                        return g.fromJson(jsonObject.get("move"), t.getMoveClass());
                     } catch (Throwable ignored) {
                         return new InvalidMove();
                     }

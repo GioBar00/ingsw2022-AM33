@@ -1,10 +1,8 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.server.listeners.MessageListenerSubscriber;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.enums.*;
-import it.polimi.ingsw.server.model.player.Player;
 
 /**
  * Game interface. It exposes the methods to change the state of the game.
@@ -129,8 +127,5 @@ public interface Game extends MessageListenerSubscriber {
      * @return if the turn was skipped successfully.
      */
     boolean skipTurn();
-
-    GameView getGameView(Player destPlayer);
-
 
 }

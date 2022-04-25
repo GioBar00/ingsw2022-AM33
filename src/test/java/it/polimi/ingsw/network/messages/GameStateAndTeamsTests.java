@@ -1,6 +1,8 @@
-package it.polimi.ingsw.network.messages.server;
+package it.polimi.ingsw.network.messages;
 
 import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.server.CurrentGameState;
+import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.network.messages.views.*;
 import it.polimi.ingsw.server.model.GameModel;
 import it.polimi.ingsw.server.model.GameModelExpert;
