@@ -380,7 +380,7 @@ public class GameModelExpert implements Game, EffectHandler {
      * @return if the turn was skipped successfully.
      */
     @Override
-    public boolean skipTurn() {
+    public boolean skipCurrentPlayerTurn() {
         if (model.executeSkipTurn()) {
             model.notifyPersonalizedGameView();
             notifyPossibleActions();

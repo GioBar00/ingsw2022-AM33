@@ -126,6 +126,6 @@ public interface Game extends MessageListenerSubscriber {
      * Skips the current player's turn.
      * @return if the turn was skipped successfully.
      */
-    boolean skipTurn();
+    boolean skipCurrentPlayerTurn();
 
 }

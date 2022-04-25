@@ -682,7 +682,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return if the turn was skipped successfully.
      */
     @Override
-    public boolean skipTurn() {
+    public boolean skipCurrentPlayerTurn() {
         if (executeSkipTurn()) {
             notifyPersonalizedGameView();
             notifyPossibleActions();
