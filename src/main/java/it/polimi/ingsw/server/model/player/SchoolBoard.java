@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model.player;
-import it.polimi.ingsw.network.messages.messagesView.SchoolBoardView;
-import it.polimi.ingsw.server.model.enums.GamePreset;
+import it.polimi.ingsw.network.messages.views.SchoolBoardView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
 

@@ -8,8 +8,8 @@ import it.polimi.ingsw.server.model.cards.CharacterCard;
 import it.polimi.ingsw.server.model.cards.EffectHandler;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.player.SchoolBoard;
-import it.polimi.ingsw.network.messages.messagesView.CharacterCardView;
-import it.polimi.ingsw.network.messages.messagesView.GameView;
+import it.polimi.ingsw.network.messages.views.CharacterCardView;
+import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.server.model.enums.*;
 
 import java.util.*;

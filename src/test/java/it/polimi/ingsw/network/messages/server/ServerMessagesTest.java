@@ -1,7 +1,8 @@
 package it.polimi.ingsw.network.messages.server;
 
-import it.polimi.ingsw.network.messages.Move;
+import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
+import it.polimi.ingsw.network.messages.moves.MoveActionRequest;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.network.messages.Message;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ServerMessagesTest {
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.server.ChooseCloud} message.
+     * Tests the {@link ChooseCloud} message.
      */
     @Test
     void chooseCloud() {
@@ -42,7 +43,7 @@ class ServerMessagesTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.server.ChooseIsland} message.
+     * Tests the {@link ChooseIsland} message.
      */
     @Test
     void chooseIsland() {
@@ -65,7 +66,7 @@ class ServerMessagesTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.server.ChooseStudentColor} message.
+     * Tests the {@link ChooseStudentColor} message.
      */
     @Test
     void chooseStudentColor() {
@@ -102,7 +103,7 @@ class ServerMessagesTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.server.MoveMotherNature} message.
+     * Tests the {@link MoveMotherNature} message.
      */
     @Test
     void moveMotherNature() {
@@ -118,7 +119,7 @@ class ServerMessagesTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.server.PlayAssistantCard} message.
+     * Tests the {@link PlayAssistantCard} message.
      */
     @Test
     void playAssistantCard() {
@@ -139,7 +140,7 @@ class ServerMessagesTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.server.MoveStudent} message.
+     * Tests the {@link MoveStudent} message.
      */
     @Test
     void moveStudent() {
@@ -193,7 +194,7 @@ class ServerMessagesTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.server.SwapStudents} message.
+     * Tests the {@link SwapStudents} message.
      */
     @Test
     void swapStudents() {
@@ -253,11 +254,11 @@ class ServerMessagesTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.server.MultiplePossibleMoves} message.
+     * Tests the {@link MultiplePossibleMoves} message.
      */
     @Test
     void multiplePossibleMoves() {
-        List<Move> moves = new LinkedList<>();
+        List<MoveActionRequest> moves = new LinkedList<>();
         Set<Integer> entranceIndexes = new HashSet<>();
         entranceIndexes.add(1);
         entranceIndexes.add(5);
@@ -270,10 +271,10 @@ class ServerMessagesTest {
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         // test equals original moves
-        for (Move move : ((MultiplePossibleMoves) m).getPossibleMoves()) {
+        for (MoveActionRequest move : ((MultiplePossibleMoves) m).getPossibleMoves()) {
             MoveStudent moveStudent = (MoveStudent) move;
             boolean found = false;
-            for (Move originalMove : moves) {
+            for (MoveActionRequest originalMove : moves) {
                 MoveStudent originalMoveStudent = (MoveStudent) originalMove;
                 if (moveStudent.getFrom().equals(originalMoveStudent.getFrom()) &&
                         moveStudent.getTo().equals(originalMoveStudent.getTo()) &&

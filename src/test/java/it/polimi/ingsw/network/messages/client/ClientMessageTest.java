@@ -1,6 +1,7 @@
 package it.polimi.ingsw.network.messages.client;
 
 import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.server.model.enums.*;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ClientMessageTest {
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.client.ActivatedCharacterCard} message.
+     * Tests the {@link it.polimi.ingsw.network.messages.actions.ActivatedCharacterCard} message.
      */
     @Test
     void activatedCharacterCard() {
@@ -28,7 +29,7 @@ class ClientMessageTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.client.ChosenCloud} message.
+     * Tests the {@link ChosenCloud} message.
      */
     @Test
     void chosenCloud() {
@@ -55,7 +56,7 @@ class ClientMessageTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.client.ChosenIsland} message.
+     * Tests the {@link ChosenIsland} message.
      */
     @Test
     void chosenIsland() {
@@ -68,7 +69,7 @@ class ClientMessageTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.client.ChosenStudentColor} message.
+     * Tests the {@link ChosenStudentColor} message.
      */
     @Test
     void chosenStudentColor() {
@@ -94,7 +95,7 @@ class ClientMessageTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.client.ConcludeCharacterCardEffect} message.
+     * Tests the {@link ConcludeCharacterCardEffect} message.
      */
     @Test
     void concludeCharacterCardEffect() {
@@ -119,7 +120,7 @@ class ClientMessageTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.client.MovedMotherNature} message.
+     * Tests the {@link MovedMotherNature} message.
      */
     @Test
     void movedMotherNature() {
@@ -132,7 +133,7 @@ class ClientMessageTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.client.MovedStudent} message.
+     * Tests the {@link MovedStudent} message.
      */
     @Test
     void movedStudent() {
@@ -168,7 +169,7 @@ class ClientMessageTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.client.PlayedAssistantCard} message.
+     * Tests the {@link PlayedAssistantCard} message.
      */
     @Test
     void playedAssistantCard() {
@@ -193,7 +194,7 @@ class ClientMessageTest {
     }
 
     /**
-     * Tests the {@link it.polimi.ingsw.network.messages.client.SwappedStudents} message.
+     * Tests the {@link SwappedStudents} message.
      */
     @Test
     void swappedStudents() {

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.model.islands;
 
-import it.polimi.ingsw.network.messages.messagesView.IslandGroupView;
+import it.polimi.ingsw.network.messages.views.IslandGroupView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
 

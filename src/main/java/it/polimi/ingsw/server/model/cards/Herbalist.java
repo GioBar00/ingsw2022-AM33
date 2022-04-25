@@ -2,7 +2,7 @@ package it.polimi.ingsw.server.model.cards;
 
 import it.polimi.ingsw.server.model.enums.CharacterType;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.server.ChooseIsland;
+import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
 
 import java.util.Set;
 

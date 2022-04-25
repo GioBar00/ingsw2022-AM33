@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.network.messages.messagesView.GameView;
+import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.server.listeners.MessageListenerSubscriber;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.enums.*;

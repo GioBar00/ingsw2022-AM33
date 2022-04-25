@@ -3,14 +3,12 @@ package it.polimi.ingsw.network.messages;
 import java.io.Serializable;
 
 /**
- * Generic message
+ * Interface for all the messages
  */
-public class Message implements Serializable {
+public interface Message extends Serializable {
 
     /**
      * @return if the message is valid.
      */
-    public boolean isValid() {
-        return false;
-    }
+    boolean isValid();
 }

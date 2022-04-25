@@ -1,9 +1,11 @@
 package it.polimi.ingsw.network.messages.enums;
 
+import it.polimi.ingsw.network.messages.InvalidMessage;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.Move;
+import it.polimi.ingsw.network.messages.actions.*;
+import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.client.*;
-import it.polimi.ingsw.network.messages.messagesView.GameView;
+import it.polimi.ingsw.network.messages.moves.InvalidMove;
 import it.polimi.ingsw.network.messages.server.*;
 
 import java.util.HashMap;
@@ -48,8 +50,9 @@ public enum MessageType {
         LOOKUP_MAP = new HashMap<>();
         for (MessageType m: MessageType.values())
             LOOKUP_MAP.put(m.getMessageClass(), m);
-        LOOKUP_MAP.put(Message.class, INVALID);
-        LOOKUP_MAP.put(Move.class, INVALID);
+
+        LOOKUP_MAP.put(InvalidMessage.class, INVALID);
+        LOOKUP_MAP.put(InvalidMove.class, INVALID);
     }
 
     private final Class<? extends Message> messageClass;

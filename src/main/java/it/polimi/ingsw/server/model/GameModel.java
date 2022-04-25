@@ -1,11 +1,15 @@
 package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.Move;
+import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
+import it.polimi.ingsw.network.messages.actions.requests.MoveMotherNature;
+import it.polimi.ingsw.network.messages.actions.requests.MoveStudent;
+import it.polimi.ingsw.network.messages.actions.requests.MultiplePossibleMoves;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
+import it.polimi.ingsw.network.messages.moves.MoveActionRequest;
 import it.polimi.ingsw.network.messages.server.*;
 import it.polimi.ingsw.server.listeners.ConcreteMessageListenerSubscriber;
-import it.polimi.ingsw.network.messages.messagesView.GameView;
+import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.server.listeners.MessageEvent;
 import it.polimi.ingsw.server.model.islands.IslandsManager;
 import it.polimi.ingsw.server.model.player.Player;
@@ -836,7 +840,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         for (int i = 0; i < islandsManager.getNumIslandGroups(); i++)
             islandIndexes.add(i);
 
-        List<Move> moves = new LinkedList<>();
+        List<MoveActionRequest> moves = new LinkedList<>();
         moves.add(new MoveStudent(MoveLocation.ENTRANCE, validEntranceIndexes, MoveLocation.ISLAND, islandIndexes));
         moves.add(new MoveStudent(MoveLocation.ENTRANCE, hallEntranceIndexes, MoveLocation.HALL, null));
         Message m = new MultiplePossibleMoves(moves);

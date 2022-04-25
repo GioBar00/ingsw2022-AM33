@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.messages.server;
 
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.messagesView.*;
+import it.polimi.ingsw.network.messages.views.*;
 import it.polimi.ingsw.server.model.GameModel;
 import it.polimi.ingsw.server.model.GameModelExpert;
 import it.polimi.ingsw.server.model.enums.GamePreset;

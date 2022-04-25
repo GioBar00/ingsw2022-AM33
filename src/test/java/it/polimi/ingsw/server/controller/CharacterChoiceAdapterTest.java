@@ -1,8 +1,8 @@
 package it.polimi.ingsw.server.controller;
 
-import it.polimi.ingsw.network.messages.client.ChosenIsland;
-import it.polimi.ingsw.network.messages.client.ChosenStudentColor;
-import it.polimi.ingsw.network.messages.client.MovedStudent;
+import it.polimi.ingsw.network.messages.actions.ChosenIsland;
+import it.polimi.ingsw.network.messages.actions.ChosenStudentColor;
+import it.polimi.ingsw.network.messages.actions.MovedStudent;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.enums.StudentColor;

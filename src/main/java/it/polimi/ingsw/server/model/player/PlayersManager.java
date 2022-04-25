@@ -1,15 +1,9 @@
 package it.polimi.ingsw.server.model.player;
 
-import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.Move;
-import it.polimi.ingsw.network.messages.enums.MoveLocation;
-import it.polimi.ingsw.network.messages.messagesView.PlayerView;
-import it.polimi.ingsw.network.messages.messagesView.TeamsView;
-import it.polimi.ingsw.network.messages.server.MoveStudent;
-import it.polimi.ingsw.network.messages.server.MultiplePossibleMoves;
-import it.polimi.ingsw.network.messages.server.PlayAssistantCard;
+import it.polimi.ingsw.network.messages.views.PlayerView;
+import it.polimi.ingsw.network.messages.views.TeamsView;
+import it.polimi.ingsw.network.messages.actions.requests.PlayAssistantCard;
 import it.polimi.ingsw.server.model.enums.*;
-import it.polimi.ingsw.util.LinkedPairList;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;

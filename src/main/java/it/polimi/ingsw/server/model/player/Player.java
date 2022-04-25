@@ -1,9 +1,8 @@
 package it.polimi.ingsw.server.model.player;
 
-import it.polimi.ingsw.network.messages.messagesView.PlayerView;
-import it.polimi.ingsw.network.messages.messagesView.SchoolBoardView;
+import it.polimi.ingsw.network.messages.views.PlayerView;
+import it.polimi.ingsw.network.messages.views.SchoolBoardView;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
-import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.Wizard;
 
 import java.util.ArrayList;

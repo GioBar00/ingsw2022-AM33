@@ -3,6 +3,10 @@ package it.polimi.ingsw.network.messages;
 import com.google.gson.*;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveType;
+import it.polimi.ingsw.network.messages.moves.InvalidMove;
+import it.polimi.ingsw.network.messages.moves.Move;
+import it.polimi.ingsw.network.messages.moves.MoveAction;
+import it.polimi.ingsw.network.messages.moves.MoveActionRequest;
 
 import java.lang.reflect.Type;
 
@@ -13,6 +17,7 @@ public final class MessageBuilder {
 
     /**
      * Serializes the message to Json.
+     *
      * @param m message to serialize.
      * @return the serialized message.
      */
@@ -26,6 +31,7 @@ public final class MessageBuilder {
 
     /**
      * Deserializes the serialized message.
+     *
      * @param json the serialized message
      * @return the deserialized message or an invalid message if the serialized message is invalid.
      */
@@ -38,10 +44,10 @@ public final class MessageBuilder {
             if (m != null && m.isValid())
                 return m;
         } catch (Exception ignored) {
-            return new Message();
+            return new InvalidMessage();
         }
 
-        return new Message();
+        return new InvalidMessage();
     }
 
     /**
@@ -53,6 +59,8 @@ public final class MessageBuilder {
         public JsonElement serialize(Message message, Type type, JsonSerializationContext jsonSerializationContext) {
             Gson g = new GsonBuilder()
                     .registerTypeAdapter(Move.class, new MoveSerializer())
+                    .registerTypeAdapter(MoveAction.class, new MoveSerializer())
+                    .registerTypeAdapter(MoveActionRequest.class, new MoveSerializer())
                     .create();
             JsonObject jsonObject = new JsonObject();
             MessageType t = MessageType.retrieveByMessageClass(message);
@@ -71,6 +79,8 @@ public final class MessageBuilder {
         public Message deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
             Gson g = new GsonBuilder()
                     .registerTypeAdapter(Move.class, new MoveDeserializer())
+                    .registerTypeAdapter(MoveAction.class, new MoveDeserializer())
+                    .registerTypeAdapter(MoveActionRequest.class, new MoveDeserializer())
                     .create();
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             if (jsonObject.isJsonObject()) {
@@ -81,12 +91,12 @@ public final class MessageBuilder {
                         if (des.isValid()) {
                             return des;
                         }
-                    } catch (IllegalArgumentException ignored) {
-                        return new Message();
+                    } catch (Throwable ignored) {
+                        return new InvalidMessage();
                     }
                 }
             }
-            return new Message();
+            return new InvalidMessage();
         }
     }
 
@@ -125,12 +135,12 @@ public final class MessageBuilder {
                         if (des.isValid()) {
                             return des;
                         }
-                    } catch (IllegalArgumentException ignored) {
-                        return new Move();
+                    } catch (Throwable ignored) {
+                        return new InvalidMove();
                     }
                 }
             }
-            return new Move();
+            return new InvalidMove();
         }
     }
 }

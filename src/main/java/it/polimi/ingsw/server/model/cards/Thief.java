@@ -3,7 +3,7 @@ package it.polimi.ingsw.server.model.cards;
 import it.polimi.ingsw.server.model.enums.CharacterType;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.server.ChooseStudentColor;
+import it.polimi.ingsw.network.messages.actions.requests.ChooseStudentColor;
 
 import java.util.Arrays;
 import java.util.EnumSet;

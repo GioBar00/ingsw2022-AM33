@@ -1,10 +1,11 @@
 package it.polimi.ingsw.network.messages.enums;
 
-import it.polimi.ingsw.network.messages.Move;
-import it.polimi.ingsw.network.messages.client.MovedStudent;
-import it.polimi.ingsw.network.messages.client.SwappedStudents;
-import it.polimi.ingsw.network.messages.server.MoveStudent;
-import it.polimi.ingsw.network.messages.server.SwapStudents;
+import it.polimi.ingsw.network.messages.moves.InvalidMove;
+import it.polimi.ingsw.network.messages.moves.Move;
+import it.polimi.ingsw.network.messages.actions.MovedStudent;
+import it.polimi.ingsw.network.messages.actions.SwappedStudents;
+import it.polimi.ingsw.network.messages.actions.requests.MoveStudent;
+import it.polimi.ingsw.network.messages.actions.requests.SwapStudents;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Map;
  * Enum that represents the type of move
  */
 public enum MoveType {
+    INVALID(null),
     MOVE(MoveStudent.class),
     SWAP(SwapStudents.class),
 
@@ -25,6 +27,8 @@ public enum MoveType {
         LOOKUP_MAP = new HashMap<>();
         for (MoveType m: MoveType.values())
             LOOKUP_MAP.put(m.getMoveClass(), m);
+
+        LOOKUP_MAP.put(InvalidMove.class, INVALID);
     }
 
     private final Class<? extends Move> moveClass;

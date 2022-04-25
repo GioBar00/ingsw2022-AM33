@@ -4,7 +4,7 @@ import it.polimi.ingsw.server.model.enums.CharacterType;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
-import it.polimi.ingsw.network.messages.server.SwapStudents;
+import it.polimi.ingsw.network.messages.actions.requests.SwapStudents;
 
 import java.util.*;
 
