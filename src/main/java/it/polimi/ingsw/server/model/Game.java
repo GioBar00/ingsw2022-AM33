@@ -128,4 +128,10 @@ public interface Game extends MessageListenerSubscriber {
      */
     boolean skipCurrentPlayerTurn();
 
+    /**
+     * Remove a player from the game
+     * @param nickname of the player
+     * @return if the player was removed
+     */
+    boolean removePlayer(String nickname);
 }

@@ -2,24 +2,27 @@ package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
+import it.polimi.ingsw.network.messages.client.SkipTurn;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
+import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
-import it.polimi.ingsw.server.controller.CallableTimerTask;
 import it.polimi.ingsw.server.listeners.*;
-import it.polimi.ingsw.server.timer.MyTimer;
-import it.polimi.ingsw.server.timer.VirtualClientStopConnection;
-import it.polimi.ingsw.server.timer.VirtualClientTimeout;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Class for handle connection between a specified player and the server. Virtual Client forward valid request to the
  * controller
  */
-public class VirtualClient extends ConcreteMessageListenerSubscriber implements Runnable, MessageListener, CallableTimerTask {
+public class VirtualClient extends ConcreteMessageListenerSubscriber implements MessageListener {
 
     /**
      * Nickname of the player who interfaces this VirtualClient
@@ -29,44 +32,152 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     /**
      * Socket of the connection
      */
-    private final Socket socket;
+    private Socket socket;
 
     /**
      * input scanner for incoming messages
      */
-    private final Scanner in;
+    private Scanner in;
 
     /**
      * output printer for outgoing messages
      */
-    private final PrintWriter out;
+    private PrintWriter out;
+
+    /**
+     * Thread executor used for
+     */
+    private final ExecutorService executor;
+
+    /**
+     * A queue for the messages to send
+     */
+    private final LinkedBlockingQueue<Message> queue;
+
+    /**
+     * Timer for checking if the connection is still alive
+     */
+    private final Timer timer;
 
     /**
      * Value for checking the time validity of a reply
      */
-    private boolean notAlive = false;
+    private Boolean notAlive = false;
 
     /**
      * Listener used in case of lost connection
      */
     private ConnectionListener connectionListener;
 
+    /**
+     * Used for know if the client is connected
+     */
+    private Boolean isActive;
+
+    /**
+     * lock associated at the boolean notAlive
+     */
+    private final Object lock;
+
+    /**
+     * lock associated at the boolean notAlive
+     */
+    private final Object lock2;
+
 
     /**
      * Constructor of VirtualClient
      * @param identifier the nickname of the player that interfaces with this VirtualClient
-     * @param socket socket of the connection
-     * @param connectionListener the listener of ConnectionEvent
      */
-    public VirtualClient(String identifier, Socket socket, ConnectionListener connectionListener) throws IOException {
+    public VirtualClient(String identifier) {
         this.identifier = identifier;
+        queue = new LinkedBlockingQueue<>();
+        timer = new Timer();
+        this.executor = Executors.newFixedThreadPool(2);
+        isActive = false;
+        lock = new Object();
+        lock2 = new Object();
+    }
+
+    /**
+     * Method used for know if the client is still connected
+     * @return true if is connected, false in other case
+     */
+    public boolean getStatus() {
+        synchronized (lock2) {
+            return isActive;
+        }
+    }
+
+    /**
+     * Adding a socket to the virtualClient. Used in case of creation or reconnection
+     * @param socket the socket of the communication
+     */
+    public void addSocket(Socket socket) {
         this.socket = socket;
+        boolean open = false;
+        do {
+            try {
+                in = new Scanner(socket.getInputStream());
+                out = new PrintWriter(socket.getOutputStream());
+                open = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }while(!open);
+        synchronized (lock2){
+            isActive = true;
+        }
+    }
 
-        in = new Scanner(this.socket.getInputStream());
-        out = new PrintWriter(this.socket.getOutputStream());
+    /**
+     * Method for start the in and the out communications
+     */
+    public void startVirtualClient() {
+        executor.submit(this :: messagesHandler);
+        executor.submit(this :: startOutput);
+        startTimer();
+        isActive = true;
+    }
 
 
-        this.connectionListener = connectionListener;
+    /**
+     * Private method for setting up the output communication
+     */
+    private void startOutput() {
+        Message m;
+        try {
+            m = queue.take();
+            out.println(MessageBuilder.toJson(m));
+            out.flush();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Private method used for checking if the connection is alive
+     */
+    private void startTimer(){
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                synchronized (lock) {
+                    notAlive = true;
+                }
+                try {
+                    queue.put(new CommMessage(CommMsgType.CONNECTION_ALIVE));
+                    wait(10*1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                synchronized (lock) {
+                    if (notAlive) {
+                        closeConnection();
+                    }
+                }
+            }
+        },0,10* 1000);
     }
 
     /**
@@ -86,35 +197,24 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     }
 
     /**
-     * Set if the connection time is no more valid
-     */
-    public void setNotAlive() {
-        notAlive = true;
-    }
-
-    /**
-     * Override Method from runnable interface
-     */
-    @Override
-    public void run() {
-        messagesHandler();
-    }
-
-    /**
      * Handles the incoming messages. Checks if the message is valid. If the message is valid notify the listener
      */
     private void messagesHandler() {
-        MyTimer timer = new MyTimer(new VirtualClientTimeout(this, 60));
         String line;
         while(true){
-            timer.startTimer();
-            synchronized (in){
-                line = in.nextLine();
+            line = in.nextLine();
+            synchronized (lock){
+                notAlive = false;
             }
-            timer.stopTask();
             Message m = MessageBuilder.fromJson(line);
             if(m.isValid()){
-                notifyListeners(new MessageEvent(this, m));
+                if (MessageType.retrieveByMessageClass(m) == MessageType.COMM_MESSAGE) {
+                    if (((CommMessage) m).getType() != CommMsgType.OK) {
+                        notifyListeners(new MessageEvent(this, m));
+                    }
+                } else {
+                    notifyListeners(new MessageEvent(this, m));
+                }
             }
             else sendInvalidMessage();
         }
@@ -125,77 +225,57 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
      * Send a Communication Message(ERROR_NOT_YOUR_TURN) to the client
      */
     public void sendNotYourTurnMessage(){
-        out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN)));
-        out.flush();
+        queue.add(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN));
     }
 
     /**
      * Send a Communication Message(ERROR_INVALID_MESSAGE) to the client
      */
     private void sendInvalidMessage() {
-        synchronized (out) {
-            out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE)));
-            out.flush();
-        }
+            queue.add(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
     }
 
     /**
      * Send a Communication Message(ERROR_IMPOSSIBLE_MOVE) to the client
      */
     public void sendImpossibleMessage() {
-        synchronized (out) {
-            out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE)));
-            out.flush();
-        }
+            queue.add(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
     }
 
     /**
-     * Called by the TimeTask for checking if the client is still alive.
-     * Send a request message to the client and wait for a reply. If the reply didn't arrive the VirtualClient close the
-     * connection and notify the Server
+     * Close the connection socket and send notify to Server
      */
-    public void endOfTime() {
-        MyTimer timer = new MyTimer(new VirtualClientStopConnection(this, 60));
-        String line;
-        synchronized (in){
-            synchronized (out) {
-                out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.CONNECTION_ALIVE)));
-                out.flush();
-
-                timer.startTimer();
-
-                do {
-                    line = in.nextLine();
-                    if (line != null) {
-                        timer.stopTask();
-                        timer.killTimer();
-                        return;
-                    }
-                } while (!notAlive);
-
-                timer.killTimer();
-
-
-                in.close();
-                out.close();
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                connectionListener.onConnectionEvent(new ConnectionEvent(this));
-            }
+    private void closeConnection() {
+        synchronized (lock2) {
+            isActive = false;
         }
-
+        timer.cancel();
+        executor.shutdown();
+        in.close();
+        out.close();
+        boolean isClosed = false;
+        do {
+            try {
+                socket.close();
+                isClosed = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }while(!isClosed);
+        connectionListener.onConnectionEvent(new ConnectionEvent(this));
     }
 
-    //TODO
+    /**
+     * Methods from MessageListener Interface for notify to the VirtualClient changes in the model
+     * @param event of the received message
+     */
     @Override
     public void onMessage(MessageEvent event) {
+        if(!isActive)
+            notifyListeners(new MessageEvent(this, new SkipTurn()));
+        else{queue.add(event.getMessage());}
 
     }
-
 
 }
 

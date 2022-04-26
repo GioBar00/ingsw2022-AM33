@@ -19,6 +19,9 @@ class PlayersManagerTest {
         assertTrue(pm.addPlayer("Pl1"));
 
         assertTrue(pm.addPlayer("Pl2"));
+        assertTrue(pm.removePlayer("Pl2"));
+        assertFalse(pm.removePlayer("Pl3"));
+        assertTrue(pm.addPlayer("Pl2"));
         assertFalse(pm.addPlayer("Pl1"));
         assertEquals(1,pm.getAvailablePlayerSlots());
         assertTrue(pm.addPlayer("Pl3"));

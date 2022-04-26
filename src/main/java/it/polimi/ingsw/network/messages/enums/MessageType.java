@@ -40,7 +40,8 @@ public enum MessageType {
     CHOSEN_GAME(ChosenGame.class),
     CHOSEN_TEAM(ChosenTeam.class),
     LOGIN(Login.class),
-    START_GAME(StartGame.class);
+    START_GAME(StartGame.class),
+    SKIP_TURN(SkipTurn.class);
 
     private static final Map<Class<? extends Message>, MessageType> LOOKUP_MAP;
 

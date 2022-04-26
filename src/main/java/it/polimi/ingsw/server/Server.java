@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.server.controller.Controller;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.client.ChosenGame;
@@ -8,6 +7,7 @@ import it.polimi.ingsw.network.messages.client.Login;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.server.controller.Controller;
 import it.polimi.ingsw.server.listeners.ConnectionEvent;
 import it.polimi.ingsw.server.listeners.ConnectionListener;
 
@@ -17,9 +17,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
 /**
  * Class for instantiate a new Game and handle new network requests
@@ -42,11 +40,6 @@ public class Server implements ConnectionListener {
     private final Controller controller;
 
     /**
-     * Executor for handle virtual Client
-     */
-    private ThreadPoolExecutor executor;
-
-    /**
      * Server's constructor method
      */
     public Server() {
@@ -62,7 +55,6 @@ public class Server implements ConnectionListener {
      * Each of this Virtual Client are run on different threads
      */
      public void handleRequest() {
-        ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
 
         try {
@@ -78,17 +70,12 @@ public class Server implements ConnectionListener {
                 String nickname = handleFirstConnection(socket);
                 if(nickname != null) {
                     synchronized (this) {
-                        boolean openVirtualClient = false;
-                        do {
-                            try {
-                                VirtualClient vc = new VirtualClient(nickname, socket, this);
-                                vc.addListener(controller);
-                                virtualClients.put(nickname, vc);
-                                openVirtualClient = true;
-                                executor.submit(vc);
-                            } catch (IOException ignored) {
-                            }
-                        } while (!openVirtualClient);
+                        VirtualClient vc = new VirtualClient(nickname);
+                        vc.addSocket(socket);
+                        vc.addListener(controller);
+                        controller.addListener(vc);
+                        virtualClients.put(nickname, vc);
+                        vc.startVirtualClient();
                     }
                 }
             } catch(IOException e) {
@@ -96,7 +83,6 @@ public class Server implements ConnectionListener {
             }
 
         }
-        executor.shutdown();
     }
 
     /**
@@ -106,10 +92,11 @@ public class Server implements ConnectionListener {
      * @param socket used for send reply messages.
      * @return a String sets as null if the request is invalid or a String with the player nickname if the request is valid.
      */
-    private String handleFirstConnection(Socket socket) {
+    public String handleFirstConnection(Socket socket) {
         try {
             Scanner in = new Scanner(socket.getInputStream());
             PrintWriter out = new PrintWriter(socket.getOutputStream());
+
 
             String line = in.nextLine();
 
@@ -122,50 +109,72 @@ public class Server implements ConnectionListener {
                 if (mex.isValid()) {
                     out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_NULL_NICKNAME)));
                     out.flush();
+                    in.close();
+                    out.close();
                     socket.close();
                     return null;
                 }
-                //model didn't exist
-                if (!controller.isInstantiated()) {
-                    out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.CHOOSE_PARTY_TYPE)));
-                    out.flush();
+                //player already in the party -> the model exist
+                if(virtualClients.containsKey(nickname) && !virtualClients.get(nickname).getStatus()){
+                    VirtualClient vc =virtualClients.get(nickname);
+                    in.close();
+                    out.close();
+                    vc.addSocket(socket);
+                    controller.addListener(vc);
+                    vc.addListener(controller);
+                    vc.startVirtualClient();
+                    return null;
+                }
+                else {
+                    //model didn't exist
+                    if (!controller.isInstantiated()) {
+                        ExecutorService executor = Executors.newFixedThreadPool(1);
 
-                    line = in.nextLine();
-                    message = MessageBuilder.fromJson(line);
-                    if (MessageType.retrieveByMessageClass(message).equals(MessageType.CHOSEN_GAME)) {
-                        ChosenGame choice = (ChosenGame) message;
-                        if (choice.isValid()) {
-                            do {
-                                controller.setModel(choice.getPreset(), choice.getMode());
-                                this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(choice.getPreset().getPlayersNumber());
+                        out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.CHOOSE_PARTY_TYPE)));
+                        out.flush();
+
+                        Future <String> result = executor.submit(() -> {
+                            String mes = in.nextLine();
+                            Message m = MessageBuilder.fromJson(mes);
+                            if (MessageType.retrieveByMessageClass(m).equals(MessageType.CHOSEN_GAME)) {
+                                ChosenGame choice = (ChosenGame) m;
+                                if (choice.isValid()) {
+                                    do {
+                                        controller.setModel(choice.getPreset(), choice.getMode());
+                                    }
+                                    while (!controller.addPlayer(nickname));
+                                    return nickname;
+                                }
                             }
-                            while (!controller.addPlayer(nickname));
-                            return nickname;
+                            return null;
+                        });
+                        try {
+                            return result.get(30, TimeUnit.SECONDS);
                         }
-
-                    }
-                    out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE)));
-                    out.flush();
-                    socket.close();
-                    return null;
-                }
-
-                //model exists
-                if (controller.addPlayer(nickname)) {
-                    return nickname;
-                } else {
-                    //Was the player already in the party but had some connection issue?
-                    synchronized (this) {
-                        if (virtualClients.containsKey(nickname) && virtualClients.get(nickname) != null) {
-                            virtualClients.remove(nickname);
-                            return nickname;
-                        } else {
-                            out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE)));
+                        catch (InterruptedException | ExecutionException e){
+                            e.printStackTrace();
+                        }
+                        catch (TimeoutException e){
+                            out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE)));
                             out.flush();
                             socket.close();
                             return null;
                         }
                     }
+                    else {
+                        //model exists
+                        if (controller.addPlayer(nickname)) {
+                        return nickname;
+                        }
+                        else {
+                            //Was the player already in the party but had some connection issue?
+                            out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_NO_SPACE)));
+                            out.flush();
+                            return null;
+                         }
+
+                    }
+
                 }
             }
         } catch (IOException e) {
@@ -188,10 +197,10 @@ public class Server implements ConnectionListener {
     @Override
     synchronized public void onConnectionEvent(ConnectionEvent event) {
             VirtualClient vc =(VirtualClient)event.getSource();
-            executor.remove(vc);
             virtualClients.remove(vc.getIdentifier());
             virtualClients.put(vc.getIdentifier(),null);
             vc.removeListener();
+            controller.removeListener(vc);
             //TODO remove model
             //TODO skip turn for that player !!IMPORTANT!! manage the case of player is the master and the party isn't started
     }

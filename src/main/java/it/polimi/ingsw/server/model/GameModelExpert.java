@@ -389,6 +389,11 @@ public class GameModelExpert implements Game, EffectHandler {
         return false;
     }
 
+    @Override
+    public boolean removePlayer(String nickname) {
+        return model.removePlayer(nickname);
+    }
+
     /**
      * Gets a random student from the bag.
      *

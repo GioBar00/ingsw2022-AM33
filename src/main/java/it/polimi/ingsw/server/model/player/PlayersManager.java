@@ -355,4 +355,19 @@ public class PlayersManager {
         }
         return new PlayAssistantCard(possibleCards);
     }
+
+    /**
+     * Remove a player from the party
+     * @param nickname of the player
+     * @return if the player has been removed
+     */
+    public boolean removePlayer(String nickname){
+        for(Player p : players){
+            if(p.getNickname().equals(nickname)){
+                players.remove(p);
+                return true;
+            }
+        }
+        return false;
+    }
 }

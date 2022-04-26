@@ -6,6 +6,8 @@ public enum CommMsgType {
     ERROR_NICKNAME_UNAVAILABLE ("ERROR: the nickname chosen is already in use"),
     ERROR_NO_SPACE("ERROR: the party is already full"),
     ERROR_UNBALANCED_TEAMS ("ERROR: the game can be started only if the teams have the same number of players"),
+    ERROR_NOT_MASTER("ERROR: you don't have the right"),
+    ERROR_GAME_STARTED("ERROR: game is already started"),
     ERROR_NOT_YOUR_TURN ("ERROR: you can't do that! it's not your turn!"),
     ERROR_IMPOSSIBLE_MOVE("ERROR: you can't move that now!"),
     ERROR_GAME_SUSPENDED("ERROR: the other players have temporarily left; the game will resume when they reconnect..."),

@@ -2,10 +2,7 @@ package it.polimi.ingsw.network.messages;
 
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
-import it.polimi.ingsw.network.messages.client.ChosenGame;
-import it.polimi.ingsw.network.messages.client.ChosenTeam;
-import it.polimi.ingsw.network.messages.client.Login;
-import it.polimi.ingsw.network.messages.client.StartGame;
+import it.polimi.ingsw.network.messages.client.*;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.server.model.enums.*;
@@ -235,5 +232,20 @@ class ClientMessageTest {
         original = new SwappedStudents(MoveLocation.CARD, 1, MoveLocation.HALL, 10);
         m = toAndFromJson(original);
         assertFalse(m.isValid());
+    }
+
+    /**
+     * Test for SkipTurn message
+     */
+    @Test
+    void SkipTurnTest(){
+        SkipTurn skipTurn = new SkipTurn();
+        assertTrue(skipTurn.isValid());
+
+        String line = MessageBuilder.toJson(skipTurn);
+        Message m = MessageBuilder.fromJson(line);
+        assertEquals(MessageType.SKIP_TURN, MessageType.retrieveByMessageClass(m));
+        SkipTurn mes = (SkipTurn)m;
+        assertTrue(mes.isValid());
     }
 }

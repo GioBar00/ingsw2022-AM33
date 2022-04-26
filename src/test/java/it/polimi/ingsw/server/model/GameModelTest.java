@@ -481,4 +481,20 @@ class GameModelTest {
             }
         }
     }
+
+    /**
+     * Tests the method removePlayer. Try to remove a player that doesn't exist
+     */
+    @Test
+    void removePlayer(){
+        GameModel model = new GameModel(GamePreset.THREE);
+
+        assertFalse(model.removePlayer("1"));
+        assertTrue(model.addPlayer("1"));
+        assertTrue(model.addPlayer("2"));
+        assertTrue(model.removePlayer("1"));
+        assertFalse(model.removePlayer("1"));
+        assertTrue(model.addPlayer("1"));
+        assertTrue(model.addPlayer("3"));
+    }
 }

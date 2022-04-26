@@ -691,6 +691,11 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         return false;
     }
 
+    @Override
+    public boolean removePlayer(String nickname) {
+        return playersManager.removePlayer(nickname);
+    }
+
     /**
      * Advances the Game to the next round.
      * If it is the last round it checks the winner.

@@ -65,6 +65,21 @@ public class Controller implements MessageListener {
         return model.addPlayer(nickname);
     }
 
+    /**
+     * This method adds a new listener to the model
+     * @param listener the listener of the model
+     */
+    public void addListener(MessageListener listener) {
+        model.addListener(listener);
+    }
+
+    /**
+     * Removes one selected listener from the model
+     * @param listener the removed listener
+     */
+    public void removeListener(MessageListener listener) {
+        model.removeListener(listener);
+    }
 
     /**
      * Override methods from MessageListener Interface.
@@ -77,28 +92,35 @@ public class Controller implements MessageListener {
     public void onMessage(MessageEvent event) {
         VirtualClient vc = (VirtualClient)event.getSource();
         Message msg = event.getMessage();
-        switch (model.getGameState()) {
-            case UNINITIALIZED:
-                handleGameSetup(vc, msg);
-                break;
-            case STARTED:
-                if (canPlay(vc.getIdentifier())){
-                    vc.sendNotYourTurnMessage();
-                }else {
-                    switch (model.getPhase()) {
-                        case PLANNING -> handlePlanningPhase(vc, msg);
 
-                        case MOVE_STUDENTS -> handleMoveStudentPhase(vc, msg);
-
-                        case MOVE_MOTHER_NATURE -> handleMoveMotherNaturePhase(vc, msg);
-
-                        case CHOOSE_CLOUD -> handleChooseCloudPhase(vc, msg);
-                    }
-                }
+        if(MessageType.retrieveByMessageClass(msg) == MessageType.SKIP_TURN){
+            if(((VirtualClient) event.getSource()).getIdentifier().equals(model.getCurrentPlayer()))
+                 model.skipCurrentPlayerTurn();
+        }
+        else {
+            switch (model.getGameState()) {
+                case UNINITIALIZED:
+                    handleGameSetup(vc, msg);
                     break;
-            case ENDED:
-                vc.sendImpossibleMessage();
-                break;
+                case STARTED:
+                    if (canPlay(vc.getIdentifier())) {
+                        vc.sendNotYourTurnMessage();
+                    } else {
+                        switch (model.getPhase()) {
+                            case PLANNING -> handlePlanningPhase(vc, msg);
+
+                            case MOVE_STUDENTS -> handleMoveStudentPhase(vc, msg);
+
+                            case MOVE_MOTHER_NATURE -> handleMoveMotherNaturePhase(vc, msg);
+
+                            case CHOOSE_CLOUD -> handleChooseCloudPhase(vc, msg);
+                        }
+                    }
+                    break;
+                case ENDED:
+                    vc.sendImpossibleMessage();
+                    break;
+            }
         }
 
 
@@ -118,6 +140,7 @@ public class Controller implements MessageListener {
                     vc.sendImpossibleMessage();
             }
             case START_GAME -> {
+                //fixme check master
                 if(!this.startGame(vc.getIdentifier()))
                     vc.sendImpossibleMessage();
             }
