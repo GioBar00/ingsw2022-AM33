@@ -65,11 +65,6 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     private Boolean notAlive = false;
 
     /**
-     * Listener used in case of lost connection
-     */
-    private ConnectionListener connectionListener;
-
-    /**
      * Used for know if the client is connected
      */
     private Boolean isActive;
@@ -180,12 +175,6 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
         },0,10* 1000);
     }
 
-    /**
-     * Removes the ConnectionListener bonded to this class
-     */
-    public void removeListener(){
-        this.connectionListener = null;
-    }
 
     /**
      * Identifier getter
@@ -245,7 +234,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     /**
      * Close the connection socket and send notify to Server
      */
-    private void closeConnection() {
+    void closeConnection() {
         synchronized (lock2) {
             isActive = false;
         }
@@ -262,7 +251,6 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
                 e.printStackTrace();
             }
         }while(!isClosed);
-        connectionListener.onConnectionEvent(new ConnectionEvent(this));
     }
 
     /**
@@ -274,7 +262,6 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
         if(!isActive)
             notifyListeners(new MessageEvent(this, new SkipTurn()));
         else{queue.add(event.getMessage());}
-
     }
 
 }

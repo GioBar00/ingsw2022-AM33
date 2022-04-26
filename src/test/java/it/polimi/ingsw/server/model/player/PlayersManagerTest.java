@@ -16,8 +16,9 @@ class PlayersManagerTest {
     @Test
     void CreatePm(){
         //TestingAdd
+        assertNull(pm.getMaster());
         assertTrue(pm.addPlayer("Pl1"));
-
+        assertEquals("Pl1", pm.getMaster());
         assertTrue(pm.addPlayer("Pl2"));
         assertTrue(pm.removePlayer("Pl2"));
         assertFalse(pm.removePlayer("Pl3"));

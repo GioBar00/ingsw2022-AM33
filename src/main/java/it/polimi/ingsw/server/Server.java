@@ -8,8 +8,10 @@ import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.server.controller.Controller;
-import it.polimi.ingsw.server.listeners.ConnectionEvent;
-import it.polimi.ingsw.server.listeners.ConnectionListener;
+
+import it.polimi.ingsw.server.listeners.EndPartyEvent;
+import it.polimi.ingsw.server.listeners.EndPartyListener;
+import it.polimi.ingsw.server.listeners.MessageEvent;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,7 +24,7 @@ import java.util.concurrent.*;
 /**
  * Class for instantiate a new Game and handle new network requests
  */
-public class Server implements ConnectionListener {
+public class Server implements EndPartyListener {
 
     /**
      * a collection of player nickname and their request handler
@@ -37,7 +39,7 @@ public class Server implements ConnectionListener {
     /**
      * Game Controller
       */
-    private final Controller controller;
+    private Controller controller;
 
     /**
      * Server's constructor method
@@ -46,7 +48,7 @@ public class Server implements ConnectionListener {
         virtualClients = new HashMap<>();
         //Todo how we chose the port
         port = 123;
-        controller = new Controller();
+        controller = new Controller(this);
 
     }
 
@@ -73,7 +75,7 @@ public class Server implements ConnectionListener {
                         VirtualClient vc = new VirtualClient(nickname);
                         vc.addSocket(socket);
                         vc.addListener(controller);
-                        controller.addListener(vc);
+                        controller.addModelListener(vc);
                         virtualClients.put(nickname, vc);
                         vc.startVirtualClient();
                     }
@@ -120,7 +122,7 @@ public class Server implements ConnectionListener {
                     in.close();
                     out.close();
                     vc.addSocket(socket);
-                    controller.addListener(vc);
+                    controller.addModelListener(vc);
                     vc.addListener(controller);
                     vc.startVirtualClient();
                     return null;
@@ -195,13 +197,26 @@ public class Server implements ConnectionListener {
      * @param event of the connection
      */
     @Override
-    synchronized public void onConnectionEvent(ConnectionEvent event) {
-            VirtualClient vc =(VirtualClient)event.getSource();
-            virtualClients.remove(vc.getIdentifier());
-            virtualClients.put(vc.getIdentifier(),null);
-            vc.removeListener();
-            controller.removeListener(vc);
-            //TODO remove model
-            //TODO skip turn for that player !!IMPORTANT!! manage the case of player is the master and the party isn't started
+    synchronized public void onEndPartyEvent(EndPartyEvent event) {
+        for(VirtualClient vc : virtualClients.values()){
+            if(vc.getStatus()){
+                vc.removeListener(controller);
+                vc.onMessage(new MessageEvent(this, new CommMessage(CommMsgType.ERROR_HOST_DISCONNECTED)));
+            }
+        }
+        try {
+            wait(10*100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for(VirtualClient vc : virtualClients.values()){
+            if(vc.getStatus()){
+                vc.closeConnection();
+            }
+        }
+
+        virtualClients.clear();
+        controller.removeListener();
+        controller = new Controller(this);
     }
 }

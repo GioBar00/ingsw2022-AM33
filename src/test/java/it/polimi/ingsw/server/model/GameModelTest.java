@@ -124,6 +124,7 @@ class GameModelTest {
         assertEquals(0,model.islandsManager.getIslandGroup((model.motherNatureIndex + 6) % 12).getIslands().get(0).getNumStudents());
         numTowersAndStudent();
         playAssistantCard();
+        assertEquals("0",model.getMaster());
     }
 
     /**
@@ -489,8 +490,10 @@ class GameModelTest {
     void removePlayer(){
         GameModel model = new GameModel(GamePreset.THREE);
 
+        assertNull(model.getMaster());
         assertFalse(model.removePlayer("1"));
         assertTrue(model.addPlayer("1"));
+        assertEquals("1",model.getMaster());
         assertTrue(model.addPlayer("2"));
         assertTrue(model.removePlayer("1"));
         assertFalse(model.removePlayer("1"));

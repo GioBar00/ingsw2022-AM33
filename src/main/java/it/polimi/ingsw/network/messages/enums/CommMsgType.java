@@ -15,9 +15,10 @@ public enum CommMsgType {
     ERROR_SERVER ("ERROR: internal server error"),
     ERROR_SERVER_UNAVAILABLE("ERROR: service unavailable"),
     ERROR_INVALID_MESSAGE("ERROR: the message is not valid"),
-    CONNECTION_ALIVE("Are you still alive?"),
+    ERROR_HOST_DISCONNECTED("ERROR: the host has left the party."),
 
     // COMMUNICATION MESSAGES FOR REQUESTS/ACKs
+    CONNECTION_ALIVE("Are you still alive?"),
     CHOOSE_PARTY_TYPE ("how many players are gonna be in your party? Which is the mode?"),
     OK ("acknowledgement");
 

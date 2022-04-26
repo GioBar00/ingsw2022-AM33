@@ -87,6 +87,12 @@ public interface Game extends MessageListenerSubscriber {
     GamePhase getPhase();
 
     /**
+     * Return the nickname of the master
+     * @return String
+     */
+    String getMaster();
+
+    /**
      * Activates character card at index.
      * @param index of the character card to activate.
      * @return if the activation was successful.

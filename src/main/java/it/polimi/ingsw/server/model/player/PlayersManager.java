@@ -370,4 +370,14 @@ public class PlayersManager {
         }
         return false;
     }
+
+    /**
+     * Returns the nickname of the master
+     * @return the nickname of the master or null if there's no player
+     */
+    public String getMaster(){
+        if(!players.isEmpty())
+            return players.get(0).getNickname();
+        return null;
+    }
 }

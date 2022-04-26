@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.model.cards;
 
 import it.polimi.ingsw.server.model.enums.StudentColor;
 
+//TODO JavaDoc
 public class CharacterParameters {
 
     private final StudentColor studentColor;

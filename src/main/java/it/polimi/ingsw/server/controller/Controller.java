@@ -5,6 +5,8 @@ import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.*;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.server.VirtualClient;
+import it.polimi.ingsw.server.listeners.EndPartyEvent;
+import it.polimi.ingsw.server.listeners.EndPartyListener;
 import it.polimi.ingsw.server.listeners.MessageEvent;
 import it.polimi.ingsw.server.listeners.MessageListener;
 import it.polimi.ingsw.server.model.Game;
@@ -27,17 +29,23 @@ public class Controller implements MessageListener {
     private Game model;
 
     /**
-     * the first player who has the rights to start the match
+     * listener of the Controller
      */
-    private final String master;
+    private EndPartyListener listener;
 
     /**
      * Default constructor of class Controller
+     * @param listener of the controller
      */
-    public Controller() {
+    public Controller(EndPartyListener listener) {
         model = null;
-        master = null;
+        this.listener = listener;
     }
+
+    /**
+     * Remove the controller listener
+     */
+    public void removeListener(){ this.listener = null;}
 
     /**
      * Method used for know if the model is instantiated
@@ -69,7 +77,7 @@ public class Controller implements MessageListener {
      * This method adds a new listener to the model
      * @param listener the listener of the model
      */
-    public void addListener(MessageListener listener) {
+    public void addModelListener(MessageListener listener) {
         model.addListener(listener);
     }
 
@@ -89,13 +97,19 @@ public class Controller implements MessageListener {
      * @param event of the received message
      */
     @Override
-    public void onMessage(MessageEvent event) {
+    public synchronized void onMessage(MessageEvent event) {
         VirtualClient vc = (VirtualClient)event.getSource();
         Message msg = event.getMessage();
 
         if(MessageType.retrieveByMessageClass(msg) == MessageType.SKIP_TURN){
-            if(((VirtualClient) event.getSource()).getIdentifier().equals(model.getCurrentPlayer()))
-                 model.skipCurrentPlayerTurn();
+            String identifier = ((VirtualClient) event.getSource()).getIdentifier();
+            if(identifier.equals(model.getCurrentPlayer()))
+                 if(!model.skipCurrentPlayerTurn()){
+                     model.removePlayer(identifier);
+                     if(identifier.equals(model.getMaster())){
+                        listener.onEndPartyEvent(new EndPartyEvent(this));
+                     }
+                 }
         }
         else {
             switch (model.getGameState()) {
@@ -274,7 +288,7 @@ public class Controller implements MessageListener {
      * the rights
      */
     private boolean startGame(String nickname) {
-        if (nickname.equals(master)) {
+        if (nickname.equals(model.getMaster())) {
             return model.startGame();
         }
         return false;

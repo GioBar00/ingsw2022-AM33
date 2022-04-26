@@ -3,16 +3,16 @@ package it.polimi.ingsw.server.listeners;
 import java.util.EventObject;
 
 /**
- * Class used to report a Connection Closed event
+ * Class used to report when the party needs to be closed event
  */
-public class ConnectionEvent extends EventObject {
+public class EndPartyEvent extends EventObject {
     /**
      * Constructs a prototypical Event.
      *
      * @param source the object on which the Event initially occurred
      * @throws IllegalArgumentException if source is null
      */
-    public ConnectionEvent(Object source) {
+    public EndPartyEvent(Object source) {
         super(source);
     }
 }

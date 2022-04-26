@@ -665,6 +665,15 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     }
 
     /**
+     * Return the nickname of the master
+     * @return String
+     */
+    @Override
+    public String getMaster() {
+        return playersManager.getMaster();
+    }
+
+    /**
      * Skips the current player's turn.
      *
      * @return if the turn was skipped successfully.

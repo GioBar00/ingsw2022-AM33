@@ -30,13 +30,14 @@ class GameModelExpertTest {
         assertEquals(GameMode.EXPERT, m.getGameMode());
         assertEquals(20, m.reserve);
         assertFalse(m.startGame());
-
+        assertNull(gameModel.getMaster());
         for (int i = 0; i < preset.getPlayersNumber(); i++) {
             String nick = Integer.toString(i);
             assertTrue(m.addPlayer(nick));
             assertEquals(preset.getPlayersNumber() - i - 1, m.getAvailablePlayerSlots());
         }
 
+        assertEquals("0",gameModel.getMaster());
         assertFalse(m.addPlayer(":("));
 
         int currentReserve = 20 - preset.getPlayersNumber();

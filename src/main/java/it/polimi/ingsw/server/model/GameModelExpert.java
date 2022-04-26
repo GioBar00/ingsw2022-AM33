@@ -294,6 +294,15 @@ public class GameModelExpert implements Game, EffectHandler {
     }
 
     /**
+     * Return the nickname of the master
+     * @return String
+     */
+    @Override
+    public String getMaster() {
+        return model.getMaster();
+    }
+
+    /**
      * Activates character card at index if the player has not already activated another card, the index is valid and the player has enough coins.
      * Notifies the listeners.
      *
