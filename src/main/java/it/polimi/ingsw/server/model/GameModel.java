@@ -700,6 +700,11 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         return false;
     }
 
+    /**
+     * Remove a player from the game
+     * @param nickname of the player
+     * @return if the player was removed
+     */
     @Override
     public boolean removePlayer(String nickname) {
         return playersManager.removePlayer(nickname);
@@ -783,9 +788,10 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param destPlayer the player to whom the gameView will be sent
      * @return the current gameView
      */
-    public GameView getGameView(Player destPlayer) {
-        return new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex);
+    public CurrentGameState getGameView(Player destPlayer) {
+        return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex));
     }
+
 
     /**
      * @return playerManager, for tests purposes

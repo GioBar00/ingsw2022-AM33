@@ -12,9 +12,7 @@ import it.polimi.ingsw.server.listeners.MessageListener;
 import it.polimi.ingsw.server.model.Game;
 import it.polimi.ingsw.server.model.GameBuilder;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
-import it.polimi.ingsw.server.model.enums.GameMode;
-import it.polimi.ingsw.server.model.enums.GamePreset;
-import it.polimi.ingsw.server.model.enums.Tower;
+import it.polimi.ingsw.server.model.enums.*;
 
 /**
  * Controller class manages the first request for each client. If the request is valid instantiates a client handler.
@@ -70,7 +68,10 @@ public class Controller implements MessageListener {
      * @return True if the player has been added. False if the game is full or the nickname is already chosen
      */
     public boolean addPlayer(String nickname) {
-        return model.addPlayer(nickname);
+        if(isInstantiated()) {
+            return model.addPlayer(nickname);
+        }
+        return false;
     }
 
     /**
@@ -103,13 +104,20 @@ public class Controller implements MessageListener {
 
         if(MessageType.retrieveByMessageClass(msg) == MessageType.SKIP_TURN){
             String identifier = ((VirtualClient) event.getSource()).getIdentifier();
-            if(identifier.equals(model.getCurrentPlayer()))
-                 if(!model.skipCurrentPlayerTurn()){
-                     model.removePlayer(identifier);
-                     if(identifier.equals(model.getMaster())){
+            if(model.getGameState() == GameState.UNINITIALIZED){
+                {
+                    if(identifier.equals(model.getMaster())){
                         listener.onEndPartyEvent(new EndPartyEvent(this));
-                     }
-                 }
+                        model = null;
+                    }
+                    else model.removePlayer(identifier);
+                }
+            }
+            else{
+                if(identifier.equals(model.getCurrentPlayer())){
+                    model.skipCurrentPlayerTurn();
+                }
+            }
         }
         else {
             switch (model.getGameState()) {
@@ -150,13 +158,12 @@ public class Controller implements MessageListener {
         switch (MessageType.retrieveByMessageClass(msg)) {
             case CHOSEN_TEAM -> {
                 ChosenTeam chosenTeam = (ChosenTeam)msg;
-                if(!this.changeTeam(vc.getIdentifier(),chosenTeam.getTower()))
-                    vc.sendImpossibleMessage();
+                this.changeTeam(vc.getIdentifier(),chosenTeam.getTower());
+
             }
             case START_GAME -> {
-                //fixme check master
-                if(!this.startGame(vc.getIdentifier()))
-                    vc.sendImpossibleMessage();
+                if (!this.startGame(vc.getIdentifier()))
+                        vc.sendImpossibleMessage();
             }
             default -> vc.sendImpossibleMessage();
         }
@@ -184,7 +191,7 @@ public class Controller implements MessageListener {
      */
     private void handleMoveStudentPhase(VirtualClient vc, Message msg) {
         switch (MessageType.retrieveByMessageClass(msg)){
-            case MOVE_STUDENT,SWAP_STUDENTS -> {
+            case MOVED_STUDENT,SWAPPED_STUDENTS -> {
                 MovedStudent movedStudent = (MovedStudent) msg;
                 CharacterParameters parameters;
 
@@ -212,8 +219,6 @@ public class Controller implements MessageListener {
                                     vc.sendImpossibleMessage();
                             }
                         }
-                    default: vc.sendImpossibleMessage();
-
                         break;
 
                     case HALL:
@@ -221,6 +226,8 @@ public class Controller implements MessageListener {
                         if(!model.applyEffect(parameters))
                             vc.sendImpossibleMessage();
                         break;
+
+                    default: vc.sendImpossibleMessage();
                 }
             }
 
@@ -230,14 +237,14 @@ public class Controller implements MessageListener {
                     vc.sendImpossibleMessage();
             }
 
-            case CHOOSE_ISLAND ->{
+            case CHOSEN_ISLAND ->{
                 ChosenIsland chosenIsland = (ChosenIsland) msg;
                 CharacterParameters parameters = CharacterChoiceAdapter.convert(chosenIsland);
                 if(!model.applyEffect(parameters))
                     vc.sendImpossibleMessage();
             }
 
-            case CHOOSE_STUDENT_COLOR -> {
+            case CHOSEN_STUDENT_COLOR -> {
                 ChosenStudentColor chosenStudentColor = (ChosenStudentColor)msg;
                 CharacterParameters parameters = CharacterChoiceAdapter.convert(chosenStudentColor);
                 if(!model.applyEffect(parameters))
@@ -261,7 +268,7 @@ public class Controller implements MessageListener {
     private void handleMoveMotherNaturePhase(VirtualClient vc, Message msg) {
         if(MessageType.retrieveByMessageClass(msg) == MessageType.MOVED_MOTHER_NATURE){
             MovedMotherNature movedMotherNature = (MovedMotherNature)msg;
-            if (model.moveMotherNature(movedMotherNature.getNumMoves()))
+            if (!model.moveMotherNature(movedMotherNature.getNumMoves()))
                 vc.sendImpossibleMessage();
         }
         else vc.sendImpossibleMessage();
@@ -275,7 +282,7 @@ public class Controller implements MessageListener {
     private void handleChooseCloudPhase(VirtualClient vc, Message msg) {
         if(MessageType.retrieveByMessageClass(msg) == MessageType.CHOSEN_CLOUD){
             ChosenCloud chosenCloud = (ChosenCloud) msg;
-            if(model.getStudentsFromCloud(chosenCloud.getCloudIndex()))
+            if(!model.getStudentsFromCloud(chosenCloud.getCloudIndex()))
                 vc.sendImpossibleMessage();
         }
         else vc.sendImpossibleMessage();
@@ -298,10 +305,9 @@ public class Controller implements MessageListener {
      * Tries to change the team of one player
      * @param nickname of the player who wants to change team
      * @param tower the team he wants to join
-     * @return true if team has been changed false if not.
      */
-     private synchronized boolean changeTeam(String nickname, Tower tower) {
-        return model.changeTeam(nickname, tower);
+     private synchronized void changeTeam(String nickname, Tower tower) {
+         model.changeTeam(nickname, tower);
      }
 
     /**
@@ -313,4 +319,13 @@ public class Controller implements MessageListener {
         return !nickname.equals(model.getCurrentPlayer());
     }
 
+    /**
+     * Return the nickname of the current Player
+     * @return null if the model is not instantiated or the nickname of the current player
+     */
+    public String getCurrentPlayer(){
+        if(isInstantiated())
+            return model.getCurrentPlayer();
+        return null;
+    }
 }

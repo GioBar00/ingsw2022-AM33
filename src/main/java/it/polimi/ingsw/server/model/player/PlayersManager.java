@@ -13,6 +13,11 @@ public class PlayersManager {
      * preset of the current game
      */
     private final GamePreset preset;
+
+    /**
+     * the master player who can start the game
+     */
+    private String master;
     /**
      * index of the current player in the array playerOrderIndexes
      */
@@ -140,6 +145,8 @@ public class PlayersManager {
             SchoolBoard sb = new SchoolBoard(preset.getEntranceCapacity(), tower, numTowers);
             Player p = new Player(nickname, availableWizards.get(wizardIndex), sb);
             players.add(p);
+            if(master == null && players.size() == 1)
+                master = nickname;
             teams.get(tower).add(p);
             return true;
         }
@@ -270,6 +277,8 @@ public class PlayersManager {
                 return false;
         }
         lobby.add(nickname);
+        if(lobby.size() == 1)
+            master = nickname;
         return true;
     }
 
@@ -372,12 +381,26 @@ public class PlayersManager {
     }
 
     /**
+     * Remove a player from the lobby
+     * @param nickname of the player
+     * @return if the player has been removed
+     */
+    public boolean removeFromLobby(String nickname){
+        for(String s : lobby){
+            if(s.equals(nickname)){
+                lobby.remove(s);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
      * Returns the nickname of the master
      * @return the nickname of the master or null if there's no player
      */
     public String getMaster(){
-        if(!players.isEmpty())
-            return players.get(0).getNickname();
-        return null;
+        return master;
     }
 }

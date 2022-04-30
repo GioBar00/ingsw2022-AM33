@@ -20,6 +20,9 @@ class GameModelTeamsTest {
     void addPlayer() {
         GameModel gmTeams = new GameModelTeams();
 
+        assertFalse(gmTeams.removePlayer("whiteLeader"));
+        assertTrue(gmTeams.addPlayer("whiteLeader"));
+        assertTrue(gmTeams.removePlayer("whiteLeader"));
         assertTrue(gmTeams.addPlayer("whiteLeader"));
         assertFalse(gmTeams.addPlayer("whiteLeader"));
         assertTrue(gmTeams.addPlayer("blackLeader"));

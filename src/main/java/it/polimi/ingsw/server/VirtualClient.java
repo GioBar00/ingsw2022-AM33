@@ -52,7 +52,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     /**
      * A queue for the messages to send
      */
-    private final LinkedBlockingQueue<Message> queue;
+    protected final LinkedBlockingQueue<Message> queue;
 
     /**
      * Timer for checking if the connection is still alive

@@ -106,5 +106,13 @@ public class GameModelTeams extends GameModel {
         return false;
     }
 
-
+    /**
+     * Remove a player from the game
+     * @param nickname of the player
+     * @return if the player was removed
+     */
+    @Override
+    public boolean removePlayer(String nickname){
+        return playersManager.removeFromLobby(nickname);
+    }
 }
