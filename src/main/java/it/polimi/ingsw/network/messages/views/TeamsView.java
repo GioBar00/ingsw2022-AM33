@@ -10,7 +10,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TeamsView implements Serializable {
+    /**
+     * teams that have formed up to now
+     */
     private final EnumMap<Tower, List<String>> teams;
+    /**
+     * nicknames of the players that haven't chosen a teams yet
+     */
     private final List<String> lobby;
 
     public TeamsView(EnumMap<Tower, List<Player>> teams, List<String> lobby){
@@ -27,10 +33,16 @@ public class TeamsView implements Serializable {
         this.lobby = lobby;
     }
 
+    /**
+     * @return the teams
+     */
     public EnumMap<Tower, List<String>> getTeams() {
         return teams;
     }
 
+    /**
+     * @return the lobby
+     */
     public List<String> getLobby() {
         return lobby;
     }

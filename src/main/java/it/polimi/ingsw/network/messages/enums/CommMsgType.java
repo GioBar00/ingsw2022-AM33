@@ -1,5 +1,10 @@
 package it.polimi.ingsw.network.messages.enums;
 
+import it.polimi.ingsw.network.messages.Message;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public enum CommMsgType {
     // COMMUNICATION MESSAGES FOR ERRORS
     ERROR_NULL_NICKNAME ("ERROR: the nickname needs to be at least one character long"),
@@ -19,7 +24,7 @@ public enum CommMsgType {
 
     // COMMUNICATION MESSAGES FOR REQUESTS/ACKs
     CONNECTION_ALIVE("Are you still alive?"),
-    CHOOSE_PARTY_TYPE ("how many players are gonna be in your party? Which is the mode?"),
+    CHOOSE_PARTY_TYPE ("Choose difficulty of the game: EASY(a) or EXPERT(b)?\nChoose number of players: TWO(2), THREE(3) or FOUR(4)?"),
     OK ("acknowledgement");
 
     private final String message;

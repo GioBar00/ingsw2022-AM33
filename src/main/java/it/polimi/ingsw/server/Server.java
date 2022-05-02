@@ -13,10 +13,13 @@ import it.polimi.ingsw.server.listeners.EndPartyEvent;
 import it.polimi.ingsw.server.listeners.EndPartyListener;
 import it.polimi.ingsw.server.listeners.MessageEvent;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.*;
@@ -47,7 +50,7 @@ public class Server implements EndPartyListener {
     public Server() {
         virtualClients = new HashMap<>();
         //Todo how we chose the port
-        port = 123;
+        port = 1234; // modified to 1234 because the first 1024 numbers of port are reserved
         controller = new Controller(this);
 
     }
@@ -65,9 +68,10 @@ public class Server implements EndPartyListener {
             System.err.println(e.getMessage());
             return;
         }
-        System.out.println("Server ready");
+        System.out.println("S: server ready");
         while (true) {
             try {
+                System.out.println("S: waiting for client");
                 Socket socket = serverSocket.accept();
                 String nickname = handleFirstConnection(socket);
                 if(nickname != null) {
@@ -81,6 +85,7 @@ public class Server implements EndPartyListener {
                     }
                 }
             } catch(IOException e) {
+                System.out.println("S: no connection available");
                 break;
             }
 
@@ -96,11 +101,20 @@ public class Server implements EndPartyListener {
      */
     public String handleFirstConnection(Socket socket) {
         try {
-            Scanner in = new Scanner(socket.getInputStream());
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream());
 
+            StringBuilder builder = new StringBuilder();
 
-            String line = in.nextLine();
+            String line = in.readLine();
+
+            while(in.ready() && line != null) {
+                builder.append(line);
+                line = in.readLine();
+            }
+
+            builder.append(line);
+            line = builder.toString();
 
             Message message = MessageBuilder.fromJson(line);
             if (MessageType.retrieveByMessageClass(message).equals(MessageType.LOGIN)) {
@@ -108,7 +122,7 @@ public class Server implements EndPartyListener {
 
                 String nickname = mex.getNickname();
                 //nickname not null
-                if (mex.isValid()) {
+                if (!mex.isValid()) {
                     out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_NULL_NICKNAME)));
                     out.flush();
                     in.close();
@@ -136,7 +150,7 @@ public class Server implements EndPartyListener {
                         out.flush();
 
                         Future <String> result = executor.submit(() -> {
-                            String mes = in.nextLine();
+                            String mes = in.readLine();
                             Message m = MessageBuilder.fromJson(mes);
                             if (MessageType.retrieveByMessageClass(m).equals(MessageType.CHOSEN_GAME)) {
                                 ChosenGame choice = (ChosenGame) m;

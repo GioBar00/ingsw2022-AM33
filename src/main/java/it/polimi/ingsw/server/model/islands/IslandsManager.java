@@ -144,11 +144,21 @@ public class IslandsManager {
         return false;
     }
 
+    /**
+     * @return the islandsView
+     */
     public ArrayList<IslandGroupView> getIslandsView(){
         ArrayList<IslandGroupView> islandsView = new ArrayList<>();
         for (IslandGroup ig: islandGroups) {
             islandsView.add(ig.getIslandGroupView());
         }
         return islandsView;
+    }
+
+    /**
+     * @return the ArrayList of IslandGroups
+     */
+    public ArrayList<IslandGroup> getIslandGroups() {
+        return islandGroups;
     }
 }

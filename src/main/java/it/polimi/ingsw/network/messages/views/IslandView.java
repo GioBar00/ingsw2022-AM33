@@ -7,7 +7,13 @@ import java.io.Serializable;
 import java.util.EnumMap;
 
 public class IslandView implements Serializable {
+    /**
+     * tower of the island (if there is none is null)
+     */
     private final Tower tower;
+    /**
+     * students on the island
+     */
     private final EnumMap<StudentColor, Integer> students;
 
     public IslandView(Tower tower, EnumMap<StudentColor, Integer> students) {
@@ -15,10 +21,16 @@ public class IslandView implements Serializable {
         this.students = students;
     }
 
+    /**
+     * @return the tower
+     */
     public Tower getTower() {
         return tower;
     }
 
+    /**
+     * @return the students
+     */
     public EnumMap<StudentColor, Integer> getStudents() {
         return students;
     }
