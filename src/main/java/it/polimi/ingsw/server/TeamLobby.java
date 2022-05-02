@@ -12,11 +12,11 @@ import java.util.List;
 public class TeamLobby extends Lobby{
 
 
-
     public TeamLobby(int maxPlayers) {
         super(maxPlayers);
     }
 
+    @Override
     public boolean canStart() {
         if(maxPlayers != super.players.size())
             return false;
@@ -33,6 +33,7 @@ public class TeamLobby extends Lobby{
         }
     }
 
+    @Override
     public boolean changeTeam(String nickname, Tower tower) {
         PlayerDetails update = null;
         for(PlayerDetails p : players){
@@ -42,21 +43,26 @@ public class TeamLobby extends Lobby{
         if(update != null) {
             update.setTower(tower);
 
-            EnumMap<Tower, List<String>> teams = new EnumMap<>(Tower.class);
-            List <String> lobby = new ArrayList<>();
-            for(Tower t : Tower.values()){
-                teams.put(t, new ArrayList<>());
-            }
-            for(PlayerDetails p  : players) {
-                if(p.getTower()!= null){
-                    teams.get(p.getTower()).add(p.getNickname());
-                }
-                else lobby.add(p.getNickname());
-            }
-            TeamsView teamsView = new TeamsView(teams, lobby);
-            notifyListeners(new MessageEvent(this, new CurrentTeams(teamsView)));
+            notifyListeners(new MessageEvent(this, new CurrentTeams(getTeamView())));
             return true;
         }
         else return false;
+    }
+
+    @Override
+    public TeamsView getTeamView() {
+        EnumMap<Tower, List<String>> teams = new EnumMap<>(Tower.class);
+        List <String> lobby = new ArrayList<>();
+        for(Tower t : Tower.values()){
+            if(!t.equals(Tower.GREY))
+                teams.put(t, new ArrayList<>());
+        }
+        for(PlayerDetails p  : players) {
+            if(p.getTower()!= null){
+                teams.get(p.getTower()).add(p.getNickname());
+            }
+            else lobby.add(p.getNickname());
+        }
+        return new TeamsView(teams, lobby);
     }
 }
