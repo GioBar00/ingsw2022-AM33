@@ -2,8 +2,8 @@ package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.network.messages.ActionRequest;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.server.listeners.MessageEvent;
-import it.polimi.ingsw.server.listeners.MessageListener;
+import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.network.listeners.MessageListener;
 import it.polimi.ingsw.server.model.enums.*;
 import it.polimi.ingsw.server.model.islands.Island;
 import it.polimi.ingsw.server.model.player.Player;
@@ -41,7 +41,7 @@ class GameModelTest {
      * @param identifier nickname of the player.
      */
     void addMessageListener(String identifier) {
-        model.addListener(new MessageListener() {
+        model.addMessageListener(new MessageListener() {
             @Override
             public String getIdentifier() {
                 return identifier;

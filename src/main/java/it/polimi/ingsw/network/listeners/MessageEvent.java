@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server.listeners;
+package it.polimi.ingsw.network.listeners;
 
 import it.polimi.ingsw.network.messages.Message;
 

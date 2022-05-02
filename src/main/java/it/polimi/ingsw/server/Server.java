@@ -10,7 +10,7 @@ import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.server.controller.Controller;
 import it.polimi.ingsw.server.listeners.EndPartyEvent;
 import it.polimi.ingsw.server.listeners.EndPartyListener;
-import it.polimi.ingsw.server.listeners.MessageEvent;
+import it.polimi.ingsw.network.listeners.MessageEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -58,35 +58,32 @@ public class Server implements EndPartyListener {
      * Each of this Virtual Client are run on different threads
      */
      public void handleRequest() {
-        ServerSocket serverSocket;
 
-        try {
-            serverSocket = new ServerSocket(port);
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println("S: server ready");
+            while (!Thread.interrupted()) {
+                try {
+                    System.out.println("S: waiting for client");
+                    Socket socket = serverSocket.accept();
+                    String nickname = handleFirstConnection(socket);
+                    if(nickname != null) {
+                        synchronized (this) {
+                            VirtualClient vc = new VirtualClient(nickname);
+                            vc.setSocket(socket);
+                            vc.addMessageListener(controller);
+                            controller.addModelListener(vc);
+                            virtualClients.put(nickname, vc);
+                            vc.start();
+                        }
+                    }
+                } catch(IOException e) {
+                    System.out.println("S: no connection available");
+                    break;
+                }
+
+            }
         } catch (IOException e) {
             System.err.println(e.getMessage());
-            return;
-        }
-        System.out.println("S: server ready");
-        while (!Thread.interrupted()) {
-            try {
-                System.out.println("S: waiting for client");
-                Socket socket = serverSocket.accept();
-                String nickname = handleFirstConnection(socket);
-                if(nickname != null) {
-                    synchronized (this) {
-                        VirtualClient vc = new VirtualClient(nickname);
-                        vc.addSocket(socket);
-                        vc.addListener(controller);
-                        controller.addModelListener(vc);
-                        virtualClients.put(nickname, vc);
-                        vc.startVirtualClient();
-                    }
-                }
-            } catch(IOException e) {
-                System.out.println("S: no connection available");
-                break;
-            }
-
         }
     }
 
@@ -115,7 +112,7 @@ public class Server implements EndPartyListener {
             line = builder.toString();
 
             Message message = MessageBuilder.fromJson(line);
-            if (MessageType.retrieveByMessageClass(message).equals(MessageType.LOGIN)) {
+            if (MessageType.retrieveByMessage(message).equals(MessageType.LOGIN)) {
                 Login mex = (Login) message;
 
                 String nickname = mex.getNickname();
@@ -130,14 +127,14 @@ public class Server implements EndPartyListener {
                 }
 
                 //player already in the party -> the model exist
-                if(virtualClients.containsKey(nickname) && !virtualClients.get(nickname).getStatus()){
-                    VirtualClient vc =virtualClients.get(nickname);
+                if(virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()){
+                    VirtualClient vc = virtualClients.get(nickname);
                     in.close();
                     out.close();
-                    vc.addSocket(socket);
+                    vc.setSocket(socket);
                     controller.addModelListener(vc);
-                    vc.addListener(controller);
-                    vc.startVirtualClient();
+                    vc.addMessageListener(controller);
+                    vc.start();
                     return null;
                 }
                 else {
@@ -145,13 +142,13 @@ public class Server implements EndPartyListener {
                     if (!controller.isInstantiated()) {
                         ExecutorService executor = Executors.newFixedThreadPool(1);
 
-                        out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.CHOOSE_PARTY_TYPE)));
+                        out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.CHOOSE_GAME)));
                         out.flush();
 
                         Future <String> result = executor.submit(() -> {
                             String mes = in.readLine();
                             Message m = MessageBuilder.fromJson(mes);
-                            if (MessageType.retrieveByMessageClass(m).equals(MessageType.CHOSEN_GAME)) {
+                            if (MessageType.retrieveByMessage(m).equals(MessageType.CHOSEN_GAME)) {
                                 ChosenGame choice = (ChosenGame) m;
                                 if (choice.isValid()) {
 
@@ -211,8 +208,8 @@ public class Server implements EndPartyListener {
     @Override
     synchronized public void onEndPartyEvent(EndPartyEvent event) {
         for(VirtualClient vc : virtualClients.values()){
-            if(vc.getStatus()){
-                vc.removeListener(controller);
+            if(vc.isConnected()){
+                vc.removeMessageListener(controller);
                 vc.onMessage(new MessageEvent(this, new CommMessage(CommMsgType.ERROR_HOST_DISCONNECTED)));
             }
         }
@@ -222,8 +219,8 @@ public class Server implements EndPartyListener {
             e.printStackTrace();
         }
         for(VirtualClient vc : virtualClients.values()){
-            if(vc.getStatus()){
-                vc.closeConnection();
+            if(vc.isConnected()){
+                vc.stop();
             }
         }
 

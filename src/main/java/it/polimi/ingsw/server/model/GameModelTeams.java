@@ -1,8 +1,6 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.server.PlayerDetails;
-import it.polimi.ingsw.server.listeners.MessageEvent;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.GameState;
 import it.polimi.ingsw.server.model.enums.Tower;

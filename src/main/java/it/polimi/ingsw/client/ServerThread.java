@@ -2,9 +2,10 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.server.Server;
 
-public class ServerThread {
+public class ServerThread implements Runnable{
 
-    public static void main( String[] args ) {
+    @Override
+    public void run() {
         Server server = new Server();
         server.handleRequest();
     }

@@ -1,5 +1,9 @@
 package it.polimi.ingsw.network.messages;
 
+import it.polimi.ingsw.network.messages.client.ChosenGame;
+import it.polimi.ingsw.network.messages.client.StartGame;
+import it.polimi.ingsw.server.model.enums.GameMode;
+import it.polimi.ingsw.server.model.enums.GamePreset;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,5 +43,11 @@ public class MessageBuilderTest {
         json = "{\"type\":\"MULTIPLE_POSSIBLE_MOVES\",\"message\":{\"possibleMoves\":[{\"type\":\"INVALID_MOVE\",\"move\":{\"from\":\"ENTRANCE\",\"fromIndexesSet\":[1,5],\"to\":\"HALL\"}}]}}";
         m = MessageBuilder.fromJson(json);
         assertFalse(m.isValid());
+
+        // invalid move type
+        json = "{\"type\":\"MULTIPLE_POSSIBLE_MOVES\",\"message\":{\"possibleMoves\":[{ \"invalid\":\"invalid\" }]}}";
+        m = MessageBuilder.fromJson(json);
+        assertFalse(m.isValid());
+
     }
 }

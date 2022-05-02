@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server.listeners;
+package it.polimi.ingsw.network.listeners;
 
 /**
  * Interface for the message listener subscriber.
@@ -9,13 +9,13 @@ public interface MessageListenerSubscriber {
      * Adds a message listener.
      * @param listener the listener to add
      */
-    void addListener(MessageListener listener);
+    void addMessageListener(MessageListener listener);
 
     /**
      * Removes a message listener.
      * @param listener the listener to remove
      */
-    void removeListener(MessageListener listener);
+    void removeMessageListener(MessageListener listener);
 
     /**
      * Notifies all listeners.

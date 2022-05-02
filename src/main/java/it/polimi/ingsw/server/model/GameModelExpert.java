@@ -2,8 +2,8 @@ package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.server.PlayerDetails;
-import it.polimi.ingsw.server.listeners.MessageEvent;
-import it.polimi.ingsw.server.listeners.MessageListener;
+import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.network.listeners.MessageListener;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.cards.CharacterCard;
 import it.polimi.ingsw.server.model.cards.EffectHandler;
@@ -722,8 +722,8 @@ public class GameModelExpert implements Game, EffectHandler {
      * @param listener the listener to add
      */
     @Override
-    public void addListener(MessageListener listener) {
-        model.addListener(listener);
+    public void addMessageListener(MessageListener listener) {
+        model.addMessageListener(listener);
     }
 
     /**
@@ -732,8 +732,8 @@ public class GameModelExpert implements Game, EffectHandler {
      * @param listener the listener to remove
      */
     @Override
-    public void removeListener(MessageListener listener) {
-        model.removeListener(listener);
+    public void removeMessageListener(MessageListener listener) {
+        model.removeMessageListener(listener);
     }
 
     /**

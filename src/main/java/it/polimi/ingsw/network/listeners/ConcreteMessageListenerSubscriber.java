@@ -1,4 +1,8 @@
-package it.polimi.ingsw.server.listeners;
+package it.polimi.ingsw.network.listeners;
+
+import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.network.listeners.MessageListener;
+import it.polimi.ingsw.network.listeners.MessageListenerSubscriber;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +21,7 @@ public abstract class ConcreteMessageListenerSubscriber implements MessageListen
      * @param listener the listener to add
      */
     @Override
-    public void addListener(MessageListener listener) {
+    public void addMessageListener(MessageListener listener) {
         listeners.add(listener);
     }
 
@@ -26,7 +30,7 @@ public abstract class ConcreteMessageListenerSubscriber implements MessageListen
      * @param listener the listener to remove
      */
     @Override
-    public void removeListener(MessageListener listener) {
+    public void removeMessageListener(MessageListener listener) {
         listeners.remove(listener);
     }
 
