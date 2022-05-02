@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.network.messages.views.WizardsView;
-import it.polimi.ingsw.server.listeners.ConcreteMessageListenerSubscriber;
+import it.polimi.ingsw.network.listeners.ConcreteMessageListenerSubscriber;
 import it.polimi.ingsw.server.model.enums.Tower;
 import it.polimi.ingsw.server.model.enums.Wizard;
 

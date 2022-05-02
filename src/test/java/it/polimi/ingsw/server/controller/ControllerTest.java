@@ -10,8 +10,8 @@ import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.server.LobbyConstructor;
 import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.server.VirtualClient;
-import it.polimi.ingsw.server.listeners.MessageEvent;
-import it.polimi.ingsw.server.listeners.MessageListener;
+import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.network.listeners.MessageListener;
 import it.polimi.ingsw.server.model.enums.*;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +27,7 @@ class ControllerTest {
 
         ModelListener(String name,MessageListener controller ){
             super(name);
-            super.addListener(controller);
+            super.addMessageListener(controller);
         }
 
         void request(Message message) {
@@ -35,22 +35,22 @@ class ControllerTest {
         }
 
         boolean queueContains(MessageType type){
-            for(Message m : queue){
-                if(MessageType.retrieveByMessageClass(m).equals(type)){
-                    queue.clear();
+            for(Message m : messageExchangeHandler.getQueue()){
+                if(MessageType.retrieveByMessage(m).equals(type)){
+                    messageExchangeHandler.clearQueue();
                     return true;
                 }
             }
             return false;
         }
 
-        void clearQueue(){
-            queue.clear();
+        void clearQueue() {
+            messageExchangeHandler.clearQueue();
         }
 
         @Override
         public void onMessage(MessageEvent event) {
-            queue.add(event.getMessage());
+            messageExchangeHandler.sendMessage(event.getMessage());
         }
     }
 

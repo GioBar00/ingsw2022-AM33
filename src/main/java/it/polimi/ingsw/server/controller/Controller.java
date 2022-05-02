@@ -9,8 +9,8 @@ import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.VirtualClient;
 import it.polimi.ingsw.server.listeners.EndPartyEvent;
 import it.polimi.ingsw.server.listeners.EndPartyListener;
-import it.polimi.ingsw.server.listeners.MessageEvent;
-import it.polimi.ingsw.server.listeners.MessageListener;
+import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.network.listeners.MessageListener;
 import it.polimi.ingsw.server.model.Game;
 import it.polimi.ingsw.server.model.GameBuilder;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
@@ -85,8 +85,8 @@ public class Controller implements MessageListener {
      * @param listener the listener of the model
      */
     public void addModelListener(MessageListener listener) {
-        model.addListener(listener);
-        lobby.addListener(listener);
+        model.addMessageListener(listener);
+        lobby.addMessageListener(listener);
     }
 
     /**
@@ -94,7 +94,7 @@ public class Controller implements MessageListener {
      * @param listener the removed listener
      */
     public void removeListener(MessageListener listener) {
-        model.removeListener(listener);
+        model.removeMessageListener(listener);
     }
 
     /**
@@ -109,13 +109,13 @@ public class Controller implements MessageListener {
         VirtualClient vc = (VirtualClient)event.getSource();
         Message msg = event.getMessage();
 
-        if(MessageType.retrieveByMessageClass(msg) == MessageType.SKIP_TURN){
+        if(MessageType.retrieveByMessage(msg) == MessageType.SKIP_TURN){
             String identifier = ((VirtualClient) event.getSource()).getIdentifier();
             if(model.getGameState() == GameState.UNINITIALIZED){
                 {
                     if(lobby.removePlayer(identifier)){
                         lobby.removePlayer(identifier);
-                        lobby.removeListener(vc);
+                        lobby.removeMessageListener(vc);
                     }
                     else {
                         listener.onEndPartyEvent(new EndPartyEvent(this));
@@ -166,7 +166,7 @@ public class Controller implements MessageListener {
      */
     private void handleGameSetup(VirtualClient vc, Message msg) {
 
-        switch (MessageType.retrieveByMessageClass(msg)) {
+        switch (MessageType.retrieveByMessage(msg)) {
             case CHOSEN_TEAM -> {
                 ChosenTeam chosenTeam = (ChosenTeam)msg;
                 this.changeTeam(vc.getIdentifier(),chosenTeam.getTower());
@@ -186,7 +186,7 @@ public class Controller implements MessageListener {
      * @param msg is the Message
      */
     private void handlePlanningPhase(VirtualClient vc, Message msg) {
-        if (MessageType.retrieveByMessageClass(msg) == MessageType.PLAYED_ASSISTANT_CARD) {
+        if (MessageType.retrieveByMessage(msg) == MessageType.PLAYED_ASSISTANT_CARD) {
             PlayedAssistantCard playedAssistantCard = (PlayedAssistantCard) msg;
             if(!model.playAssistantCard(playedAssistantCard.getAssistantCard()))
                 vc.sendImpossibleMessage();
@@ -201,7 +201,7 @@ public class Controller implements MessageListener {
      * @param msg is the Message
      */
     private void handleMoveStudentPhase(VirtualClient vc, Message msg) {
-        switch (MessageType.retrieveByMessageClass(msg)){
+        switch (MessageType.retrieveByMessage(msg)){
             case MOVED_STUDENT,SWAPPED_STUDENTS -> {
                 MovedStudent movedStudent = (MovedStudent) msg;
                 CharacterParameters parameters;
@@ -277,7 +277,7 @@ public class Controller implements MessageListener {
      * @param msg is the Message
      */
     private void handleMoveMotherNaturePhase(VirtualClient vc, Message msg) {
-        if(MessageType.retrieveByMessageClass(msg) == MessageType.MOVED_MOTHER_NATURE){
+        if(MessageType.retrieveByMessage(msg) == MessageType.MOVED_MOTHER_NATURE){
             MovedMotherNature movedMotherNature = (MovedMotherNature)msg;
             if (!model.moveMotherNature(movedMotherNature.getNumMoves()))
                 vc.sendImpossibleMessage();
@@ -291,7 +291,7 @@ public class Controller implements MessageListener {
      * @param msg is the Message
      */
     private void handleChooseCloudPhase(VirtualClient vc, Message msg) {
-        if(MessageType.retrieveByMessageClass(msg) == MessageType.CHOSEN_CLOUD){
+        if(MessageType.retrieveByMessage(msg) == MessageType.CHOSEN_CLOUD){
             ChosenCloud chosenCloud = (ChosenCloud) msg;
             if(!model.getStudentsFromCloud(chosenCloud.getCloudIndex()))
                 vc.sendImpossibleMessage();

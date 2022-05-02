@@ -74,7 +74,7 @@ public enum MessageType {
      * @param message the message
      * @return the type of the message
      */
-    public static MessageType retrieveByMessageClass(Message message) {
+    public static MessageType retrieveByMessage(Message message) {
         if (LOOKUP_MAP.containsKey(message.getClass()))
             return LOOKUP_MAP.get(message.getClass());
         return INVALID;
