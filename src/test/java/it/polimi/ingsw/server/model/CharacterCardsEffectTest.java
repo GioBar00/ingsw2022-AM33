@@ -32,9 +32,9 @@ class CharacterCardsEffectTest {
      */
     @BeforeEach
     void prepareModel() {
-        gme.addPlayer(pC.getPlayer("1", Wizard.ONE));
-        gme.addPlayer(pC.getPlayer("2", Wizard.ONE));
-        gme.addPlayer(pC.getPlayer("3", Wizard.ONE));
+        gme.addPlayer(pC.getPlayer("1", Wizard.SENSEI));
+        gme.addPlayer(pC.getPlayer("2", Wizard.SENSEI));
+        gme.addPlayer(pC.getPlayer("3", Wizard.SENSEI));
         gme.startGame();
     }
 

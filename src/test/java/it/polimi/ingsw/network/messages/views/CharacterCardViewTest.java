@@ -24,9 +24,9 @@ class CharacterCardViewTest {
      * adds the player and prepares the game
      */
     void prepareModel() {
-        gme.addPlayer(pC.getPlayer("1", Wizard.TWO));
-        gme.addPlayer(pC.getPlayer("2",Wizard.TWO));
-        gme.addPlayer(pC.getPlayer("3",Wizard.TWO));
+        gme.addPlayer(pC.getPlayer("1", Wizard.WITCH));
+        gme.addPlayer(pC.getPlayer("2",Wizard.WITCH));
+        gme.addPlayer(pC.getPlayer("3",Wizard.WITCH));
         gme.startGame();
     }
 

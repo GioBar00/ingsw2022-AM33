@@ -20,14 +20,14 @@ class PlayersManagerTest {
     void CreatePm(){
 
         //TestingAdd
-        assertTrue(pm.addPlayer(pC.getPlayer("p1",Wizard.TWO)));
-        assertTrue(pm.addPlayer(pC.getPlayer("p2" ,Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("p1",Wizard.WITCH)));
+        assertTrue(pm.addPlayer(pC.getPlayer("p2" ,Wizard.WITCH)));
         assertTrue(pm.removePlayer("p2"));
         assertFalse(pm.removePlayer("Pl3"));
-        assertTrue(pm.addPlayer(pC.getPlayer("p1",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("p1",Wizard.WITCH)));
         assertEquals(1,pm.getAvailablePlayerSlots());
-        assertTrue(pm.addPlayer(pC.getPlayer("p3",Wizard.TWO)));
-        assertFalse(pm.addPlayer(pC.getPlayer("p4",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("p3",Wizard.WITCH)));
+        assertFalse(pm.addPlayer(pC.getPlayer("p4",Wizard.WITCH)));
     }
 
     /**
@@ -37,9 +37,9 @@ class PlayersManagerTest {
     void playersManagerTest() {
         PlayerConvertor pC = new PlayerConvertor();
 
-        assertTrue(pm.addPlayer(pC.getPlayer("Pl1",Wizard.TWO)));
-        assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.TWO)));
-        assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl1",Wizard.WITCH)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.WITCH)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.WITCH)));
 
         //Check slots
         assertEquals(0,pm.getAvailablePlayerSlots());
@@ -66,9 +66,9 @@ class PlayersManagerTest {
     void SortingTest(){
         PlayerConvertor pC = new PlayerConvertor();
 
-        assertTrue(pm.addPlayer(pC.getPlayer("Pl1",Wizard.TWO)));
-        assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.TWO)));
-        assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl1",Wizard.WITCH)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.WITCH)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.WITCH)));
 
         assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
         pm.nextPlayer();
@@ -100,9 +100,9 @@ class PlayersManagerTest {
     void clockwiseTest (){
         PlayerConvertor pC = new PlayerConvertor();
 
-        assertTrue(pm.addPlayer(pC.getPlayer("Pl1",Wizard.TWO)));
-        assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.TWO)));
-        assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl1",Wizard.WITCH)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.WITCH)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.WITCH)));
 
         assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
         pm.nextPlayer();
@@ -131,9 +131,9 @@ class PlayersManagerTest {
     void firstPlayerTest(){
         PlayerConvertor pC = new PlayerConvertor();
 
-        assertTrue(pm.addPlayer(pC.getPlayer("Pl1",Wizard.TWO)));
-        assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.TWO)));
-        assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl1",Wizard.WITCH)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.WITCH)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.WITCH)));
 
         pm.setFirstPlayer(2 - 1);
         assertEquals("Pl2",pm.getPlayers().get(0).getNickname());

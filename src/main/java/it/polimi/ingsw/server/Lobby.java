@@ -1,10 +1,13 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.network.messages.views.WizardsView;
 import it.polimi.ingsw.server.listeners.ConcreteMessageListenerSubscriber;
 import it.polimi.ingsw.server.model.enums.Tower;
 import it.polimi.ingsw.server.model.enums.Wizard;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 public class Lobby extends ConcreteMessageListenerSubscriber {
@@ -69,5 +72,18 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
     }
     public boolean changeTeam(String nickname, Tower tower){
         return false;
+    }
+
+    /**
+     * @return current available wizards
+     */
+    public WizardsView getWizardsView(){
+        List<Wizard> wizards = Arrays.asList(Wizard.values());
+
+        for (PlayerDetails pd : players) {
+            wizards.remove(pd.getWizard());
+        }
+
+        return new WizardsView(EnumSet.copyOf(wizards));
     }
 }

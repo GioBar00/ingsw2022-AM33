@@ -27,7 +27,7 @@ class ViewsTest {
             if (!preset.equals(GamePreset.FOUR)){
                 PlayersManager pmTest = new PlayersManager(preset);
                 for(int i = 0; i< preset.getPlayersNumber(); i++){
-                    assertTrue(pmTest.addPlayer(pC.getPlayer(Integer.toString(i), Wizard.ONE, Tower.WHITE)));
+                    assertTrue(pmTest.addPlayer(pC.getPlayer(Integer.toString(i), Wizard.SENSEI, Tower.WHITE)));
                 }
 
                 ArrayList<PlayerView> playerViewTest = pmTest.getPlayersView(pmTest.getPlayers().get(0));
@@ -84,10 +84,10 @@ class ViewsTest {
         GameModel gmTeams = new GameModelTeams();
         PlayersManager pmTest = gmTeams.getPlayersManager();
 
-        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteLeader", Wizard.ONE, Tower.WHITE)));
-        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackLeader", Wizard.ONE, Tower.BLACK)));
-        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteOther", Wizard.ONE, Tower.WHITE)));
-        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackOther", Wizard.ONE, Tower.BLACK)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteLeader", Wizard.SENSEI, Tower.WHITE)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackLeader", Wizard.SENSEI, Tower.BLACK)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteOther", Wizard.SENSEI, Tower.WHITE)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackOther", Wizard.SENSEI, Tower.BLACK)));
 
 
         ArrayList<PlayerView> playerViewTest = pmTest.getPlayersView(pmTest.getPlayers().get(0));

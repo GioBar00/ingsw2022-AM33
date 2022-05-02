@@ -34,7 +34,7 @@ class GameStateAndTeamsTests {
                 t = Tower.WHITE;
             else
                 t = Tower.BLACK;
-            gm.getModel().getPlayersManager().addPlayer(pC.getPlayer(Integer.toString(i), Wizard.THREE, t));
+            gm.getModel().getPlayersManager().addPlayer(pC.getPlayer(Integer.toString(i), Wizard.MERLIN, t));
         }
         gm.startGame();
     }

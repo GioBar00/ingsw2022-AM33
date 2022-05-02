@@ -111,7 +111,7 @@ class GameModelTest {
             assertEquals(preset.getPlayersNumber() - i, model.getAvailablePlayerSlots());
 
             addMessageListener(i + "");
-            assertTrue(model.addPlayer(pC.getPlayer( i + "", Wizard.THREE)));
+            assertTrue(model.addPlayer(pC.getPlayer( i + "", Wizard.MERLIN)));
         }
 
         assertEquals(GameState.UNINITIALIZED, model.getGameState());
@@ -493,12 +493,12 @@ class GameModelTest {
     void removePlayer(){
         GameModel model = new GameModel(GamePreset.THREE);
         assertFalse(model.removePlayer("1"));
-        assertTrue(model.addPlayer(pC.getPlayer("1", Wizard.ONE)));
-        assertTrue(model.addPlayer(pC.getPlayer("2", Wizard.ONE)));
+        assertTrue(model.addPlayer(pC.getPlayer("1", Wizard.SENSEI)));
+        assertTrue(model.addPlayer(pC.getPlayer("2", Wizard.SENSEI)));
         assertTrue(model.removePlayer("1"));
         assertFalse(model.removePlayer("1"));
-        assertTrue(model.addPlayer(pC.getPlayer("1", Wizard.ONE)));
-        assertTrue(model.addPlayer(pC.getPlayer("3", Wizard.ONE)));
+        assertTrue(model.addPlayer(pC.getPlayer("1", Wizard.SENSEI)));
+        assertTrue(model.addPlayer(pC.getPlayer("3", Wizard.SENSEI)));
     }
 
 }

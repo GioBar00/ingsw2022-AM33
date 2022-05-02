@@ -48,7 +48,7 @@ class GameViewTest {
     void setUpInitial(){
         pmTest = gmTest.getModel().getPlayersManager();
         for(int i = 0; i < GamePreset.THREE.getPlayersNumber(); i++){
-            pmTest.addPlayer(pC.getPlayer(Integer.toString(i),Wizard.ONE)) ;
+            pmTest.addPlayer(pC.getPlayer(Integer.toString(i),Wizard.SENSEI)) ;
         }
         imTest = gmTest.getModel().getIslandsManager();
         playerTowers = new ArrayList<>();

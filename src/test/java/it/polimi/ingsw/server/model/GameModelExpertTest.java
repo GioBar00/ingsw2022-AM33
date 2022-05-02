@@ -34,11 +34,11 @@ class GameModelExpertTest {
         assertFalse(m.startGame());
         for (int i = 0; i < preset.getPlayersNumber(); i++) {
             String nick = Integer.toString(i);
-            assertTrue(m.addPlayer(pC.getPlayer(nick, Wizard.FOUR)));
+            assertTrue(m.addPlayer(pC.getPlayer(nick, Wizard.KING)));
             assertEquals(preset.getPlayersNumber() - i - 1, m.getAvailablePlayerSlots());
         }
 
-        assertFalse(m.addPlayer(pC.getPlayer(": (", Wizard.FOUR)));
+        assertFalse(m.addPlayer(pC.getPlayer(": (", Wizard.KING)));
 
         int currentReserve = 20 - preset.getPlayersNumber();
 
@@ -152,7 +152,7 @@ class GameModelExpertTest {
         m.characterCards.set(0, herbalist);
 
         for (int i = 0; i < GamePreset.THREE.getPlayersNumber(); i++) {
-            assertTrue(m.addPlayer(pC.getPlayer(i + "", Wizard.FOUR)));
+            assertTrue(m.addPlayer(pC.getPlayer(i + "", Wizard.KING)));
         }
 
 

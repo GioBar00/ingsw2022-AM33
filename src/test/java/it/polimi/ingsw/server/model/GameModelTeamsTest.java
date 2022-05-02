@@ -23,12 +23,12 @@ class GameModelTeamsTest {
         GameModel gmTeams = new GameModelTeams();
 
         assertFalse(gmTeams.removePlayer("whiteLeader"));
-        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteLeader", Wizard.ONE, Tower.WHITE)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteLeader", Wizard.SENSEI, Tower.WHITE)));
         assertTrue(gmTeams.removePlayer("whiteLeader"));
-        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteLeader", Wizard.ONE, Tower.WHITE)));
-        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackLeader", Wizard.ONE, Tower.BLACK)));
-        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteOther", Wizard.ONE, Tower.WHITE)));
-        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackOther", Wizard.ONE, Tower.BLACK)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteLeader", Wizard.SENSEI, Tower.WHITE)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackLeader", Wizard.SENSEI, Tower.BLACK)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteOther", Wizard.SENSEI, Tower.WHITE)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackOther", Wizard.SENSEI, Tower.BLACK)));
 
 
         Player pl1 = gmTeams.playersManager.getPlayers().get(0);
@@ -52,7 +52,7 @@ class GameModelTeamsTest {
         assertEquals(gmTeams.playersManager.getSchoolBoard(pl4).getTower(), Tower.BLACK);
         assertEquals(0, gmTeams.playersManager.getSchoolBoard(pl4).getNumTowers());
 
-        assertFalse(gmTeams.addPlayer(pC.getPlayer("whiteOther", Wizard.ONE, Tower.WHITE)));
+        assertFalse(gmTeams.addPlayer(pC.getPlayer("whiteOther", Wizard.SENSEI, Tower.WHITE)));
     }
 
     /**
@@ -64,10 +64,10 @@ class GameModelTeamsTest {
     void swapTowers(){
         GameModel gmTeams = new GameModelTeams();
 
-        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteLeader", Wizard.ONE, Tower.WHITE)));
-        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackLeader", Wizard.ONE, Tower.BLACK)));
-        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteOther", Wizard.ONE, Tower.WHITE)));
-        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackOther", Wizard.ONE, Tower.BLACK)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteLeader", Wizard.SENSEI, Tower.WHITE)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackLeader", Wizard.SENSEI, Tower.BLACK)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteOther", Wizard.SENSEI, Tower.WHITE)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackOther", Wizard.SENSEI, Tower.BLACK)));
 
         Player pl1 = gmTeams.playersManager.getPlayers().get(0);
         Player pl2 = gmTeams.playersManager.getPlayers().get(1);
