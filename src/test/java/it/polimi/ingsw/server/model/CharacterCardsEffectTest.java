@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.GameModelExpert;
 import it.polimi.ingsw.server.model.cards.*;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.StudentColor;
+import it.polimi.ingsw.server.model.enums.Wizard;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.player.SchoolBoard;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests all character effects.
  */
 class CharacterCardsEffectTest {
+
+    PlayerConvertor pC = new PlayerConvertor();
     /**
      * game model expert.
      */
@@ -29,9 +32,9 @@ class CharacterCardsEffectTest {
      */
     @BeforeEach
     void prepareModel() {
-        gme.addPlayer("1");
-        gme.addPlayer("2");
-        gme.addPlayer("3");
+        gme.addPlayer(pC.getPlayer("1", Wizard.ONE));
+        gme.addPlayer(pC.getPlayer("2", Wizard.ONE));
+        gme.addPlayer(pC.getPlayer("3", Wizard.ONE));
         gme.startGame();
     }
 

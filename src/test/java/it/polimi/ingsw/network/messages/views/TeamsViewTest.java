@@ -1,20 +1,13 @@
 package it.polimi.ingsw.network.messages.views;
 
-import it.polimi.ingsw.network.messages.server.CurrentTeams;
-import it.polimi.ingsw.server.model.GameModelTeams;
-import it.polimi.ingsw.server.model.enums.Tower;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class TeamsViewTest {
 
-    /**
+    //TODO TEST
+    /*
      * test for CurrentTeams. The creation of CurrentTeams is called twice: once while the player "blackOther" is still
      * in the lobby, the second time when it gets added to Team Black
      */
+    /*
     @Test
     void teamsViewTest(){
         GameModelTeams gmTeams = new GameModelTeams();
@@ -58,4 +51,6 @@ class TeamsViewTest {
         assertTrue(tv.getTeams().get(Tower.BLACK).contains("blackOther"));
         assertEquals(0, lobby.size());
     }
+
+     */
 }

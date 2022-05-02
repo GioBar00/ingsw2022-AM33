@@ -8,6 +8,7 @@ import it.polimi.ingsw.network.messages.actions.requests.MultiplePossibleMoves;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.server.*;
+import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.listeners.ConcreteMessageListenerSubscriber;
 import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.server.listeners.MessageEvent;
@@ -104,17 +105,13 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
 
     /**
      * Adds a new player to the game only if the game is uninitialized, there is at lest an empty player slot and there isn't any other player with that nickname.
-     * @param nickname unique identifier of a player
+     * @param playerDetails unique class with details for a player
      * @return if the player was added successfully.
      */
-    public boolean addPlayer(String nickname) {
+    public boolean addPlayer(PlayerDetails playerDetails) {
         if (gameState != GameState.UNINITIALIZED)
             return false;
-        if (playersManager.addPlayer(nickname)) {
-            notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeamsView())));
-            return true;
-        }
-        return false;
+        return playersManager.addPlayer(playerDetails);
     }
 
     /**
@@ -662,15 +659,6 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     @Override
     public GamePhase getPhase() {
         return roundManager.getGamePhase();
-    }
-
-    /**
-     * Return the nickname of the master
-     * @return String
-     */
-    @Override
-    public String getMaster() {
-        return playersManager.getMaster();
     }
 
     /**

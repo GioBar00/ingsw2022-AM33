@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.listeners.MessageListenerSubscriber;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.enums.*;
@@ -25,10 +26,10 @@ public interface Game extends MessageListenerSubscriber {
 
     /**
      * Adds a new player to the game.
-     * @param nickname unique identifier of a player
+     * @param playerDetails unique class with details for a player
      * @return if the player was added successfully.
      */
-    boolean addPlayer(String nickname);
+    boolean addPlayer(PlayerDetails playerDetails);
 
 
     /**
@@ -85,12 +86,6 @@ public interface Game extends MessageListenerSubscriber {
      * @return GamePhase
      */
     GamePhase getPhase();
-
-    /**
-     * Return the nickname of the master
-     * @return String
-     */
-    String getMaster();
 
     /**
      * Activates character card at index.

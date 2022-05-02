@@ -7,14 +7,17 @@ import java.io.InputStreamReader;
 public class ClientMain{
 
     public static void main(String[] args) throws IOException {
-        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+        ClientThread ct = new ClientThread();
+        ct.execute();
+        /*BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         boolean serverOn = false;
         ServerThread st;
         ClientThread ct;
         Thread t_server = null, t_client = null;
 
         String input = stdIn.readLine();
-        
+
+
         while(!input.equals("shutdown")){
             if(input.equals("new server")){
                 if (!serverOn){
@@ -37,6 +40,6 @@ public class ClientMain{
         
         t_server.interrupt();
         t_client.interrupt();
-
+        */
     }
 }

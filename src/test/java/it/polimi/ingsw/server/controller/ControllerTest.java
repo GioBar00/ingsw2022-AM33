@@ -7,6 +7,7 @@ import it.polimi.ingsw.network.messages.client.SkipTurn;
 import it.polimi.ingsw.network.messages.client.StartGame;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
+import it.polimi.ingsw.server.LobbyConstructor;
 import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.server.VirtualClient;
 import it.polimi.ingsw.server.listeners.MessageEvent;
@@ -89,7 +90,7 @@ class ControllerTest {
         assertFalse(controller.isInstantiated());
         assertFalse(controller.addPlayer(m1.getIdentifier()));
 
-        controller.setModel(GamePreset.TWO, GameMode.EXPERT);
+        controller.setModelAndLobby(GamePreset.TWO, GameMode.EXPERT, LobbyConstructor.getLobby(GamePreset.TWO));
         controller.addModelListener(m1);
 
         assertTrue(controller.isInstantiated());
@@ -111,11 +112,13 @@ class ControllerTest {
         m2.request(new StartGame());
         assertTrue(m2.queueContains(MessageType.COMM_MESSAGE));
 
+
         m1.request(new StartGame());
         assertTrue(m1.queueContains(MessageType.CURRENT_GAME_STATE));
         assertTrue(m2.queueContains(MessageType.CURRENT_GAME_STATE));
 
     }
+
 
     @Test
     void partySimulation() {
@@ -266,7 +269,7 @@ class ControllerTest {
     @Test
     void EarlyDisconnectionTest(){
         Controller c = new Controller(new Server());
-        c.setModel(GamePreset.FOUR,GameMode.EASY);
+        c.setModelAndLobby(GamePreset.FOUR,GameMode.EASY,LobbyConstructor.getLobby(GamePreset.TWO));
 
         assertTrue(c.isInstantiated());
         ModelListener m1 = new ModelListener("p1", c);
@@ -304,7 +307,7 @@ class ControllerTest {
     @Test
     void chooseTeamTest(){
         Controller c = new Controller(new Server());
-        c.setModel(GamePreset.FOUR,GameMode.EASY);
+        c.setModelAndLobby(GamePreset.FOUR,GameMode.EASY,LobbyConstructor.getLobby(GamePreset.FOUR));
 
         ModelListener m1 = new ModelListener("p1", c);
         c.addPlayer(m1.getIdentifier());

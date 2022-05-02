@@ -2,6 +2,7 @@ package it.polimi.ingsw.network.messages.views;
 
 import it.polimi.ingsw.server.model.GameModel;
 import it.polimi.ingsw.server.model.GameModelExpert;
+import it.polimi.ingsw.server.model.PlayerConvertor;
 import it.polimi.ingsw.server.model.cards.CharacterCard;
 import it.polimi.ingsw.server.model.enums.*;
 import it.polimi.ingsw.server.model.islands.IslandsManager;
@@ -38,6 +39,8 @@ class GameViewTest {
     List<CharacterCardView> characterCardView;
     Map<String, Integer> playerCoins;
 
+    PlayerConvertor pC = new PlayerConvertor();
+
     /**
      * set up of the gameModel, before each test
      */
@@ -45,7 +48,7 @@ class GameViewTest {
     void setUpInitial(){
         pmTest = gmTest.getModel().getPlayersManager();
         for(int i = 0; i < GamePreset.THREE.getPlayersNumber(); i++){
-            pmTest.addPlayer(Integer.toString(i));
+            pmTest.addPlayer(pC.getPlayer(Integer.toString(i),Wizard.ONE)) ;
         }
         imTest = gmTest.getModel().getIslandsManager();
         playerTowers = new ArrayList<>();

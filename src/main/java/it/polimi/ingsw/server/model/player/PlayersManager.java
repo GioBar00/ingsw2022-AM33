@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.model.player;
 import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.actions.requests.PlayAssistantCard;
+import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.model.enums.*;
 
 import java.util.*;
@@ -14,10 +15,6 @@ public class PlayersManager {
      */
     private final GamePreset preset;
 
-    /**
-     * the master player who can start the game
-     */
-    private String master;
     /**
      * index of the current player in the array playerOrderIndexes
      */
@@ -35,10 +32,7 @@ public class PlayersManager {
      * map of the teams corresponding to each tower
      */
     private final EnumMap<Tower, List<Player>> teams = new EnumMap<>(Tower.class);
-    /**
-     * list of the players waiting to be added to the game
-     */
-    private final List<String> lobby = new ArrayList<>();
+
     /**
      * Constructor of PlayerManager
      * @param preset of the current game
@@ -91,7 +85,7 @@ public class PlayersManager {
      * @return number of available slots
      */
     public int getAvailablePlayerSlots() {
-        return preset.getPlayersNumber() - players.size() - lobby.size();
+        return preset.getPlayersNumber() - players.size();
     }
 
     /**
@@ -104,21 +98,24 @@ public class PlayersManager {
 
     /**
      * Adds a new player to the game if there are no other players with the same nickname.
-     * @param nickname unique identifier of a player
+     * @param playerDetails unique class with details for a player
      * @return if the player was added successfully.
      */
-    public boolean addPlayer(String nickname) {
+    public boolean addPlayer(PlayerDetails playerDetails) {
         // get random tower from available ones
-        List<Tower> availableTowers = new LinkedList<>(preset.getTowers().stream().toList());
+        if(playerDetails.getTower() == null){
+            List<Tower> availableTowers = new LinkedList<>(preset.getTowers().stream().toList());
 
-        for (Player p: players)
-            availableTowers.removeIf(x -> x.equals(p.getSchoolBoard().getTower()));
+            for (Player p: players)
+                availableTowers.removeIf(x -> x.equals(p.getSchoolBoard().getTower()));
 
-        if (availableTowers.size() > 0) {
-            int towerIndex = ThreadLocalRandom.current().nextInt(0, availableTowers.size());
-            return addPlayer(nickname, availableTowers.get(towerIndex));
+            if (availableTowers.size() > 0) {
+                int towerIndex = ThreadLocalRandom.current().nextInt(0, availableTowers.size());
+                return addPlayer(playerDetails.getNickname(), availableTowers.get(towerIndex), playerDetails.getWizard());
+            }
+            return false;
         }
-        return false;
+        return addPlayer(playerDetails.getNickname(), playerDetails.getTower(), playerDetails.getWizard());
     }
 
     /**
@@ -126,27 +123,16 @@ public class PlayersManager {
      * @param nickname unique identifier of a player
      * @return if the player was added successfully.
      */
-    public boolean addPlayer(String nickname, Tower tower) {
+    public boolean addPlayer(String nickname, Tower tower, Wizard wizard) {
         if (getAvailablePlayerSlots() > 0) {
-            // get random wizard from available ones
-            List<Wizard> availableWizards = new LinkedList<>(Arrays.asList(Wizard.values()));
-            for (Player p: players) {
-                if (p.getNickname().equals(nickname))
-                    return false;
-                availableWizards.removeIf(x -> x.equals(p.getWizard()));
-            }
-
-            int wizardIndex = ThreadLocalRandom.current().nextInt(0, availableWizards.size());
 
             int numTowers = teams.get(tower).size() > 0 ?
                     0 :
                     preset.getTowersNumber();
 
             SchoolBoard sb = new SchoolBoard(preset.getEntranceCapacity(), tower, numTowers);
-            Player p = new Player(nickname, availableWizards.get(wizardIndex), sb);
+            Player p = new Player(nickname, wizard, sb);
             players.add(p);
-            if(master == null && players.size() == 1)
-                master = nickname;
             teams.get(tower).add(p);
             return true;
         }
@@ -260,69 +246,7 @@ public class PlayersManager {
         }
     }
 
-    /**
-     * adds a client to the lobby, checking that the nickname isn't already used
-     * @param nickname of the to-be player that enters the lobby
-     * @return true if the nickname is available
-     */
-    public boolean addToLobby(String nickname){
-        if (getAvailablePlayerSlots() == 0)
-            return false;
-        for (String s: lobby) {
-            if(s.equals(nickname))
-                return false;
-        }
-        for (Player p: players) {
-            if(p.getNickname().equals(nickname))
-                return false;
-        }
-        lobby.add(nickname);
-        if(lobby.size() == 1)
-            master = nickname;
-        return true;
-    }
 
-    /**
-     * the method changes the team to which the player belongs; if the player didn't previously belong to any team,
-     * it's added as a new member
-     * @param nickname of the player
-     * @param tower of the new team
-     * @return true if the change was successful
-     */
-    public boolean changeTeam(String nickname, Tower tower){
-        if (!preset.getTowers().contains(tower))
-            return false;
-
-        for (String s: lobby)
-            if (s.equals(nickname)) {
-                // player not in a team yet
-                lobby.remove(nickname);
-                addPlayer(nickname, tower);
-                return true;
-            }
-
-        for (Tower t: teams.keySet()) {
-            for (Player p: teams.get(t))
-                if (p.getNickname().equals(nickname)){
-                    // player already in a team
-                    if (p.getSchoolBoard().getNumTowers() != 0){
-                        // if the player is the leader who is currently holding the towers swap them with the second player
-                        int tempTowerNum = p.getSchoolBoard().getNumTowers();
-                        for (Player nextLeader : teams.get(t)){
-                            if (!nextLeader.equals(p))
-                                nextLeader.getSchoolBoard().setMaxNumTowers(8);
-                            nextLeader.getSchoolBoard().addTowers(tempTowerNum);
-                        }
-                    }
-                    teams.get(t).remove(p);
-                    players.remove(p);
-                    addPlayer(nickname, tower);
-                    return true;
-                }
-        }
-
-        return false;
-    }
 
     /**
      * @param destPlayer the player to whom the view is going to be sent
@@ -337,19 +261,6 @@ public class PlayersManager {
         return playersView;
     }
 
-    /**
-     * @return the lobby
-     */
-    public List<String> getLobby() {
-        return lobby;
-    }
-
-    /**
-     * @return the teamsView
-     */
-    public TeamsView getTeamsView(){
-        return new TeamsView(teams, lobby);
-    }
 
     /**
      * Calculates the playable cards for the current player.
@@ -374,33 +285,12 @@ public class PlayersManager {
         for(Player p : players){
             if(p.getNickname().equals(nickname)){
                 players.remove(p);
+                teams.get(p.getSchoolBoard().getTower()).remove(p);
+
                 return true;
             }
         }
         return false;
     }
 
-    /**
-     * Remove a player from the lobby
-     * @param nickname of the player
-     * @return if the player has been removed
-     */
-    public boolean removeFromLobby(String nickname){
-        for(String s : lobby){
-            if(s.equals(nickname)){
-                lobby.remove(s);
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    /**
-     * Returns the nickname of the master
-     * @return the nickname of the master or null if there's no player
-     */
-    public String getMaster(){
-        return master;
-    }
 }

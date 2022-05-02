@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.network.messages.server.CurrentTeams;
+import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.listeners.MessageEvent;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.GameState;
@@ -18,20 +19,16 @@ public class GameModelTeams extends GameModel {
     }
 
     /**
-     * the method adds the to-be player to the lobby and waits for the client to choose a preferred team before adding it as a player
-     * @param nickname unique identifier of a player
+     * Adds a new player to the game only if the game is uninitialized, there is at lest an empty player slot and there isn't any other player with that nickname.
+     * @param playerDetails unique class with details for a player
      * @return if the player was added successfully.
      */
     @Override
-    public boolean addPlayer(String nickname) {
+    public boolean addPlayer(PlayerDetails playerDetails) {
         if (gameState != GameState.UNINITIALIZED)
             return false;
 
-        if (playersManager.addToLobby(nickname)) {
-            notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeamsView())));
-            return true;
-        }
-        return false;
+        else return playersManager.addPlayer(playerDetails);
     }
 
     /**
@@ -90,29 +87,4 @@ public class GameModelTeams extends GameModel {
         return super.startGame();
     }
 
-    /**
-     * the method changes the team to which the player belongs; if the player didn't previously belong to any team,
-     * it's added as a new member
-     * @param nickname of the player
-     * @param tower of the new team
-     * @return true if the change was successful
-     */
-    @Override
-    public boolean changeTeam(String nickname, Tower tower) {
-        if (playersManager.changeTeam(nickname, tower)) {
-            notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeamsView())));
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Remove a player from the game
-     * @param nickname of the player
-     * @return if the player was removed
-     */
-    @Override
-    public boolean removePlayer(String nickname){
-        return playersManager.removeFromLobby(nickname);
-    }
 }

@@ -8,7 +8,6 @@ import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.server.controller.Controller;
-
 import it.polimi.ingsw.server.listeners.EndPartyEvent;
 import it.polimi.ingsw.server.listeners.EndPartyListener;
 import it.polimi.ingsw.server.listeners.MessageEvent;
@@ -19,9 +18,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Scanner;
 import java.util.concurrent.*;
 
 /**
@@ -43,6 +40,7 @@ public class Server implements EndPartyListener {
      * Game Controller
       */
     private Controller controller;
+
 
     /**
      * Server's constructor method
@@ -69,7 +67,7 @@ public class Server implements EndPartyListener {
             return;
         }
         System.out.println("S: server ready");
-        while (true) {
+        while (!Thread.interrupted()) {
             try {
                 System.out.println("S: waiting for client");
                 Socket socket = serverSocket.accept();
@@ -130,6 +128,7 @@ public class Server implements EndPartyListener {
                     socket.close();
                     return null;
                 }
+
                 //player already in the party -> the model exist
                 if(virtualClients.containsKey(nickname) && !virtualClients.get(nickname).getStatus()){
                     VirtualClient vc =virtualClients.get(nickname);
@@ -155,10 +154,9 @@ public class Server implements EndPartyListener {
                             if (MessageType.retrieveByMessageClass(m).equals(MessageType.CHOSEN_GAME)) {
                                 ChosenGame choice = (ChosenGame) m;
                                 if (choice.isValid()) {
-                                    do {
-                                        controller.setModel(choice.getPreset(), choice.getMode());
-                                    }
-                                    while (!controller.addPlayer(nickname));
+
+                                    controller.setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
+                                    controller.addPlayer(nickname);
                                     return nickname;
                                 }
                             }
@@ -180,7 +178,7 @@ public class Server implements EndPartyListener {
                     else {
                         //model exists
                         if (controller.addPlayer(nickname)) {
-                        return nickname;
+                            return nickname;
                         }
                         else {
                             //Was the player already in the party but had some connection issue?

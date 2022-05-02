@@ -1,8 +1,9 @@
 package it.polimi.ingsw.server.model.player;
 
+import it.polimi.ingsw.server.model.PlayerConvertor;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.GamePreset;
-import it.polimi.ingsw.server.model.player.PlayersManager;
+import it.polimi.ingsw.server.model.enums.Wizard;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,23 +11,23 @@ import static org.junit.jupiter.api.Assertions.*;
 class PlayersManagerTest {
     PlayersManager pm = new PlayersManager(GamePreset.THREE);
 
+    private final PlayerConvertor pC = new PlayerConvertor();
+
     /**
      * Test the methods addPlayer, tries to add a new player when there's no space left and to add a player with an existing nickname
      */
     @Test
     void CreatePm(){
+
         //TestingAdd
-        assertNull(pm.getMaster());
-        assertTrue(pm.addPlayer("Pl1"));
-        assertEquals("Pl1", pm.getMaster());
-        assertTrue(pm.addPlayer("Pl2"));
-        assertTrue(pm.removePlayer("Pl2"));
+        assertTrue(pm.addPlayer(pC.getPlayer("p1",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("p2" ,Wizard.TWO)));
+        assertTrue(pm.removePlayer("p2"));
         assertFalse(pm.removePlayer("Pl3"));
-        assertTrue(pm.addPlayer("Pl2"));
-        assertFalse(pm.addPlayer("Pl1"));
+        assertTrue(pm.addPlayer(pC.getPlayer("p1",Wizard.TWO)));
         assertEquals(1,pm.getAvailablePlayerSlots());
-        assertTrue(pm.addPlayer("Pl3"));
-        assertFalse(pm.addPlayer("Pl4"));
+        assertTrue(pm.addPlayer(pC.getPlayer("p3",Wizard.TWO)));
+        assertFalse(pm.addPlayer(pC.getPlayer("p4",Wizard.TWO)));
     }
 
     /**
@@ -34,9 +35,11 @@ class PlayersManagerTest {
      */
     @Test
     void playersManagerTest() {
-        assertTrue(pm.addPlayer("Pl1"));
-        assertTrue(pm.addPlayer("Pl2"));
-        assertTrue(pm.addPlayer("Pl3"));
+        PlayerConvertor pC = new PlayerConvertor();
+
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl1",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.TWO)));
 
         //Check slots
         assertEquals(0,pm.getAvailablePlayerSlots());
@@ -61,9 +64,11 @@ class PlayersManagerTest {
      */
     @Test
     void SortingTest(){
-        assertTrue(pm.addPlayer("Pl1"));
-        assertTrue(pm.addPlayer("Pl2"));
-        assertTrue(pm.addPlayer("Pl3"));
+        PlayerConvertor pC = new PlayerConvertor();
+
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl1",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.TWO)));
 
         assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
         pm.nextPlayer();
@@ -93,9 +98,11 @@ class PlayersManagerTest {
      */
     @Test
     void clockwiseTest (){
-        assertTrue(pm.addPlayer("Pl1"));
-        assertTrue(pm.addPlayer("Pl2"));
-        assertTrue(pm.addPlayer("Pl3"));
+        PlayerConvertor pC = new PlayerConvertor();
+
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl1",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.TWO)));
 
         assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
         pm.nextPlayer();
@@ -122,9 +129,11 @@ class PlayersManagerTest {
      */
     @Test
     void firstPlayerTest(){
-        assertTrue(pm.addPlayer("Pl1"));
-        assertTrue(pm.addPlayer("Pl2"));
-        assertTrue(pm.addPlayer("Pl3"));
+        PlayerConvertor pC = new PlayerConvertor();
+
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl1",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.TWO)));
+        assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.TWO)));
 
         pm.setFirstPlayer(2 - 1);
         assertEquals("Pl2",pm.getPlayers().get(0).getNickname());
@@ -142,3 +151,4 @@ class PlayersManagerTest {
         assertEquals("Pl3",pm.getPlayers().get(2).getNickname());
     }
 }
+

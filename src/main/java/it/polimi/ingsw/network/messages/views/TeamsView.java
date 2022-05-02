@@ -1,7 +1,6 @@
 package it.polimi.ingsw.network.messages.views;
 
 import it.polimi.ingsw.server.model.enums.Tower;
-import it.polimi.ingsw.server.model.player.Player;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,13 +18,13 @@ public class TeamsView implements Serializable {
      */
     private final List<String> lobby;
 
-    public TeamsView(EnumMap<Tower, List<Player>> teams, List<String> lobby){
+    public TeamsView(EnumMap<Tower, List<String>> teams, List<String> lobby){
         EnumMap<Tower, List<String>> teamsString = new EnumMap<>(Tower.class);
         for (Tower t: teams.keySet()) {
             teamsString.put(t, new LinkedList<>());
             ArrayList<String> playerNicks = new ArrayList<>();
-            for (Player p : teams.get(t)) {
-                playerNicks.add(p.getNickname());
+            for (String s : teams.get(t)) {
+                playerNicks.add(s);
             }
             teamsString.put(t, playerNicks);
         }

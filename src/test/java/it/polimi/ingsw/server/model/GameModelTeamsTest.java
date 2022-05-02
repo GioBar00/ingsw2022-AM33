@@ -1,14 +1,16 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.server.model.GameModel;
-import it.polimi.ingsw.server.model.GameModelTeams;
 import it.polimi.ingsw.server.model.enums.Tower;
+import it.polimi.ingsw.server.model.enums.Wizard;
 import it.polimi.ingsw.server.model.player.Player;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameModelTeamsTest {
+
+    private final PlayerConvertor pC = new PlayerConvertor();
+
 
     /**
      * tests that the players are added correctly to the game: the four players should be divided into the two
@@ -21,20 +23,13 @@ class GameModelTeamsTest {
         GameModel gmTeams = new GameModelTeams();
 
         assertFalse(gmTeams.removePlayer("whiteLeader"));
-        assertTrue(gmTeams.addPlayer("whiteLeader"));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteLeader", Wizard.ONE, Tower.WHITE)));
         assertTrue(gmTeams.removePlayer("whiteLeader"));
-        assertTrue(gmTeams.addPlayer("whiteLeader"));
-        assertFalse(gmTeams.addPlayer("whiteLeader"));
-        assertTrue(gmTeams.addPlayer("blackLeader"));
-        assertTrue(gmTeams.addPlayer("whiteOther"));
-        assertTrue(gmTeams.addPlayer("blackOther"));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteLeader", Wizard.ONE, Tower.WHITE)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackLeader", Wizard.ONE, Tower.BLACK)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteOther", Wizard.ONE, Tower.WHITE)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackOther", Wizard.ONE, Tower.BLACK)));
 
-        assertTrue(gmTeams.changeTeam("whiteLeader", Tower.WHITE));
-        assertTrue(gmTeams.changeTeam("blackLeader", Tower.BLACK));
-        assertTrue(gmTeams.changeTeam("whiteOther", Tower.WHITE));
-        assertTrue(gmTeams.changeTeam("blackOther", Tower.BLACK));
-        assertFalse(gmTeams.changeTeam("lallo", Tower.BLACK));
-        assertFalse(gmTeams.changeTeam("whiteLeader", Tower.GREY));
 
         Player pl1 = gmTeams.playersManager.getPlayers().get(0);
         Player pl2 = gmTeams.playersManager.getPlayers().get(1);
@@ -57,7 +52,7 @@ class GameModelTeamsTest {
         assertEquals(gmTeams.playersManager.getSchoolBoard(pl4).getTower(), Tower.BLACK);
         assertEquals(0, gmTeams.playersManager.getSchoolBoard(pl4).getNumTowers());
 
-        assertFalse(gmTeams.addPlayer("extra"));
+        assertFalse(gmTeams.addPlayer(pC.getPlayer("whiteOther", Wizard.ONE, Tower.WHITE)));
     }
 
     /**
@@ -69,15 +64,10 @@ class GameModelTeamsTest {
     void swapTowers(){
         GameModel gmTeams = new GameModelTeams();
 
-        assertTrue(gmTeams.addPlayer("whiteLeader"));
-        assertTrue(gmTeams.addPlayer("blackLeader"));
-        assertTrue(gmTeams.addPlayer("whiteOther"));
-        assertTrue(gmTeams.addPlayer("blackOther"));
-
-        assertTrue(gmTeams.changeTeam("whiteLeader", Tower.WHITE));
-        assertTrue(gmTeams.changeTeam("blackLeader", Tower.BLACK));
-        assertTrue(gmTeams.changeTeam("whiteOther", Tower.WHITE));
-        assertTrue(gmTeams.changeTeam("blackOther", Tower.BLACK));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteLeader", Wizard.ONE, Tower.WHITE)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackLeader", Wizard.ONE, Tower.BLACK)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteOther", Wizard.ONE, Tower.WHITE)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackOther", Wizard.ONE, Tower.BLACK)));
 
         Player pl1 = gmTeams.playersManager.getPlayers().get(0);
         Player pl2 = gmTeams.playersManager.getPlayers().get(1);
@@ -111,72 +101,4 @@ class GameModelTeamsTest {
         assertTrue(gmTeams.roundManager.getWinners().contains(gmTeams.playersManager.getSchoolBoard(pl2).getTower()));
     }
 
-    /**
-     * check that the members of the teams are changed correctly (in the case that the teams where already formed)
-     */
-    @Test
-    void changeSidesTest(){
-        GameModelTeams gmTeams = new GameModelTeams();
-
-        assertTrue(gmTeams.addPlayer("whiteLeader"));
-        assertTrue(gmTeams.addPlayer("blackLeader"));
-        assertTrue(gmTeams.addPlayer("traitor1"));
-        assertTrue(gmTeams.addPlayer("traitor2"));
-
-        assertTrue(gmTeams.changeTeam("whiteLeader", Tower.WHITE));
-        assertTrue(gmTeams.changeTeam("blackLeader", Tower.BLACK));
-        assertTrue(gmTeams.changeTeam("traitor1", Tower.WHITE));
-        assertTrue(gmTeams.changeTeam("traitor2", Tower.BLACK));
-
-        Player wl = gmTeams.playersManager.getPlayers().get(0);
-        Player bl = gmTeams.playersManager.getPlayers().get(1);
-        Player t1 = gmTeams.playersManager.getPlayers().get(2);
-        assertEquals("traitor1", t1.getNickname());
-        Player t2 = gmTeams.playersManager.getPlayers().get(3);
-        assertEquals("traitor2", t2.getNickname());
-
-        assertTrue(gmTeams.playersManager.getTeams().get(Tower.WHITE).contains(wl));
-        assertTrue(gmTeams.playersManager.getTeams().get(Tower.WHITE).contains(t1));
-        assertTrue(gmTeams.playersManager.getTeams().get(Tower.BLACK).contains(bl));
-        assertTrue(gmTeams.playersManager.getTeams().get(Tower.BLACK).contains(t2));
-
-        gmTeams.playersManager.changeTeam("traitor1", Tower.BLACK);
-        assertEquals("traitor1", gmTeams.playersManager.getTeams().get(Tower.BLACK).get(2).getNickname());
-        assertTrue(gmTeams.playersManager.getTeams().get(Tower.WHITE).contains(wl));
-        assertTrue(gmTeams.playersManager.getTeams().get(Tower.BLACK).contains(bl));
-        assertTrue(gmTeams.playersManager.getTeams().get(Tower.BLACK).contains(t2));
-
-        gmTeams.playersManager.changeTeam("traitor2", Tower.WHITE);
-        assertEquals("traitor2", gmTeams.playersManager.getTeams().get(Tower.WHITE).get(1).getNickname());
-        assertTrue(gmTeams.playersManager.getTeams().get(Tower.WHITE).contains(wl));
-        assertTrue(gmTeams.playersManager.getTeams().get(Tower.BLACK).contains(bl));
-        assertEquals("traitor1", gmTeams.playersManager.getTeams().get(Tower.BLACK).get(1).getNickname());
-    }
-
-    @Test
-    void leaderChangesTeam(){
-        GameModelTeams gmTeams = new GameModelTeams();
-
-        assertTrue(gmTeams.addPlayer("whiteLeader"));
-        assertTrue(gmTeams.addPlayer("blackLeader"));
-        assertTrue(gmTeams.addPlayer("nextWhiteLeader"));
-        assertTrue(gmTeams.addPlayer("otherBlack"));
-
-        assertTrue(gmTeams.changeTeam("whiteLeader", Tower.WHITE));
-        assertTrue(gmTeams.changeTeam("blackLeader", Tower.BLACK));
-        assertTrue(gmTeams.changeTeam("nextWhiteLeader", Tower.WHITE));
-        assertTrue(gmTeams.changeTeam("otherBlack", Tower.BLACK));
-
-        assertTrue(gmTeams.changeTeam("whiteLeader", Tower.BLACK));
-        
-        Player newLeader = null;
-        for(Player p : gmTeams.playersManager.getPlayers()){
-            if (p.getNickname().equals("nextWhiteLeader"))
-                newLeader = p;
-        }
-
-        assert newLeader != null;
-        assertEquals(8, gmTeams.playersManager.getSchoolBoard(newLeader).getNumTowers());
-
-    }
 }

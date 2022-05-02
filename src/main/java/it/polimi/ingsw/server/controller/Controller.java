@@ -4,6 +4,8 @@ import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.*;
 import it.polimi.ingsw.network.messages.enums.MessageType;
+import it.polimi.ingsw.server.Lobby;
+import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.VirtualClient;
 import it.polimi.ingsw.server.listeners.EndPartyEvent;
 import it.polimi.ingsw.server.listeners.EndPartyListener;
@@ -31,6 +33,8 @@ public class Controller implements MessageListener {
      */
     private EndPartyListener listener;
 
+    private Lobby lobby;
+
     /**
      * Default constructor of class Controller
      * @param listener of the controller
@@ -38,6 +42,7 @@ public class Controller implements MessageListener {
     public Controller(EndPartyListener listener) {
         model = null;
         this.listener = listener;
+        lobby = null;
     }
 
     /**
@@ -50,7 +55,7 @@ public class Controller implements MessageListener {
      * @return true if the model is instantiated
      */
     public boolean isInstantiated() {
-        return model != null;
+        return model != null && lobby != null;
     }
 
     /**
@@ -58,8 +63,9 @@ public class Controller implements MessageListener {
      * @param preset is the number of players for the game
      * @param mode is the mode of the game
      */
-    public void setModel(GamePreset preset, GameMode mode) {
+    public void setModelAndLobby(GamePreset preset, GameMode mode, Lobby lobby) {
         model = GameBuilder.getGame(preset, mode);
+        this.lobby = lobby;
     }
 
     /**
@@ -69,7 +75,7 @@ public class Controller implements MessageListener {
      */
     public boolean addPlayer(String nickname) {
         if(isInstantiated()) {
-            return model.addPlayer(nickname);
+            return lobby.addPlayer(nickname);
         }
         return false;
     }
@@ -80,6 +86,7 @@ public class Controller implements MessageListener {
      */
     public void addModelListener(MessageListener listener) {
         model.addListener(listener);
+        lobby.addListener(listener);
     }
 
     /**
@@ -106,11 +113,15 @@ public class Controller implements MessageListener {
             String identifier = ((VirtualClient) event.getSource()).getIdentifier();
             if(model.getGameState() == GameState.UNINITIALIZED){
                 {
-                    if(identifier.equals(model.getMaster())){
+                    if(lobby.removePlayer(identifier)){
+                        lobby.removePlayer(identifier);
+                        lobby.removeListener(vc);
+                    }
+                    else {
                         listener.onEndPartyEvent(new EndPartyEvent(this));
                         model = null;
+                        //lobby remove all listener
                     }
-                    else model.removePlayer(identifier);
                 }
             }
             else{
@@ -295,8 +306,11 @@ public class Controller implements MessageListener {
      * the rights
      */
     private boolean startGame(String nickname) {
-        if (nickname.equals(model.getMaster())) {
-            return model.startGame();
+        if (nickname.equals(lobby.getMaster()) && lobby.canStart()) {
+           for(PlayerDetails p : lobby.getPlayer()){
+               model.addPlayer(p);
+           }
+           model.startGame();
         }
         return false;
     }
@@ -307,7 +321,7 @@ public class Controller implements MessageListener {
      * @param tower the team he wants to join
      */
      private synchronized void changeTeam(String nickname, Tower tower) {
-         model.changeTeam(nickname, tower);
+         lobby.changeTeam(nickname, tower);
      }
 
     /**

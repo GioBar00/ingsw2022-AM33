@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.listeners.MessageEvent;
 import it.polimi.ingsw.server.listeners.MessageListener;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
@@ -110,12 +111,12 @@ public class GameModelExpert implements Game, EffectHandler {
 
     /**
      * Adds a new player to the game. Initializes the coins of the player if the player was added successfully.
-     * @param nickname unique identifier of a player
+     * @param playerDetails unique class with details for a player
      * @return if the player was added successfully.
      */
     @Override
-    public boolean addPlayer(String nickname) {
-        if (model.addPlayer(nickname)) {
+    public boolean addPlayer(PlayerDetails playerDetails) {
+        if (model.addPlayer(playerDetails)) {
             List<Player> players = model.playersManager.getPlayers();
             Player p = players.get(players.size() - 1);
             playerCoins.put(p.getNickname(), 0);
@@ -291,15 +292,6 @@ public class GameModelExpert implements Game, EffectHandler {
     @Override
     public GamePhase getPhase() {
         return model.getPhase();
-    }
-
-    /**
-     * Return the nickname of the master
-     * @return String
-     */
-    @Override
-    public String getMaster() {
-        return model.getMaster();
     }
 
     /**
