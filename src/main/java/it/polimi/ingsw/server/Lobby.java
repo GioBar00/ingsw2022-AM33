@@ -5,10 +5,7 @@ import it.polimi.ingsw.server.listeners.ConcreteMessageListenerSubscriber;
 import it.polimi.ingsw.server.model.enums.Tower;
 import it.polimi.ingsw.server.model.enums.Wizard;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 public class Lobby extends ConcreteMessageListenerSubscriber {
 
@@ -37,8 +34,11 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
         for(PlayerDetails p : players){
             if(p.getNickname().equals(nickname))
                 update = p;
-            else if (p.getWizard().equals(wizard))
-                return false;
+            else
+                if (p.getWizard() != null) {
+                    if (p.getWizard().equals(wizard))
+                        return false;
+            }
         }
         if(update != null) {
             update.setWizard(wizard);
@@ -78,12 +78,19 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
      * @return current available wizards
      */
     public WizardsView getWizardsView(){
-        List<Wizard> wizards = Arrays.asList(Wizard.values());
+        LinkedList<Wizard> wizards = new LinkedList<>(Arrays.asList(Wizard.values()));
+        int counter = 0;
 
         for (PlayerDetails pd : players) {
-            wizards.remove(pd.getWizard());
+            if (pd.getWizard() != null){
+                counter ++;
+                wizards.remove(pd.getWizard());
+            }
         }
 
+        // enum set doesn't allow empty set
+        if (counter == 4)
+            return null;
         return new WizardsView(EnumSet.copyOf(wizards));
     }
 }

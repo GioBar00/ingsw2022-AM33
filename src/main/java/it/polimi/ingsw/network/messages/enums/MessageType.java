@@ -26,6 +26,7 @@ public enum MessageType {
     COMM_MESSAGE(CommMessage.class),
     CURRENT_TEAMS(CurrentTeams.class),
     CURRENT_GAME_STATE(CurrentGameState.class),
+    AVAILABLE_WIZARDS(AvailableWizards.class),
 
     // client messages
     PLAYED_ASSISTANT_CARD(PlayedAssistantCard.class),
