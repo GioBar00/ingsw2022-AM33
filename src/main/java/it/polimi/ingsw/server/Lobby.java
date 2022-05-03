@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
 import it.polimi.ingsw.network.listeners.ConcreteMessageListenerSubscriber;
 import it.polimi.ingsw.server.model.enums.Tower;
@@ -32,13 +33,12 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
     public boolean setWizard(Wizard wizard, String nickname) {
         PlayerDetails update = null;
         for(PlayerDetails p : players){
-            if(p.getNickname().equals(nickname))
+            if(p.getNickname().equals(nickname)) {
                 update = p;
-            else
-                if (p.getWizard() != null) {
-                    if (p.getWizard().equals(wizard))
-                        return false;
             }
+            else if (p.getWizard() != null)
+                if(p.getWizard().equals(wizard))
+                    return false;
         }
         if(update != null) {
             update.setWizard(wizard);
@@ -72,6 +72,10 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
     }
     public boolean changeTeam(String nickname, Tower tower){
         return false;
+    }
+
+    public TeamsView getTeamView() {
+        return null;
     }
 
     /**

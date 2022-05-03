@@ -1,29 +1,37 @@
 package it.polimi.ingsw.network.messages.views;
 
+import it.polimi.ingsw.network.messages.server.CurrentTeams;
+import it.polimi.ingsw.server.Lobby;
+import it.polimi.ingsw.server.LobbyConstructor;
+import it.polimi.ingsw.server.model.enums.GamePreset;
+import it.polimi.ingsw.server.model.enums.Tower;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 class TeamsViewTest {
 
-    //TODO TEST
-    /*
+    /**
      * test for CurrentTeams. The creation of CurrentTeams is called twice: once while the player "blackOther" is still
      * in the lobby, the second time when it gets added to Team Black
      */
-    /*
+
     @Test
     void teamsViewTest(){
-        GameModelTeams gmTeams = new GameModelTeams();
+        Lobby lobby = LobbyConstructor.getLobby(GamePreset.FOUR);
 
-        assertTrue(gmTeams.addPlayer("whiteLeader"));
-        assertTrue(gmTeams.addPlayer("blackLeader"));
-        assertTrue(gmTeams.addPlayer("whiteOther"));
-        assertTrue(gmTeams.addPlayer("blackOther"));
+        assertTrue(lobby.addPlayer("whiteLeader"));
+        assertTrue(lobby.addPlayer("blackLeader"));
+        assertTrue(lobby.addPlayer("whiteOther"));
+        assertTrue(lobby.addPlayer("blackOther"));
 
-        assertTrue(gmTeams.changeTeam("whiteLeader", Tower.WHITE));
-        assertTrue(gmTeams.changeTeam("blackLeader", Tower.BLACK));
-        assertTrue(gmTeams.changeTeam("whiteOther", Tower.WHITE));
+        assertTrue(lobby.changeTeam("whiteLeader", Tower.WHITE));
+        assertTrue(lobby.changeTeam("blackLeader", Tower.BLACK));
+        assertTrue(lobby.changeTeam("whiteOther", Tower.WHITE));
 
-        CurrentTeams ct = new CurrentTeams(gmTeams.getPlayersManager().getTeamsView());
-        TeamsView tv = ct.getTeamsView();
-        List<String> lobby = ct.getTeamsView().getLobby();
+
+        TeamsView tv = lobby.getTeamView();
+        CurrentTeams ct = new CurrentTeams(tv);
 
         assertFalse(tv.getTeams().isEmpty());
         assertEquals(2, tv.getTeams().get(Tower.WHITE).size());
@@ -31,16 +39,17 @@ class TeamsViewTest {
         assertTrue(tv.getTeams().get(Tower.WHITE).contains("whiteOther"));
         assertEquals(1, tv.getTeams().get(Tower.BLACK).size());
         assertTrue(tv.getTeams().get(Tower.BLACK).contains("blackLeader"));
-        assertEquals(1, lobby.size());
-        assertTrue(lobby.contains("blackOther"));
+
 
         assertTrue(ct.isValid());
 
-        assertTrue(gmTeams.changeTeam("blackOther", Tower.BLACK));
+        assertTrue(lobby.changeTeam("blackOther", Tower.BLACK));
 
-        ct = new CurrentTeams (gmTeams.getPlayersManager().getTeamsView());
-        tv = ct.getTeamsView();
-        lobby = ct.getTeamsView().getLobby();
+
+        tv = lobby.getTeamView();
+        ct = new CurrentTeams (lobby.getTeamView());
+
+        int lobbySize = ct.getTeamsView().getLobby().size();
 
         assertFalse(tv.getTeams().isEmpty());
         assertEquals(2, tv.getTeams().get(Tower.WHITE).size());
@@ -49,8 +58,7 @@ class TeamsViewTest {
         assertEquals(2, tv.getTeams().get(Tower.BLACK).size());
         assertTrue(tv.getTeams().get(Tower.BLACK).contains("blackLeader"));
         assertTrue(tv.getTeams().get(Tower.BLACK).contains("blackOther"));
-        assertEquals(0, lobby.size());
+        assertEquals(0, lobbySize);
     }
 
-     */
 }

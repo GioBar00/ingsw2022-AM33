@@ -112,22 +112,6 @@ class ViewsTest {
             assertEquals(pv.getNumAssistantCards(), 10);
             assertNull(pv.getPlayedCard());
         }
-
-        //TODO TEST
-        /*
-        TeamsView tv = new CurrentTeams(gmTeams.getPlayersManager().getTeamsView()).getTeamsView();
-        List<String> lobby = tv.getLobby();
-
-        assertFalse(tv.getTeams().isEmpty());
-        assertEquals(2, tv.getTeams().get(Tower.WHITE).size());
-        assertTrue(tv.getTeams().get(Tower.WHITE).contains("whiteLeader"));
-        assertTrue(tv.getTeams().get(Tower.WHITE).contains("whiteOther"));
-        assertEquals(2, tv.getTeams().get(Tower.BLACK).size());
-        assertTrue(tv.getTeams().get(Tower.BLACK).contains("blackLeader"));
-        assertTrue(tv.getTeams().get(Tower.BLACK).contains("blackOther"));
-        assertEquals(0, lobby.size());
-
-         */
     }
 
     /**
