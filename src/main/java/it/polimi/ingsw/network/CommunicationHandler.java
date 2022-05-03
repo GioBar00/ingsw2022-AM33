@@ -280,7 +280,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
 
     /**
      * Sets the disconnection listener.
-     *
      * @param listener the listener to set
      */
     @Override
@@ -290,7 +289,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
 
     /**
      * Notifies the listener that a disconnection has occurred.
-     *
      * @param event the event to notify
      */
     @Override

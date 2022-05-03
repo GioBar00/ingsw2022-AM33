@@ -67,12 +67,10 @@ public class Server implements EndPartyListener {
                     if(nickname != null) {
                         synchronized (this) {
                             VirtualClient vc = new VirtualClient(nickname);
-                            vc.setSocket(socket);
-                            vc.addMessageListener(controller);
-                            controller.addModelListener(vc);
+                            startVirtualClient(vc, socket);
                             virtualClients.put(nickname, vc);
-                            vc.start();
                             controller.sendAvailableWizard(vc);
+
                         }
                     }
                 } catch(IOException e) {
@@ -106,55 +104,22 @@ public class Server implements EndPartyListener {
                 //nickname not null
                 if (!mex.isValid()) {
                     MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NULL_NICKNAME), out);
-                    in.close();
-                    out.close();
-                    socket.close();
+                    closeCommunication(socket,in,out);
                     return null;
                 }
 
                 //player already in the party -> the model exist
                 if(virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()){
                     VirtualClient vc = virtualClients.get(nickname);
-                    in.close();
-                    out.close();
-                    vc.setSocket(socket);
-                    controller.addModelListener(vc);
-                    vc.addMessageListener(controller);
-                    vc.start();
+                    closeInOut(in, out);
+                    startVirtualClient(vc,socket);
                     return null;
                 }
                 else {
-                    //model didn't exist
+
                     if (!controller.isInstantiated()) {
-                        ExecutorService executor = Executors.newFixedThreadPool(1);
-
-                        MessageExchange.sendMessage(new CommMessage(CommMsgType.CHOOSE_GAME), out);
-
-                        Future <String> result = executor.submit(() -> {
-                            String mes = in.readLine();
-                            Message m = MessageBuilder.fromJson(mes);
-                            if (MessageType.retrieveByMessage(m).equals(MessageType.CHOSEN_GAME)) {
-                                ChosenGame choice = (ChosenGame) m;
-                                if (choice.isValid()) {
-
-                                    controller.setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
-                                    controller.addPlayer(nickname);
-                                    return nickname;
-                                }
-                            }
-                            return null;
-                        });
-                        try {
-                            return result.get(30, TimeUnit.SECONDS);
-                        }
-                        catch (InterruptedException | ExecutionException e){
-                            e.printStackTrace();
-                        }
-                        catch (TimeoutException e){
-                            MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE), out);
-                            socket.close();
-                            return null;
-                        }
+                        //model didn't exist
+                        return firstPlayer(nickname,socket,in,out);
                     }
                     else {
                         //model exists
@@ -166,7 +131,6 @@ public class Server implements EndPartyListener {
                             MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE), out);
                             return null;
                          }
-
                     }
 
                 }
@@ -180,6 +144,82 @@ public class Server implements EndPartyListener {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Sends a message to the client if he is the host and wait for the chosen Game.
+     * If the message doesn't arrive in the consecutive 30 seconds the server closes the connection
+     * @param nickname the nickname of the game host
+     * @param socket Socket for the connection
+     * @param in BufferedReader for reading input
+     * @param out BufferedWriter for writing output
+     * @throws IOException if there's some failure in closing connection
+     */
+    private String firstPlayer(String nickname, Socket socket, BufferedReader in, BufferedWriter out) throws IOException {
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+
+        MessageExchange.sendMessage(new CommMessage(CommMsgType.CHOOSE_GAME), out);
+
+        Future <String> result = executor.submit(() -> {
+            String mes = in.readLine();
+            Message m = MessageBuilder.fromJson(mes);
+            if (MessageType.retrieveByMessage(m).equals(MessageType.CHOSEN_GAME)) {
+                ChosenGame choice = (ChosenGame) m;
+                if (choice.isValid()) {
+                    controller.setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
+                    controller.addPlayer(nickname);
+                    return nickname;
+                }
+            }
+            return null;
+        });
+        try {
+            return result.get(30, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException | ExecutionException e){
+            e.printStackTrace();
+            return null;
+        }
+        catch (TimeoutException e){
+            MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE), out);
+            socket.close();
+            return null;
+        }
+    }
+
+    /**
+     * closes the input reader and the output writer
+     * @param in BufferedReader for reading input
+     * @param out BufferedWriter for writing output
+     * @throws IOException if there's some failure in closing connection
+     */
+    private void closeInOut(BufferedReader in, BufferedWriter out) throws IOException {
+        in.close();
+        out.close();
+    }
+
+    /**
+     * closes the socket the input reader and the output writer
+     * @param socket Socket for the connection
+     * @param in BufferedReader for reading input
+     * @param out BufferedWriter for writing output
+     * @throws IOException if there's some failure in closing connection
+     */
+    private void closeCommunication(Socket socket, BufferedReader in, BufferedWriter out) throws IOException {
+        closeInOut(in, out);
+        socket.close();
+    }
+
+    /**
+     * Starts a virtual client and adds it to the model listeners. Adds the controller to the VirtualClient listeners
+     * @param vc the VirtualClient
+     * @param socket Socket for connection
+     */
+    private void startVirtualClient(VirtualClient vc,Socket socket) {
+        vc.setSocket(socket);
+        controller.addModelListener(vc);
+        vc.addMessageListener(controller);
+        vc.start();
     }
 
     /**
@@ -206,7 +246,6 @@ public class Server implements EndPartyListener {
                 vc.stop();
             }
         }
-
         virtualClients.clear();
         controller.removeListener();
         controller = new Controller(this);
