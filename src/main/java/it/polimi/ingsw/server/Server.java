@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.network.MessageExchange;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.client.ChosenGame;
@@ -12,10 +13,7 @@ import it.polimi.ingsw.server.listeners.EndPartyEvent;
 import it.polimi.ingsw.server.listeners.EndPartyListener;
 import it.polimi.ingsw.network.listeners.MessageEvent;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -97,29 +95,16 @@ public class Server implements EndPartyListener {
     public String handleFirstConnection(Socket socket) {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream());
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
-            StringBuilder builder = new StringBuilder();
-
-            String line = in.readLine();
-
-            while(in.ready() && line != null) {
-                builder.append(line);
-                line = in.readLine();
-            }
-
-            builder.append(line);
-            line = builder.toString();
-
-            Message message = MessageBuilder.fromJson(line);
+            Message message = MessageExchange.receiveMessage(in);
             if (MessageType.retrieveByMessage(message).equals(MessageType.LOGIN)) {
                 Login mex = (Login) message;
 
                 String nickname = mex.getNickname();
                 //nickname not null
                 if (!mex.isValid()) {
-                    out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_NULL_NICKNAME)));
-                    out.flush();
+                    MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NULL_NICKNAME), out);
                     in.close();
                     out.close();
                     socket.close();
@@ -142,8 +127,7 @@ public class Server implements EndPartyListener {
                     if (!controller.isInstantiated()) {
                         ExecutorService executor = Executors.newFixedThreadPool(1);
 
-                        out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.CHOOSE_GAME)));
-                        out.flush();
+                        MessageExchange.sendMessage(new CommMessage(CommMsgType.CHOOSE_GAME), out);
 
                         Future <String> result = executor.submit(() -> {
                             String mes = in.readLine();
@@ -166,8 +150,7 @@ public class Server implements EndPartyListener {
                             e.printStackTrace();
                         }
                         catch (TimeoutException e){
-                            out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE)));
-                            out.flush();
+                            MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE), out);
                             socket.close();
                             return null;
                         }
@@ -179,8 +162,7 @@ public class Server implements EndPartyListener {
                         }
                         else {
                             //Was the player already in the party but had some connection issue?
-                            out.println(MessageBuilder.toJson(new CommMessage(CommMsgType.ERROR_NO_SPACE)));
-                            out.flush();
+                            MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE), out);
                             return null;
                          }
 

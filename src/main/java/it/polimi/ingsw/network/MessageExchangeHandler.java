@@ -147,9 +147,7 @@ public class MessageExchangeHandler implements DisconnectListenerSubscriber {
         try {
             while (!Thread.interrupted()) {
                 Message m = queue.take();
-                writer.write(MessageBuilder.toJson(m));
-                writer.newLine();
-                writer.flush();
+                MessageExchange.sendMessage(m, writer);
             }
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
@@ -163,23 +161,11 @@ public class MessageExchangeHandler implements DisconnectListenerSubscriber {
         try {
             while (!Thread.interrupted()) {
 
-                StringBuilder builder = new StringBuilder();
-                String line = reader.readLine();
-
-                while (reader.ready() && line != null) {
-                    builder.append(line);
-                    line = reader.readLine();
-                }
-
-                if (line == null) {
+                Message message = MessageExchange.receiveMessage(reader, (event) -> {
                     notifyListener(new DisconnectEvent(this));
                     stop();
-                }
+                });
 
-                builder.append(line);
-                line = builder.toString();
-
-                Message message = MessageBuilder.fromJson(line);
                 if (message.isValid()) {
                     if (isMaster && !checkPong(message) || !isMaster && !checkPing(message)) {
                         messageHandler.handleMessage(message);
