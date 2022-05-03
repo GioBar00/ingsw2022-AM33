@@ -776,7 +776,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param destPlayer the player to whom the gameView will be sent
      * @return the current gameView
      */
-    public CurrentGameState getGameView(Player destPlayer) {
+    public CurrentGameState getCurrentGameState(Player destPlayer) {
         return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex));
     }
 
@@ -800,7 +800,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      */
     void notifyPersonalizedGameView() {
         for (Player p: playersManager.getPlayers())
-            notifyListener(p.getNickname(), new MessageEvent(this, getGameView(p)));
+            notifyListener(p.getNickname(), new MessageEvent(this, getCurrentGameState(p)));
     }
 
     /**

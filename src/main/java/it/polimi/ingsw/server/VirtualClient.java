@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.network.MessageExchangeHandler;
+import it.polimi.ingsw.network.CommunicationHandler;
 import it.polimi.ingsw.network.MessageHandler;
 import it.polimi.ingsw.network.listeners.*;
 import it.polimi.ingsw.network.messages.Message;
@@ -25,7 +25,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     /**
      * The message exchange handler used to send and receive messages to and from the client
      */
-    protected final MessageExchangeHandler messageExchangeHandler;
+    protected final CommunicationHandler communicationHandler;
 
     /**
      * Constructor of VirtualClient
@@ -33,7 +33,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
      */
     public VirtualClient(String identifier) {
         this.identifier = identifier;
-        messageExchangeHandler = new MessageExchangeHandler(this, true);
+        communicationHandler = new CommunicationHandler(this, true);
     }
 
     /**
@@ -50,7 +50,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
      * @return true if is connected, false in other case
      */
     public synchronized boolean isConnected() {
-        return messageExchangeHandler.isConnected();
+        return communicationHandler.isConnected();
     }
 
     /**
@@ -59,35 +59,35 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
      * @param newSocket the socket of the communication
      */
     public synchronized void setSocket(Socket newSocket) {
-        messageExchangeHandler.setSocket(newSocket);
+        communicationHandler.setSocket(newSocket);
     }
 
     /**
      * This method starts the message exchange handler
      */
     public synchronized void start() {
-        messageExchangeHandler.start();
+        communicationHandler.start();
     }
 
     /**
      * This method stops the message exchange handler
      */
     public synchronized void stop() {
-        messageExchangeHandler.stop();
+        communicationHandler.stop();
     }
 
     /**
      * Send a Communication Message(ERROR_NOT_YOUR_TURN) to the client
      */
     public void sendNotYourTurnMessage() {
-        messageExchangeHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN));
+        communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN));
     }
 
     /**
      * Send a Communication Message(ERROR_IMPOSSIBLE_MOVE) to the client
      */
     public void sendImpossibleMessage() {
-        messageExchangeHandler.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
+        communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
     }
 
 
@@ -100,7 +100,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
         if (!isConnected())
             notifyListeners(new MessageEvent(this, new SkipTurn()));
         else
-            messageExchangeHandler.sendMessage(event.getMessage());
+            communicationHandler.sendMessage(event.getMessage());
 
     }
 

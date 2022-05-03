@@ -43,15 +43,15 @@ public class GameView extends InvalidMessage {
     /**
      * reserve of coins
      */
-    private Integer reserve = 0;
+    private final Integer reserve;
     /**
      * view of the character cards
      */
-    private List<CharacterCardView> characterCardView = null;
+    private final List<CharacterCardView> characterCardView;
     /**
      * coins of each player
      */
-    private Map<String, Integer> playerCoins = null;
+    private final Map<String, Integer> playerCoins;
 
     /**
      * constructor of the GameView for an easy game
@@ -64,6 +64,9 @@ public class GameView extends InvalidMessage {
         this.islandsView = islandsView;
         this.playersView = playersView;
         this.motherNatureIndex = motherNatureIndex;
+        this.reserve = null;
+        this.characterCardView = null;
+        this.playerCoins = null;
     }
 
     /**

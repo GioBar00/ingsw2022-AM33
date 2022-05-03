@@ -1,8 +1,6 @@
 package it.polimi.ingsw.network.messages;
 
-import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.server.CurrentGameState;
-import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.network.messages.views.*;
 import it.polimi.ingsw.server.model.GameModel;
 import it.polimi.ingsw.server.model.GameModelExpert;
@@ -13,8 +11,6 @@ import it.polimi.ingsw.server.model.enums.Wizard;
 import it.polimi.ingsw.server.model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.print.event.PrintServiceAttributeListener;
 
 import static it.polimi.ingsw.network.messages.MessageBuilderTest.toAndFromJson;
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,7 +40,7 @@ class GameStateAndTeamsTests {
      */
     @Test
     void CurrentGameStateTest(){
-        CurrentGameState original = new CurrentGameState(gm.getGameView(gm.getModel().getPlayersManager().getCurrentPlayer()));
+        CurrentGameState original = gm.getCurrentGameState(gm.getModel().getPlayersManager().getCurrentPlayer());
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof CurrentGameState);

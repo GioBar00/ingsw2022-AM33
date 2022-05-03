@@ -80,7 +80,7 @@ class GameViewTest {
      * @param destPlayer the player to whom the gameView will be sent
      */
     void setUpGameView(Player destPlayer){
-        gameView = gmTest.getGameView(destPlayer);
+        gameView = gmTest.getCurrentGameState(destPlayer).getGameView();
 
         mode = gameView.getMode();
         preset = gameView.getPreset();

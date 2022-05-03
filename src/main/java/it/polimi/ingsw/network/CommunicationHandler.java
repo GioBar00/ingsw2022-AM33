@@ -2,7 +2,6 @@ package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.network.listeners.*;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
@@ -18,7 +17,7 @@ import java.util.concurrent.*;
 /**
  * This class is used to handle the message exchange between the server and the client and vice versa.
  */
-public class MessageExchangeHandler implements DisconnectListenerSubscriber {
+public class CommunicationHandler implements DisconnectListenerSubscriber {
 
     /**
      * The message handler.
@@ -75,7 +74,7 @@ public class MessageExchangeHandler implements DisconnectListenerSubscriber {
      *
      * @param messageHandler the message handler
      */
-    public MessageExchangeHandler(MessageHandler messageHandler) {
+    public CommunicationHandler(MessageHandler messageHandler) {
         this(messageHandler, false);
     }
 
@@ -85,7 +84,7 @@ public class MessageExchangeHandler implements DisconnectListenerSubscriber {
      * @param messageHandler the message handler
      * @param isMaster if true, pings will be sent to ensure that the two parties are connected.
      */
-    public MessageExchangeHandler(MessageHandler messageHandler, Boolean isMaster) {
+    public CommunicationHandler(MessageHandler messageHandler, Boolean isMaster) {
         this.messageHandler = messageHandler;
         queue = new LinkedBlockingQueue<>();
         executor = Executors.newSingleThreadExecutor();

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.server.CurrentGameState;
 import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.network.listeners.MessageEvent;
 import it.polimi.ingsw.network.listeners.MessageListener;
@@ -148,7 +149,7 @@ public class GameModelExpert implements Game, EffectHandler {
     public boolean startGame() {
         if(model.executeStartGame()){
             this.initializeGame();
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameView();
             notifyPossibleActions();
             return true;
         }
@@ -165,7 +166,7 @@ public class GameModelExpert implements Game, EffectHandler {
     @Override
     public boolean playAssistantCard(AssistantCard assistantCard) {
         if (model.executePlayAssistantCard(assistantCard)) {
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameView();
             notifyPossibleActions();
             return true;
         }
@@ -195,7 +196,7 @@ public class GameModelExpert implements Game, EffectHandler {
                     reserve--;
                 }
             }
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameView();
             notifyPossibleActions();
             return true;
         }
@@ -216,7 +217,7 @@ public class GameModelExpert implements Game, EffectHandler {
         if (characterCardActivating != null)
             return false;
         if (model.executeMoveStudentToIsland(entranceIndex, islandGroupIndex)) {
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameView();
             notifyPossibleActions();
             return true;
         }
@@ -240,7 +241,7 @@ public class GameModelExpert implements Game, EffectHandler {
             if (model.atLeastOneCloudWithStudents()) {
                 endTurn();
             }
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameView();
             notifyPossibleActions();
             return true;
         }
@@ -270,7 +271,7 @@ public class GameModelExpert implements Game, EffectHandler {
 
         if (model.executeGetStudentsFromCloud(cloudIndex)) {
             endTurn();
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameView();
             notifyPossibleActions();
             return true;
         }
@@ -318,7 +319,7 @@ public class GameModelExpert implements Game, EffectHandler {
         activatedACharacterCard = true;
         if (characterCardActivating.getRequiredChoicesNumber() == 0)
             applyEffect(null);
-        model.notifyPersonalizedGameView();
+        notifyPersonalizedGameView();
         notifyPossibleActions();
         return true;
     }
@@ -337,7 +338,7 @@ public class GameModelExpert implements Game, EffectHandler {
         if (characterCardActivating.applyEffect(this, parameters)) {
             if (characterCardActivating.hasAppliedEffect())
                 characterCardActivating = null;
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameView();
             notifyPossibleActions();
             return true;
         }
@@ -356,7 +357,7 @@ public class GameModelExpert implements Game, EffectHandler {
             return false;
         if (characterCardActivating.endEffect()) {
             characterCardActivating = null;
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameView();
             notifyPossibleActions();
             return true;
         }
@@ -383,7 +384,7 @@ public class GameModelExpert implements Game, EffectHandler {
     @Override
     public boolean skipCurrentPlayerTurn() {
         if (model.executeSkipTurn()) {
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameView();
             notifyPossibleActions();
             return true;
         }
@@ -634,13 +635,21 @@ public class GameModelExpert implements Game, EffectHandler {
     }
 
     /**
+     * Notifies each player about the new game state.
+     */
+    private void notifyPersonalizedGameView() {
+        for (Player p: model.playersManager.getPlayers())
+            notifyListener(p.getNickname(), new MessageEvent(this, getCurrentGameState(p)));
+    }
+
+    /**
      * @param destPlayer the player to whom the gameView will be sent
      * @return the current game view
      */
-    public GameView getGameView(Player destPlayer){
-        return new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
+    public CurrentGameState getCurrentGameState(Player destPlayer){
+        return new CurrentGameState(new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
                 model.islandsManager.getIslandsView(), model.playersManager.getPlayersView(destPlayer), model.motherNatureIndex,
-                reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins);
+                reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins));
     }
 
     /**

@@ -325,7 +325,7 @@ public class Controller implements MessageListener {
            for(PlayerDetails p : lobby.getPlayers()){
                model.addPlayer(p);
            }
-           model.startGame();
+           return model.startGame();
         }
         return false;
     }

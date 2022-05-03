@@ -27,7 +27,7 @@ class ControllerTest {
 
     static class ModelListener extends VirtualClient implements MessageListener {
 
-        ModelListener(String name,MessageListener controller ){
+        ModelListener(String name, MessageListener controller ){
             super(name);
             super.addMessageListener(controller);
         }
@@ -37,9 +37,9 @@ class ControllerTest {
         }
 
         boolean queueContains(MessageType type){
-            for(Message m : messageExchangeHandler.getQueue()){
+            for(Message m : communicationHandler.getQueue()){
                 if(MessageType.retrieveByMessage(m).equals(type)){
-                    messageExchangeHandler.clearQueue();
+                    communicationHandler.clearQueue();
                     return true;
                 }
             }
@@ -47,12 +47,12 @@ class ControllerTest {
         }
 
         void clearQueue() {
-            messageExchangeHandler.clearQueue();
+            communicationHandler.clearQueue();
         }
 
         @Override
         public void onMessage(MessageEvent event) {
-            messageExchangeHandler.sendMessage(event.getMessage());
+            communicationHandler.sendMessage(event.getMessage());
         }
     }
 
@@ -128,6 +128,8 @@ class ControllerTest {
         m2.request(new StartGame());
         assertTrue(m2.queueContains(MessageType.COMM_MESSAGE));
 
+        m1.clearQueue();
+        m2.clearQueue();
 
         m1.request(new StartGame());
         assertTrue(m1.queueContains(MessageType.CURRENT_GAME_STATE));

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.network.MessageExchangeHandler;
+import it.polimi.ingsw.network.CommunicationHandler;
 import it.polimi.ingsw.network.MessageHandler;
 import it.polimi.ingsw.network.listeners.DisconnectEvent;
 import it.polimi.ingsw.network.listeners.DisconnectListener;
@@ -22,14 +22,14 @@ public class Client implements MessageHandler, DisconnectListener {
 
     private final int port;
 
-    private final MessageExchangeHandler messageExchangeHandler;
+    private final CommunicationHandler communicationHandler;
 
     public Client(String nickname, String hostname, int port) {
         this.nickname = nickname;
         this.port = port;
         this.hostname = hostname;
-        messageExchangeHandler = new MessageExchangeHandler(this);
-        messageExchangeHandler.setDisconnectListener(this);
+        communicationHandler = new CommunicationHandler(this);
+        communicationHandler.setDisconnectListener(this);
     }
 
     public String getNickname() {
@@ -38,16 +38,16 @@ public class Client implements MessageHandler, DisconnectListener {
 
     public void connect() {
         try {
-            messageExchangeHandler.setSocket(new Socket(hostname, port));
-            messageExchangeHandler.start();
-            messageExchangeHandler.sendMessage(new Login(nickname));
+            communicationHandler.setSocket(new Socket(hostname, port));
+            communicationHandler.start();
+            communicationHandler.sendMessage(new Login(nickname));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void sendMessage(Message message) {
-        messageExchangeHandler.sendMessage(message);
+        communicationHandler.sendMessage(message);
     }
 
     private void handleGameCreation(Message m) {
