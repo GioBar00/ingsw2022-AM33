@@ -35,6 +35,7 @@ class AvailableWizardsTest {
         lobby.setWizard(Wizard.KING, "player4");
         original = new AvailableWizards(lobby.getWizardsView());
         m = toAndFromJson(original);
-        assertFalse(m.isValid());
+        assertTrue(m.isValid());
+        assertEquals(0, ((AvailableWizards) m).getWizardsView().getAvailableWizards().size());
     }
 }
