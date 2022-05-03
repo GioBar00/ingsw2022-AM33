@@ -50,6 +50,6 @@ class WizardsViewTest {
 
         lobby.setWizard(Wizard.KING, "player4");
         wizardsView = lobby.getWizardsView();
-        assertNull(wizardsView);
+        assertEquals(0, wizardsView.getAvailableWizards().size());
     }
 }

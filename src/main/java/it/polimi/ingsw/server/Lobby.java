@@ -94,7 +94,7 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
 
         // enum set doesn't allow empty set
         if (counter == 4)
-            return null;
+            return new WizardsView(EnumSet.noneOf(Wizard.class));
         return new WizardsView(EnumSet.copyOf(wizards));
     }
 }
