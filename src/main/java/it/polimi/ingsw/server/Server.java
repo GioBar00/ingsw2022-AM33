@@ -72,6 +72,7 @@ public class Server implements EndPartyListener {
                             controller.addModelListener(vc);
                             virtualClients.put(nickname, vc);
                             vc.start();
+                            controller.sendAvailableWizard(vc);
                         }
                     }
                 } catch(IOException e) {

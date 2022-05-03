@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.controller;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
+import it.polimi.ingsw.network.messages.client.ChosenWizard;
 import it.polimi.ingsw.network.messages.client.SkipTurn;
 import it.polimi.ingsw.network.messages.client.StartGame;
 import it.polimi.ingsw.network.messages.enums.MessageType;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//todo javacdoc
 class ControllerTest {
     Controller controller;
     ModelListeners modelListeners;
@@ -90,11 +92,17 @@ class ControllerTest {
         assertFalse(controller.isInstantiated());
         assertFalse(controller.addPlayer(m1.getIdentifier()));
 
+
         controller.setModelAndLobby(GamePreset.TWO, GameMode.EXPERT, LobbyConstructor.getLobby(GamePreset.TWO));
         controller.addModelListener(m1);
+        controller.sendAvailableWizard(m1);
+        assertTrue(m1.queueContains(MessageType.AVAILABLE_WIZARDS));
 
         assertTrue(controller.isInstantiated());
         assertTrue(controller.addPlayer(m1.getIdentifier()));
+
+        m1.request(new ChosenWizard(Wizard.SENSEI));
+
 
         //start when there's only a player
         m1.request(new StartGame());
@@ -107,6 +115,14 @@ class ControllerTest {
         ModelListener m2 = new ModelListener("p2", controller);
         modelListeners.add(m2);
         controller.addModelListener(m2);
+        controller.addPlayer("p2");
+        controller.sendAvailableWizard(m2);
+        assertTrue(m2.queueContains(MessageType.AVAILABLE_WIZARDS));
+
+        m2.request(new ChosenWizard(Wizard.SENSEI));
+        assertTrue(m2.queueContains(MessageType.COMM_MESSAGE));
+
+        m2.request(new ChosenWizard(Wizard.WITCH));
 
         controller.addPlayer(m2.getIdentifier());
         m2.request(new StartGame());
@@ -118,7 +134,6 @@ class ControllerTest {
         assertTrue(m2.queueContains(MessageType.CURRENT_GAME_STATE));
 
     }
-
 
     @Test
     void partySimulation() {
@@ -312,18 +327,22 @@ class ControllerTest {
         ModelListener m1 = new ModelListener("p1", c);
         c.addPlayer(m1.getIdentifier());
         c.addModelListener(m1);
+        m1.request(new ChosenWizard(Wizard.SENSEI));
 
         ModelListener m2 = new ModelListener("p2", c);
         c.addPlayer(m2.getIdentifier());
         c.addModelListener(m2);
+        m2.request(new ChosenWizard(Wizard.WITCH));
 
         ModelListener m3 = new ModelListener("p3", c);
         c.addPlayer(m3.getIdentifier());
         c.addModelListener(m3);
+        m3.request(new ChosenWizard(Wizard.KING));
 
         ModelListener m4 = new ModelListener("p4", c);
         c.addPlayer(m4.getIdentifier());
         c.addModelListener(m4);
+        m4.request(new ChosenWizard(Wizard.MERLIN));
 
         m1.request(new ChosenTeam(Tower.BLACK));
         m2.request(new ChosenTeam(Tower.BLACK));

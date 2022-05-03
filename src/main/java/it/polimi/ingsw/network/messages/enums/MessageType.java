@@ -40,6 +40,7 @@ public enum MessageType {
     CONCLUDE_CHARACTER_CARD_EFFECT(ConcludeCharacterCardEffect.class),
     CHOSEN_GAME(ChosenGame.class),
     CHOSEN_TEAM(ChosenTeam.class),
+    CHOSEN_WIZARD(ChosenWizard.class),
     LOGIN(Login.class),
     START_GAME(StartGame.class),
     SKIP_TURN(SkipTurn.class);

@@ -3,6 +3,7 @@ package it.polimi.ingsw.network.listeners;
 import it.polimi.ingsw.network.listeners.MessageEvent;
 import it.polimi.ingsw.network.listeners.MessageListener;
 import it.polimi.ingsw.network.listeners.MessageListenerSubscriber;
+import it.polimi.ingsw.network.messages.Message;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +33,13 @@ public abstract class ConcreteMessageListenerSubscriber implements MessageListen
     @Override
     public void removeMessageListener(MessageListener listener) {
         listeners.remove(listener);
+    }
+
+    /**
+     * Removes all the message listener.
+     */
+    public  void removeAllMessageListener() {
+        listeners.clear();
     }
 
     /**

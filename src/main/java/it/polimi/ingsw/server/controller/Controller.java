@@ -4,6 +4,7 @@ import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.*;
 import it.polimi.ingsw.network.messages.enums.MessageType;
+import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.server.Lobby;
 import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.VirtualClient;
@@ -118,9 +119,9 @@ public class Controller implements MessageListener {
                         lobby.removeMessageListener(vc);
                     }
                     else {
+                        lobby.removeAllMessageListener();
                         listener.onEndPartyEvent(new EndPartyEvent(this));
                         model = null;
-                        //lobby remove all listener
                     }
                 }
             }
@@ -176,8 +177,22 @@ public class Controller implements MessageListener {
                 if (!this.startGame(vc.getIdentifier()))
                         vc.sendImpossibleMessage();
             }
+
+            case CHOSEN_WIZARD -> {
+                ChosenWizard chosenWizard = (ChosenWizard)msg;
+                if(!lobby.setWizard(chosenWizard.getWizard(),vc.getIdentifier()))
+                    vc.sendImpossibleMessage();
+            }
             default -> vc.sendImpossibleMessage();
         }
+    }
+
+    /**
+     * Send the current wizard situation to a specified listener
+     * @param messageListener the client who is going to receive
+     */
+    public void sendAvailableWizard(MessageListener messageListener){
+        lobby.notifyListener(messageListener.getIdentifier(),new MessageEvent(this, new AvailableWizards(lobby.getWizardsView())));
     }
 
     /**
@@ -307,7 +322,7 @@ public class Controller implements MessageListener {
      */
     private boolean startGame(String nickname) {
         if (nickname.equals(lobby.getMaster()) && lobby.canStart()) {
-           for(PlayerDetails p : lobby.getPlayer()){
+           for(PlayerDetails p : lobby.getPlayers()){
                model.addPlayer(p);
            }
            model.startGame();
@@ -323,6 +338,7 @@ public class Controller implements MessageListener {
      private synchronized void changeTeam(String nickname, Tower tower) {
          lobby.changeTeam(nickname, tower);
      }
+
 
     /**
      * Used for know if is a player turn

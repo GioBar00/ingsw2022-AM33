@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
 import it.polimi.ingsw.network.listeners.ConcreteMessageListenerSubscriber;
@@ -41,8 +43,11 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
                     return false;
         }
         if(update != null) {
-            update.setWizard(wizard);
-            return true;
+            if (update.getWizard() == null) {
+                update.setWizard(wizard);
+                notifyListeners(new MessageEvent(this, new AvailableWizards(getWizardsView())));
+                return true;
+            }
         }
         return false;
     }
@@ -52,10 +57,17 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
     }
 
     public boolean canStart() {
-        return maxPlayers == players.size();
+        if (maxPlayers == players.size()){
+            for(PlayerDetails p : players){
+                if(p.getWizard() == null)
+                    return false;
+            }
+            return true;
+        }
+        return false;
     }
 
-    public ArrayList<PlayerDetails> getPlayer() {
+    public ArrayList<PlayerDetails> getPlayers() {
         return new ArrayList<>(players);
     }
 

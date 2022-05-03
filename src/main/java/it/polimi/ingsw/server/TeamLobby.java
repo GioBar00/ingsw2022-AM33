@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
+//todo test and javadoc
 public class TeamLobby extends Lobby{
 
 
@@ -18,16 +19,18 @@ public class TeamLobby extends Lobby{
 
     @Override
     public boolean canStart() {
-        if(maxPlayers != super.players.size())
+        if(!super.canStart())
             return false;
         else {
             int black = 0;
             int white = 0;
             for(PlayerDetails p : players) {
-                if (p.getTower().equals(Tower.WHITE))
-                    white++;
-                else if (p.getTower().equals(Tower.BLACK))
-                    black++;
+                if(p.getTower()!= null) {
+                    if (p.getTower().equals(Tower.WHITE))
+                        white++;
+                    else if (p.getTower().equals(Tower.BLACK))
+                        black++;
+                }
             }
             return white == 2 && black == 2;
         }
@@ -36,6 +39,8 @@ public class TeamLobby extends Lobby{
     @Override
     public boolean changeTeam(String nickname, Tower tower) {
         PlayerDetails update = null;
+        if(tower.equals(Tower.GREY))
+            return false;
         for(PlayerDetails p : players){
             if(p.getNickname().equals(nickname))
                 update = p;

@@ -12,4 +12,5 @@ public interface MessageHandler {
      * @param message the message received
      */
     void handleMessage(Message message);
+
 }

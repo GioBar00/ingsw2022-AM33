@@ -247,4 +247,19 @@ class ClientMessageTest {
         SkipTurn mes = (SkipTurn)m;
         assertTrue(mes.isValid());
     }
+
+    /**
+     * Tests the {@link ChosenWizard} message.
+     */
+    @Test
+    void ChosenWizardTest() {
+        ChosenWizard chosenWizard = new ChosenWizard(Wizard.MERLIN);
+        assertTrue(chosenWizard.isValid());
+        assertEquals(Wizard.MERLIN, chosenWizard.getWizard());
+
+        String s = MessageBuilder.toJson(chosenWizard);
+        chosenWizard = (ChosenWizard) MessageBuilder.fromJson(s);
+        assertTrue(chosenWizard.isValid());
+        assertEquals(Wizard.MERLIN, chosenWizard.getWizard());
+    }
 }
