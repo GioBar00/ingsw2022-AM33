@@ -39,6 +39,10 @@ public class Server implements EndPartyListener {
       */
     private Controller controller;
 
+    /**
+     * The executor used to allocate the controller.
+     */
+    private ExecutorService executor;
 
     /**
      * Server's constructor method
@@ -48,14 +52,14 @@ public class Server implements EndPartyListener {
         //Todo how we chose the port
         port = 1234; // modified to 1234 because the first 1024 numbers of port are reserved
         controller = new Controller(this);
-
+        startController();
     }
 
     /**
      * Main Method used for instantiate Virtual Client if is permitted.
      * Each of this Virtual Client are run on different threads
      */
-     public void handleRequest() {
+     public synchronized void handleRequest() {
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("S: server ready");
@@ -247,7 +251,32 @@ public class Server implements EndPartyListener {
             }
         }
         virtualClients.clear();
+        stopServer();
         controller.removeListener();
         controller = new Controller(this);
+        startController();
+    }
+
+    /**
+     * Getter of the controller
+     * @return the controller
+     */
+    public Controller getController(){
+        return controller;
+    }
+
+    /**
+     * Closes the controller thread
+     */
+    public void stopServer(){
+        executor.shutdownNow();
+    }
+
+    /**
+     * Starts the controller
+     */
+    private void startController(){
+        executor = Executors.newSingleThreadExecutor();
+        executor.submit(controller::startController);
     }
 }

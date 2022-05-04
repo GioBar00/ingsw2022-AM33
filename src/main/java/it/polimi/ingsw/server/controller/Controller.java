@@ -1,8 +1,11 @@
 package it.polimi.ingsw.server.controller;
 
+import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.network.listeners.MessageListener;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
-import it.polimi.ingsw.network.messages.client.*;
+import it.polimi.ingsw.network.messages.client.ChosenTeam;
+import it.polimi.ingsw.network.messages.client.ChosenWizard;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.server.Lobby;
@@ -10,12 +13,15 @@ import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.VirtualClient;
 import it.polimi.ingsw.server.listeners.EndPartyEvent;
 import it.polimi.ingsw.server.listeners.EndPartyListener;
-import it.polimi.ingsw.network.listeners.MessageEvent;
-import it.polimi.ingsw.network.listeners.MessageListener;
 import it.polimi.ingsw.server.model.Game;
 import it.polimi.ingsw.server.model.GameBuilder;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
-import it.polimi.ingsw.server.model.enums.*;
+import it.polimi.ingsw.server.model.enums.GameMode;
+import it.polimi.ingsw.server.model.enums.GamePreset;
+import it.polimi.ingsw.server.model.enums.GameState;
+import it.polimi.ingsw.server.model.enums.Tower;
+
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Controller class manages the first request for each client. If the request is valid instantiates a client handler.
@@ -34,7 +40,17 @@ public class Controller implements MessageListener {
      */
     private EndPartyListener listener;
 
+    /**
+     * Lobby for the party
+     */
     private Lobby lobby;
+
+    /**
+     * The queue used to send messages.
+     */
+    private final LinkedBlockingQueue<MessageEvent> queue;
+
+    private final Object lock;
 
     /**
      * Default constructor of class Controller
@@ -44,6 +60,8 @@ public class Controller implements MessageListener {
         model = null;
         this.listener = listener;
         lobby = null;
+        queue = new LinkedBlockingQueue<>();
+        lock = new Object();
     }
 
     /**
@@ -98,15 +116,28 @@ public class Controller implements MessageListener {
         model.removeMessageListener(listener);
     }
 
+
+
     /**
      * Override methods from MessageListener Interface.
-     * When a Virtual Client receives a valid message notify the controller that analyze the message and apply the
-     * request to the model (if it's possible).
-     * onMessage method is divided into 5 different methods; each of the methods handle a specific game phase.
+     * When a Virtual Client receives a valid message notify the controller that put the event in a queue that contains
+     * all the request that need to be handled .
      * @param event of the received message
      */
     @Override
-    public synchronized void onMessage(MessageEvent event) {
+    public void onMessage(MessageEvent event) {
+        synchronized (lock) {
+            if (isInstantiated())
+                queue.add(event);
+        }
+    }
+
+    /**
+     * Handles the message event. Analyze the message and apply the request to the model (if it's possible).
+     * onMessage method is divided into 5 different methods; each of the methods handle a specific game phase.
+     * @param event of the received message
+     */
+    public void handleMessage(MessageEvent event) {
         VirtualClient vc = (VirtualClient)event.getSource();
         Message msg = event.getMessage();
 
@@ -157,7 +188,6 @@ public class Controller implements MessageListener {
             }
         }
 
-
     }
 
     /**
@@ -191,7 +221,7 @@ public class Controller implements MessageListener {
      * Send the current wizard situation to a specified listener
      * @param messageListener the client who is going to receive
      */
-    public void sendAvailableWizard(MessageListener messageListener){
+    public synchronized void sendAvailableWizard(MessageListener messageListener){
         lobby.notifyListener(messageListener.getIdentifier(),new MessageEvent(this, new AvailableWizards(lobby.getWizardsView())));
     }
 
@@ -357,5 +387,18 @@ public class Controller implements MessageListener {
         if(isInstantiated())
             return model.getCurrentPlayer();
         return null;
+    }
+
+    /**
+     * This method take the request from the queue and try to apply the changes.
+     */
+    public void startController() {
+        try {
+            while (!Thread.interrupted()) {
+                handleMessage(queue.take());
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
