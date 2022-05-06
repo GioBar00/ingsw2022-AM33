@@ -65,18 +65,32 @@ public class Server implements EndPartyListener {
             System.out.println("S: server ready");
             while (!Thread.interrupted()) {
                 try {
+                    String nickname = null;
                     System.out.println("S: waiting for client");
                     Socket socket = serverSocket.accept();
-                    String nickname = handleFirstConnection(socket);
-                    if(nickname != null) {
-                        synchronized (this) {
-                            VirtualClient vc = new VirtualClient(nickname);
-                            startVirtualClient(vc, socket);
-                            virtualClients.put(nickname, vc);
-                            controller.sendAvailableWizard(vc);
+                    Future <String> nick =  executor.submit(() -> this.handleFirstConnection(socket));
+                    try {
+                        nickname = nick.get(5, TimeUnit.SECONDS);
+                    }
+                    catch (InterruptedException | ExecutionException ignored){ }
+                    catch (TimeoutException e){
+                        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                        MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_SERVER_UNAVAILABLE), out);
+                        out.close();
+                        socket.close();
+                    }
+                    finally {
+                        if(nickname != null) {
+                            synchronized (this) {
+                                VirtualClient vc = new VirtualClient(nickname);
+                                startVirtualClient(vc, socket);
+                                virtualClients.put(nickname, vc);
+                                controller.sendAvailableWizard(vc);
 
+                            }
                         }
                     }
+
                 } catch(IOException e) {
                     System.out.println("S: no connection available");
                     break;
@@ -276,7 +290,7 @@ public class Server implements EndPartyListener {
      * Starts the controller
      */
     private void startController(){
-        executor = Executors.newSingleThreadExecutor();
+        executor = Executors.newFixedThreadPool(2);
         executor.submit(controller::startController);
     }
 }
