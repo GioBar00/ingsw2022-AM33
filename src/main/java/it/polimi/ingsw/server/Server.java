@@ -48,9 +48,16 @@ public class Server implements EndPartyListener {
      * Server's constructor method
      */
     public Server() {
+        this(1234);
+    }
+
+    /**
+     * Server's constructor method
+     * @param port tcp port of the server
+     */
+    public Server(int port) {
         virtualClients = new HashMap<>();
-        //Todo how we chose the port
-        port = 1234; // modified to 1234 because the first 1024 numbers of port are reserved
+        this.port = port;
         controller = new Controller(this);
         startController();
     }

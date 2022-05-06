@@ -187,6 +187,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
         if (MessageType.retrieveByMessage(message) == MessageType.COMM_MESSAGE)
             if (((CommMessage) message).getType() == CommMsgType.PING) {
                 queue.add(new CommMessage(CommMsgType.PONG));
+                clientAcknowledged.countDown();
                 return true;
             }
         return false;
@@ -222,10 +223,13 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
             @Override
             public void run() {
                 clientAcknowledged = new CountDownLatch(1);
+                long seconds = isMaster ? 10 : 20;
                 try {
-                    queue.add(new CommMessage(CommMsgType.PING));
-                    if (!clientAcknowledged.await(10, TimeUnit.SECONDS)) {
+                    if (isMaster)
+                        queue.add(new CommMessage(CommMsgType.PING));
+                    if (!clientAcknowledged.await(seconds, TimeUnit.SECONDS)) {
                         stop();
+                        notifyListener(new DisconnectEvent(this));
                     }
 
                 } catch (InterruptedException e) {
@@ -247,8 +251,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
             executor = Executors.newFixedThreadPool(2);
             executor.submit(this::handleInput);
             executor.submit(this::handleOutput);
-            if (isMaster)
-                startTimer();
+            startTimer();
         }
     }
 
