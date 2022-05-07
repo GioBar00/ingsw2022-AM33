@@ -77,18 +77,11 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     }
 
     /**
-     * Send a Communication Message(ERROR_NOT_YOUR_TURN) to the client
+     * Send a Message to the client
      */
-    public void sendNotYourTurnMessage() {
-        communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN));
-    }
-
-    /**
-     * Send a Communication Message(ERROR_IMPOSSIBLE_MOVE) to the client
-     */
-    public void sendImpossibleMessage() {
-        communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
-    }
+   public void sendMessage(Message message){
+       communicationHandler.sendMessage(message);
+   }
 
 
     /**

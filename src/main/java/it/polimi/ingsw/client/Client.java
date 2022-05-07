@@ -2,99 +2,130 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.network.CommunicationHandler;
 import it.polimi.ingsw.network.MessageHandler;
-import it.polimi.ingsw.network.listeners.DisconnectEvent;
-import it.polimi.ingsw.network.listeners.DisconnectListener;
+import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.MessageBuilder;
-import it.polimi.ingsw.network.messages.client.Login;
-import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
+import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.network.messages.server.CurrentTeams;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.LinkedBlockingQueue;
 
-public class Client implements MessageHandler, DisconnectListener {
+/**
+ * Class for client-side communication
+ */
+public class Client implements MessageHandler, ViewListener, Runnable {
 
-    private final String nickname;
-
+    /**
+     * the hostname for the connection
+     */
     private final String hostname;
 
+    /**
+     * the port for the connection
+     */
     private final int port;
 
+    /**
+     * The message exchange handler used to send and receive messages to and from the client
+     */
     private final CommunicationHandler communicationHandler;
 
-    public Client(String nickname, String hostname, int port) {
-        this.nickname = nickname;
-        this.port = port;
+    /**
+     * The interface for the user
+     */
+    private final UI userInterface;
+
+    /**
+     * Queue with arrived messages
+     */
+    private final LinkedBlockingQueue<Message> queue;
+
+    /**
+     * Constructor of Virtual Server
+     */
+    Client(String hostname, int port, UI userInterface) {
         this.hostname = hostname;
-        communicationHandler = new CommunicationHandler(this);
-        communicationHandler.setDisconnectListener(this);
+        this.port = port;
+        queue = new LinkedBlockingQueue<>();
+        this.communicationHandler = new CommunicationHandler(this);
+        this.userInterface = userInterface;
+        userInterface.setViewListener(this);
     }
 
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void connect() {
+    /**
+     * This method sets up the connection and starts the communicationHandler.
+     */
+    private void startConnection(){
         try {
             communicationHandler.setSocket(new Socket(hostname, port));
             communicationHandler.start();
-            communicationHandler.sendMessage(new Login(nickname));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-    }
-
-    public void sendMessage(Message message) {
-        communicationHandler.sendMessage(message);
-    }
-
-    private void handleGameCreation(Message m) {
-        switch (MessageType.retrieveByMessage(m)) {
-            case COMM_MESSAGE -> {
-                if (((CommMessage) m).getType() == CommMsgType.CHOOSE_GAME) {
-                    //FIXME: view chose game
-                    System.out.println(nickname +": choose game");
-                } else
-                    System.out.println("ERROR: " + nickname + ": " + ((CommMessage) m).getType().getMessage());
-            }
-            case CURRENT_TEAMS -> {
-
-            }
-            case CURRENT_GAME_STATE -> {
-
-            }
-        }
-    }
-
-    private void handleCommMessage(Message m) {
-
-    }
-
-
-    /**
-     * Invoked when a client disconnects from the server and vice versa.
-     *
-     * @param event the event object
-     */
-    @Override
-    public void onDisconnect(DisconnectEvent event) {
-
     }
 
     /**
      * This method is called when a message is received.
-     *
-     * @param message the message received
+     * @param message the message received.
      */
     @Override
     public void handleMessage(Message message) {
-        System.out.println(nickname + ": received message ");
-        System.out.println(MessageBuilder.toJson(message));
-        switch (MessageType.retrieveByMessage(message)) {
-            case COMM_MESSAGE -> handleCommMessage(message);
+        queue.add(message);
+    }
 
+    /**
+     * Method called when the user want to update the model.
+     * @param event the request.
+     */
+    @Override
+    public void onMessage(Message event) {
+        if(MessageType.retrieveByMessage(event) == MessageType.LOGIN) {
+                startConnection();
+                communicationHandler.sendMessage(event);
+        }
+        communicationHandler.sendMessage(event);
+    }
+
+    /**
+     * Task for the Client.
+     * Takes the messages from the model and apply the changes to the view.
+     */
+    @Override
+    public void run() {
+        Message message;
+        while(!Thread.interrupted()){
+            try {
+                message = queue.take();
+                updateView(message);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /**
+     * Method for updating the view based on the received  messages.
+     * @param message a Message from the model.
+     */
+    public void updateView(Message message){
+        switch (MessageType.retrieveByMessage(message)){
+            case COMM_MESSAGE -> {
+                switch (((CommMessage)message).getType()){
+                    case CHOOSE_GAME ->    userInterface.setHost();
+                    default -> userInterface.showError((CommMessage)message);
+                }
+            }
+            case AVAILABLE_WIZARDS -> {
+                userInterface.setWizardView(((AvailableWizards)message).getWizardsView());
+                userInterface.showWizardMenu();
+            }
+            case CURRENT_TEAMS -> {
+                userInterface.setTeamsView(((CurrentTeams)message).getTeamsView());
+                userInterface.showLobbyScreen();
+            }
         }
     }
 }

@@ -96,7 +96,7 @@ class ControllerTest {
 
         controller.setModelAndLobby(GamePreset.TWO, GameMode.EXPERT, LobbyConstructor.getLobby(GamePreset.TWO));
         controller.addModelListener(m1);
-        controller.sendAvailableWizard(m1);
+        controller.sendInitialStats(m1);
         assertTrue(m1.queueContains(MessageType.AVAILABLE_WIZARDS));
 
         assertTrue(controller.isInstantiated());
@@ -118,7 +118,7 @@ class ControllerTest {
         modelListeners.add(m2);
         controller.addModelListener(m2);
         controller.addPlayer("p2");
-        controller.sendAvailableWizard(m2);
+        controller.sendInitialStats(m2);
         assertTrue(m2.queueContains(MessageType.AVAILABLE_WIZARDS));
 
         controller.handleMessage(new MessageEvent(m2, new ChosenWizard(Wizard.SENSEI)));

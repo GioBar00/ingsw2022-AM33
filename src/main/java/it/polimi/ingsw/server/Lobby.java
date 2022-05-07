@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.network.listeners.MessageListener;
 import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
@@ -108,5 +109,9 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
         if (counter == 4)
             return new WizardsView(EnumSet.noneOf(Wizard.class));
         return new WizardsView(EnumSet.copyOf(wizards));
+    }
+
+    public void sendInitialStats(MessageListener messageListener){
+        notifyListener(messageListener.getIdentifier(),new MessageEvent(this, new AvailableWizards(getWizardsView())));
     }
 }

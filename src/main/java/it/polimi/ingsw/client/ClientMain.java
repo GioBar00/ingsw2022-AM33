@@ -12,10 +12,12 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.fusesource.jansi.Ansi.ansi;
+
 public class ClientMain {
 
     static BufferedReader stdIn;
-    static List<Client> clients = new LinkedList<>();
+    static List<TestClient> clients = new LinkedList<>();
     public static void main(String[] args) {
         stdIn = new BufferedReader(new InputStreamReader(System.in));
         boolean serverOn = false;
@@ -78,11 +80,11 @@ public class ClientMain {
         try {
             System.out.println("CT: choose a nickname: ");
             String clientName = stdIn.readLine();
-            Client client = new Client(clientName, "127.0.0.1", 1234);
+            TestClient client = new TestClient(clientName, "127.0.0.1", 1234);
             clients.add(client);
             client.connect();
             if (clients.size() == 1)
-                client.sendMessage(new ChosenGame(GamePreset.TWO, GameMode.EXPERT));
+                client.sendMessage(new ChosenGame(GamePreset.FOUR, GameMode.EXPERT));
         } catch (IOException e) {
             e.printStackTrace();
         }

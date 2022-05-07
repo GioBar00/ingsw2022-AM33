@@ -92,7 +92,7 @@ public class Server implements EndPartyListener {
                                 VirtualClient vc = new VirtualClient(nickname);
                                 startVirtualClient(vc, socket);
                                 virtualClients.put(nickname, vc);
-                                controller.sendAvailableWizard(vc);
+                                controller.sendInitialStats(vc);
 
                             }
                         }

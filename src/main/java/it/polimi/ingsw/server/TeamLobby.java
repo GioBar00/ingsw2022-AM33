@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.network.listeners.MessageListener;
+import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.listeners.MessageEvent;
@@ -15,6 +17,15 @@ public class TeamLobby extends Lobby{
 
     public TeamLobby(int maxPlayers) {
         super(maxPlayers);
+    }
+
+    @Override
+    public boolean addPlayer(String nickname){
+        if(super.addPlayer(nickname)){
+            notifyListeners(new MessageEvent(this, new CurrentTeams(getTeamView())));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -69,5 +80,10 @@ public class TeamLobby extends Lobby{
             else lobby.add(p.getNickname());
         }
         return new TeamsView(teams, lobby);
+    }
+
+    public void sendInitialStats(MessageListener messageListener){
+        super.sendInitialStats(messageListener);
+        notifyListener(messageListener.getIdentifier(),new MessageEvent(this, new CurrentTeams(getTeamView())));
     }
 }

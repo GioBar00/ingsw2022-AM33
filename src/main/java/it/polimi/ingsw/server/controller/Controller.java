@@ -6,8 +6,10 @@ import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
 import it.polimi.ingsw.network.messages.client.ChosenWizard;
+import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.AvailableWizards;
+import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.server.Lobby;
 import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.VirtualClient;
@@ -169,7 +171,7 @@ public class Controller implements MessageListener {
                     break;
                 case STARTED:
                     if (canPlay(vc.getIdentifier())) {
-                        vc.sendNotYourTurnMessage();
+                        vc.sendMessage(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN));
                     } else {
                         switch (model.getPhase()) {
                             case PLANNING -> handlePlanningPhase(vc, msg);
@@ -183,7 +185,7 @@ public class Controller implements MessageListener {
                     }
                     break;
                 case ENDED:
-                    vc.sendImpossibleMessage();
+                    vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                     break;
             }
         }
@@ -204,16 +206,18 @@ public class Controller implements MessageListener {
 
             }
             case START_GAME -> {
-                if (!this.startGame(vc.getIdentifier()))
-                        vc.sendImpossibleMessage();
+                if(!lobby.getMaster().equals(vc.getIdentifier()))
+                    vc.sendMessage(new CommMessage(CommMsgType. ERROR_NOT_MASTER));
+                else if (!this.startGame(vc.getIdentifier()))
+                        vc.sendMessage(new CommMessage(CommMsgType.ERROR_CANT_START));
             }
 
             case CHOSEN_WIZARD -> {
                 ChosenWizard chosenWizard = (ChosenWizard)msg;
                 if(!lobby.setWizard(chosenWizard.getWizard(),vc.getIdentifier()))
-                    vc.sendImpossibleMessage();
+                    vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
             }
-            default -> vc.sendImpossibleMessage();
+            default -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
         }
     }
 
@@ -221,8 +225,8 @@ public class Controller implements MessageListener {
      * Send the current wizard situation to a specified listener
      * @param messageListener the client who is going to receive
      */
-    public synchronized void sendAvailableWizard(MessageListener messageListener){
-        lobby.notifyListener(messageListener.getIdentifier(),new MessageEvent(this, new AvailableWizards(lobby.getWizardsView())));
+    public synchronized void sendInitialStats(MessageListener messageListener){
+        lobby.sendInitialStats(messageListener);
     }
 
     /**
@@ -234,9 +238,9 @@ public class Controller implements MessageListener {
         if (MessageType.retrieveByMessage(msg) == MessageType.PLAYED_ASSISTANT_CARD) {
             PlayedAssistantCard playedAssistantCard = (PlayedAssistantCard) msg;
             if(!model.playAssistantCard(playedAssistantCard.getAssistantCard()))
-                vc.sendImpossibleMessage();
+                vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
         } else {
-            vc.sendImpossibleMessage();
+            vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
         }
     }
 
@@ -257,13 +261,13 @@ public class Controller implements MessageListener {
                         switch (movedStudent.getTo()) {
                             case HALL -> {
                                 if(!model.moveStudentToHall(movedStudent.getFromIndex()))
-                                    vc.sendImpossibleMessage();
+                                    vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                             }
                             case ISLAND -> {
                                 if(!model.moveStudentToIsland(movedStudent.getFromIndex(), movedStudent.getToIndex()))
-                                    vc.sendImpossibleMessage();
+                                    vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                             }
-                            default -> vc.sendImpossibleMessage();
+                            default -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                         }
                         break;
 
@@ -272,7 +276,7 @@ public class Controller implements MessageListener {
                             case ISLAND, ENTRANCE, HALL -> {
                                 parameters = CharacterChoiceAdapter.convert(movedStudent);
                                 if(!model.applyEffect(parameters))
-                                    vc.sendImpossibleMessage();
+                                    vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                             }
                         }
                         break;
@@ -280,39 +284,39 @@ public class Controller implements MessageListener {
                     case HALL:
                         parameters = CharacterChoiceAdapter.convert(movedStudent);
                         if(!model.applyEffect(parameters))
-                            vc.sendImpossibleMessage();
+                            vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                         break;
 
-                    default: vc.sendImpossibleMessage();
+                    default: vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                 }
             }
 
             case ACTIVATED_CHARACTER_CARD -> {
                 ActivatedCharacterCard activatedCharacterCard = (ActivatedCharacterCard) msg;
                 if(!model.activateCharacterCard(activatedCharacterCard.getCharacterCardIndex()))
-                    vc.sendImpossibleMessage();
+                    vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
             }
 
             case CHOSEN_ISLAND ->{
                 ChosenIsland chosenIsland = (ChosenIsland) msg;
                 CharacterParameters parameters = CharacterChoiceAdapter.convert(chosenIsland);
                 if(!model.applyEffect(parameters))
-                    vc.sendImpossibleMessage();
+                    vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
             }
 
             case CHOSEN_STUDENT_COLOR -> {
                 ChosenStudentColor chosenStudentColor = (ChosenStudentColor)msg;
                 CharacterParameters parameters = CharacterChoiceAdapter.convert(chosenStudentColor);
                 if(!model.applyEffect(parameters))
-                    vc.sendImpossibleMessage();
+                    vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
             }
 
             case CONCLUDE_CHARACTER_CARD_EFFECT -> {
                 if(!model.endEffect())
-                    vc.sendImpossibleMessage();
+                    vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
             }
 
-            default -> vc.sendImpossibleMessage();
+            default -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
         }
     }
 
@@ -325,9 +329,9 @@ public class Controller implements MessageListener {
         if(MessageType.retrieveByMessage(msg) == MessageType.MOVED_MOTHER_NATURE){
             MovedMotherNature movedMotherNature = (MovedMotherNature)msg;
             if (!model.moveMotherNature(movedMotherNature.getNumMoves()))
-                vc.sendImpossibleMessage();
+                vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
         }
-        else vc.sendImpossibleMessage();
+        else vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
     }
 
     /**
@@ -339,9 +343,9 @@ public class Controller implements MessageListener {
         if(MessageType.retrieveByMessage(msg) == MessageType.CHOSEN_CLOUD){
             ChosenCloud chosenCloud = (ChosenCloud) msg;
             if(!model.getStudentsFromCloud(chosenCloud.getCloudIndex()))
-                vc.sendImpossibleMessage();
+                vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
         }
-        else vc.sendImpossibleMessage();
+        else vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
     }
 
     /**
