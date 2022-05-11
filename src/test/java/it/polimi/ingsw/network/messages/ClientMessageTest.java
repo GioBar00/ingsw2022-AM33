@@ -207,6 +207,17 @@ class ClientMessageTest {
         assertEquals(original.getFromIndex(), ((SwappedStudents)m).getFromIndex());
         assertEquals(original.getTo(), ((SwappedStudents)m).getTo());
         assertEquals(original.getToIndex(), ((SwappedStudents)m).getToIndex());
+
+        original = new SwappedStudents(new MovedStudent(MoveLocation.ENTRANCE, 2, MoveLocation.HALL,2));
+        m = toAndFromJson(original);
+        assertTrue(m.isValid());
+        assertTrue(m instanceof SwappedStudents);
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
+        assertEquals(original.getFrom(), ((SwappedStudents)m).getFrom());
+        assertEquals(original.getFromIndex(), ((SwappedStudents)m).getFromIndex());
+        assertEquals(original.getTo(), ((SwappedStudents)m).getTo());
+        assertEquals(original.getToIndex(), ((SwappedStudents)m).getToIndex());
+
         // invalid from
         original = new SwappedStudents(null, 2, MoveLocation.HALL, 2);
         m = toAndFromJson(original);

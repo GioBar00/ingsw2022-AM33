@@ -1,5 +1,7 @@
 package it.polimi.ingsw.network.messages.enums;
 
+import java.util.Locale;
+
 /**
  * Enum for the possible locations of a move
  */
@@ -46,5 +48,21 @@ public enum MoveLocation {
      */
     public boolean requiresIndex() {
         return doesRequireFromIndex || doesRequireToIndex;
+    }
+
+    /**
+     * Convert a string into the proper MoveLocation
+     * @param input String
+     * @return null if the value in input is not valid or the MoveLocation if it's valid
+     */
+    public static MoveLocation getFromString(String input){
+        input = input.toLowerCase();
+        return switch(input){
+            case "entrance" -> ENTRANCE;
+            case "hall" -> HALL;
+            case "island" -> ISLAND;
+            case "card" -> CARD;
+            default -> null;
+        };
     }
 }

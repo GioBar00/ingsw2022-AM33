@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server.model.enums;
 
+import javax.naming.NoInitialContextException;
+
 /**
  * enumeration for assistant cards: contains data for number of card, its value and number of moves
  */
@@ -18,4 +20,19 @@ public enum AssistantCard {
     public Integer getValue(){return value;}
     public Integer getMoves(){return moves;}
 
+    public static AssistantCard getFromInt(int value){
+        return switch (value) {
+            case 1 -> ONE;
+            case 2 -> TWO;
+            case 3 -> THREE;
+            case 4 -> FOUR;
+            case 5 -> FIVE;
+            case 6 -> SIX;
+            case 7 -> SEVEN;
+            case 8 -> EIGHT;
+            case 9 -> NINE;
+            case 10 -> TEN;
+            default -> null;
+        };
+    }
 }

@@ -3,6 +3,7 @@ package it.polimi.ingsw.network.messages;
 import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CurrentGameState;
 import it.polimi.ingsw.server.Lobby;
+import it.polimi.ingsw.server.VirtualClient;
 import it.polimi.ingsw.server.model.enums.Wizard;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +14,7 @@ class AvailableWizardsTest {
 
     @Test
     void availableWizardsTest(){
-        Lobby lobby = new Lobby(4);
+        Lobby lobby = new Lobby(4, new VirtualClient("player1"));
         lobby.addPlayer("player1");
         lobby.addPlayer("player2");
         lobby.addPlayer("player3");

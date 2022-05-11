@@ -7,10 +7,13 @@ import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.network.messages.server.CurrentGameState;
 import it.polimi.ingsw.network.messages.server.CurrentTeams;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -44,9 +47,14 @@ public class Client implements MessageHandler, ViewListener, Runnable {
     private final LinkedBlockingQueue<Message> queue;
 
     /**
+     * The executor used to handle the message exchange.
+     */
+    private ExecutorService executor;
+
+    /**
      * Constructor of Virtual Server
      */
-    Client(String hostname, int port, UI userInterface) {
+    public Client(String hostname, int port, UI userInterface) {
         this.hostname = hostname;
         this.port = port;
         queue = new LinkedBlockingQueue<>();
@@ -58,10 +66,12 @@ public class Client implements MessageHandler, ViewListener, Runnable {
     /**
      * This method sets up the connection and starts the communicationHandler.
      */
-    private void startConnection(){
+    public void startConnection(){
         try {
             communicationHandler.setSocket(new Socket(hostname, port));
             communicationHandler.start();
+            executor = Executors.newFixedThreadPool(1);
+            executor.submit(this::run);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -84,7 +94,6 @@ public class Client implements MessageHandler, ViewListener, Runnable {
     public void onMessage(Message event) {
         if(MessageType.retrieveByMessage(event) == MessageType.LOGIN) {
                 startConnection();
-                communicationHandler.sendMessage(event);
         }
         communicationHandler.sendMessage(event);
     }
@@ -110,22 +119,36 @@ public class Client implements MessageHandler, ViewListener, Runnable {
      * Method for updating the view based on the received  messages.
      * @param message a Message from the model.
      */
-    public void updateView(Message message){
+    public synchronized void updateView(Message message){
         switch (MessageType.retrieveByMessage(message)){
             case COMM_MESSAGE -> {
                 switch (((CommMessage)message).getType()){
-                    case CHOOSE_GAME ->    userInterface.setHost();
-                    default -> userInterface.showError((CommMessage)message);
+                    case CHOOSE_GAME -> userInterface.setHost();
+                    case CAN_START -> userInterface.hostCanStart();
+                    case ERROR_CANT_START -> userInterface.hostCantStart();
+                    default -> userInterface.showCommMessage((CommMessage)message);
                 }
             }
             case AVAILABLE_WIZARDS -> {
                 userInterface.setWizardView(((AvailableWizards)message).getWizardsView());
                 userInterface.showWizardMenu();
             }
-            case CURRENT_TEAMS -> {
-                userInterface.setTeamsView(((CurrentTeams)message).getTeamsView());
-                userInterface.showLobbyScreen();
+            case CURRENT_TEAMS -> userInterface.setTeamsView(((CurrentTeams)message).getTeamsView());
+            case PLAY_ASSISTANT_CARD, MULTIPLE_POSSIBLE_MOVES, CHOOSE_CLOUD, CHOOSE_ISLAND, CHOOSE_STUDENT_COLOR, MOVE_MOTHER_NATURE, MOVE_STUDENT, SWAP_STUDENTS ->
+                    userInterface.setPossibleMoves(message);
+
+            case CURRENT_GAME_STATE -> {
+                userInterface.setGameView(((CurrentGameState)message).getGameView());
+                userInterface.showGameScreen();
             }
         }
+    }
+
+    /**
+     * End the connection
+     */
+    public void closeConnection(){
+        communicationHandler.stop();
+        executor.shutdownNow();
     }
 }

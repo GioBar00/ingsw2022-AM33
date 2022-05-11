@@ -22,6 +22,7 @@ public enum CommMsgType {
     // COMMUNICATION MESSAGES FOR REQUESTS/ACKs
     PING("Are you still alive?"),
     CHOOSE_GAME("Choose the difficulty of the game: EASY or EXPERT.\nChoose the number of players: TWO, THREE or FOUR."),
+    CAN_START("You can start the party. Be quick things could change"),
     PONG("acknowledgement");
 
     private final String message;

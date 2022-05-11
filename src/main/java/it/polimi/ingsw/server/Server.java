@@ -45,6 +45,10 @@ public class Server implements EndPartyListener {
     private ExecutorService executor;
 
     /**
+     * The preset of the party
+     */
+    private ChosenGame choice;
+    /**
      * Server's constructor method
      */
     public Server() {
@@ -57,6 +61,7 @@ public class Server implements EndPartyListener {
      */
     public Server(int port) {
         virtualClients = new HashMap<>();
+        choice = null;
         this.port = port;
         controller = new Controller(this);
         startController();
@@ -66,7 +71,7 @@ public class Server implements EndPartyListener {
      * Main Method used for instantiate Virtual Client if is permitted.
      * Each of this Virtual Client are run on different threads
      */
-     public synchronized void handleRequest() {
+     public void handleRequest() {
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("S: server ready");
@@ -77,7 +82,7 @@ public class Server implements EndPartyListener {
                     Socket socket = serverSocket.accept();
                     Future <String> nick =  executor.submit(() -> this.handleFirstConnection(socket));
                     try {
-                        nickname = nick.get(5, TimeUnit.SECONDS);
+                        nickname = nick.get(35, TimeUnit.SECONDS);
                     }
                     catch (InterruptedException | ExecutionException ignored){ }
                     catch (TimeoutException e){
@@ -90,6 +95,10 @@ public class Server implements EndPartyListener {
                         if(nickname != null) {
                             synchronized (this) {
                                 VirtualClient vc = new VirtualClient(nickname);
+                                if(virtualClients.size() == 0 && choice != null){
+                                    controller.setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset(),vc));
+                                    controller.addPlayer(nickname);
+                                }
                                 startVirtualClient(vc, socket);
                                 virtualClients.put(nickname, vc);
                                 controller.sendInitialStats(vc);
@@ -138,10 +147,16 @@ public class Server implements EndPartyListener {
                     VirtualClient vc = virtualClients.get(nickname);
                     closeInOut(in, out);
                     startVirtualClient(vc,socket);
+                    if(controller.isInstantiated()){
+                        controller.addModelListener(vc);
+                    }
                     return null;
                 }
                 else {
-
+                    if(virtualClients.containsKey(nickname) && virtualClients.get(nickname).isConnected()){
+                        MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE), out);
+                        return null;
+                    }
                     if (!controller.isInstantiated()) {
                         //model didn't exist
                         return firstPlayer(nickname,socket,in,out);
@@ -191,8 +206,7 @@ public class Server implements EndPartyListener {
             if (MessageType.retrieveByMessage(m).equals(MessageType.CHOSEN_GAME)) {
                 ChosenGame choice = (ChosenGame) m;
                 if (choice.isValid()) {
-                    controller.setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
-                    controller.addPlayer(nickname);
+                    this.choice = choice;
                     return nickname;
                 }
             }
@@ -201,8 +215,7 @@ public class Server implements EndPartyListener {
         try {
             return result.get(30, TimeUnit.SECONDS);
         }
-        catch (InterruptedException | ExecutionException e){
-            e.printStackTrace();
+        catch (InterruptedException | ExecutionException ignored){
             return null;
         }
         catch (TimeoutException e){

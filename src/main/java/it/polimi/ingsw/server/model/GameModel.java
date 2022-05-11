@@ -777,7 +777,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return the current gameView
      */
     public CurrentGameState getCurrentGameState(Player destPlayer) {
-        return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex));
+        return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(),getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex));
     }
 
 

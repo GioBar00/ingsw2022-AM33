@@ -27,6 +27,11 @@ public class GameView extends InvalidMessage {
     private final GamePhase phase;
 
     /**
+     * The current player
+     */
+    private final String currentPlayer;
+
+    /**
      * view of the Islands
      */
     private final List<IslandGroupView> islandsView;
@@ -56,11 +61,12 @@ public class GameView extends InvalidMessage {
     /**
      * constructor of the GameView for an easy game
      */
-    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex) {
+    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex) {
         this.mode = mode;
         this.preset = preset;
         this.state = state;
         this.phase = phase;
+        this.currentPlayer = currentPlayer;
         this.islandsView = islandsView;
         this.playersView = playersView;
         this.motherNatureIndex = motherNatureIndex;
@@ -72,11 +78,12 @@ public class GameView extends InvalidMessage {
     /**
      * constructor of the GameView for an expert game (sets also the attributes for the CharacterCard)
      */
-    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, Integer reserve, List<CharacterCardView> characterCardView, Map<String, Integer> playerCoins) {
+    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, Integer reserve, List<CharacterCardView> characterCardView, Map<String, Integer> playerCoins) {
         this.mode = mode;
         this.preset = preset;
         this.state = state;
         this.phase = phase;
+        this.currentPlayer = currentPlayer;
         this.islandsView = islandsView;
         this.playersView = playersView;
         this.motherNatureIndex = motherNatureIndex;
@@ -111,6 +118,13 @@ public class GameView extends InvalidMessage {
      */
     public GamePhase getPhase() {
         return phase;
+    }
+
+    /**
+     * @return the current player
+     */
+    public String getCurrentPlayer() {
+        return currentPlayer;
     }
 
     /**

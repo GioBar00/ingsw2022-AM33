@@ -96,11 +96,13 @@ class GameStateAndTeamsTests {
         assertFalse(m.isValid());
         // test first if of isValid()
         Player dest = gm.getModel().getPlayersManager().getCurrentPlayer();
-        original = new CurrentGameState(new GameView(gm.getGameMode(), null, gm.getGameState(), gm.getPhase(), gm.getModel().getIslandsManager().getIslandsView(), gm.getModel().getPlayersManager().getPlayersView(dest), gm.getModel().getMotherNatureIndex(), gm.getReserve(), gm.getCharacterCardsView(dest.getNickname()), gm.getPlayerCoins()));
+        GameView gameView = new GameView(gm.getGameMode(), null, gm.getGameState(), gm.getPhase(), gm.getCurrentPlayer(), gm.getModel().getIslandsManager().getIslandsView(), gm.getModel().getPlayersManager().getPlayersView(dest), gm.getModel().getMotherNatureIndex(), gm.getReserve(), gm.getCharacterCardsView(dest.getNickname()), gm.getPlayerCoins());
+        assertEquals(dest.getNickname(), gameView.getCurrentPlayer());
+        original = new CurrentGameState(new GameView(gm.getGameMode(), null, gm.getGameState(), gm.getPhase(), gm.getCurrentPlayer(), gm.getModel().getIslandsManager().getIslandsView(), gm.getModel().getPlayersManager().getPlayersView(dest), gm.getModel().getMotherNatureIndex(), gm.getReserve(), gm.getCharacterCardsView(dest.getNickname()), gm.getPlayerCoins()));
         m = toAndFromJson(original);
         assertFalse(m.isValid());
         // test second if fo isValid()
-        original = new CurrentGameState(new GameView(gm.getGameMode(), gm.getModel().getPlayersManager().getPreset(), gm.getGameState(), gm.getPhase(), gm.getModel().getIslandsManager().getIslandsView(), null, gm.getModel().getMotherNatureIndex(), gm.getReserve(), gm.getCharacterCardsView(dest.getNickname()), gm.getPlayerCoins()));
+        original = new CurrentGameState(new GameView(gm.getGameMode(), gm.getModel().getPlayersManager().getPreset(), gm.getGameState(), gm.getPhase(),gm.getCurrentPlayer(), gm.getModel().getIslandsManager().getIslandsView(), null, gm.getModel().getMotherNatureIndex(), gm.getReserve(), gm.getCharacterCardsView(dest.getNickname()), gm.getPlayerCoins()));
         m = toAndFromJson(original);
         assertFalse(m.isValid());
     }

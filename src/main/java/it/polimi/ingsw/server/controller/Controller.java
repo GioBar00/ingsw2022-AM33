@@ -129,8 +129,7 @@ public class Controller implements MessageListener {
     @Override
     public void onMessage(MessageEvent event) {
         synchronized (lock) {
-            if (isInstantiated())
-                queue.add(event);
+            queue.add(event);
         }
     }
 
@@ -159,8 +158,9 @@ public class Controller implements MessageListener {
                 }
             }
             else{
-                if(identifier.equals(model.getCurrentPlayer())){
-                    model.skipCurrentPlayerTurn();
+                if(isInstantiated())
+                 if(identifier.equals(model.getCurrentPlayer())){
+                        model.skipCurrentPlayerTurn();
                 }
             }
         }
@@ -172,7 +172,7 @@ public class Controller implements MessageListener {
                 case STARTED:
                     if (canPlay(vc.getIdentifier())) {
                         vc.sendMessage(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN));
-                    } else {
+                    } else if(isInstantiated()){
                         switch (model.getPhase()) {
                             case PLANNING -> handlePlanningPhase(vc, msg);
 
@@ -183,6 +183,7 @@ public class Controller implements MessageListener {
                             case CHOOSE_CLOUD -> handleChooseCloudPhase(vc, msg);
                         }
                     }
+                    else{ vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));}
                     break;
                 case ENDED:
                     vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
@@ -203,6 +204,7 @@ public class Controller implements MessageListener {
             case CHOSEN_TEAM -> {
                 ChosenTeam chosenTeam = (ChosenTeam)msg;
                 this.changeTeam(vc.getIdentifier(),chosenTeam.getTower());
+
 
             }
             case START_GAME -> {

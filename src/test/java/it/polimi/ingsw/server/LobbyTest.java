@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.client.enums.ViewState;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.Tower;
 import it.polimi.ingsw.server.model.enums.Wizard;
@@ -21,7 +22,7 @@ public class LobbyTest {
      */
     @Test
     void lobbyTest(){
-        Lobby lobby = LobbyConstructor.getLobby(GamePreset.THREE);
+        Lobby lobby = LobbyConstructor.getLobby(GamePreset.THREE, new VirtualClient("p1"));
 
         assertTrue(lobby.addPlayer("p1"));
         assertFalse(lobby.addPlayer("p1"));
@@ -75,13 +76,14 @@ public class LobbyTest {
      */
     @Test
     void TeamLobbyTest(){
-        Lobby lobby = LobbyConstructor.getLobby(GamePreset.FOUR);
+        VirtualClient v1 = new VirtualClient("p1");
+        Lobby lobby = LobbyConstructor.getLobby(GamePreset.FOUR, v1);
 
         lobby.addPlayer("p1");
         lobby.addPlayer("p2");
         lobby.addPlayer("p3");
         lobby.addPlayer("p4");
-
+        lobby.sendInitialStats(v1);
         assertFalse(lobby.canStart());
 
         lobby.setWizard(Wizard.KING,"p1");

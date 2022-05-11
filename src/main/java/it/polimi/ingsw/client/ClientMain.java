@@ -19,6 +19,7 @@ public class ClientMain {
     static BufferedReader stdIn;
     static List<TestClient> clients = new LinkedList<>();
     public static void main(String[] args) {
+
         stdIn = new BufferedReader(new InputStreamReader(System.in));
         boolean serverOn = false;
         ServerThread st;
@@ -84,7 +85,7 @@ public class ClientMain {
             clients.add(client);
             client.connect();
             if (clients.size() == 1)
-                client.sendMessage(new ChosenGame(GamePreset.FOUR, GameMode.EXPERT));
+                client.sendMessage(new ChosenGame(GamePreset.TWO, GameMode.EXPERT));
         } catch (IOException e) {
             e.printStackTrace();
         }

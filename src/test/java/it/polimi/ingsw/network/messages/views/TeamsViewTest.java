@@ -3,6 +3,7 @@ package it.polimi.ingsw.network.messages.views;
 import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.server.Lobby;
 import it.polimi.ingsw.server.LobbyConstructor;
+import it.polimi.ingsw.server.VirtualClient;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.Tower;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ class TeamsViewTest {
 
     @Test
     void teamsViewTest(){
-        Lobby lobby = LobbyConstructor.getLobby(GamePreset.FOUR);
+        Lobby lobby = LobbyConstructor.getLobby(GamePreset.FOUR, new VirtualClient("test"));
 
         assertTrue(lobby.addPlayer("whiteLeader"));
         assertTrue(lobby.addPlayer("blackLeader"));

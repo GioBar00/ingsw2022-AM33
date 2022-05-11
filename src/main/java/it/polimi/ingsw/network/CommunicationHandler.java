@@ -2,6 +2,7 @@ package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.network.listeners.*;
 import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
@@ -149,7 +150,11 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                 MessageExchange.sendMessage(m, writer);
             }
         } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
+            if(!isMaster()) {
+                System.out.println("We are sorry, you have been disconnected");
+                e.printStackTrace();
+            }
+            else e.printStackTrace();
         }
     }
 
@@ -260,8 +265,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      */
     public synchronized void stop() {
         if (!executor.isShutdown()) {
-            if (isMaster)
-                timer.cancel();
+            timer.cancel();
             executor.shutdownNow();
             try {
                 reader.close();

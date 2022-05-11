@@ -94,7 +94,7 @@ class ControllerTest {
         assertFalse(controller.addPlayer(m1.getIdentifier()));
 
 
-        controller.setModelAndLobby(GamePreset.TWO, GameMode.EXPERT, LobbyConstructor.getLobby(GamePreset.TWO));
+        controller.setModelAndLobby(GamePreset.TWO, GameMode.EXPERT, LobbyConstructor.getLobby(GamePreset.TWO, new VirtualClient("p1")));
         controller.addModelListener(m1);
         controller.sendInitialStats(m1);
         assertTrue(m1.queueContains(MessageType.AVAILABLE_WIZARDS));
@@ -289,7 +289,7 @@ class ControllerTest {
         Server server = new Server();
         server.stopServer();
         Controller c = new Controller(server);
-        c.setModelAndLobby(GamePreset.FOUR,GameMode.EASY,LobbyConstructor.getLobby(GamePreset.TWO));
+        c.setModelAndLobby(GamePreset.FOUR,GameMode.EASY,LobbyConstructor.getLobby(GamePreset.TWO,new VirtualClient("p1")));
 
         assertTrue(c.isInstantiated());
         ModelListener m1 = new ModelListener("p1", c);
@@ -329,7 +329,7 @@ class ControllerTest {
     void chooseTeamTest(){
         Server server = new Server();
         Controller c = server.getController();
-        c.setModelAndLobby(GamePreset.FOUR,GameMode.EASY,LobbyConstructor.getLobby(GamePreset.FOUR));
+        c.setModelAndLobby(GamePreset.FOUR,GameMode.EASY,LobbyConstructor.getLobby(GamePreset.FOUR,new VirtualClient("p1")));
 
         ModelListener m1 = new ModelListener("p1", c);
         c.addPlayer(m1.getIdentifier());
