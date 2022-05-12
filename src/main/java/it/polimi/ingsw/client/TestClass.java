@@ -12,8 +12,6 @@ import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.EnumMap;
 
-import static org.fusesource.jansi.Ansi.ansi;
-
 public class TestClass {
     static BufferedReader stdIn;
     static GameView gameView;

@@ -40,7 +40,7 @@ public class Eriantys {
                 }
                 server.handleRequest();
             } else if (cmd.hasOption("c")) {
-                System.out.println("Starting game in CLI mode");
+                System.out.println("Starting game in oldCLI mode");
                 UI userInterface = new CLI();
                 userInterface.showStartScreen();
             } else {
@@ -62,7 +62,7 @@ public class Eriantys {
         options.addOption("h", "help", false, "Print this help");
         options.addOption("s", "server", false, "Start server");
         options.addOption("p", "port", true, "Server port number");
-        options.addOption("c", "cli", false, "Start game in CLI mode");
+        options.addOption("c", "cli", false, "Start game in oldCLI mode");
         options.addOption("g", "gui", false, "Start game in GUI mode");
         return options;
     }
@@ -74,13 +74,13 @@ public class Eriantys {
      */
     private static void checkOptions(CommandLine cmd) throws ParseException {
         if (cmd.hasOption("s") && cmd.hasOption("c"))
-            throw new ParseException("You can't start both server and CLI at the same time");
+            throw new ParseException("You can't start both server and oldCLI at the same time");
         if (cmd.hasOption("s") && cmd.hasOption("g"))
             throw new ParseException("You can't start both server and GUI at the same time");
         if (cmd.hasOption("p") && !cmd.hasOption("s"))
             throw new ParseException("You can't specify a port number for a client");
         if (cmd.hasOption("g") && cmd.hasOption("c"))
-            throw new ParseException("You can't start both GUI and CLI at the same time");
+            throw new ParseException("You can't start both GUI and oldCLI at the same time");
 
         if (cmd.hasOption("p")) {
             try {

@@ -5,25 +5,23 @@ import it.polimi.ingsw.client.UI;
 import it.polimi.ingsw.client.enums.ViewState;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.requests.*;
-import it.polimi.ingsw.network.messages.client.*;
+import it.polimi.ingsw.network.messages.client.Login;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.server.CommMessage;
-import it.polimi.ingsw.network.messages.server.CurrentGameState;
-import it.polimi.ingsw.network.messages.views.CharacterCardView;
-import it.polimi.ingsw.network.messages.views.GameView;
-import it.polimi.ingsw.network.messages.views.TeamsView;
-import it.polimi.ingsw.network.messages.views.WizardsView;
+import it.polimi.ingsw.network.messages.views.*;
 import it.polimi.ingsw.server.model.enums.*;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static it.polimi.ingsw.server.model.enums.StudentColor.*;
+import static org.fusesource.jansi.Ansi.ansi;
 
 
 public class CLI implements UI {
@@ -207,8 +205,18 @@ public class CLI implements UI {
         for(int i = 0; i< 5 ; i++)
             System.out.println();
         //show island
+        ArrayList<String> islands = getIslandsLines(gameView.getIslandsView(), gameView.getMotherNatureIndex());
+        for (String line : islands) {
+            System.out.println(line);
+        }
         //show details
         //show school boards
+        for (PlayerView pv : gameView.getPlayersView()){
+            ArrayList<String> board = getSchoolBoardLines(pv.getSchoolBoardView());
+            for (String line : board) {
+                System.out.println(line);
+            }
+        }
         showPossibleMoves();
     }
 
@@ -502,6 +510,320 @@ public class CLI implements UI {
         view[6] = colors.get("blue") +  sup +" "+ sup2 + colors.get("yellow") + sup +" " + sup2;
         view[6] = view[6] + colors.get("cyan") + sup +" " + colors.get("reset");
         return view;
+    }
+
+    private ArrayList<String> getSchoolBoardLines(SchoolBoardView sbv){
+        ArrayList<String> schoolBoardLines = new ArrayList<>();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        int indexEntrance = 0;
+        int countTower = 0;
+        // CONTORNO SOPRA
+        stringBuilder.append(ansi().render("@|yellow ╔|@"));
+        for(int i = 0; i < 92; i ++){
+            if ((i == 14) || (i == 77) || (i == 67)) {
+                stringBuilder.append(ansi().render("@|yellow ╦|@"));
+            } else {
+                stringBuilder.append(ansi().render("@|yellow ═|@"));
+            }
+        }
+        stringBuilder.append(ansi().render("@|yellow ╗|@"));
+        schoolBoardLines.add(0, stringBuilder.toString());
+
+        // INTERNO RIGA PER RIGA
+        for(int rows = 0; rows < 5; rows ++) {
+            stringBuilder.delete(0, stringBuilder.length());
+
+            // ENTRANCE
+            stringBuilder.append(ansi().render("@|yellow ║|@"));
+            for (int i = 0; i < 2; i++) {
+                stringBuilder.append(ansi().render("@|white ░|@"));
+            }
+            if (indexEntrance < sbv.getEntrance().size()) {
+                appendStudent(sbv.getEntrance().get(indexEntrance), stringBuilder);
+            } else {
+                stringBuilder.append("   ");
+            }
+            indexEntrance++;
+            for (int i = 0; i < 4; i++) {
+                stringBuilder.append(ansi().render("@|white ░|@"));
+            }
+            if (indexEntrance < sbv.getEntrance().size()) {
+                appendStudent(sbv.getEntrance().get(indexEntrance), stringBuilder);
+            } else {
+                stringBuilder.append("   ");
+            }
+            indexEntrance++;
+            for (int i = 0; i < 2; i++) {
+                stringBuilder.append(ansi().render("@|white ░|@"));
+            }
+
+            // HALL
+            stringBuilder.append(ansi().render("@|yellow ║|@"));
+            appendHall(rows, stringBuilder, sbv.getStudentsHall());
+
+
+            // PROFESSORS
+            stringBuilder.append(ansi().render("@|yellow ║|@"));
+            for (int i = 0; i < 3; i++) {
+                stringBuilder.append(ansi().render("@|white ░|@"));
+            }
+            StudentColor currentProfLine = null;
+            switch (rows){
+                case 0 -> currentProfLine = StudentColor.GREEN;
+                case 1 -> currentProfLine = StudentColor.RED;
+                case 2 -> currentProfLine = StudentColor.YELLOW;
+                case 3 -> currentProfLine = StudentColor.PINK;
+                case 4 -> currentProfLine = StudentColor.BLUE;
+            }
+            if (sbv.getProfessors().contains(currentProfLine)) {
+                switch (currentProfLine){
+                    case RED -> stringBuilder.append(ansi().render("@|red  ■ |@"));
+                    case BLUE -> stringBuilder.append(ansi().render("@|blue  ■ |@"));
+                    case GREEN -> stringBuilder.append(ansi().render("@|green  ■ |@"));
+                    case PINK -> stringBuilder.append(ansi().render("@|magenta  ■ |@"));
+                    case YELLOW -> stringBuilder.append(ansi().render("@|yellow  ■ |@"));
+                }
+            } else {
+                stringBuilder.append("   ");
+            }
+            for(int i = 0; i < 3; i ++){
+                stringBuilder.append(ansi().render("@|white ░|@"));
+            }
+
+            // TOWERS
+            stringBuilder.append(ansi().render("@|yellow ║|@"));
+            for(int i = 0; i < 2; i ++){
+                stringBuilder.append(ansi().render("@|white ░|@"));
+            }
+            if (countTower < sbv.getNumTowers()) {
+                appendTower(sbv.getTower(), stringBuilder);
+            } else {
+                stringBuilder.append("   ");
+            }
+            countTower ++;
+            for(int i = 0; i < 4; i ++){
+                stringBuilder.append(ansi().render("@|white ░|@"));
+            }
+            if (countTower < sbv.getNumTowers()) {
+                appendTower(sbv.getTower(), stringBuilder);
+            } else {
+                stringBuilder.append("   ");
+            }
+            countTower ++;
+            for(int i = 0; i < 2; i ++){
+                stringBuilder.append(ansi().render("@|white ░|@"));
+            }
+            stringBuilder.append(ansi().render("@|yellow ║|@"));
+            schoolBoardLines.add(rows+1, stringBuilder.toString());
+        }
+
+        // CONTORNO SOTTO
+        stringBuilder.delete(0, stringBuilder.length());
+        stringBuilder.append(ansi().render("@|yellow ╚|@"));
+        for(int i = 0; i < 92; i ++){
+            if ((i == 14) || (i == 77) || (i == 67)) {
+                stringBuilder.append(ansi().render("@|yellow ╩|@"));
+            } else {
+                stringBuilder.append(ansi().render("@|yellow ═|@"));
+            }
+        }
+        stringBuilder.append(ansi().render("@|yellow ╝|@"));
+        schoolBoardLines.add(6, stringBuilder.toString());
+
+        // NOMI
+        schoolBoardLines.add(7, "\tEntrance\t\t\t\t\t\tHall\t\t\t\t\t\t\tProfessors\t\s\s\sTowers");
+
+        for (String s : schoolBoardLines) {
+            System.out.println(s);
+        }
+
+        return schoolBoardLines;
+    }
+
+    private ArrayList<String> getIslandsLines(List<IslandGroupView> views, int motherNatureIndex){
+        ArrayList<String> islandsLines = new ArrayList<>();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        // water layer
+        appendWater(stringBuilder);
+
+        islandsLines.add(0, stringBuilder.toString());
+        stringBuilder.delete(0, stringBuilder.length());
+
+        // top border
+        stringBuilder.append(ansi().render("@|blue ░ |@"));
+        for (IslandGroupView igv : views) {
+            stringBuilder.append(ansi().render("@|green ╔|@"));
+            for(int i = 0; i < igv.getIslands().size(); i++){
+                stringBuilder.append(ansi().render("@|green ═══════|@"));
+                if (i == igv.getIslands().size() - 1)
+                    stringBuilder.append(ansi().render("@|green ╗|@"));
+                else
+                    stringBuilder.append(ansi().render("@|green ╦|@"));
+            }
+            stringBuilder.append(ansi().render("@|blue ░ |@"));
+        }
+
+
+        // first line (tower + blocks)
+        islandsLines.add(1, stringBuilder.toString());
+        stringBuilder.delete(0, stringBuilder.length());
+
+        stringBuilder.append(ansi().render("@|blue ░ |@"));
+        int islandIndex = 0;
+        for (IslandGroupView igv : views) {
+            stringBuilder.append(ansi().render("@|green ║|@"));
+            for(int i = 0; i < igv.getIslands().size(); i++) {
+                Tower tower = igv.getIslands().get(i).getTower();
+                if (tower == null)
+                    stringBuilder.append("   ");
+                else
+                    appendTower(tower, stringBuilder);
+                if (i == 0 && islandIndex == motherNatureIndex)
+                    stringBuilder.append(ansi().render("@|green ©|@"));
+                else
+                    stringBuilder.append(" ");
+                appendBlock(igv.isBlocked(), stringBuilder);
+                stringBuilder.append(ansi().render("@|green ║|@"));
+            }
+            stringBuilder.append(ansi().render("@|blue ░ |@"));
+            islandIndex ++;
+        }
+
+
+        // second line (blue, red and green students)
+        islandsLines.add(2, stringBuilder.toString());
+        stringBuilder.delete(0, stringBuilder.length());
+
+        stringBuilder.append(ansi().render("@|blue ░ |@"));
+        for (IslandGroupView igv : views) {
+            stringBuilder.append(ansi().render("@|green ║|@"));
+            for(int i = 0; i < igv.getIslands().size(); i++) {
+                appendStudentNumber(BLUE, igv.getIslands().get(i).getStudents().get(StudentColor.BLUE), stringBuilder);
+                appendStudentNumber(RED, igv.getIslands().get(i).getStudents().get(StudentColor.RED), stringBuilder);
+                appendStudentNumber(GREEN, igv.getIslands().get(i).getStudents().get(GREEN), stringBuilder);
+                stringBuilder.append(ansi().render("@|green ║|@"));
+            }
+            System.out.print(ansi().eraseScreen().render("@|blue  ░ |@"));
+            stringBuilder.append(ansi().render("@|blue ░ |@"));
+        }
+
+        // third line (pink and yellow students)
+        islandsLines.add(3, stringBuilder.toString());
+        stringBuilder.delete(0, stringBuilder.length());
+
+        stringBuilder.append(ansi().render("@|blue ░ |@"));
+        for (IslandGroupView igv : views){
+            stringBuilder.append(ansi().render("@|green ║|@"));
+            for(int i = 0; i < igv.getIslands().size(); i++) {
+                appendStudentNumber(PINK, igv.getIslands().get(i).getStudents().get(PINK), stringBuilder);
+                appendStudentNumber(YELLOW, igv.getIslands().get(i).getStudents().get(YELLOW), stringBuilder);
+                stringBuilder.append(ansi().render("@|green   ║|@"));
+            }
+            stringBuilder.append(ansi().render("@|blue ░ |@"));
+        }
+
+
+        // bottom border
+        islandsLines.add(4, stringBuilder.toString());
+        stringBuilder.delete(0, stringBuilder.length());
+
+        stringBuilder.append(ansi().render("@|blue ░ |@"));
+        for (IslandGroupView igv : views) {
+            stringBuilder.append(ansi().render("@|green ╚|@"));
+            for(int i = 0; i < igv.getIslands().size(); i++){
+                stringBuilder.append(ansi().render("@|green ═══════|@"));
+                if (i == igv.getIslands().size() - 1)
+                    stringBuilder.append(ansi().render("@|green ╝|@"));
+                else
+                    stringBuilder.append(ansi().render("@|green ╩|@"));
+            }
+            stringBuilder.append(ansi().render("@|blue ░ |@"));
+        }
+
+        // water layer
+        islandsLines.add(5, stringBuilder.toString());
+        stringBuilder.delete(0, stringBuilder.length());
+        appendWater(stringBuilder);
+
+        return islandsLines;
+    }
+
+
+    private void appendStudent(StudentColor studentColor, StringBuilder s){
+        switch (studentColor) {
+            case RED -> s.append(ansi().render("@|red  © |@"));
+            case BLUE -> s.append(ansi().render("@|blue  © |@"));
+            case GREEN -> s.append(ansi().render("@|green  © |@"));
+            case PINK -> s.append(ansi().render("@|magenta  © |@"));
+            case YELLOW -> s.append(ansi().render("@|yellow  © |@"));
+        }
+    }
+
+    private void appendTower(Tower tower, StringBuilder s){
+        switch (tower){
+            case WHITE -> s.append(" ■ ");
+            case BLACK -> s.append(ansi().render("@|black  ■ |@"));
+            case GREY -> s.append(ansi().render("@|white  ■ |@"));
+        }
+    }
+
+    private void appendBorder(StudentColor studentColor, StringBuilder s){
+        switch (studentColor) {
+            case RED -> s.append(ansi().render("@|red ░░|@"));
+            case BLUE -> s.append(ansi().render("@|blue ░░|@"));
+            case GREEN -> s.append(ansi().render("@|green ░░|@"));
+            case PINK -> s.append(ansi().render("@|magenta ░░|@"));
+            case YELLOW -> s.append(ansi().render("@|yellow ░░|@"));
+        }
+    }
+
+    private void appendHall(int row, StringBuilder s, EnumMap<StudentColor, Integer> hallView){
+        StudentColor studentColor = null;
+        switch (row){
+            case 0 -> studentColor = StudentColor.GREEN;
+            case 1 -> studentColor = StudentColor.RED;
+            case 2 -> studentColor = StudentColor.YELLOW;
+            case 3 -> studentColor = StudentColor.PINK;
+            case 4 -> studentColor = StudentColor.BLUE;
+        }
+
+        appendBorder(studentColor, s);
+        for(int j = 0; j < 10; j ++){
+            if (j < hallView.get(studentColor)){
+                appendStudent(studentColor, s);
+            } else {
+                s.append("   ");
+            }
+            appendBorder(studentColor, s);
+        }
+    }
+
+    private void appendBlock(boolean isBlocked, StringBuilder s){
+        if (isBlocked)
+            s.append(ansi().render("@|red  X |@"));
+        else
+            s.append("   ");
+    }
+
+    private void appendStudentNumber(StudentColor studentColor, int num, StringBuilder s){
+        if (num == 0)
+            s.append("   ");
+        else
+            switch (studentColor) {
+                case RED -> s.append(ansi().render("@|red  %d |@", num));
+                case BLUE -> s.append(ansi().render("@|blue  %d |@", num));
+                case GREEN -> s.append(ansi().render("@|green  %d |@", num));
+                case PINK -> s.append(ansi().render("@|magenta  %d |@", num));
+                case YELLOW -> s.append(ansi().render("@|yellow  %d |@", num));
+            }
+    }
+
+    private void appendWater(StringBuilder s){
+        for (int i = 0; i < 137; i ++) {
+            s.append(ansi().render("@|blue ░|@"));
+        }
     }
 }
 
