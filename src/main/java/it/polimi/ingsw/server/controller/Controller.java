@@ -10,6 +10,7 @@ import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.server.Lobby;
 import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.VirtualClient;
@@ -118,7 +119,15 @@ public class Controller implements MessageListener {
         model.removeMessageListener(listener);
     }
 
-
+    /**
+     * Returns if the game is started
+     * @return a boolean true if the game is started
+     */
+    public boolean isGameStarted(){
+        if(model == null)
+            return false;
+        return model.getGameState().equals(GameState.STARTED);
+    }
 
     /**
      * Override methods from MessageListener Interface.
@@ -204,8 +213,6 @@ public class Controller implements MessageListener {
             case CHOSEN_TEAM -> {
                 ChosenTeam chosenTeam = (ChosenTeam)msg;
                 this.changeTeam(vc.getIdentifier(),chosenTeam.getTower());
-
-
             }
             case START_GAME -> {
                 if(!lobby.getMaster().equals(vc.getIdentifier()))
@@ -216,8 +223,16 @@ public class Controller implements MessageListener {
 
             case CHOSEN_WIZARD -> {
                 ChosenWizard chosenWizard = (ChosenWizard)msg;
-                if(!lobby.setWizard(chosenWizard.getWizard(),vc.getIdentifier()))
+                if(!lobby.setWizard(chosenWizard.getWizard(),vc.getIdentifier())){
                     vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
+                    vc.sendMessage(new AvailableWizards(lobby.getWizardsView()));
+                }
+                else {
+                    vc.sendMessage(new CommMessage(CommMsgType.OK));
+                    if(lobby.getTeamView() != null){
+                        vc.sendMessage(new CurrentTeams(lobby.getTeamView()));
+                    }
+                }
             }
             default -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
         }

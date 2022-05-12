@@ -108,6 +108,7 @@ public class Client implements MessageHandler, ViewListener, Runnable {
         while(!Thread.interrupted()){
             try {
                 message = queue.take();
+                System.out.println("CL : " + message.getClass().getName());
                 updateView(message);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);

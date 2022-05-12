@@ -13,7 +13,6 @@ public enum CommMsgType {
     ERROR_GAME_SUSPENDED("ERROR: the other players have temporarily left; the game will resume when they reconnect..."),
     ERROR_INCORRECT_INPUT ("ERROR: the elements chosen are unavailable"),
     ERROR_SERVER ("ERROR: internal server error"),
-
     ERROR_CANT_START("ERROR : wait for other players. You can't start now"),
     ERROR_SERVER_UNAVAILABLE("ERROR: service unavailable"),
     ERROR_INVALID_MESSAGE("ERROR: the message is not valid"),
@@ -23,7 +22,8 @@ public enum CommMsgType {
     PING("Are you still alive?"),
     CHOOSE_GAME("Choose the difficulty of the game: EASY or EXPERT.\nChoose the number of players: TWO, THREE or FOUR."),
     CAN_START("You can start the party. Be quick things could change"),
-    PONG("acknowledgement");
+    PONG("acknowledgement"),
+    OK("move is valid");
 
     private final String message;
 

@@ -105,7 +105,6 @@ public class InputParser{
     private boolean checkRightMoment(MessageType messageType){
          if(MessageType.retrieveByMessage(lastRequest).equals(messageType))
              return true;
-         else printInvalidMessage();
          return false;
     }
 
@@ -264,14 +263,18 @@ public class InputParser{
         MovedStudent message = checkMoveChoice(in);
         if(message!= null){
             cli.notifyListener(message);
+            return;
         }
+        printInvalidMessage();
     }
 
     private void parseSwapChoice(String[] in){
         SwappedStudents message = (SwappedStudents) checkMoveChoice(in);
         if(message!= null){
             cli.notifyListener(message);
+            return;
         }
+        printInvalidMessage();
     }
     private boolean checkMove(MoveLocation from, int fromIndex, MoveLocation to, Integer toIndex,MoveActionRequest m){
         return checkMove( from, fromIndex, to, toIndex, m.getFrom(), m.getTo(), m.getFromIndexesSet(), m.getToIndexesSet());
@@ -291,66 +294,70 @@ public class InputParser{
     private MovedStudent checkMoveChoice(String[] in) {
         if (checkRightMoment(MessageType.MULTIPLE_POSSIBLE_MOVES) || checkRightMoment(MessageType.MOVE_STUDENT)) {
             if (in.length == 4 || in.length == 5) {
+                for (int i = 0; i < in.length; i++) {
+                    System.out.println(in[i]);
+                }
                 List<MoveActionRequest> moves;
                 MoveLocation from = MoveLocation.getFromString(in[1]);
                 MoveLocation to = MoveLocation.getFromString(in[3]);
+                if (from == null || to == null) {
+                    return null;
+                }
                 int fromIndex;
-                Integer toIndex;
+                Integer toIndex = null;
                 if (from.equals(MoveLocation.ENTRANCE)) {
                     if (in[2].matches("-?\\d+")) {
                         fromIndex = Integer.parseInt(in[2]);
                     } else {
-                        printInvalidMessage();
                         return null;
                     }
                 } else {
                     StudentColor st = StudentColor.getColorFromString(in[2]);
                     if (st == null) {
-                        printInvalidMessage();
                         return null;
                     }
                     fromIndex = st.ordinal();
                 }
                 if (!to.requiresToIndex()) {
                     if (in.length == 5) {
-                        printInvalidMessage();
-                        return null;
-                    }
-                }
-                if (to.equals(MoveLocation.ENTRANCE) || to.equals(MoveLocation.ISLAND)) {
-                    if (in[4].matches("-?\\d+")) {
-                        toIndex = Integer.parseInt(in[4]);
-                    } else {
-                        printInvalidMessage();
                         return null;
                     }
                 } else {
-                    StudentColor st = StudentColor.getColorFromString(in[4]);
-                    if (st == null) {
-                        printInvalidMessage();
-                        return null;
+                    if (to.equals(MoveLocation.ENTRANCE) || to.equals(MoveLocation.ISLAND)) {
+                        if (in.length != 5) {
+                            return null;
+                        }
+                        if (in[4].matches("-?\\d+")) {
+                            toIndex = Integer.parseInt(in[4]);
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        StudentColor st = StudentColor.getColorFromString(in[4]);
+                        if (st == null) {
+                            return null;
+                        }
+                        toIndex = st.ordinal();
                     }
-                    toIndex = st.ordinal();
                 }
                 int check = 0;
                 if (checkRightMoment(MessageType.MULTIPLE_POSSIBLE_MOVES)) {
-                    moves = ((MultiplePossibleMoves)lastRequest).getPossibleMoves();
+                    moves = ((MultiplePossibleMoves) lastRequest).getPossibleMoves();
                     for (MoveActionRequest m : moves) {
                         if (checkMove(from, fromIndex, to, toIndex, m)) {
                             check++;
                         }
                     }
                 } else {
-                    MoveStudent move = ((MoveStudent)lastRequest);
+                    MoveStudent move = ((MoveStudent) lastRequest);
                     if (checkMove(from, fromIndex, to, toIndex, move.getFrom(), move.getTo(), move.getFromIndexesSet(), move.getToIndexesSet()))
                         check++;
                 }
                 if (check == 1) {
-                    return new MovedStudent(from, toIndex, to, toIndex);
+                    return new MovedStudent(from, fromIndex, to, toIndex);
                 }
             }
         }
-        printInvalidMessage();
         return null;
     }
 }

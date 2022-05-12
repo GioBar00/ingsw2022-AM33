@@ -91,6 +91,7 @@ class ControllerTest {
 
         assertNull(controller.getCurrentPlayer());
         assertFalse(controller.isInstantiated());
+        assertFalse(controller.isGameStarted());
         assertFalse(controller.addPlayer(m1.getIdentifier()));
 
 
@@ -120,6 +121,7 @@ class ControllerTest {
         controller.addPlayer("p2");
         controller.sendInitialStats(m2);
         assertTrue(m2.queueContains(MessageType.AVAILABLE_WIZARDS));
+        assertFalse(controller.isGameStarted());
 
         controller.handleMessage(new MessageEvent(m2, new ChosenWizard(Wizard.SENSEI)));
         assertTrue(m2.queueContains(MessageType.COMM_MESSAGE));
@@ -136,6 +138,7 @@ class ControllerTest {
         controller.handleMessage(new MessageEvent(m1, new StartGame()));
         assertTrue(m1.queueContains(MessageType.CURRENT_GAME_STATE));
         assertTrue(m2.queueContains(MessageType.CURRENT_GAME_STATE));
+        assertTrue(controller.isGameStarted());
     }
 
     @Test

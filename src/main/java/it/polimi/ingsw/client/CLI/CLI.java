@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.UI;
 import it.polimi.ingsw.client.enums.ViewState;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.client.Login;
@@ -117,7 +118,7 @@ public class CLI implements UI {
         nickname = input.nextLine();
         client = new Client(server, port, this);
         notifyListener(new Login(nickname));
-        executorService = Executors.newFixedThreadPool(2);
+        executorService = Executors.newSingleThreadExecutor();
         executorService.submit(this::readInput);
     }
 
@@ -150,14 +151,17 @@ public class CLI implements UI {
                 System.out.println("Type WIZARD <NAME>");
                 inputParser.setCanChoseWizard(true);
                 inputParser.canWrite();
-
-                lastState = ViewState.CHOSE_WIZARD;
             }
         }
     }
     @Override
     public void showLobbyScreen() {
         clearTerminal();
+        if(lastState.equals(ViewState.SETUP)){
+            showWizardMenu();
+            lastState = ViewState.CHOSE_WIZARD;
+            return;
+        }
         for(int i = 0; i < 4;i++){
             System.out.println();
         }
@@ -172,7 +176,6 @@ public class CLI implements UI {
         if(inputParser.isCanStart() && inputParser.isHost()){
             System.out.println("The match can start now. Type START if you want to start it");
         }
-        showWizardMenu();
     }
 
     @Override
@@ -195,15 +198,14 @@ public class CLI implements UI {
 
     @Override
     public void showGameScreen() {
+        lastState = ViewState.PLAYING;
         lastRequest = null;
         teamsView = null;
         inputParser.setCanChoseWizard(false);
         inputParser.cantWrite();
         inputParser.setCanStart(false);
         inputParser.setCanChoseWizard(false);
-        System.out.println("CIAO SEI NELLA SCHERMATA INIZIALE");
-        for(int i = 0; i< 5 ; i++)
-            System.out.println();
+        clearTerminal();
         //show island
         ArrayList<String> islands = getIslandsLines(gameView.getIslandsView(), gameView.getMotherNatureIndex());
         for (String line : islands) {
@@ -223,75 +225,76 @@ public class CLI implements UI {
     public void showPossibleMoves() {
         if(nickname.equals(gameView.getCurrentPlayer()))
             inputParser.canWrite();
+        if(lastRequest == null)
+            return;
         Map<String, Integer> characterCard = playableCharacterCards();
-        if (characterCard != null) {
-            System.out.println("Choose next action : ");
-            System.out.println("Activate a CharacterCard by typing ACTIVE <name>");
+        if (characterCard != null && !(MessageType.retrieveByMessage(lastRequest).equals(MessageType.MOVE_MOTHER_NATURE) || MessageType.retrieveByMessage(lastRequest).equals(MessageType.CHOOSE_CLOUD))){
+            System.out.println(colors.get("green") + "Choose next action : ");
+            System.out.println("Activate a CharacterCard by typing ACTIVE <name>" + colors.get("reset"));
             StringBuilder text = new StringBuilder("[ ");
             for(String s : characterCard.keySet())
                 text.append(s.toUpperCase()).append(" |");
             text = new StringBuilder(text.subSequence(0, text.lastIndexOf("|")) + "] ");
             System.out.println("Available Character Card " + text );
         }
-        if(lastRequest == null)
-            return;
+
         switch(MessageType.retrieveByMessage(lastRequest)){
             case CHOOSE_CLOUD -> {
                 Set<Integer> choices = ((ChooseCloud)lastRequest).getAvailableCloudIndexes();
-                System.out.println("You have to chose a Cloud");
+                System.out.println(colors.get("green") + "You have to chose a Cloud");
                 System.out.println("Available Cloud " + buildSequence(choices));
-                System.out.println("Type CLOUD <INDEX>");
+                System.out.println("Type CLOUD <INDEX>" + colors.get("reset"));
             }
             case CHOOSE_ISLAND ->{
                 Set<Integer> choices = ((ChooseIsland)lastRequest).getAvailableIslandIndexes();
-                System.out.println("You have to chose an Island");
+                System.out.println(colors.get("green") + "You have to chose an Island");
                 System.out.println("Available Island " + buildSequence(choices));
-                System.out.println("Type ISLAND <INDEX>");
+                System.out.println("Type ISLAND <INDEX>" + colors.get("reset"));
             }
             case CHOOSE_STUDENT_COLOR -> {
                 EnumSet<StudentColor> choices = ((ChooseStudentColor)lastRequest).getAvailableStudentColors();
-                System.out.println("You have to chose a StudentColor");
+                System.out.println(colors.get("green") + "You have to chose a StudentColor");
                 System.out.println("Available StudentColor " + buildSequence(choices));
-                System.out.println("Type COLOR <COLOR>");
+                System.out.println("Type COLOR <COLOR>"+ colors.get("reset"));
             }
             case MOVE_MOTHER_NATURE -> {
-                System.out.println("You have to chose a StudentColor");
+                System.out.println(colors.get("green") + "You have to chose a StudentColor");
                 System.out.println("Insert the number of steps mother nature has to take [up to " +
                 ((MoveMotherNature)lastRequest).getMaxNumMoves() + " ]");
-                System.out.println("Type MOTHERNATURE <STEPS>");
+                System.out.println("Type MOTHERNATURE <STEPS>"+ colors.get("reset"));
             }
             case MOVE_STUDENT -> {
                 if(characterCard != null){
-                    System.out.println("Make a move by typing MOVE <from> <index/color> <to> <index/color>");
+                    System.out.println(colors.get("green") + "Or select one of the following moves"+ colors.get("reset"));
                 }
-                System.out.println("You have to make a MOVE");
+                System.out.println(colors.get("green") + "You have to make a MOVE"+ colors.get("reset"));
                 printMove((MoveStudent)lastRequest);
-                System.out.println("Type MOVE <FROM> <INDEX/COLOR> <TO> <INDEX/COLOR> ");
+                System.out.println(colors.get("green") + "Type MOVE <FROM> <INDEX/COLOR> <TO> <INDEX/COLOR> "+ colors.get("reset"));
             }
             case MULTIPLE_POSSIBLE_MOVES -> {
                 if(characterCard != null){
-                    System.out.println("Make a move by typing MOVE <FROM> <INDEX/COLOR> <TO> <INDEX/COLOR>");
+                    System.out.println(colors.get("green") + "Or select one of the following moves"+ colors.get("reset"));
                 }
                 for(MoveActionRequest m : ((MultiplePossibleMoves)lastRequest).getPossibleMoves())
                     printMove(m);
-                System.out.println("Type MOVE <FROM> <INDEX/COLOR> <TO> <INDEX/COLOR> ");
+                System.out.println(colors.get("green") +"Type MOVE <FROM> <INDEX/COLOR> <TO> <INDEX/COLOR>"+ colors.get("reset"));
             }
             case SWAP_STUDENTS -> {
                 if(characterCard != null){
-                    System.out.println("Make a swap by typing SWAP <FROM> <INDEX/COLOR> <TO> <INDEX/COLOR>");
+                    System.out.println(colors.get("green") + "Or select one of the following moves"+ colors.get("reset"));
                 }
                 printSwap((SwapStudents)lastRequest);
-                System.out.println("Type SWAP <FROM> <INDEX/COLOR> <TO> <INDEX/COLOR>");
+                System.out.println(colors.get("green") +"Type SWAP <FROM> <INDEX/COLOR> <TO> <INDEX/COLOR>"+ colors.get("reset"));
             }
             case PLAY_ASSISTANT_CARD -> {
-                System.out.println("Choose an AssistantCard");
-                System.out.println("Cards Available :");
+                System.out.println(colors.get("green") + "Choose an AssistantCard");
+                System.out.println("Cards Available :"+ colors.get("reset"));
                 for(AssistantCard a : ((PlayAssistantCard)lastRequest).getPlayableAssistantCards()){
                     System.out.println("[ Card number : "+ a.getValue() + " max Mother Nature moves : " + a.getMoves() +" ]");
                 }
-                System.out.println("Type ASSISTANT <NUMBER>");
+                System.out.println(colors.get("green") + "Type ASSISTANT <NUMBER>"+ colors.get("reset"));
             }
-            default -> {System.out.println("sei qui");}
+            default -> {}
         }
     }
 
@@ -308,17 +311,20 @@ public class CLI implements UI {
 
     @Override
     public void showCommMessage(CommMessage message) {
-        System.out.println("\n"+ message.getType().getMessage());
+        if((lastState.equals(ViewState.SETUP)  || lastState.equals(ViewState.CHOSE_WIZARD))&& message.getType().equals(CommMsgType.OK)){
+            lastState = ViewState.CHOSE_WIZARD;
+            return;
+        }
         if(lastState.equals(ViewState.CHOSE_WIZARD) && message.getType().equals(CommMsgType.ERROR_IMPOSSIBLE_MOVE)){
             lastState = ViewState.SETUP;
-            this.showWizardMenu();
-        }
-        if(lastState.equals(ViewState.PLAY_CARD) && message.getType().equals(CommMsgType.ERROR_IMPOSSIBLE_MOVE)){
-            this.showPossibleMoves();
+            return;
         }
         if(lastState.equals(ViewState.PLAYING)){
+            System.out.println("\n"+ message.getType().getMessage());
             this.showPossibleMoves();
+            return;
         }
+        System.out.println("\n"+ message.getType().getMessage());
     }
 
     private void clearTerminal() {
@@ -419,7 +425,6 @@ public class CLI implements UI {
 
     private StringBuilder printCommonMoveParts(MoveActionRequest move){
         Set<Integer> choices;
-        System.out.println("Available Moves ");
         StringBuilder text = new StringBuilder("Move from " + move.getFrom().toString());
         choices = move.getFromIndexesSet();
         if(choices!= null)
@@ -519,15 +524,15 @@ public class CLI implements UI {
         int indexEntrance = 0;
         int countTower = 0;
         // CONTORNO SOPRA
-        stringBuilder.append(ansi().render("@|yellow ╔|@"));
+        stringBuilder.append(colors.get("yellow")).append("╔");
         for(int i = 0; i < 92; i ++){
             if ((i == 14) || (i == 77) || (i == 67)) {
-                stringBuilder.append(ansi().render("@|yellow ╦|@"));
+                stringBuilder.append(("╦"));
             } else {
-                stringBuilder.append(ansi().render("@|yellow ═|@"));
+                stringBuilder.append(("═"));
             }
         }
-        stringBuilder.append(ansi().render("@|yellow ╗|@"));
+        stringBuilder.append("╗").append(colors.get("reset"));
         schoolBoardLines.add(0, stringBuilder.toString());
 
         // INTERNO RIGA PER RIGA
@@ -535,9 +540,9 @@ public class CLI implements UI {
             stringBuilder.delete(0, stringBuilder.length());
 
             // ENTRANCE
-            stringBuilder.append(ansi().render("@|yellow ║|@"));
+            stringBuilder.append(colors.get("yellow")).append("║");
             for (int i = 0; i < 2; i++) {
-                stringBuilder.append(ansi().render("@|white ░|@"));
+                stringBuilder.append(colors.get("white")).append("░");
             }
             if (indexEntrance < sbv.getEntrance().size()) {
                 appendStudent(sbv.getEntrance().get(indexEntrance), stringBuilder);
@@ -546,7 +551,7 @@ public class CLI implements UI {
             }
             indexEntrance++;
             for (int i = 0; i < 4; i++) {
-                stringBuilder.append(ansi().render("@|white ░|@"));
+                stringBuilder.append(colors.get("white")).append("░");
             }
             if (indexEntrance < sbv.getEntrance().size()) {
                 appendStudent(sbv.getEntrance().get(indexEntrance), stringBuilder);
@@ -555,18 +560,18 @@ public class CLI implements UI {
             }
             indexEntrance++;
             for (int i = 0; i < 2; i++) {
-                stringBuilder.append(ansi().render("@|white ░|@"));
+                stringBuilder.append(colors.get("white")).append("░");
             }
 
             // HALL
-            stringBuilder.append(ansi().render("@|yellow ║|@"));
+            stringBuilder.append(colors.get("yellow")).append("║");
             appendHall(rows, stringBuilder, sbv.getStudentsHall());
 
 
             // PROFESSORS
-            stringBuilder.append(ansi().render("@|yellow ║|@"));
+            stringBuilder.append(colors.get("yellow")).append("║");
             for (int i = 0; i < 3; i++) {
-                stringBuilder.append(ansi().render("@|white ░|@"));
+                stringBuilder.append(colors.get("white")).append("░");
             }
             StudentColor currentProfLine = null;
             switch (rows){
@@ -578,23 +583,23 @@ public class CLI implements UI {
             }
             if (sbv.getProfessors().contains(currentProfLine)) {
                 switch (currentProfLine){
-                    case RED -> stringBuilder.append(ansi().render("@|red  ■ |@"));
-                    case BLUE -> stringBuilder.append(ansi().render("@|blue  ■ |@"));
-                    case GREEN -> stringBuilder.append(ansi().render("@|green  ■ |@"));
-                    case PINK -> stringBuilder.append(ansi().render("@|magenta  ■ |@"));
-                    case YELLOW -> stringBuilder.append(ansi().render("@|yellow  ■ |@"));
+                    case RED -> stringBuilder.append(colors.get("red")).append(" ■ ");
+                    case BLUE -> stringBuilder.append(colors.get("blue")).append(" ■ ");
+                    case GREEN -> stringBuilder.append(colors.get("green")).append(" ■ ");
+                    case PINK -> stringBuilder.append(colors.get("magenta")).append(" ■ ");
+                    case YELLOW -> stringBuilder.append(colors.get("yellow")).append(" ■ ");
                 }
             } else {
                 stringBuilder.append("   ");
             }
             for(int i = 0; i < 3; i ++){
-                stringBuilder.append(ansi().render("@|white ░|@"));
+                stringBuilder.append(colors.get("white")).append("░");
             }
 
             // TOWERS
-            stringBuilder.append(ansi().render("@|yellow ║|@"));
+            stringBuilder.append(colors.get("yellow")).append("║");
             for(int i = 0; i < 2; i ++){
-                stringBuilder.append(ansi().render("@|white ░|@"));
+                stringBuilder.append(colors.get("white")).append("░");
             }
             if (countTower < sbv.getNumTowers()) {
                 appendTower(sbv.getTower(), stringBuilder);
@@ -603,7 +608,7 @@ public class CLI implements UI {
             }
             countTower ++;
             for(int i = 0; i < 4; i ++){
-                stringBuilder.append(ansi().render("@|white ░|@"));
+                stringBuilder.append(colors.get("white")).append("░");
             }
             if (countTower < sbv.getNumTowers()) {
                 appendTower(sbv.getTower(), stringBuilder);
@@ -612,31 +617,27 @@ public class CLI implements UI {
             }
             countTower ++;
             for(int i = 0; i < 2; i ++){
-                stringBuilder.append(ansi().render("@|white ░|@"));
+                stringBuilder.append(colors.get("white")).append("░");
             }
-            stringBuilder.append(ansi().render("@|yellow ║|@"));
+            stringBuilder.append(colors.get("yellow")).append("║");
             schoolBoardLines.add(rows+1, stringBuilder.toString());
         }
 
         // CONTORNO SOTTO
         stringBuilder.delete(0, stringBuilder.length());
-        stringBuilder.append(ansi().render("@|yellow ╚|@"));
+        stringBuilder.append(colors.get("yellow")).append("╚");
         for(int i = 0; i < 92; i ++){
             if ((i == 14) || (i == 77) || (i == 67)) {
-                stringBuilder.append(ansi().render("@|yellow ╩|@"));
+                stringBuilder.append("╩");
             } else {
-                stringBuilder.append(ansi().render("@|yellow ═|@"));
+                stringBuilder.append("═");
             }
         }
-        stringBuilder.append(ansi().render("@|yellow ╝|@"));
+        stringBuilder.append("╝").append(colors.get("reset"));
         schoolBoardLines.add(6, stringBuilder.toString());
 
         // NOMI
-        schoolBoardLines.add(7, "\tEntrance\t\t\t\t\t\tHall\t\t\t\t\t\t\tProfessors\t\s\s\sTowers");
-
-        for (String s : schoolBoardLines) {
-            System.out.println(s);
-        }
+        schoolBoardLines.add(7, "\tEntrance\t\t\tHall\t\t\tProfessors\t\s\s\sTowers");
 
         return schoolBoardLines;
     }
@@ -753,29 +754,29 @@ public class CLI implements UI {
 
     private void appendStudent(StudentColor studentColor, StringBuilder s){
         switch (studentColor) {
-            case RED -> s.append(ansi().render("@|red  © |@"));
-            case BLUE -> s.append(ansi().render("@|blue  © |@"));
-            case GREEN -> s.append(ansi().render("@|green  © |@"));
-            case PINK -> s.append(ansi().render("@|magenta  © |@"));
-            case YELLOW -> s.append(ansi().render("@|yellow  © |@"));
+            case RED -> s.append(colors.get("red")).append(" © ").append(colors.get("reset"));
+            case BLUE -> s.append(colors.get("blue")).append(" © ").append(colors.get("reset"));
+            case GREEN -> s.append(colors.get("green")).append(" © ").append(colors.get("reset"));
+            case PINK -> s.append(colors.get("magenta")).append(" © ").append(colors.get("reset"));
+            case YELLOW -> s.append(colors.get("yellow")).append(" © ").append(colors.get("reset"));
         }
     }
 
     private void appendTower(Tower tower, StringBuilder s){
         switch (tower){
-            case WHITE -> s.append(" ■ ");
-            case BLACK -> s.append(ansi().render("@|black  ■ |@"));
-            case GREY -> s.append(ansi().render("@|white  ■ |@"));
+            case WHITE -> s.append(colors.get("reset")).append(" ■ ").append(colors.get("reset"));
+            case BLACK -> s.append(colors.get("black")).append(" ■ ").append(colors.get("reset"));
+            case GREY -> s.append(colors.get("white")).append(" ■ ").append(colors.get("reset"));
         }
     }
 
     private void appendBorder(StudentColor studentColor, StringBuilder s){
         switch (studentColor) {
-            case RED -> s.append(ansi().render("@|red ░░|@"));
-            case BLUE -> s.append(ansi().render("@|blue ░░|@"));
-            case GREEN -> s.append(ansi().render("@|green ░░|@"));
-            case PINK -> s.append(ansi().render("@|magenta ░░|@"));
-            case YELLOW -> s.append(ansi().render("@|yellow ░░|@"));
+            case RED -> s.append(colors.get("red")).append("░░").append(colors.get("reset"));
+            case BLUE -> s.append(colors.get("blue")).append("░░").append(colors.get("reset"));
+            case GREEN -> s.append(colors.get("green")).append("░░").append(colors.get("reset"));
+            case PINK -> s.append(colors.get("magenta")).append("░░").append(colors.get("reset"));
+            case YELLOW -> s.append(colors.get("yellow")).append("░░").append(colors.get("reset"));
         }
     }
 
@@ -802,7 +803,7 @@ public class CLI implements UI {
 
     private void appendBlock(boolean isBlocked, StringBuilder s){
         if (isBlocked)
-            s.append(ansi().render("@|red  X |@"));
+            s.append(colors.get("red")).append(" X ").append(colors.get("reset"));
         else
             s.append("   ");
     }
@@ -812,18 +813,18 @@ public class CLI implements UI {
             s.append("   ");
         else
             switch (studentColor) {
-                case RED -> s.append(ansi().render("@|red  %d |@", num));
-                case BLUE -> s.append(ansi().render("@|blue  %d |@", num));
-                case GREEN -> s.append(ansi().render("@|green  %d |@", num));
-                case PINK -> s.append(ansi().render("@|magenta  %d |@", num));
-                case YELLOW -> s.append(ansi().render("@|yellow  %d |@", num));
+                case RED -> s.append(colors.get("red")).append(" ").append(num).append(" ").append(colors.get("reset"));
+                case BLUE -> s.append(colors.get("blue")).append(" ").append(num).append(" ").append(colors.get("reset"));
+                case GREEN -> s.append(colors.get("green")).append(" ").append(num).append(" ").append(colors.get("reset"));
+                case PINK -> s.append(colors.get("magenta")).append(" ").append(num).append(" ").append(colors.get("reset"));
+                case YELLOW -> s.append(colors.get("yellow")).append(" ").append(num).append(" ").append(colors.get("reset"));
             }
     }
 
     private void appendWater(StringBuilder s){
-        for (int i = 0; i < 137; i ++) {
-            s.append(ansi().render("@|blue ░|@"));
-        }
+        s.append(colors.get("blue"));
+        s.append("░".repeat(137));
+        s.append(colors.get("reset"));
     }
 }
 

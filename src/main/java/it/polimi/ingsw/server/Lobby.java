@@ -52,7 +52,6 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
             if (update.getWizard() == null) {
                 update.setWizard(wizard);
                 sendStar();
-                notifyListeners(new MessageEvent(this, new AvailableWizards(getWizardsView())));
                 return true;
             }
         }

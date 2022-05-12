@@ -142,18 +142,20 @@ public class Server implements EndPartyListener {
                     return null;
                 }
 
-                //player already in the party -> the model exist
-                if(virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()){
-                    VirtualClient vc = virtualClients.get(nickname);
-                    closeInOut(in, out);
-                    startVirtualClient(vc,socket);
-                    if(controller.isInstantiated()){
+                if(controller.isGameStarted()){
+                    if(virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()){
+                        VirtualClient vc = virtualClients.get(nickname);
+                        closeInOut(in, out);
+                        startVirtualClient(vc,socket);
                         controller.addModelListener(vc);
                     }
-                    return null;
+                    else {
+                        MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE), out);
+                        closeInOut(in, out);
+                    }
                 }
                 else {
-                    if(virtualClients.containsKey(nickname) && virtualClients.get(nickname).isConnected()){
+                    if(virtualClients.containsKey(nickname)){
                         MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE), out);
                         return null;
                     }
@@ -167,7 +169,6 @@ public class Server implements EndPartyListener {
                             return nickname;
                         }
                         else {
-                            //Was the player already in the party but had some connection issue?
                             MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE), out);
                             return null;
                          }

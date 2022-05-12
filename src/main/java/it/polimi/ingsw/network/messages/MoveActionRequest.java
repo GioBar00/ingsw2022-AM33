@@ -11,17 +11,17 @@ public interface MoveActionRequest extends Move, ActionRequest {
     /**
      * @return from location.
      */
-    public MoveLocation getFrom();
+    MoveLocation getFrom();
     /**
      * @return from location indexes.
      */
-    public Set<Integer> getFromIndexesSet();
+    Set<Integer> getFromIndexesSet();
     /**
      * @return to location.
      */
-    public MoveLocation getTo();
+    MoveLocation getTo();
     /**
      * @return to location indexes.
      */
-    public Set<Integer> getToIndexesSet();
+    Set<Integer> getToIndexesSet();
 }

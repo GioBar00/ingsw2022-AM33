@@ -85,7 +85,7 @@ public class ClientMain {
             clients.add(client);
             client.connect();
             if (clients.size() == 1)
-                client.sendMessage(new ChosenGame(GamePreset.TWO, GameMode.EXPERT));
+                client.sendMessage(new ChosenGame(GamePreset.FOUR, GameMode.EXPERT));
         } catch (IOException e) {
             e.printStackTrace();
         }

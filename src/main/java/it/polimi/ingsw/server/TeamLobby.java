@@ -18,6 +18,7 @@ import java.util.List;
 public class TeamLobby extends Lobby{
 
 
+
     public TeamLobby(int maxPlayers, MessageListener host) {
         super(maxPlayers, host);
     }
@@ -85,22 +86,10 @@ public class TeamLobby extends Lobby{
         return new TeamsView(teams, lobby);
     }
 
-    public void sendInitialStats(MessageListener messageListener){
-        super.sendInitialStats(messageListener);
-        notifyListener(messageListener.getIdentifier(),new MessageEvent(this, new CurrentTeams(getTeamView())));
-    }
-
     private void sendStar(){
         if(canStart()){
             host.onMessage(new MessageEvent(this, new CommMessage(CommMsgType.CAN_START)));
         }
     }
 
-    public boolean setWizard(Wizard wizard, String nickname) {
-        if(super.setWizard(wizard, nickname)) {
-            notifyListeners(new MessageEvent(this,new CurrentTeams(getTeamView())));
-            return true;
-        }
-        return false;
-    }
 }

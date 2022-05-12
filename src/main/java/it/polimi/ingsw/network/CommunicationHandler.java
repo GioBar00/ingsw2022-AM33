@@ -98,8 +98,10 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      * @param socket the socket to set
      */
     public synchronized void setSocket(Socket socket) {
-        if (executor != null)
+        if (executor != null){
+            System.out.println("CH : setSocket stop");
             stop();
+        }
         this.socket = socket;
         if (!socket.isClosed()) {
             try {
@@ -146,10 +148,16 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     private void handleOutput() {
         try {
             while (!Thread.interrupted()) {
-                Message m = queue.take();
+                Message m = null;
+                try {
+                    m = queue.take();
+                } catch (InterruptedException e) {
+                    System.out.println("CH : output interrupted");
+                }
                 MessageExchange.sendMessage(m, writer);
             }
-        } catch (InterruptedException | IOException e) {
+            System.out.println("CH : output stop");
+        } catch ( IOException e) {
             if(!isMaster()) {
                 System.out.println("We are sorry, you have been disconnected");
                 e.printStackTrace();
@@ -167,6 +175,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
 
                 Message message = MessageExchange.receiveMessage(reader, (event) -> {
                     notifyListener(new DisconnectEvent(this));
+                    System.out.println("CH : handleInput stop");
                     stop();
                 });
 
@@ -233,6 +242,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                     if (isMaster)
                         queue.add(new CommMessage(CommMsgType.PING));
                     if (!clientAcknowledged.await(seconds, TimeUnit.SECONDS)) {
+                        System.out.println("CH : timer Stop");
                         stop();
                         notifyListener(new DisconnectEvent(this));
                     }
@@ -257,6 +267,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
             executor.submit(this::handleInput);
             executor.submit(this::handleOutput);
             startTimer();
+            System.out.println("CH : start");
         }
     }
 
@@ -265,6 +276,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      */
     public synchronized void stop() {
         if (!executor.isShutdown()) {
+            System.out.println("CH : stop");
             timer.cancel();
             executor.shutdownNow();
             try {
@@ -282,6 +294,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      * @param message the message to send
      */
     public void sendMessage(Message message) {
+        System.out.println("CH : send message " + message.getClass().getName());
         queue.add(message);
     }
 
