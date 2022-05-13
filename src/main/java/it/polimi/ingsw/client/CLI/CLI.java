@@ -5,7 +5,6 @@ import it.polimi.ingsw.client.UI;
 import it.polimi.ingsw.client.enums.ViewState;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.client.Login;
@@ -214,7 +213,7 @@ public class CLI implements UI {
         //show details
         //show school boards
         for (PlayerView pv : gameView.getPlayersView()){
-            ArrayList<String> board = getSchoolBoardLines(pv.getSchoolBoardView());
+            ArrayList<String> board = getSchoolBoardLines(pv.getSchoolBoardView(), gameView.getPreset());
             for (String line : board) {
                 System.out.println(line);
             }
@@ -517,7 +516,7 @@ public class CLI implements UI {
         return view;
     }
 
-    private ArrayList<String> getSchoolBoardLines(SchoolBoardView sbv){
+    private ArrayList<String> getSchoolBoardLines(SchoolBoardView sbv, GamePreset preset){
         ArrayList<String> schoolBoardLines = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -544,20 +543,18 @@ public class CLI implements UI {
             for (int i = 0; i < 2; i++) {
                 stringBuilder.append(colors.get("white")).append("░");
             }
-            if (indexEntrance < sbv.getEntrance().size()) {
+            if (indexEntrance < preset.getEntranceCapacity() && sbv.getEntrance().get(indexEntrance) != null){
                 appendStudent(sbv.getEntrance().get(indexEntrance), stringBuilder);
-            } else {
+            } else
                 stringBuilder.append("   ");
-            }
             indexEntrance++;
             for (int i = 0; i < 4; i++) {
                 stringBuilder.append(colors.get("white")).append("░");
             }
-            if (indexEntrance < sbv.getEntrance().size()) {
+            if (indexEntrance < preset.getEntranceCapacity() && sbv.getEntrance().get(indexEntrance) != null){
                 appendStudent(sbv.getEntrance().get(indexEntrance), stringBuilder);
-            } else {
+            } else
                 stringBuilder.append("   ");
-            }
             indexEntrance++;
             for (int i = 0; i < 2; i++) {
                 stringBuilder.append(colors.get("white")).append("░");
@@ -699,7 +696,7 @@ public class CLI implements UI {
 
         stringBuilder.append(ansi().render("@|blue ░ |@"));
         for (IslandGroupView igv : views) {
-            stringBuilder.append(ansi().render("@|green ║|@"));
+            stringBuilder.append(ansi().render("@|green ║ |@"));
             for(int i = 0; i < igv.getIslands().size(); i++) {
                 appendStudentNumber(BLUE, igv.getIslands().get(i).getStudents().get(StudentColor.BLUE), stringBuilder);
                 appendStudentNumber(RED, igv.getIslands().get(i).getStudents().get(StudentColor.RED), stringBuilder);
@@ -716,7 +713,7 @@ public class CLI implements UI {
 
         stringBuilder.append(ansi().render("@|blue ░ |@"));
         for (IslandGroupView igv : views){
-            stringBuilder.append(ansi().render("@|green ║|@"));
+            stringBuilder.append(ansi().render("@|green ║ |@"));
             for(int i = 0; i < igv.getIslands().size(); i++) {
                 appendStudentNumber(PINK, igv.getIslands().get(i).getStudents().get(PINK), stringBuilder);
                 appendStudentNumber(YELLOW, igv.getIslands().get(i).getStudents().get(YELLOW), stringBuilder);
@@ -751,6 +748,95 @@ public class CLI implements UI {
         return islandsLines;
     }
 
+    private ArrayList<String> getCardLines(CharacterCardView characterCardView){
+        ArrayList<String> cardLines = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+
+        // top border
+        sb.append(colors.get("red")).append("╔═══════════╗").append(colors.get("reset"));
+
+        // name of the card
+        cardLines.add(0, sb.toString());
+        sb.delete(0, sb.length());
+        sb.append(colors.get("red")).append("║ ").append(colors.get("reset"));
+        sb.append(colors.get("red")).append(characterCardView.getType().name()).append(colors.get("reset"));
+
+        int spacesLeft = 10 - characterCardView.getType().name().length();
+        for(int i = 0; i < spacesLeft; i++) {
+            sb.append(" ");
+        }
+        sb.append(colors.get("red")).append("║").append(colors.get("reset"));
+
+        // cost of the card
+        cardLines.add(1, sb.toString());
+        sb.delete(0, sb.length());
+        sb.append(colors.get("red")).append("║ ").append(colors.get("reset"));
+
+        int total = characterCardView.getOriginalCost() + characterCardView.getAdditionalCost();
+        sb.append(colors.get("white")).append(characterCardView.getOriginalCost()).append("+").append(characterCardView.getAdditionalCost()).append(" = ").append(total).append(colors.get("reset"));
+        sb.append(colors.get("red")).append(" ║").append(colors.get("reset"));
+
+        // addictionals (students or blocks)
+        cardLines.add(2, sb.toString());
+        sb.delete(0, sb.length());
+
+        // if the card has students
+        if (characterCardView.getStudent() != null){
+            sb.append(colors.get("red")).append("║ ").append(colors.get("reset"));
+
+            int studCount = 0;
+            for (StudentColor sc : characterCardView.getStudent().keySet()) {
+                for (int i = 0; i < characterCardView.getStudent().get(sc); i++) {
+                    appendStudent(sc, sb);
+                    if (studCount == 2) {
+                        sb.append(colors.get("red")).append(" ║").append(colors.get("reset"));
+
+                        cardLines.add(3, sb.toString());
+                        sb.delete(0, sb.length());
+
+                        sb.append(colors.get("red")).append("║ ").append(colors.get("reset"));
+                    }
+                    studCount++;
+                }
+            }
+            if (studCount < 6){
+                sb.append("   ");
+                studCount++;
+            }
+            sb.append(colors.get("red")).append(" ║").append(colors.get("reset"));
+
+            // if the card can manage blocks
+        } else if (characterCardView.getType().equals(CharacterType.HERBALIST)){
+            sb.append(colors.get("red")).append("║ ").append(colors.get("reset"));
+
+            sb.append(colors.get("white")).append("blocks: ").append(characterCardView.getNumBlocks()).append(colors.get("reset"));
+
+            sb.append(colors.get("red")).append(" ║").append(colors.get("reset"));
+
+            cardLines.add(3, sb.toString());
+            sb.delete(0, sb.length());
+
+            sb.append(colors.get("red")).append("║           ║").append(colors.get("reset"));
+            // if the card has no addictional
+        } else {
+            sb.append(colors.get("red")).append("║           ║").append(colors.get("reset"));
+
+            cardLines.add(3, sb.toString());
+            sb.delete(0, sb.length());
+
+            sb.append(colors.get("red")).append("║           ║").append(colors.get("reset"));
+        }
+
+        // bottom border
+        cardLines.add(4, sb.toString());
+        sb.delete(0, sb.length());
+
+        sb.append(colors.get("red")).append("╚═══════════╝").append(colors.get("reset"));
+        cardLines.add(5, sb.toString());
+        sb.delete(0, sb.length());
+
+        return cardLines;
+    }
 
     private void appendStudent(StudentColor studentColor, StringBuilder s){
         switch (studentColor) {
@@ -764,9 +850,9 @@ public class CLI implements UI {
 
     private void appendTower(Tower tower, StringBuilder s){
         switch (tower){
-            case WHITE -> s.append(colors.get("reset")).append(" ■ ").append(colors.get("reset"));
-            case BLACK -> s.append(colors.get("black")).append(" ■ ").append(colors.get("reset"));
-            case GREY -> s.append(colors.get("white")).append(" ■ ").append(colors.get("reset"));
+            case WHITE -> s.append(colors.get("reset")).append(" W ").append(colors.get("reset"));
+            case BLACK -> s.append(colors.get("reset")).append(" B ").append(colors.get("reset"));
+            case GREY -> s.append(colors.get("reset")).append(" G ").append(colors.get("reset"));
         }
     }
 
@@ -813,11 +899,11 @@ public class CLI implements UI {
             s.append("   ");
         else
             switch (studentColor) {
-                case RED -> s.append(colors.get("red")).append(" ").append(num).append(" ").append(colors.get("reset"));
+                case RED -> s.append(colors.get("red")).append(num).append(" ").append(colors.get("reset"));
                 case BLUE -> s.append(colors.get("blue")).append(" ").append(num).append(" ").append(colors.get("reset"));
-                case GREEN -> s.append(colors.get("green")).append(" ").append(num).append(" ").append(colors.get("reset"));
+                case GREEN -> s.append(colors.get("green")).append(num).append(" ").append(colors.get("reset"));
                 case PINK -> s.append(colors.get("magenta")).append(" ").append(num).append(" ").append(colors.get("reset"));
-                case YELLOW -> s.append(colors.get("yellow")).append(" ").append(num).append(" ").append(colors.get("reset"));
+                case YELLOW -> s.append(colors.get("yellow")).append(num).append(" ").append(colors.get("reset"));
             }
     }
 
