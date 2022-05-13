@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.UI;
 import it.polimi.ingsw.client.enums.ViewState;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.client.Login;
@@ -12,6 +13,7 @@ import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.network.messages.views.*;
 import it.polimi.ingsw.server.model.enums.*;
 
@@ -29,6 +31,9 @@ public class CLI implements UI {
     private String nickname;
     private final String os;
     private Scanner input;
+    private String server;
+    private int port;
+    private boolean firstConnection;
     private ViewListener listener;
     private TeamsView teamsView;
     private GameView gameView;
@@ -42,6 +47,7 @@ public class CLI implements UI {
     public CLI(){
         os = System.getProperty("os.name");
         lastState = ViewState.SETUP;
+        firstConnection = true;
         colors = new HashMap<>();
         colors.put("reset","\033[0m");
         colors.put("black","\033[30m");
@@ -95,6 +101,7 @@ public class CLI implements UI {
         System.out.println("Insert the type of the game by typing NEWGAME <NUM.PLAYER> <TYPE>");
         System.out.println("Choices are 2 | 3 | 4 players normal(n) | expert(e)");
 
+        setUpFirstConnection();
 
     }
 
@@ -110,15 +117,25 @@ public class CLI implements UI {
 
         System.out.print("\n" + "\033[0m" +"Insert Server name -> ");
 
-        String server = input.nextLine();
+        server = input.nextLine();
         System.out.print("Insert port -> ");
-        int port = Integer.parseInt(input.nextLine());
+        port = Integer.parseInt(input.nextLine());
+        chooseNickname();
+    }
+
+    private void chooseNickname(){
         System.out.print("Choose Nickname -> ");
         nickname = input.nextLine();
         client = new Client(server, port, this);
         notifyListener(new Login(nickname));
-        executorService = Executors.newSingleThreadExecutor();
-        executorService.submit(this::readInput);
+    }
+
+    private void setUpFirstConnection(){
+        if(firstConnection){
+            executorService = Executors.newSingleThreadExecutor();
+            executorService.submit(this::readInput);
+            firstConnection = false;
+        }
     }
 
     private void readInput(){
@@ -151,11 +168,14 @@ public class CLI implements UI {
                 inputParser.setCanChoseWizard(true);
                 inputParser.canWrite();
             }
+            setUpFirstConnection();
         }
     }
     @Override
     public void showLobbyScreen() {
         clearTerminal();
+
+        System.out.println(MessageBuilder.toJson(new CurrentTeams(teamsView)));
         if(lastState.equals(ViewState.SETUP)){
             showWizardMenu();
             lastState = ViewState.CHOSE_WIZARD;
@@ -180,18 +200,18 @@ public class CLI implements UI {
     @Override
     synchronized public void hostCanStart() {
         if(inputParser.isHost()){
-            inputParser.canWrite();
-            inputParser.setCanStart(true);
             if(teamsView == null)
                 System.out.println("\nThe match can start now. Type START if you want to start it");
             else showLobbyScreen();
+            inputParser.canWrite();
+            inputParser.setCanStart(true);
         }
     }
 
     synchronized public void hostCantStart(){
-        if(teamsView != null){
-           inputParser.setCanStart(false);
-           showLobbyScreen();
+        if(teamsView != null) {
+            inputParser.setCanStart(false);
+            showLobbyScreen();
         }
     }
 
@@ -310,6 +330,18 @@ public class CLI implements UI {
 
     @Override
     public void showCommMessage(CommMessage message) {
+        if(lastState.equals((ViewState.SETUP)) && message.getType().equals(CommMsgType.ERROR_NICKNAME_UNAVAILABLE)){
+            System.out.println("\n"+ message.getType().getMessage());
+            client.closeConnection();
+            chooseNickname();
+            return;
+        }
+        if(lastState.equals(ViewState.SETUP) && message.getType().equals(CommMsgType.ERROR_NO_SPACE)){
+            System.out.println("Sorry the match is full");
+            client.closeConnection();
+            executorService.shutdownNow();
+            return;
+        }
         if((lastState.equals(ViewState.SETUP)  || lastState.equals(ViewState.CHOSE_WIZARD))&& message.getType().equals(CommMsgType.OK)){
             lastState = ViewState.CHOSE_WIZARD;
             return;
@@ -445,6 +477,7 @@ public class CLI implements UI {
                 text.append(" ").append(buildSequence(fromIntegersToEnums(choices)));
             }
         }
+        System.out.println(text);
     }
 
     private String[] buildTeamLobby(){
@@ -468,7 +501,7 @@ public class CLI implements UI {
         view[1] = view[1] + colors.get("cyan") + sup +" ";
 
         List<String> black = teamsView.getTeams().get(Tower.BLACK);
-        List <String> white = teamsView.getTeams().get(Tower.WHITE);
+        List<String> white = teamsView.getTeams().get(Tower.WHITE);
         List<String> lobby = teamsView.getLobby();
 
         sup = new StringBuilder();
@@ -634,7 +667,7 @@ public class CLI implements UI {
         schoolBoardLines.add(6, stringBuilder.toString());
 
         // NOMI
-        schoolBoardLines.add(7, "\tEntrance\t\t\tHall\t\t\tProfessors\t\s\s\sTowers");
+        schoolBoardLines.add(7, "  Entrance\t\t\tHall\t\t\t   Professors\t\s\s\sTowers");
 
         return schoolBoardLines;
     }
@@ -650,17 +683,17 @@ public class CLI implements UI {
         stringBuilder.delete(0, stringBuilder.length());
 
         // top border
-        stringBuilder.append(ansi().render("@|blue ░ |@"));
+        stringBuilder.append(colors.get("blue")).append("░");
         for (IslandGroupView igv : views) {
-            stringBuilder.append(ansi().render("@|green ╔|@"));
+            stringBuilder.append(colors.get("green")).append("╔");
             for(int i = 0; i < igv.getIslands().size(); i++){
-                stringBuilder.append(ansi().render("@|green ═══════|@"));
+                stringBuilder.append(colors.get("green")).append("═══════");
                 if (i == igv.getIslands().size() - 1)
-                    stringBuilder.append(ansi().render("@|green ╗|@"));
+                    stringBuilder.append(colors.get("green")).append("╗");
                 else
-                    stringBuilder.append(ansi().render("@|green ╦|@"));
+                    stringBuilder.append(colors.get("green")).append("╦");
             }
-            stringBuilder.append(ansi().render("@|blue ░ |@"));
+            stringBuilder.append(colors.get("blue")).append(" ░ ");
         }
 
 
@@ -668,10 +701,10 @@ public class CLI implements UI {
         islandsLines.add(1, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
 
-        stringBuilder.append(ansi().render("@|blue ░ |@"));
+        stringBuilder.append(colors.get("blue")).append("░");
         int islandIndex = 0;
         for (IslandGroupView igv : views) {
-            stringBuilder.append(ansi().render("@|green ║|@"));
+            stringBuilder.append(colors.get("green")).append("║");
             for(int i = 0; i < igv.getIslands().size(); i++) {
                 Tower tower = igv.getIslands().get(i).getTower();
                 if (tower == null)
@@ -679,13 +712,13 @@ public class CLI implements UI {
                 else
                     appendTower(tower, stringBuilder);
                 if (i == 0 && islandIndex == motherNatureIndex)
-                    stringBuilder.append(ansi().render("@|green ©|@"));
+                    stringBuilder.append(colors.get("green")).append("©");
                 else
                     stringBuilder.append(" ");
                 appendBlock(igv.isBlocked(), stringBuilder);
-                stringBuilder.append(ansi().render("@|green ║|@"));
+                stringBuilder.append(colors.get("green")).append("║ ");
             }
-            stringBuilder.append(ansi().render("@|blue ░ |@"));
+            stringBuilder.append(colors.get("blue")).append("░ ");
             islandIndex ++;
         }
 
@@ -694,32 +727,32 @@ public class CLI implements UI {
         islandsLines.add(2, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
 
-        stringBuilder.append(ansi().render("@|blue ░ |@"));
+        stringBuilder.append(colors.get("blue")).append("░");
         for (IslandGroupView igv : views) {
-            stringBuilder.append(ansi().render("@|green ║ |@"));
+            stringBuilder.append(colors.get("green")).append("║ ");
             for(int i = 0; i < igv.getIslands().size(); i++) {
                 appendStudentNumber(BLUE, igv.getIslands().get(i).getStudents().get(StudentColor.BLUE), stringBuilder);
                 appendStudentNumber(RED, igv.getIslands().get(i).getStudents().get(StudentColor.RED), stringBuilder);
                 appendStudentNumber(GREEN, igv.getIslands().get(i).getStudents().get(GREEN), stringBuilder);
-                stringBuilder.append(ansi().render("@|green ║|@"));
+                stringBuilder.append(colors.get("green")).append("║ ");
             }
-            System.out.print(ansi().eraseScreen().render("@|blue  ░ |@"));
-            stringBuilder.append(ansi().render("@|blue ░ |@"));
+            stringBuilder.append(colors.get("blue")).append("░ ");
         }
 
         // third line (pink and yellow students)
         islandsLines.add(3, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
 
-        stringBuilder.append(ansi().render("@|blue ░ |@"));
+        stringBuilder.append(colors.get("blue")).append("░");
         for (IslandGroupView igv : views){
-            stringBuilder.append(ansi().render("@|green ║ |@"));
+            stringBuilder.append(colors.get("green")).append("║ ");
             for(int i = 0; i < igv.getIslands().size(); i++) {
                 appendStudentNumber(PINK, igv.getIslands().get(i).getStudents().get(PINK), stringBuilder);
                 appendStudentNumber(YELLOW, igv.getIslands().get(i).getStudents().get(YELLOW), stringBuilder);
-                stringBuilder.append(ansi().render("@|green   ║|@"));
+                stringBuilder.append("  ");
+                stringBuilder.append(colors.get("green")).append("║ ");
             }
-            stringBuilder.append(ansi().render("@|blue ░ |@"));
+            stringBuilder.append(colors.get("blue")).append("░ ");
         }
 
 
@@ -727,23 +760,24 @@ public class CLI implements UI {
         islandsLines.add(4, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
 
-        stringBuilder.append(ansi().render("@|blue ░ |@"));
+        stringBuilder.append(colors.get("blue")).append("░");
         for (IslandGroupView igv : views) {
-            stringBuilder.append(ansi().render("@|green ╚|@"));
+            stringBuilder.append(colors.get("green")).append("╚");
             for(int i = 0; i < igv.getIslands().size(); i++){
-                stringBuilder.append(ansi().render("@|green ═══════|@"));
+                stringBuilder.append(colors.get("green")).append("═══════");
                 if (i == igv.getIslands().size() - 1)
-                    stringBuilder.append(ansi().render("@|green ╝|@"));
+                    stringBuilder.append(colors.get("green")).append("╝");
                 else
-                    stringBuilder.append(ansi().render("@|green ╩|@"));
+                    stringBuilder.append(colors.get("green")).append("╩");
             }
-            stringBuilder.append(ansi().render("@|blue ░ |@"));
+            stringBuilder.append(colors.get("blue")).append(" ░ ");
         }
 
         // water layer
         islandsLines.add(5, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
         appendWater(stringBuilder);
+        islandsLines.add(6,stringBuilder.toString());
 
         return islandsLines;
     }
@@ -762,9 +796,7 @@ public class CLI implements UI {
         sb.append(colors.get("red")).append(characterCardView.getType().name()).append(colors.get("reset"));
 
         int spacesLeft = 10 - characterCardView.getType().name().length();
-        for(int i = 0; i < spacesLeft; i++) {
-            sb.append(" ");
-        }
+        sb.append(" ".repeat(Math.max(0, spacesLeft)));
         sb.append(colors.get("red")).append("║").append(colors.get("reset"));
 
         // cost of the card
@@ -896,13 +928,13 @@ public class CLI implements UI {
 
     private void appendStudentNumber(StudentColor studentColor, int num, StringBuilder s){
         if (num == 0)
-            s.append("   ");
+            s.append("  ");
         else
             switch (studentColor) {
                 case RED -> s.append(colors.get("red")).append(num).append(" ").append(colors.get("reset"));
-                case BLUE -> s.append(colors.get("blue")).append(" ").append(num).append(" ").append(colors.get("reset"));
+                case BLUE -> s.append(colors.get("blue")).append(num).append(" ").append(colors.get("reset"));
                 case GREEN -> s.append(colors.get("green")).append(num).append(" ").append(colors.get("reset"));
-                case PINK -> s.append(colors.get("magenta")).append(" ").append(num).append(" ").append(colors.get("reset"));
+                case PINK -> s.append(colors.get("magenta")).append(num).append(" ").append(colors.get("reset"));
                 case YELLOW -> s.append(colors.get("yellow")).append(num).append(" ").append(colors.get("reset"));
             }
     }

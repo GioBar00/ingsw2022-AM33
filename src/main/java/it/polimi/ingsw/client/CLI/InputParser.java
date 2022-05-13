@@ -64,7 +64,7 @@ public class InputParser{
         return canStart;
     }
 
-    void setLastRequest(Message request){
+    synchronized void setLastRequest(Message request){
         lastRequest = request;
     }
 

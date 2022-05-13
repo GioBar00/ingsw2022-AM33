@@ -57,6 +57,8 @@ public class Client implements MessageHandler, ViewListener, Runnable {
     public Client(String hostname, int port, UI userInterface) {
         this.hostname = hostname;
         this.port = port;
+        executor = Executors.newSingleThreadExecutor();
+        executor.shutdownNow();
         queue = new LinkedBlockingQueue<>();
         this.communicationHandler = new CommunicationHandler(this);
         this.userInterface = userInterface;
@@ -70,8 +72,10 @@ public class Client implements MessageHandler, ViewListener, Runnable {
         try {
             communicationHandler.setSocket(new Socket(hostname, port));
             communicationHandler.start();
-            executor = Executors.newFixedThreadPool(1);
-            executor.submit(this::run);
+            if(executor.isShutdown()) {
+                executor = Executors.newSingleThreadExecutor();
+                executor.submit(this);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -150,6 +154,5 @@ public class Client implements MessageHandler, ViewListener, Runnable {
      */
     public void closeConnection(){
         communicationHandler.stop();
-        executor.shutdownNow();
     }
 }
