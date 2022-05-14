@@ -2,8 +2,11 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.network.CommunicationHandler;
 import it.polimi.ingsw.network.MessageHandler;
+import it.polimi.ingsw.network.listeners.DisconnectEvent;
+import it.polimi.ingsw.network.listeners.DisconnectListener;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CommMessage;
@@ -19,7 +22,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Class for client-side communication
  */
-public class Client implements MessageHandler, ViewListener, Runnable {
+public class Client implements MessageHandler, ViewListener, Runnable , DisconnectListener {
 
     /**
      * the hostname for the connection
@@ -71,6 +74,7 @@ public class Client implements MessageHandler, ViewListener, Runnable {
     public void startConnection(){
         try {
             communicationHandler.setSocket(new Socket(hostname, port));
+            communicationHandler.setDisconnectListener(this);
             communicationHandler.start();
             if(executor.isShutdown()) {
                 executor = Executors.newSingleThreadExecutor();
@@ -125,6 +129,8 @@ public class Client implements MessageHandler, ViewListener, Runnable {
      * @param message a Message from the model.
      */
     public synchronized void updateView(Message message){
+        System.out.println(MessageBuilder.toJson(message));
+
         switch (MessageType.retrieveByMessage(message)){
             case COMM_MESSAGE -> {
                 switch (((CommMessage)message).getType()){
@@ -154,5 +160,17 @@ public class Client implements MessageHandler, ViewListener, Runnable {
      */
     public void closeConnection(){
         communicationHandler.stop();
+    }
+
+    /**
+     * Invoked when a client disconnects from the server and vice versa.
+     *
+     * @param event the event object
+     */
+    @Override
+    public void onDisconnect(DisconnectEvent event) {
+        closeConnection();
+        userInterface.close();
+        executor.shutdownNow();
     }
 }

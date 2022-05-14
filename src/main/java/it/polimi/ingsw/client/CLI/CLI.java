@@ -13,24 +13,23 @@ import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.network.messages.server.CurrentGameState;
 import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.network.messages.views.*;
 import it.polimi.ingsw.server.model.enums.*;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static it.polimi.ingsw.server.model.enums.StudentColor.*;
-import static org.fusesource.jansi.Ansi.ansi;
 
 
 public class CLI implements UI {
     private Client client;
     private String nickname;
     private final String os;
-    private Scanner input;
+    private final Scanner input;
     private String server;
     private int port;
     private boolean firstConnection;
@@ -75,15 +74,24 @@ public class CLI implements UI {
     }
 
     @Override
-    public void setGameView(GameView gameView) {
+    synchronized public void setGameView(GameView gameView) {
         this.gameView = gameView;
     }
 
     @Override
-    public void setPossibleMoves(Message message){
+    synchronized public void setPossibleMoves(Message message){
         lastRequest = message;
         inputParser.setLastRequest(message);
         showPossibleMoves();
+    }
+
+    @Override
+    public void close() {
+        inputParser.cantWrite();
+        System.out.println("We are sorry, the server is unavailable");
+        System.out.println("Press c for closing the game");
+        executorService.shutdownNow();
+        return;
     }
 
     @Override
@@ -139,7 +147,7 @@ public class CLI implements UI {
     }
 
     private void readInput(){
-        while(!partyEnded()){
+        while(!partyEnded() && !Thread.interrupted()){
             input.reset();
             String command = input.nextLine();
             inputParser.parse(command);
@@ -192,9 +200,6 @@ public class CLI implements UI {
 
         inputParser.canWrite();
         System.out.println("Select/change team by Typing TEAM <BLACK/WHITE>");
-        if(inputParser.isCanStart() && inputParser.isHost()){
-            System.out.println("The match can start now. Type START if you want to start it");
-        }
     }
 
     @Override
@@ -202,9 +207,13 @@ public class CLI implements UI {
         if(inputParser.isHost()){
             if(teamsView == null)
                 System.out.println("\nThe match can start now. Type START if you want to start it");
-            else showLobbyScreen();
-            inputParser.canWrite();
-            inputParser.setCanStart(true);
+            else{ showLobbyScreen();
+                inputParser.canWrite();
+                inputParser.setCanStart(true);
+                if(inputParser.isCanStart() && inputParser.isHost()){
+                    System.out.println("The match can start now. Type START if you want to start it");
+                }
+            }
         }
     }
 
@@ -225,6 +234,7 @@ public class CLI implements UI {
         inputParser.setCanStart(false);
         inputParser.setCanChoseWizard(false);
         clearTerminal();
+        System.out.println(MessageBuilder.toJson(new CurrentGameState(gameView)));
         //show island
         ArrayList<String> islands = getIslandsLines(gameView.getIslandsView(), gameView.getMotherNatureIndex());
         for (String line : islands) {
@@ -256,7 +266,7 @@ public class CLI implements UI {
             text = new StringBuilder(text.subSequence(0, text.lastIndexOf("|")) + "] ");
             System.out.println("Available Character Card " + text );
         }
-
+        System.out.println(MessageBuilder.toJson(lastRequest));
         switch(MessageType.retrieveByMessage(lastRequest)){
             case CHOOSE_CLOUD -> {
                 Set<Integer> choices = ((ChooseCloud)lastRequest).getAvailableCloudIndexes();
@@ -359,6 +369,11 @@ public class CLI implements UI {
     }
 
     private void clearTerminal() {
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        /*
         if (os.contains("Windows")) {
             try {
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
@@ -375,6 +390,8 @@ public class CLI implements UI {
         }
         System.out.println("\033[H\033[2J");
         System.out.flush();
+
+         */
     }
 
     /**

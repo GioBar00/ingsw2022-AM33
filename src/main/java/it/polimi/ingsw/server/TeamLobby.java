@@ -17,8 +17,6 @@ import java.util.List;
 //todo test and javadoc
 public class TeamLobby extends Lobby{
 
-
-
     public TeamLobby(int maxPlayers, MessageListener host) {
         super(maxPlayers, host);
     }
@@ -63,7 +61,7 @@ public class TeamLobby extends Lobby{
         if(update != null) {
             update.setTower(tower);
             notifyListeners(new MessageEvent(this, new CurrentTeams(getTeamView())));
-            sendStar();
+            sendStart();
             return true;
         }
         else return false;
@@ -86,7 +84,7 @@ public class TeamLobby extends Lobby{
         return new TeamsView(teams, lobby);
     }
 
-    private void sendStar(){
+    private void sendStart(){
         if(canStart()){
             host.onMessage(new MessageEvent(this, new CommMessage(CommMsgType.CAN_START)));
         }

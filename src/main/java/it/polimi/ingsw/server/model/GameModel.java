@@ -457,6 +457,13 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     void checkProfessor(StudentColor s){
         Player current = playersManager.getCurrentPlayer();
         SchoolBoard currSch = playersManager.getSchoolBoard(current);
+        for(Player p: playersManager.getPlayers()){
+            if(!p.equals(current)){
+                SchoolBoard compSch = playersManager.getSchoolBoard(p);
+                if(compSch.getStudentsInHall(s) >= currSch.getStudentsInHall(s))
+                     return;
+                }
+            }
         boolean found = false;
         for(Player p: playersManager.getPlayers()){
             if(!p.equals(current)){
@@ -471,11 +478,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             }
         }
         if(!found && !currSch.getProfessors().contains(s)){
-            try {
-                currSch.addProfessor(s);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            currSch.addProfessor(s);
         }
     }
 

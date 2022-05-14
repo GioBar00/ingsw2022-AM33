@@ -156,8 +156,14 @@ public class Server implements EndPartyListener {
                 }
                 else {
                     if(virtualClients.containsKey(nickname)){
-                        MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE), out);
-                        return null;
+                        if(virtualClients.get(nickname).isConnected()) {
+                            MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE), out);
+                            return null;
+                        }
+                        else{
+                            virtualClients.remove(nickname);
+                            return nickname;
+                        }
                     }
                     if (!controller.isInstantiated()) {
                         //model didn't exist

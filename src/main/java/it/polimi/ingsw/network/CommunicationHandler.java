@@ -9,6 +9,7 @@ import it.polimi.ingsw.network.messages.server.CommMessage;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -152,17 +153,16 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                 try {
                     m = queue.take();
                 } catch (InterruptedException e) {
-                    System.out.println("CH : output interrupted");
+                    if(isMaster)
+                        System.out.println("CH : output interrupted");
                 }
                 MessageExchange.sendMessage(m, writer);
             }
             System.out.println("CH : output stop");
         } catch ( IOException e) {
-            if(!isMaster()) {
-                System.out.println("We are sorry, you have been disconnected");
+            if(isMaster()) {
                 e.printStackTrace();
             }
-            else e.printStackTrace();
         }
     }
 
@@ -172,7 +172,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     private void handleInput() {
         try {
             while (!Thread.interrupted()) {
-
                 Message message = MessageExchange.receiveMessage(reader, (event) -> {
                     notifyListener(new DisconnectEvent(this));
                     System.out.println("CH : handleInput stop");
@@ -188,7 +187,9 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
 
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            if(isMaster()) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -294,7 +295,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      * @param message the message to send
      */
     public void sendMessage(Message message) {
-        System.out.println("CH : send message " + message.getClass().getName());
         queue.add(message);
     }
 

@@ -37,6 +37,8 @@ public interface UI extends ViewListenerSubscriber {
     void showGameScreen();
 
     void setPossibleMoves(Message message);
+
+    void close();
     void updateGameView();
 
     void updateLobbyView();

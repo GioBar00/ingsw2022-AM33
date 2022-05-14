@@ -48,6 +48,7 @@ public class InputParser{
     synchronized void setCanChoseWizard(boolean value){
         canChoseWizard = value;
     }
+
     synchronized  void canWrite(){
         canWrite = true;
     }
@@ -95,7 +96,7 @@ public class InputParser{
                 }
                 else{ printInvalidMessage(); }
             } else {
-                System.out.println(cli.colors.get("red") + "Not your turn");
+                System.out.println(cli.colors.get("red") + "Not your turn" + cli.colors.get("reset"));
             }
         }catch (IndexOutOfBoundsException e){
             printInvalidMessage();

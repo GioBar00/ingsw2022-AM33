@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.controller;
 import it.polimi.ingsw.network.listeners.MessageEvent;
 import it.polimi.ingsw.network.listeners.MessageListener;
 import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
 import it.polimi.ingsw.network.messages.client.ChosenWizard;
@@ -161,8 +162,8 @@ public class Controller implements MessageListener {
                     }
                     else {
                         lobby.removeAllMessageListener();
-                        listener.onEndPartyEvent(new EndPartyEvent(this));
                         model = null;
+                        listener.onEndPartyEvent(new EndPartyEvent(this));
                     }
                 }
             }
@@ -208,7 +209,6 @@ public class Controller implements MessageListener {
      * @param msg is the Message
      */
     private void handleGameSetup(VirtualClient vc, Message msg) {
-
         switch (MessageType.retrieveByMessage(msg)) {
             case CHOSEN_TEAM -> {
                 ChosenTeam chosenTeam = (ChosenTeam)msg;
