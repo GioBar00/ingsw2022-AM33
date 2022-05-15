@@ -16,5 +16,5 @@ public interface DisconnectListenerSubscriber {
      * Notifies the listener that a disconnection has occurred.
      * @param event the event to notify
      */
-    void notifyListener(DisconnectEvent event);
+    void notifyDisconnectListener(DisconnectEvent event);
 }

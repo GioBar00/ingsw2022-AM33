@@ -12,6 +12,7 @@ import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.network.listeners.ConcreteMessageListenerSubscriber;
 import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.server.listeners.EndGameListener;
 import it.polimi.ingsw.server.model.islands.IslandsManager;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.player.PlayersManager;
@@ -803,7 +804,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      */
     void notifyPersonalizedGameView() {
         for (Player p: playersManager.getPlayers())
-            notifyListener(p.getNickname(), new MessageEvent(this, getCurrentGameState(p)));
+            notifyMessageListener(p.getNickname(), new MessageEvent(this, getCurrentGameState(p)));
     }
 
     /**
@@ -825,7 +826,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      */
     void notifyPlayAssistantCard() {
         Player curr = playersManager.getCurrentPlayer();
-        notifyListener(curr.getNickname(), new MessageEvent(this, playersManager.getPossibleAssistantCards()));
+        notifyMessageListener(curr.getNickname(), new MessageEvent(this, playersManager.getPossibleAssistantCards()));
     }
 
     /**
@@ -856,7 +857,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         moves.add(new MoveStudent(MoveLocation.ENTRANCE, hallEntranceIndexes, MoveLocation.HALL, null));
         Message m = new MultiplePossibleMoves(moves);
 
-        notifyListener(curr.getNickname(), new MessageEvent(this, m));
+        notifyMessageListener(curr.getNickname(), new MessageEvent(this, m));
     }
 
     /**
@@ -864,7 +865,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      */
     void notifyMoveMotherNature() {
         Player curr = playersManager.getCurrentPlayer();
-        notifyListener(curr.getNickname(), new MessageEvent(this, new MoveMotherNature(playersManager.getPlayedCard().getMoves())));
+        notifyMessageListener(curr.getNickname(), new MessageEvent(this, new MoveMotherNature(playersManager.getPlayedCard().getMoves())));
     }
 
     /**
@@ -877,7 +878,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             if (clouds.get(i).getStudents().size() > 0)
                 cloudIndexes.add(i);
         }
-        notifyListener(curr.getNickname(), new MessageEvent(this, new ChooseCloud(cloudIndexes)));
+        notifyMessageListener(curr.getNickname(), new MessageEvent(this, new ChooseCloud(cloudIndexes)));
     }
 
     /**

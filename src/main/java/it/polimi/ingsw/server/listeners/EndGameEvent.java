@@ -5,14 +5,14 @@ import java.util.EventObject;
 /**
  * Class used to report when the party needs to be closed event
  */
-public class EndPartyEvent extends EventObject {
+public class EndGameEvent extends EventObject {
     /**
      * Constructs a prototypical Event.
      *
      * @param source the object on which the Event initially occurred
      * @throws IllegalArgumentException if source is null
      */
-    public EndPartyEvent(Object source) {
+    public EndGameEvent(Object source) {
         super(source);
     }
 }

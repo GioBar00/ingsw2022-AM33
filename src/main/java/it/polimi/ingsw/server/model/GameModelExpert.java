@@ -639,7 +639,7 @@ public class GameModelExpert implements Game, EffectHandler {
      */
     private void notifyPersonalizedGameView() {
         for (Player p: model.playersManager.getPlayers())
-            notifyListener(p.getNickname(), new MessageEvent(this, getCurrentGameState(p)));
+            notifyMessageListener(p.getNickname(), new MessageEvent(this, getCurrentGameState(p)));
     }
 
     /**
@@ -751,8 +751,8 @@ public class GameModelExpert implements Game, EffectHandler {
      * @param event of the message to notify
      */
     @Override
-    public void notifyListeners(MessageEvent event) {
-        model.notifyListeners(event);
+    public void notifyMessageListeners(MessageEvent event) {
+        model.notifyMessageListeners(event);
     }
 
     /**
@@ -762,8 +762,8 @@ public class GameModelExpert implements Game, EffectHandler {
      * @param event      of the message to notify
      */
     @Override
-    public void notifyListener(String identifier, MessageEvent event) {
-        model.notifyListener(identifier, event);
+    public void notifyMessageListener(String identifier, MessageEvent event) {
+        model.notifyMessageListener(identifier, event);
     }
 
     /**
@@ -774,7 +774,7 @@ public class GameModelExpert implements Game, EffectHandler {
             Message m = characterCardActivating.getRequiredAction(this);
             if (m != null) {
                 Player curr = model.playersManager.getCurrentPlayer();
-                notifyListener(curr.getNickname(), new MessageEvent(this, m));
+                notifyMessageListener(curr.getNickname(), new MessageEvent(this, m));
             }
         } else {
             model.notifyPossibleActions();

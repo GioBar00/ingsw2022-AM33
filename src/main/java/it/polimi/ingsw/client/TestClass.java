@@ -2,16 +2,9 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.CLI.CLI;
 import it.polimi.ingsw.network.messages.views.GameView;
-import it.polimi.ingsw.network.messages.views.IslandGroupView;
-import it.polimi.ingsw.network.messages.views.IslandView;
 import it.polimi.ingsw.server.Server;
-import it.polimi.ingsw.server.model.enums.GameMode;
-import it.polimi.ingsw.server.model.enums.StudentColor;
-import it.polimi.ingsw.server.model.enums.Tower;
 
 import java.io.BufferedReader;
-import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.Scanner;
 
 public class TestClass {
@@ -25,7 +18,7 @@ public class TestClass {
         if(input.equals("s")){
             System.out.println("Starting a server");
             Server server = new Server();
-            server.handleRequest();
+            server.handleRequests();
         }
         else {
             System.out.println("Starting a client");

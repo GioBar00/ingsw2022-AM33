@@ -1,30 +1,26 @@
-package it.polimi.ingsw.server;
+package it.polimi.ingsw.server.lobby;
 
-import it.polimi.ingsw.network.listeners.MessageListener;
-import it.polimi.ingsw.network.messages.enums.CommMsgType;
-import it.polimi.ingsw.network.messages.server.AvailableWizards;
-import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.model.enums.Tower;
-import it.polimi.ingsw.server.model.enums.Wizard;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
 //todo test and javadoc
-public class TeamLobby extends Lobby{
+public class TeamLobby extends Lobby {
 
-    public TeamLobby(int maxPlayers, MessageListener host) {
-        super(maxPlayers, host);
+    public TeamLobby(int maxPlayers) {
+        super(maxPlayers);
     }
 
     @Override
     public boolean addPlayer(String nickname){
         if(super.addPlayer(nickname)){
-            notifyListeners(new MessageEvent(this, new CurrentTeams(getTeamView())));
+            notifyMessageListeners(new MessageEvent(this, new CurrentTeams(getTeamView())));
             return true;
         }
         return false;
@@ -60,7 +56,7 @@ public class TeamLobby extends Lobby{
         }
         if(update != null) {
             update.setTower(tower);
-            notifyListeners(new MessageEvent(this, new CurrentTeams(getTeamView())));
+            notifyTeams();
             sendStart();
             return true;
         }
@@ -70,24 +66,17 @@ public class TeamLobby extends Lobby{
     @Override
     public TeamsView getTeamView() {
         EnumMap<Tower, List<String>> teams = new EnumMap<>(Tower.class);
-        List <String> lobby = new ArrayList<>();
-        for(Tower t : Tower.values()){
-            if(!t.equals(Tower.GREY))
+        List<String> lobby = new ArrayList<>();
+        for (Tower t : Tower.values()) {
+            if (!t.equals(Tower.GREY))
                 teams.put(t, new ArrayList<>());
         }
-        for(PlayerDetails p  : players) {
-            if(p.getTower()!= null){
+        for (PlayerDetails p : players) {
+            if (p.getTower() != null) {
                 teams.get(p.getTower()).add(p.getNickname());
-            }
-            else lobby.add(p.getNickname());
+            } else lobby.add(p.getNickname());
         }
         return new TeamsView(teams, lobby);
-    }
-
-    private void sendStart(){
-        if(canStart()){
-            host.onMessage(new MessageEvent(this, new CommMessage(CommMsgType.CAN_START)));
-        }
     }
 
 }

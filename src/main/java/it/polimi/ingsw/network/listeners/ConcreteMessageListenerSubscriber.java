@@ -1,10 +1,5 @@
 package it.polimi.ingsw.network.listeners;
 
-import it.polimi.ingsw.network.listeners.MessageEvent;
-import it.polimi.ingsw.network.listeners.MessageListener;
-import it.polimi.ingsw.network.listeners.MessageListenerSubscriber;
-import it.polimi.ingsw.network.messages.Message;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,7 +33,7 @@ public abstract class ConcreteMessageListenerSubscriber implements MessageListen
     /**
      * Removes all the message listener.
      */
-    public  void removeAllMessageListener() {
+    public  void removeAllMessageListeners() {
         listeners.clear();
     }
 
@@ -47,7 +42,7 @@ public abstract class ConcreteMessageListenerSubscriber implements MessageListen
      * @param event of the message to notify
      */
     @Override
-    public void notifyListeners(MessageEvent event) {
+    public void notifyMessageListeners(MessageEvent event) {
         for (MessageListener listener : listeners) {
             listener.onMessage(event);
         }
@@ -60,7 +55,7 @@ public abstract class ConcreteMessageListenerSubscriber implements MessageListen
      * @param event      of the message to notify
      */
     @Override
-    public void notifyListener(String identifier, MessageEvent event) {
+    public void notifyMessageListener(String identifier, MessageEvent event) {
         for (MessageListener listener : listeners) {
             if (listener.getIdentifier().equals(identifier)) {
                 listener.onMessage(event);

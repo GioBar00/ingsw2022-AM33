@@ -10,13 +10,13 @@ public enum CommMsgType {
     ERROR_GAME_STARTED("ERROR: game is already started"),
     ERROR_NOT_YOUR_TURN ("ERROR: you can't do that! it's not your turn!"),
     ERROR_IMPOSSIBLE_MOVE("ERROR: you can't move that now!"),
-    ERROR_GAME_SUSPENDED("ERROR: the other players have temporarily left; the game will resume when they reconnect..."),
     ERROR_INCORRECT_INPUT ("ERROR: the elements chosen are unavailable"),
     ERROR_SERVER ("ERROR: internal server error"),
     ERROR_CANT_START("ERROR : wait for other players. You can't start now"),
     ERROR_SERVER_UNAVAILABLE("ERROR: service unavailable"),
     ERROR_INVALID_MESSAGE("ERROR: the message is not valid"),
     ERROR_HOST_DISCONNECTED("ERROR: the host has left the party."),
+    ERROR_TIMEOUT("ERROR: the connection has timed out"),
 
     // COMMUNICATION MESSAGES FOR REQUESTS/ACKs
     PING("Are you still alive?"),

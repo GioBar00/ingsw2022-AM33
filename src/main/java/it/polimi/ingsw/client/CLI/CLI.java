@@ -91,11 +91,10 @@ public class CLI implements UI {
         System.out.println("We are sorry, the server is unavailable");
         System.out.println("Press c for closing the game");
         executorService.shutdownNow();
-        return;
     }
 
     @Override
-    public void setHost() {
+    public void chooseGame() {
         inputParser.setHost();
         inputParser.canWrite();
 
@@ -186,7 +185,7 @@ public class CLI implements UI {
         System.out.println(MessageBuilder.toJson(new CurrentTeams(teamsView)));
         if(lastState.equals(ViewState.SETUP)){
             showWizardMenu();
-            lastState = ViewState.CHOSE_WIZARD;
+            lastState = ViewState.CHOOSE_WIZARD;
             return;
         }
         for(int i = 0; i < 4;i++){
@@ -204,16 +203,12 @@ public class CLI implements UI {
 
     @Override
     synchronized public void hostCanStart() {
-        if(inputParser.isHost()){
-            if(teamsView == null)
-                System.out.println("\nThe match can start now. Type START if you want to start it");
-            else{ showLobbyScreen();
-                inputParser.canWrite();
-                inputParser.setCanStart(true);
-                if(inputParser.isCanStart() && inputParser.isHost()){
-                    System.out.println("The match can start now. Type START if you want to start it");
-                }
-            }
+        if(inputParser.isHost()) {
+            inputParser.canWrite();
+            inputParser.setCanStart(true);
+            System.out.println("The match can start now. Type START if you want to start it");
+            if(teamsView != null)
+                showLobbyScreen();
         }
     }
 
@@ -229,7 +224,6 @@ public class CLI implements UI {
         lastState = ViewState.PLAYING;
         lastRequest = null;
         teamsView = null;
-        inputParser.setCanChoseWizard(false);
         inputParser.cantWrite();
         inputParser.setCanStart(false);
         inputParser.setCanChoseWizard(false);
@@ -352,11 +346,11 @@ public class CLI implements UI {
             executorService.shutdownNow();
             return;
         }
-        if((lastState.equals(ViewState.SETUP)  || lastState.equals(ViewState.CHOSE_WIZARD))&& message.getType().equals(CommMsgType.OK)){
-            lastState = ViewState.CHOSE_WIZARD;
+        if((lastState.equals(ViewState.SETUP)  || lastState.equals(ViewState.CHOOSE_WIZARD))&& message.getType().equals(CommMsgType.OK)){
+            lastState = ViewState.CHOOSE_WIZARD;
             return;
         }
-        if(lastState.equals(ViewState.CHOSE_WIZARD) && message.getType().equals(CommMsgType.ERROR_IMPOSSIBLE_MOVE)){
+        if(lastState.equals(ViewState.CHOOSE_WIZARD) && message.getType().equals(CommMsgType.ERROR_IMPOSSIBLE_MOVE)){
             lastState = ViewState.SETUP;
             return;
         }
@@ -499,7 +493,7 @@ public class CLI implements UI {
 
     private String[] buildTeamLobby(){
         String[] view = new String[7];
-        view[0] ="";
+        view[0] = "";
         for(int i = 0; i < 15; i++){
             view[0] = view[0] +" ";
         }

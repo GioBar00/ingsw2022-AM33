@@ -9,7 +9,6 @@ import it.polimi.ingsw.network.messages.server.CommMessage;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -24,7 +23,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     /**
      * The message handler.
      */
-    private final MessageHandler messageHandler;
+    private MessageHandler messageHandler;
 
     /**
      * The socket used to exchange messages.
@@ -64,12 +63,20 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     /**
      * The latch used to check if the pong has been received.
      */
-    private CountDownLatch clientAcknowledged;
+    private CountDownLatch latch;
 
     /**
      * The timer used to send ping messages.
      */
     private Timer timer;
+
+    /**
+     * Constructor.
+     * @param isMaster if true, pings will be sent to ensure that the two parties are connected.
+     */
+    public CommunicationHandler(boolean isMaster) {
+        this((Message m) -> {}, isMaster);
+    }
 
     /**
      * Constructor.
@@ -112,6 +119,22 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Getter
+     * @return the socket
+     */
+    public Socket getSocket() {
+        return socket;
+    }
+
+    /**
+     * This method is used to set the message handler.
+     * @param messageHandler the message handler to set
+     */
+    public synchronized void setMessageHandler(MessageHandler messageHandler) {
+        this.messageHandler = messageHandler;
     }
 
     /**
@@ -160,9 +183,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
             }
             System.out.println("CH : output stop");
         } catch ( IOException e) {
-            if(isMaster()) {
-                e.printStackTrace();
-            }
+            System.out.println("CH : handleOutput IOException");
         }
     }
 
@@ -173,23 +194,23 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
         try {
             while (!Thread.interrupted()) {
                 Message message = MessageExchange.receiveMessage(reader, (event) -> {
-                    notifyListener(new DisconnectEvent(this));
+                    notifyDisconnectListener(new DisconnectEvent(this));
                     System.out.println("CH : handleInput stop");
                     stop();
                 });
-
                 if (message.isValid()) {
                     if (isMaster && !checkPong(message) || !isMaster && !checkPing(message)) {
-                        messageHandler.handleMessage(message);
+                        synchronized (this) {
+                            if (messageHandler != null)
+                                messageHandler.handleMessage(message);
+                        }
                     }
                 } else if (isMaster)
                     sendInvalidMessage();
 
             }
         } catch (IOException e) {
-            if(isMaster()) {
-                e.printStackTrace();
-            }
+            System.out.println("CH : handleInput IOException");
         }
     }
 
@@ -202,7 +223,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
         if (MessageType.retrieveByMessage(message) == MessageType.COMM_MESSAGE)
             if (((CommMessage) message).getType() == CommMsgType.PING) {
                 queue.add(new CommMessage(CommMsgType.PONG));
-                clientAcknowledged.countDown();
+                latch.countDown();
                 return true;
             }
         return false;
@@ -216,7 +237,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     private boolean checkPong(Message message) {
         if (MessageType.retrieveByMessage(message) == MessageType.COMM_MESSAGE)
             if (((CommMessage) message).getType() == CommMsgType.PONG) {
-                clientAcknowledged.countDown();
+                latch.countDown();
                 return true;
             }
         return false;
@@ -237,19 +258,19 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                clientAcknowledged = new CountDownLatch(1);
+                latch = new CountDownLatch(1);
                 long seconds = isMaster ? 10 : 20;
                 try {
                     if (isMaster)
                         queue.add(new CommMessage(CommMsgType.PING));
-                    if (!clientAcknowledged.await(seconds, TimeUnit.SECONDS)) {
+                    if (!latch.await(seconds, TimeUnit.SECONDS)) {
                         System.out.println("CH : timer Stop");
                         stop();
-                        notifyListener(new DisconnectEvent(this));
+                        notifyDisconnectListener(new DisconnectEvent(this));
                     }
 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException ignored) {
+                    System.out.println("CH : timer InterruptedException");
                 }
             }
         },0,5 * 1000);
@@ -273,17 +294,30 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     }
 
     /**
-     * This method stops the message exchange handler.
+     * This method stops the message exchange handler closing the socket.
      */
     public synchronized void stop() {
+        stop(true);
+    }
+
+    /**
+     * This method stops the message exchange handler.
+     * @param closeSocket if the socket should be closed
+     */
+    public synchronized void stop(boolean closeSocket) {
         if (!executor.isShutdown()) {
             System.out.println("CH : stop");
             timer.cancel();
             executor.shutdownNow();
+        }
+        if (closeSocket) {
             try {
-                reader.close();
-                writer.close();
-                socket.close();
+                if (reader != null)
+                    reader.close();
+                if (writer != null)
+                    writer.close();
+                if (socket != null)
+                    socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -312,8 +346,12 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      * @param event the event to notify
      */
     @Override
-    public void notifyListener(DisconnectEvent event) {
-        if (disconnectListener != null)
+    public void notifyDisconnectListener(DisconnectEvent event) {
+        queue.clear();
+        if (disconnectListener != null) {
+            System.out.println("CH : notifyDisconnectListener");
             disconnectListener.onDisconnect(event);
+        }
+
     }
 }

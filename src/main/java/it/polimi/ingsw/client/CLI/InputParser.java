@@ -104,9 +104,7 @@ public class InputParser{
     }
 
     private boolean checkRightMoment(MessageType messageType){
-         if(MessageType.retrieveByMessage(lastRequest).equals(messageType))
-             return true;
-         return false;
+        return MessageType.retrieveByMessage(lastRequest).equals(messageType);
     }
 
     private void printInvalidMessage(){

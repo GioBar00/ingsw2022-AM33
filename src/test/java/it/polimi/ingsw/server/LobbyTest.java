@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.client.enums.ViewState;
+import it.polimi.ingsw.server.lobby.Lobby;
+import it.polimi.ingsw.server.lobby.LobbyConstructor;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.Tower;
 import it.polimi.ingsw.server.model.enums.Wizard;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.LinkedList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +22,7 @@ public class LobbyTest {
      */
     @Test
     void lobbyTest(){
-        Lobby lobby = LobbyConstructor.getLobby(GamePreset.THREE, new VirtualClient("p1"));
+        Lobby lobby = LobbyConstructor.getLobby(GamePreset.THREE);
 
         assertTrue(lobby.addPlayer("p1"));
         assertFalse(lobby.addPlayer("p1"));
@@ -77,13 +77,13 @@ public class LobbyTest {
     @Test
     void TeamLobbyTest(){
         VirtualClient v1 = new VirtualClient("p1");
-        Lobby lobby = LobbyConstructor.getLobby(GamePreset.FOUR, v1);
+        Lobby lobby = LobbyConstructor.getLobby(GamePreset.FOUR);
 
         lobby.addPlayer("p1");
         lobby.addPlayer("p2");
         lobby.addPlayer("p3");
         lobby.addPlayer("p4");
-        lobby.sendInitialStats(v1);
+        lobby.notifyAvailableWizards(v1.getIdentifier());
         assertFalse(lobby.canStart());
 
         lobby.setWizard(Wizard.KING,"p1");

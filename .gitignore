@@ -9,3 +9,5 @@
 out/
 log/*
 !log/.gitkeep
+
+dependency-reduced-pom.xml

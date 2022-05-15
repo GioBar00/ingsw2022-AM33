@@ -1,6 +1,6 @@
 package it.polimi.ingsw.network.messages.views;
 
-import it.polimi.ingsw.server.Lobby;
+import it.polimi.ingsw.server.lobby.Lobby;
 import it.polimi.ingsw.server.VirtualClient;
 import it.polimi.ingsw.server.model.enums.Wizard;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,7 @@ class WizardsViewTest {
 
     @Test
     void wizardsViewTest(){
-        Lobby lobby = new Lobby(4, new VirtualClient("player1"));
+        Lobby lobby = new Lobby(4);
 
         lobby.addPlayer("player1");
         lobby.addPlayer("player2");

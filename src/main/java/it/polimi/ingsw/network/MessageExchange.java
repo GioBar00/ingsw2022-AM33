@@ -21,20 +21,16 @@ public abstract class MessageExchange {
      * @throws IOException if an I/O error occurs.
      */
     public static Message receiveMessage(BufferedReader reader, DisconnectListener disconnectListener) throws IOException {
-        StringBuilder builder = new StringBuilder();
         String line = reader.readLine();
 
-        while (reader.ready() && line != null) {
-            builder.append(line);
+        while (reader.ready() && line == null) {
             line = reader.readLine();
         }
 
         if (line == null)
             disconnectListener.onDisconnect(null);
 
-        builder.append(line);
-        line = builder.toString();
-
+        //System.out.println("Real message received - " + line);
         return MessageBuilder.fromJson(line);
     }
 
@@ -56,8 +52,9 @@ public abstract class MessageExchange {
      */
     public static void sendMessage(Message message, BufferedWriter writer) throws IOException {
         writer.write(MessageBuilder.toJson(message));
-        writer.newLine();
+        writer.write("\n");
         writer.flush();
+        //System.out.println("Real message sent - " + MessageBuilder.toJson(message));
     }
 
 }

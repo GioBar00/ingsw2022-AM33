@@ -91,19 +91,21 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
      */
     @Override
     public void handleMessage(Message message) {
+        System.out.println("C: received message - " + MessageBuilder.toJson(message));
         queue.add(message);
     }
 
     /**
      * Method called when the user want to update the model.
-     * @param event the request.
+     * @param message the request.
      */
     @Override
-    public void onMessage(Message event) {
-        if(MessageType.retrieveByMessage(event) == MessageType.LOGIN) {
+    public void onMessage(Message message) {
+        if(MessageType.retrieveByMessage(message) == MessageType.LOGIN) {
                 startConnection();
         }
-        communicationHandler.sendMessage(event);
+        System.out.println("C: sending message - " + MessageBuilder.toJson(message));
+        communicationHandler.sendMessage(message);
     }
 
     /**
@@ -134,7 +136,7 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
         switch (MessageType.retrieveByMessage(message)){
             case COMM_MESSAGE -> {
                 switch (((CommMessage)message).getType()){
-                    case CHOOSE_GAME -> userInterface.setHost();
+                    case CHOOSE_GAME -> userInterface.chooseGame();
                     case CAN_START -> userInterface.hostCanStart();
                     case ERROR_CANT_START -> userInterface.hostCantStart();
                     default -> userInterface.showCommMessage((CommMessage)message);

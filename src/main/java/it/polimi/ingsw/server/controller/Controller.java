@@ -1,9 +1,7 @@
 package it.polimi.ingsw.server.controller;
 
-import it.polimi.ingsw.network.listeners.MessageEvent;
-import it.polimi.ingsw.network.listeners.MessageListener;
+import it.polimi.ingsw.network.listeners.*;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
 import it.polimi.ingsw.network.messages.client.ChosenWizard;
@@ -11,12 +9,12 @@ import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CommMessage;
-import it.polimi.ingsw.network.messages.server.CurrentTeams;
-import it.polimi.ingsw.server.Lobby;
+import it.polimi.ingsw.server.listeners.EndGameEvent;
+import it.polimi.ingsw.server.listeners.EndGameListenerSubscriber;
+import it.polimi.ingsw.server.lobby.Lobby;
 import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.VirtualClient;
-import it.polimi.ingsw.server.listeners.EndPartyEvent;
-import it.polimi.ingsw.server.listeners.EndPartyListener;
+import it.polimi.ingsw.server.listeners.EndGameListener;
 import it.polimi.ingsw.server.model.Game;
 import it.polimi.ingsw.server.model.GameBuilder;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
@@ -32,7 +30,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Each client handler request to the Controller class specified methods for updating the model. Controller verifies the validity
  * of the request and calls the correct method. Provide an updated view for each client
  */
-public class Controller implements MessageListener {
+public class Controller implements MessageListener, DisconnectListenerSubscriber, EndGameListenerSubscriber {
 
     /**
      * the instance of the game model
@@ -40,9 +38,14 @@ public class Controller implements MessageListener {
     private Game model;
 
     /**
-     * listener of the Controller
+     * end game listener of the Controller
      */
-    private EndPartyListener listener;
+    private EndGameListener endGameListener;
+
+    /**
+     * disconnect listener of the Controller
+     */
+    private DisconnectListener disconnectListener;
 
     /**
      * Lobby for the party
@@ -54,24 +57,21 @@ public class Controller implements MessageListener {
      */
     private final LinkedBlockingQueue<MessageEvent> queue;
 
-    private final Object lock;
-
     /**
      * Default constructor of class Controller
-     * @param listener of the controller
      */
-    public Controller(EndPartyListener listener) {
+    public Controller() {
         model = null;
-        this.listener = listener;
         lobby = null;
         queue = new LinkedBlockingQueue<>();
-        lock = new Object();
     }
 
     /**
      * Remove the controller listener
      */
-    public void removeListener(){ this.listener = null;}
+    public void removeEndGameListener() {
+        this.endGameListener = null;
+    }
 
     /**
      * Method used for know if the model is instantiated
@@ -116,7 +116,7 @@ public class Controller implements MessageListener {
      * Removes one selected listener from the model
      * @param listener the removed listener
      */
-    public void removeListener(MessageListener listener) {
+    public void removeModelListener(MessageListener listener) {
         model.removeMessageListener(listener);
     }
 
@@ -124,7 +124,7 @@ public class Controller implements MessageListener {
      * Returns if the game is started
      * @return a boolean true if the game is started
      */
-    public boolean isGameStarted(){
+    public boolean isGameStarted() {
         if(model == null)
             return false;
         return model.getGameState().equals(GameState.STARTED);
@@ -138,9 +138,7 @@ public class Controller implements MessageListener {
      */
     @Override
     public void onMessage(MessageEvent event) {
-        synchronized (lock) {
-            queue.add(event);
-        }
+        queue.add(event);
     }
 
     /**
@@ -152,37 +150,40 @@ public class Controller implements MessageListener {
         VirtualClient vc = (VirtualClient)event.getSource();
         Message msg = event.getMessage();
 
-        if(MessageType.retrieveByMessage(msg) == MessageType.SKIP_TURN){
+        if (MessageType.retrieveByMessage(msg) == MessageType.SKIP_TURN) {
             String identifier = ((VirtualClient) event.getSource()).getIdentifier();
-            if(model.getGameState() == GameState.UNINITIALIZED){
-                {
-                    if(lobby.removePlayer(identifier)){
-                        lobby.removePlayer(identifier);
-                        lobby.removeMessageListener(vc);
-                    }
-                    else {
-                        lobby.removeAllMessageListener();
-                        model = null;
-                        listener.onEndPartyEvent(new EndPartyEvent(this));
+            System.out.println("CONTR: Skip turn from " + identifier);
+            switch (model.getGameState()) {
+                case UNINITIALIZED -> {
+                    if (lobby.containsPlayer(identifier)) {
+                        if (lobby.getMaster().equals(identifier)) {
+                            lobby.removeAllMessageListeners();
+                            notifyEndGame();
+                            model = null;
+                        }
+                        else {
+                            lobby.removePlayer(identifier);
+                            lobby.removeMessageListener(vc);
+                            notifyDisconnectListener(new DisconnectEvent(vc));
+                        }
                     }
                 }
-            }
-            else{
-                if(isInstantiated())
-                 if(identifier.equals(model.getCurrentPlayer())){
-                        model.skipCurrentPlayerTurn();
+                case ENDED -> notifyEndGame();
+                default -> {
+                    if (isInstantiated())
+                        if (identifier.equals(model.getCurrentPlayer())) {
+                            model.skipCurrentPlayerTurn();
+                        }
                 }
             }
         }
         else {
             switch (model.getGameState()) {
-                case UNINITIALIZED:
-                    handleGameSetup(vc, msg);
-                    break;
-                case STARTED:
-                    if (canPlay(vc.getIdentifier())) {
+                case UNINITIALIZED -> handleGameSetup(vc, msg);
+                case STARTED -> {
+                    if (!canPlay(vc.getIdentifier())) {
                         vc.sendMessage(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN));
-                    } else if(isInstantiated()){
+                    } else if (isInstantiated()) {
                         switch (model.getPhase()) {
                             case PLANNING -> handlePlanningPhase(vc, msg);
 
@@ -192,12 +193,10 @@ public class Controller implements MessageListener {
 
                             case CHOOSE_CLOUD -> handleChooseCloudPhase(vc, msg);
                         }
+                    } else {
+                        vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                     }
-                    else{ vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));}
-                    break;
-                case ENDED:
-                    vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
-                    break;
+                }
             }
         }
 
@@ -212,12 +211,12 @@ public class Controller implements MessageListener {
         switch (MessageType.retrieveByMessage(msg)) {
             case CHOSEN_TEAM -> {
                 ChosenTeam chosenTeam = (ChosenTeam)msg;
-                this.changeTeam(vc.getIdentifier(),chosenTeam.getTower());
+                changeTeam(vc.getIdentifier(),chosenTeam.getTower());
             }
             case START_GAME -> {
                 if(!lobby.getMaster().equals(vc.getIdentifier()))
                     vc.sendMessage(new CommMessage(CommMsgType. ERROR_NOT_MASTER));
-                else if (!this.startGame(vc.getIdentifier()))
+                else if (!startGame(vc.getIdentifier()))
                         vc.sendMessage(new CommMessage(CommMsgType.ERROR_CANT_START));
             }
 
@@ -229,9 +228,8 @@ public class Controller implements MessageListener {
                 }
                 else {
                     vc.sendMessage(new CommMessage(CommMsgType.OK));
-                    if(lobby.getTeamView() != null){
-                        vc.sendMessage(new CurrentTeams(lobby.getTeamView()));
-                    }
+                    lobby.notifyAvailableWizards();
+                    lobby.notifyTeams(vc.getIdentifier());
                 }
             }
             default -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
@@ -243,7 +241,7 @@ public class Controller implements MessageListener {
      * @param messageListener the client who is going to receive
      */
     public synchronized void sendInitialStats(MessageListener messageListener){
-        lobby.sendInitialStats(messageListener);
+        lobby.notifyAvailableWizards(messageListener.getIdentifier());
     }
 
     /**
@@ -366,12 +364,12 @@ public class Controller implements MessageListener {
     }
 
     /**
-     * Method used by onMessage for starting the game
+     * Method used by onMessage for starting the game.
      * @param nickname who try to call this method
      * @return true if the game is started. False if the game can't start or who request this method doesn't have
      * the rights
      */
-    private boolean startGame(String nickname) {
+    private synchronized boolean startGame(String nickname) {
         if (nickname.equals(lobby.getMaster()) && lobby.canStart()) {
            for(PlayerDetails p : lobby.getPlayers()){
                model.addPlayer(p);
@@ -397,7 +395,7 @@ public class Controller implements MessageListener {
      * @return true if the player is the current player
      */
     private boolean canPlay(String nickname) {
-        return !nickname.equals(model.getCurrentPlayer());
+        return nickname.equals(model.getCurrentPlayer());
     }
 
     /**
@@ -418,8 +416,49 @@ public class Controller implements MessageListener {
             while (!Thread.interrupted()) {
                 handleMessage(queue.take());
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    /**
+     * Sets the disconnection listener.
+     *
+     * @param listener the listener to set
+     */
+    @Override
+    public void setDisconnectListener(DisconnectListener listener) {
+        disconnectListener = listener;
+    }
+
+    /**
+     * Notifies the listener that a disconnection has occurred.
+     *
+     * @param event the event to notify
+     */
+    @Override
+    public void notifyDisconnectListener(DisconnectEvent event) {
+        if (disconnectListener != null) {
+            disconnectListener.onDisconnect(event);
+        }
+    }
+
+    /**
+     * Method to subscribe a EndGameListener
+     *
+     * @param listener the EndGameListener to subscribe
+     */
+    @Override
+    public void setEndGameListener(EndGameListener listener) {
+        endGameListener = listener;
+    }
+
+    /**
+     * Method to notify the EndGameListener
+     */
+    @Override
+    public void notifyEndGame() {
+        if (endGameListener != null) {
+            endGameListener.onEndGameEvent(new EndGameEvent(this));
         }
     }
 }

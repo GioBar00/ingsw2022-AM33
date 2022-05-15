@@ -1,7 +1,5 @@
 package it.polimi.ingsw.server.model.enums;
 
-import javax.naming.NoInitialContextException;
-
 /**
  * enumeration for assistant cards: contains data for number of card, its value and number of moves
  */

@@ -1,14 +1,14 @@
-package it.polimi.ingsw.server;
+package it.polimi.ingsw.server.lobby;
 
 import it.polimi.ingsw.network.listeners.MessageEvent;
-import it.polimi.ingsw.network.listeners.MessageListener;
-import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
 import it.polimi.ingsw.network.listeners.ConcreteMessageListenerSubscriber;
+import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.model.enums.Tower;
 import it.polimi.ingsw.server.model.enums.Wizard;
 
@@ -20,11 +20,9 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
 
     protected final int maxPlayers;
 
-    protected final MessageListener host;
-    public Lobby(int maxPlayers, MessageListener host) {
+    public Lobby(int maxPlayers) {
         players = new ArrayList<>();
         this.maxPlayers = maxPlayers;
-        this.host = host;
     }
 
     public boolean addPlayer(String nickname) {
@@ -118,13 +116,39 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
         return new WizardsView(EnumSet.copyOf(wizards));
     }
 
-    public void sendInitialStats(MessageListener messageListener){
-        notifyListener(messageListener.getIdentifier(),new MessageEvent(this, new AvailableWizards(getWizardsView())));
+    public void notifyAvailableWizards(String identifier) {
+        System.out.println("Sending initial stats to " + identifier);
+        notifyMessageListener(identifier, new MessageEvent(this, new AvailableWizards(getWizardsView())));
     }
 
-    private void sendStart(){
-        if(canStart()){
-            host.onMessage(new MessageEvent(this, new CommMessage(CommMsgType.CAN_START)));
+    public void notifyAvailableWizards() {
+        for (PlayerDetails pd : players) {
+            if (pd.getWizard() == null)
+                notifyAvailableWizards(pd.getNickname());
         }
+    }
+
+    public void notifyTeams(String identifier) {
+        if (getTeamView() != null)
+            notifyMessageListener(identifier, new MessageEvent(this, new CurrentTeams(getTeamView())));
+    }
+
+    public void notifyTeams() {
+        if (getTeamView() != null)
+            notifyMessageListeners(new MessageEvent(this, new CurrentTeams(getTeamView())));
+    }
+
+    void sendStart() {
+        if(canStart()){
+            notifyMessageListener(getMaster(), new MessageEvent(this, new CommMessage(CommMsgType.CAN_START)));
+        }
+    }
+
+    public boolean containsPlayer(String identifier) {
+        for (PlayerDetails pd : players) {
+            if (pd.getNickname().equals(identifier))
+                return true;
+        }
+        return false;
     }
 }

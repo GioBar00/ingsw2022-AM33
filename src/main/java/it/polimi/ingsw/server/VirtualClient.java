@@ -6,8 +6,6 @@ import it.polimi.ingsw.network.listeners.*;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.client.SkipTurn;
-import it.polimi.ingsw.network.messages.enums.CommMsgType;
-import it.polimi.ingsw.network.messages.server.CommMessage;
 
 import java.net.Socket;
 
@@ -34,6 +32,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     public VirtualClient(String identifier) {
         this.identifier = identifier;
         communicationHandler = new CommunicationHandler(this, true);
+        communicationHandler.setDisconnectListener(this);
     }
 
     /**
@@ -79,10 +78,12 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     /**
      * Send a Message to the client
      */
-   public void sendMessage(Message message){
-       System.out.println("VC : send to " + identifier);
-       System.out.println(MessageBuilder.toJson(message));
-       communicationHandler.sendMessage(message);
+   public void sendMessage(Message message) {
+       if (isConnected()) {
+           System.out.println("VC : send to " + identifier);
+           System.out.println(MessageBuilder.toJson(message));
+           communicationHandler.sendMessage(message);
+       }
    }
 
 
@@ -93,9 +94,9 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     @Override
     public synchronized void onMessage(MessageEvent event) {
         if (!isConnected())
-            notifyListeners(new MessageEvent(this, new SkipTurn()));
+            notifyMessageListeners(new MessageEvent(this, new SkipTurn()));
         else
-            communicationHandler.sendMessage(event.getMessage());
+            sendMessage(event.getMessage());
 
     }
 
@@ -108,7 +109,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     public void handleMessage(Message message) {
         System.out.println("VC " + identifier + ": received message ");
         System.out.println(MessageBuilder.toJson(message));
-        notifyListeners(new MessageEvent(this, message));
+        notifyMessageListeners(new MessageEvent(this, message));
     }
 
     /**
@@ -118,7 +119,8 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
      */
     @Override
     public void onDisconnect(DisconnectEvent event) {
-        notifyListeners(new MessageEvent(this, new SkipTurn()));
+        System.out.println("VC " + identifier + ": disconnected");
+        notifyMessageListeners(new MessageEvent(this, new SkipTurn()));
     }
 }
 

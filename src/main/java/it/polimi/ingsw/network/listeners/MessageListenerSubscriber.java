@@ -21,12 +21,12 @@ public interface MessageListenerSubscriber {
      * Notifies all listeners.
      * @param event of the message to notify
      */
-    void notifyListeners(MessageEvent event);
+    void notifyMessageListeners(MessageEvent event);
 
     /**
      * Notifies a specific listener.
      * @param identifier of the listener to notify
      * @param event of the message to notify
      */
-    void notifyListener(String identifier, MessageEvent event);
+    void notifyMessageListener(String identifier, MessageEvent event);
 }

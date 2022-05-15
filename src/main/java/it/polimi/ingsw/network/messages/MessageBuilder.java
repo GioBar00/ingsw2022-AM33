@@ -19,7 +19,6 @@ public final class MessageBuilder {
      */
     public static String toJson(Message m) {
         Gson g = new GsonBuilder()
-                //.setPrettyPrinting()
                 .registerTypeAdapter(Message.class, new MessageSerializer())
                 .create();
         return g.toJson(m, Message.class);

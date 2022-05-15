@@ -7,6 +7,6 @@ public class ServerThread implements Runnable{
     @Override
     public void run() {
         Server server = new Server();
-        server.handleRequest();
+        server.handleRequests();
     }
 }

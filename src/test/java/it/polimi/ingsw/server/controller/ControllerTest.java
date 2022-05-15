@@ -10,7 +10,7 @@ import it.polimi.ingsw.network.messages.client.SkipTurn;
 import it.polimi.ingsw.network.messages.client.StartGame;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
-import it.polimi.ingsw.server.LobbyConstructor;
+import it.polimi.ingsw.server.lobby.LobbyConstructor;
 import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.server.VirtualClient;
 import it.polimi.ingsw.server.model.enums.*;
@@ -30,6 +30,11 @@ class ControllerTest {
         ModelListener(String name, MessageListener controller ){
             super(name);
             super.addMessageListener(controller);
+        }
+
+        @Override
+        public synchronized boolean isConnected() {
+            return true;
         }
 
         boolean queueContains(MessageType type){
@@ -81,8 +86,9 @@ class ControllerTest {
 
 
         Server server = new Server();
-        server.stopServer();
-        controller = new Controller(server);
+        server.stopController();
+        controller = new Controller();
+        controller.setEndGameListener(server);
 
         modelListeners = new ModelListeners();
         ModelListener m1 = new ModelListener("p1", controller);
@@ -95,7 +101,7 @@ class ControllerTest {
         assertFalse(controller.addPlayer(m1.getIdentifier()));
 
 
-        controller.setModelAndLobby(GamePreset.TWO, GameMode.EXPERT, LobbyConstructor.getLobby(GamePreset.TWO, new VirtualClient("p1")));
+        controller.setModelAndLobby(GamePreset.TWO, GameMode.EXPERT, LobbyConstructor.getLobby(GamePreset.TWO));
         controller.addModelListener(m1);
         controller.sendInitialStats(m1);
         assertTrue(m1.queueContains(MessageType.AVAILABLE_WIZARDS));
@@ -290,9 +296,10 @@ class ControllerTest {
     void EarlyDisconnectionTest(){
 
         Server server = new Server();
-        server.stopServer();
-        Controller c = new Controller(server);
-        c.setModelAndLobby(GamePreset.FOUR,GameMode.EASY,LobbyConstructor.getLobby(GamePreset.TWO,new VirtualClient("p1")));
+        server.stopController();
+        Controller c = new Controller();
+        c.setEndGameListener(server);
+        c.setModelAndLobby(GamePreset.FOUR,GameMode.EASY,LobbyConstructor.getLobby(GamePreset.TWO));
 
         assertTrue(c.isInstantiated());
         ModelListener m1 = new ModelListener("p1", c);
@@ -332,7 +339,7 @@ class ControllerTest {
     void chooseTeamTest(){
         Server server = new Server();
         Controller c = server.getController();
-        c.setModelAndLobby(GamePreset.FOUR,GameMode.EASY,LobbyConstructor.getLobby(GamePreset.FOUR,new VirtualClient("p1")));
+        c.setModelAndLobby(GamePreset.FOUR,GameMode.EASY,LobbyConstructor.getLobby(GamePreset.FOUR));
 
         ModelListener m1 = new ModelListener("p1", c);
         c.addPlayer(m1.getIdentifier());

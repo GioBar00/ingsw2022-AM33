@@ -1,28 +1,30 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.network.MessageExchange;
-import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.MessageBuilder;
+import it.polimi.ingsw.network.CommunicationHandler;
+import it.polimi.ingsw.network.listeners.DisconnectEvent;
+import it.polimi.ingsw.network.listeners.DisconnectListener;
 import it.polimi.ingsw.network.messages.client.ChosenGame;
 import it.polimi.ingsw.network.messages.client.Login;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.server.controller.Controller;
-import it.polimi.ingsw.server.listeners.EndPartyEvent;
-import it.polimi.ingsw.server.listeners.EndPartyListener;
-import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.server.enums.ServerState;
+import it.polimi.ingsw.server.listeners.EndGameEvent;
+import it.polimi.ingsw.server.listeners.EndGameListener;
+import it.polimi.ingsw.server.lobby.LobbyConstructor;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Class for instantiate a new Game and handle new network requests
  */
-public class Server implements EndPartyListener {
+public class Server implements EndGameListener, DisconnectListener {
 
     /**
      * a collection of player nickname and their request handler
@@ -45,9 +47,10 @@ public class Server implements EndPartyListener {
     private ExecutorService executor;
 
     /**
-     * The preset of the party
+     * Current server state
      */
-    private ChosenGame choice;
+    private ServerState state;
+
     /**
      * Server's constructor method
      */
@@ -61,54 +64,47 @@ public class Server implements EndPartyListener {
      */
     public Server(int port) {
         virtualClients = new HashMap<>();
-        choice = null;
         this.port = port;
-        controller = new Controller(this);
+        resetGame();
+    }
+
+    private void resetGame() {
+        controller = new Controller();
+        controller.setEndGameListener(this);
+        controller.setDisconnectListener(this);
         startController();
+        state = ServerState.EMPTY;
     }
 
     /**
      * Main Method used for instantiate Virtual Client if is permitted.
      * Each of this Virtual Client are run on different threads
      */
-     public void handleRequest() {
-
+     public void handleRequests() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("S: server ready");
             while (!Thread.interrupted()) {
                 try {
-                    String nickname = null;
                     System.out.println("S: waiting for client");
                     Socket socket = serverSocket.accept();
-                    Future <String> nick =  executor.submit(() -> this.handleFirstConnection(socket));
-                    try {
-                        nickname = nick.get(35, TimeUnit.SECONDS);
-                    }
-                    catch (InterruptedException | ExecutionException ignored){ }
-                    catch (TimeoutException e){
-                        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                        MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_SERVER_UNAVAILABLE), out);
-                        out.close();
-                        socket.close();
-                    }
-                    finally {
-                        if(nickname != null) {
-                            synchronized (this) {
-                                VirtualClient vc = new VirtualClient(nickname);
-                                if(virtualClients.size() == 0 && choice != null){
-                                    controller.setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset(),vc));
-                                    controller.addPlayer(nickname);
-                                }
-                                startVirtualClient(vc, socket);
-                                virtualClients.put(nickname, vc);
-                                controller.sendInitialStats(vc);
-
+                    CommunicationHandler communicationHandler = new CommunicationHandler(true);
+                    communicationHandler.setSocket(socket);
+                    synchronized (this) {
+                        switch (state) {
+                            case EMPTY -> {
+                                state = ServerState.HANDLING_FIRST;
+                                Executors.newSingleThreadExecutor().execute(() -> handleFirstPlayer(communicationHandler));
                             }
+                            case HANDLING_FIRST -> Executors.newSingleThreadExecutor().submit(() -> {
+                                communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_SERVER_UNAVAILABLE));
+                                communicationHandler.stop();
+                            });
+                            case NORMAL -> Executors.newSingleThreadExecutor().execute(() -> handleNewPlayer(communicationHandler));
                         }
                     }
-
-                } catch(IOException e) {
-                    System.out.println("S: no connection available");
+                } catch (Throwable e) {
+                    System.out.println("S: NOT HANDLED ERROR!!!!");
+                    e.printStackTrace();
                     break;
                 }
 
@@ -118,141 +114,116 @@ public class Server implements EndPartyListener {
         }
     }
 
-    /**
-     * Verifies if the new request is a valid one. Call the controller and try to add a player. If the controller doesn't exist
-     * request the game mode to the client who is the first player and instantiate a new party.
-     * In case of disconnection verify that the request came from a player who was already in the party.
-     * @param socket used for send reply messages.
-     * @return a String sets as null if the request is invalid or a String with the player nickname if the request is valid.
-     */
-    public String handleFirstConnection(Socket socket) {
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-
-            Message message = MessageExchange.receiveMessage(in);
-            if (MessageType.retrieveByMessage(message).equals(MessageType.LOGIN)) {
-                Login mex = (Login) message;
-
-                String nickname = mex.getNickname();
-                //nickname not null
-                if (!mex.isValid()) {
-                    MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NULL_NICKNAME), out);
-                    closeCommunication(socket,in,out);
-                    return null;
-                }
-
-                if(controller.isGameStarted()){
-                    if(virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()){
-                        VirtualClient vc = virtualClients.get(nickname);
-                        closeInOut(in, out);
-                        startVirtualClient(vc,socket);
-                        controller.addModelListener(vc);
-                    }
-                    else {
-                        MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE), out);
-                        closeInOut(in, out);
-                    }
-                }
-                else {
-                    if(virtualClients.containsKey(nickname)){
-                        if(virtualClients.get(nickname).isConnected()) {
-                            MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE), out);
-                            return null;
-                        }
-                        else{
-                            virtualClients.remove(nickname);
-                            return nickname;
-                        }
-                    }
-                    if (!controller.isInstantiated()) {
-                        //model didn't exist
-                        return firstPlayer(nickname,socket,in,out);
-                    }
-                    else {
-                        //model exists
-                        if (controller.addPlayer(nickname)) {
-                            return nickname;
-                        }
-                        else {
-                            MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE), out);
-                            return null;
+    private void handleFirstPlayer(CommunicationHandler communicationHandler) {
+         try {
+             String nickname = getPlayerNickname(communicationHandler);
+             if (nickname != null) {
+                 CountDownLatch countDownLatch = new CountDownLatch(1);
+                 communicationHandler.setMessageHandler((message) -> {
+                     if (message.isValid() && MessageType.retrieveByMessage(message) == MessageType.CHOSEN_GAME) {
+                         ChosenGame choice = (ChosenGame) message;
+                         controller.setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
+                         synchronized (this) {
+                             state = ServerState.NORMAL;
+                             countDownLatch.countDown();
+                             addPlayer(communicationHandler, nickname);
                          }
-                    }
+                     } else
+                         communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
+                 });
 
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                 communicationHandler.sendMessage(new CommMessage(CommMsgType.CHOOSE_GAME));
+
+                 try {
+                     if (!countDownLatch.await(30, TimeUnit.SECONDS)) {
+                         throw new TimeoutException();
+                     }
+                 } catch (InterruptedException ignored) {}
+
+             } else {
+                 synchronized (this) {
+                     state = ServerState.EMPTY;
+                 }
+             }
+         } catch (TimeoutException e) {
+             communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
+             communicationHandler.stop();
+             synchronized (this) {
+                 state = ServerState.EMPTY;
+             }
+         }
+    }
+
+    private String getPlayerNickname(CommunicationHandler communicationHandler) throws TimeoutException {
+         CountDownLatch latch = new CountDownLatch(1);
+         AtomicReference<String> nickname = new AtomicReference<>();
+         communicationHandler.setMessageHandler((message) -> {
+             if (message.isValid() && MessageType.retrieveByMessage(message) == MessageType.LOGIN) {
+                 Login login = (Login) message;
+                 nickname.set(login.getNickname());
+             } else {
+                 communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
+                 nickname.set(null);
+             }
+             latch.countDown();
+         });
+
+         communicationHandler.start();
+
         try {
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * Sends a message to the client if he is the host and wait for the chosen Game.
-     * If the message doesn't arrive in the consecutive 30 seconds the server closes the connection
-     * @param nickname the nickname of the game host
-     * @param socket Socket for the connection
-     * @param in BufferedReader for reading input
-     * @param out BufferedWriter for writing output
-     * @throws IOException if there's some failure in closing connection
-     */
-    private String firstPlayer(String nickname, Socket socket, BufferedReader in, BufferedWriter out) throws IOException {
-        ExecutorService executor = Executors.newFixedThreadPool(1);
-
-        MessageExchange.sendMessage(new CommMessage(CommMsgType.CHOOSE_GAME), out);
-
-        Future <String> result = executor.submit(() -> {
-            String mes = in.readLine();
-            Message m = MessageBuilder.fromJson(mes);
-            if (MessageType.retrieveByMessage(m).equals(MessageType.CHOSEN_GAME)) {
-                ChosenGame choice = (ChosenGame) m;
-                if (choice.isValid()) {
-                    this.choice = choice;
-                    return nickname;
-                }
+            if (latch.await(10, TimeUnit.SECONDS) && nickname.get() != null) {
+                communicationHandler.setMessageHandler(null);
+                return nickname.get();
+            } else if (nickname.get() == null) {
+                communicationHandler.setMessageHandler(null);
+                return null;
             }
-            return null;
-        });
-        try {
-            return result.get(30, TimeUnit.SECONDS);
-        }
-        catch (InterruptedException | ExecutionException ignored){
-            return null;
-        }
-        catch (TimeoutException e){
-            MessageExchange.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE), out);
-            socket.close();
-            return null;
-        }
+        } catch (InterruptedException ignored) {}
+        communicationHandler.setMessageHandler(null);
+        throw new TimeoutException();
     }
 
-    /**
-     * closes the input reader and the output writer
-     * @param in BufferedReader for reading input
-     * @param out BufferedWriter for writing output
-     * @throws IOException if there's some failure in closing connection
-     */
-    private void closeInOut(BufferedReader in, BufferedWriter out) throws IOException {
-        in.close();
-        out.close();
+    private void handleNewPlayer(CommunicationHandler communicationHandler) {
+         try {
+             String nickname = getPlayerNickname(communicationHandler);
+
+             if (nickname != null) {
+                 communicationHandler.setMessageHandler(null);
+                 if (controller.isGameStarted()) {
+                     if (virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()) {
+                         communicationHandler.stop(false);
+                         virtualClients.get(nickname).setSocket(communicationHandler.getSocket());
+                     } else {
+                         communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
+                         communicationHandler.stop();
+                     }
+                 } else if (virtualClients.containsKey(nickname)) {
+                     communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE));
+                     communicationHandler.stop();
+                 } else {
+                     if (!addPlayer(communicationHandler, nickname)){
+                         communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
+                         communicationHandler.stop();
+                     }
+                 }
+             }
+         } catch (TimeoutException e) {
+             communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
+             communicationHandler.stop();
+         }
     }
 
-    /**
-     * closes the socket the input reader and the output writer
-     * @param socket Socket for the connection
-     * @param in BufferedReader for reading input
-     * @param out BufferedWriter for writing output
-     * @throws IOException if there's some failure in closing connection
-     */
-    private void closeCommunication(Socket socket, BufferedReader in, BufferedWriter out) throws IOException {
-        closeInOut(in, out);
-        socket.close();
+    private boolean addPlayer(CommunicationHandler communicationHandler, String nickname) {
+         if (controller.addPlayer(nickname)) {
+             System.out.println("S: added player " + nickname);
+             communicationHandler.stop(false);
+             VirtualClient vc = new VirtualClient(nickname);
+             startVirtualClient(vc, communicationHandler.getSocket());
+             virtualClients.put(nickname, vc);
+             controller.sendInitialStats(vc);
+             return true;
+         }
+         return false;
     }
 
     /**
@@ -260,7 +231,7 @@ public class Server implements EndPartyListener {
      * @param vc the VirtualClient
      * @param socket Socket for connection
      */
-    private void startVirtualClient(VirtualClient vc,Socket socket) {
+    private void startVirtualClient(VirtualClient vc, Socket socket) {
         vc.setSocket(socket);
         controller.addModelListener(vc);
         vc.addMessageListener(controller);
@@ -274,28 +245,18 @@ public class Server implements EndPartyListener {
      * @param event of the connection
      */
     @Override
-    synchronized public void onEndPartyEvent(EndPartyEvent event) {
-        for(VirtualClient vc : virtualClients.values()){
-            if(vc.isConnected()){
-                vc.removeMessageListener(controller);
-                vc.onMessage(new MessageEvent(this, new CommMessage(CommMsgType.ERROR_HOST_DISCONNECTED)));
-            }
-        }
-        try {
-            wait(10*100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        for(VirtualClient vc : virtualClients.values()){
-            if(vc.isConnected()){
-                vc.stop();
-            }
+    public synchronized void onEndGameEvent(EndGameEvent event) {
+        for(VirtualClient vc : virtualClients.values()) {
+            controller.removeModelListener(vc);
+            vc.stop();
         }
         virtualClients.clear();
-        stopServer();
-        controller.removeListener();
-        controller = new Controller(this);
-        startController();
+        ExecutorService oldController = executor;
+        controller.removeEndGameListener();
+        controller.setDisconnectListener(null);
+        resetGame();
+        System.out.println("S: disconnected all players");
+        oldController.shutdownNow();
     }
 
     /**
@@ -309,15 +270,29 @@ public class Server implements EndPartyListener {
     /**
      * Closes the controller thread
      */
-    public void stopServer(){
+    public void stopController(){
         executor.shutdownNow();
     }
 
     /**
      * Starts the controller
      */
-    private void startController(){
-        executor = Executors.newFixedThreadPool(2);
+    private void startController() {
+        executor = Executors.newSingleThreadExecutor();
         executor.submit(controller::startController);
+    }
+
+    /**
+     * Invoked when a client disconnects from the server and vice versa.
+     *
+     * @param event the event object
+     */
+    @Override
+    public synchronized void onDisconnect(DisconnectEvent event) {
+        VirtualClient vc = (VirtualClient) event.getSource();
+        controller.removeModelListener(vc);
+        vc.stop();
+        virtualClients.remove(vc.getIdentifier());
+        System.out.println("S: disconnected player " + vc.getIdentifier());
     }
 }
