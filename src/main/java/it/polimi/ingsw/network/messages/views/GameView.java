@@ -58,10 +58,12 @@ public class GameView extends InvalidMessage {
      */
     private final Map<String, Integer> playerCoins;
 
+    private final List<CloudView> cloudViews;
+
     /**
      * constructor of the GameView for an easy game
      */
-    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex) {
+    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, ArrayList<CloudView> cloudViews) {
         this.mode = mode;
         this.preset = preset;
         this.state = state;
@@ -73,12 +75,13 @@ public class GameView extends InvalidMessage {
         this.reserve = null;
         this.characterCardView = null;
         this.playerCoins = null;
+        this.cloudViews = cloudViews;
     }
 
     /**
      * constructor of the GameView for an expert game (sets also the attributes for the CharacterCard)
      */
-    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, Integer reserve, List<CharacterCardView> characterCardView, Map<String, Integer> playerCoins) {
+    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, Integer reserve, List<CharacterCardView> characterCardView, Map<String, Integer> playerCoins, ArrayList<CloudView> cloudViews) {
         this.mode = mode;
         this.preset = preset;
         this.state = state;
@@ -90,6 +93,7 @@ public class GameView extends InvalidMessage {
         this.reserve = reserve;
         this.characterCardView = characterCardView;
         this.playerCoins = playerCoins;
+        this.cloudViews = cloudViews;
     }
 
     /**
@@ -167,5 +171,12 @@ public class GameView extends InvalidMessage {
      */
     public Map<String, Integer> getPlayerCoins() {
         return playerCoins;
+    }
+
+    /**
+     * @return the cloudsView
+     */
+    public List<CloudView> getCloudViews() {
+        return cloudViews;
     }
 }
