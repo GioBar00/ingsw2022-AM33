@@ -1,6 +1,7 @@
 package it.polimi.ingsw;
 
 import it.polimi.ingsw.client.CLI.CLI;
+import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.GUI.GUI;
 import it.polimi.ingsw.client.UI;
 import it.polimi.ingsw.server.Server;
@@ -43,8 +44,8 @@ public class Eriantys {
                 server.handleRequests();
             } else if (cmd.hasOption("c")) {
                 System.out.println("Starting game in CLI mode");
-                UI userInterface = new CLI();
-                userInterface.showStartScreen();
+                Client client = new Client(new CLI());
+                client.startClient();
             } else {
                 System.out.println("Starting game in GUI mode");
                 Application.launch(GUI.class);

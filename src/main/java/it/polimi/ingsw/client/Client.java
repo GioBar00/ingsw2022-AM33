@@ -7,6 +7,7 @@ import it.polimi.ingsw.network.listeners.DisconnectListener;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
+import it.polimi.ingsw.network.messages.client.Login;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CommMessage;
@@ -14,6 +15,7 @@ import it.polimi.ingsw.network.messages.server.CurrentGameState;
 import it.polimi.ingsw.network.messages.server.CurrentTeams;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,12 +29,14 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
     /**
      * the hostname for the connection
      */
-    private final String hostname;
+    private String hostname;
 
     /**
      * the port for the connection
      */
-    private final int port;
+    private int port;
+
+    private String nickname;
 
     /**
      * The message exchange handler used to send and receive messages to and from the client
@@ -57,15 +61,65 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
     /**
      * Constructor of Virtual Server
      */
-    public Client(String hostname, int port, UI userInterface) {
-        this.hostname = hostname;
-        this.port = port;
+    public Client(UI userInterface){
         executor = Executors.newSingleThreadExecutor();
         executor.shutdownNow();
         queue = new LinkedBlockingQueue<>();
         this.communicationHandler = new CommunicationHandler(this);
         this.userInterface = userInterface;
-        userInterface.setViewListener(this);
+        this.userInterface.setClient(this);
+        this.userInterface.setViewListener(this);
+    }
+
+    public void startClient(){
+        userInterface.showStartScreen();
+    }
+
+    public boolean setServerAddress(String hostname){
+        this.hostname = hostname;
+        return true;
+        /*
+        if(hostname.toLowerCase().equals("localhost")){
+            this.hostname = hostname;
+            return true;
+        }
+
+        String [] add = hostname.split(".");
+
+        for(String i: add){
+            System.out.println(i);
+        }
+
+        if(add.length != 4)
+            return false;
+        int val;
+        for(String i : add){
+            if(i.matches("-?\\d+")){
+                val = Integer.parseInt(i);
+                if(val < 0 || val > 255)
+                    return false;
+            }
+            else{ return false;}
+        }
+        this.hostname = hostname;
+        return true;
+
+         */
+    }
+
+    public boolean setServerPort(String port){
+        if(port.matches("-?\\d+")){
+            int portValue = Integer.parseInt(port);
+            if(portValue < 1024 || portValue > 65535)
+                return false;
+            this.port = portValue;
+            return true;
+        }
+        return false;
+    }
+
+    public void setNickname(String nickname){
+        this.nickname = nickname;
     }
 
     /**
@@ -81,7 +135,8 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
                 executor.submit(this);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            userInterface.serverUnavailable();
+            closeConnection();
         }
     }
 
@@ -101,13 +156,18 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
      */
     @Override
     public void onMessage(Message message) {
-        if(MessageType.retrieveByMessage(message) == MessageType.LOGIN) {
-                startConnection();
-        }
         System.out.println("C: sending message - " + MessageBuilder.toJson(message));
         communicationHandler.sendMessage(message);
     }
 
+    public boolean sendLogin(){
+        if(nickname != null && hostname != null && port != 0) {
+            startConnection();
+            onMessage(new Login(nickname));
+            return true;
+        }
+        return false;
+    }
     /**
      * Task for the Client.
      * Takes the messages from the model and apply the changes to the view.
@@ -139,6 +199,9 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
                     case CHOOSE_GAME -> userInterface.chooseGame();
                     case CAN_START -> userInterface.hostCanStart();
                     case ERROR_CANT_START -> userInterface.hostCantStart();
+                    case ERROR_TIMEOUT, ERROR_SERVER_UNAVAILABLE -> {
+                        userInterface.serverUnavailable();
+                    }
                     default -> userInterface.showCommMessage((CommMessage)message);
                 }
             }
@@ -172,7 +235,7 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
     @Override
     public void onDisconnect(DisconnectEvent event) {
         closeConnection();
-        userInterface.close();
+        userInterface.serverUnavailable();
         executor.shutdownNow();
     }
 }

@@ -12,6 +12,7 @@ import it.polimi.ingsw.network.messages.views.WizardsView;
  */
 public interface UI extends ViewListenerSubscriber {
 
+    void setClient (Client client);
     void setWizardView(WizardsView wizardsView);
 
     void setTeamsView(TeamsView teamsView);
@@ -33,6 +34,8 @@ public interface UI extends ViewListenerSubscriber {
     void showGameScreen();
 
     void setPossibleMoves(Message message);
+
+    void serverUnavailable();
 
     void close();
     void updateGameView();

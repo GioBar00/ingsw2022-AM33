@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.GUI;
 
+import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.UI;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
@@ -26,6 +27,11 @@ public class GUI extends Application implements UI{
     @Override
     public void stop() {
        System.exit(0);
+    }
+
+    @Override
+    public void setClient(Client client) {
+
     }
 
     /**
@@ -113,6 +119,11 @@ public class GUI extends Application implements UI{
      */
     @Override
     public void setPossibleMoves(Message message) {
+
+    }
+
+    @Override
+    public void serverUnavailable() {
 
     }
 

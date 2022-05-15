@@ -8,7 +8,6 @@ import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.requests.*;
-import it.polimi.ingsw.network.messages.client.Login;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
@@ -30,8 +29,6 @@ public class CLI implements UI {
     private String nickname;
     private final String os;
     private final Scanner input;
-    private String server;
-    private int port;
     private boolean firstConnection;
     private ViewListener listener;
     private TeamsView teamsView;
@@ -43,7 +40,7 @@ public class CLI implements UI {
     final HashMap<String , String> colors;
     private final InputParser inputParser;
     private ExecutorService executorService;
-    public CLI(){
+    public CLI() {
         os = System.getProperty("os.name");
         lastState = ViewState.SETUP;
         firstConnection = true;
@@ -61,6 +58,9 @@ public class CLI implements UI {
         input = new Scanner(System.in);
     }
 
+    public void setClient (Client client){
+        this.client = client;
+    }
     @Override
     public void setWizardView(WizardsView wizardsView) {
         this.wizardsView = wizardsView;
@@ -86,10 +86,34 @@ public class CLI implements UI {
     }
 
     @Override
+    public void serverUnavailable() {
+        System.out.println("We are sorry, the server is unavailable");
+        System.out.println("Press C for closing the game or R for reconnecting");
+        if(executorService == null){
+            String in = input.nextLine();
+            if(in.length() > 0){
+                if(in.substring(0,1).equalsIgnoreCase("c")) {
+                    input.close();
+                }
+                else showStartScreen();
+            }
+            else serverUnavailable();
+        }
+        else{
+            inputParser.setServerStatus(false);
+        }
+    }
+
+    void sendLogin(){
+        inputParser.setServerStatus(true);
+        if(!client.sendLogin()){
+            showStartScreen();
+        }
+    }
+
+    @Override
     public void close() {
         inputParser.cantWrite();
-        System.out.println("We are sorry, the server is unavailable");
-        System.out.println("Press c for closing the game");
         executorService.shutdownNow();
     }
 
@@ -109,32 +133,43 @@ public class CLI implements UI {
         System.out.println("Choices are 2 | 3 | 4 players normal(n) | expert(e)");
 
         setUpFirstConnection();
-
     }
 
     @Override
     public void showStartScreen() {
-        clearTerminal();
-        System.out.println("\033[33m" +"███████╗██████╗ ██╗ █████╗ ███╗   ██╗████████╗██╗   ██╗███████╗");
-        System.out.println("\033[33m" + "██╔════╝██╔══██╗██║██╔══██╗████╗  ██║╚══██╔══╝╚██╗ ██╔╝██╔════╝");
-        System.out.println("\033[33m" + "█████╗  ██████╔╝██║███████║██╔██╗ ██║   ██║    ╚████╔╝ ███████╗");
-        System.out.println("\033[33m" +"██╔══╝  ██╔══██╗██║██╔══██║██║╚██╗██║   ██║     ╚██╔╝  ╚════██║");
-        System.out.println("\033[33m"+"███████╗██║  ██║██║██║  ██║██║ ╚████║   ██║      ██║   ███████║ ");
-        System.out.println("\033[33m"+"╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝      ╚═╝   ╚══════╝ ");
-
-        System.out.print("\n" + "\033[0m" +"Insert Server name -> ");
-
-        server = input.nextLine();
-        System.out.print("Insert port -> ");
-        port = Integer.parseInt(input.nextLine());
+        printGameName();
+        requestServerAddress();
         chooseNickname();
+    }
+
+    private void printGameName(){clearTerminal();
+        System.out.println(colors.get("yellow") +"███████╗██████╗ ██╗ █████╗ ███╗   ██╗████████╗██╗   ██╗███████╗");
+        System.out.println("██╔════╝██╔══██╗██║██╔══██╗████╗  ██║╚══██╔══╝╚██╗ ██╔╝██╔════╝");
+        System.out.println("█████╗  ██████╔╝██║███████║██╔██╗ ██║   ██║    ╚████╔╝ ███████╗");
+        System.out.println("██╔══╝  ██╔══██╗██║██╔══██║██║╚██╗██║   ██║     ╚██╔╝  ╚════██║");
+        System.out.println("███████╗██║  ██║██║██║  ██║██║ ╚████║   ██║      ██║   ███████║ ");
+        System.out.println("╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝      ╚═╝   ╚══════╝ " + colors.get("reset"));
+    }
+
+    private void requestServerAddress(){
+        String server;
+        String port;
+        do {
+            System.out.print("\n" + colors.get("reset") + "Insert Server name -> ");
+            server = input.nextLine();
+        }while(!client.setServerAddress(server));
+
+        do {
+            System.out.print("Insert port -> ");
+            port = input.nextLine();
+        }while(!client.setServerPort(port));
     }
 
     private void chooseNickname(){
         System.out.print("Choose Nickname -> ");
         nickname = input.nextLine();
-        client = new Client(server, port, this);
-        notifyListener(new Login(nickname));
+        client.setNickname(nickname);
+        sendLogin();
     }
 
     private void setUpFirstConnection(){
@@ -162,6 +197,7 @@ public class CLI implements UI {
             return gameView.getState().equals(GameState.ENDED);
         }
     }
+
     public void showWizardMenu(){
         if(lastState.equals(ViewState.SETUP)) {
 
@@ -307,7 +343,7 @@ public class CLI implements UI {
                     System.out.println(colors.get("green") + "Or select one of the following moves"+ colors.get("reset"));
                 }
                 printSwap((SwapStudents)lastRequest);
-                System.out.println(colors.get("green") +"Type SWAP <FROM> <INDEX/COLOR> <TO> <INDEX/COLOR>"+ colors.get("reset"));
+                System.out.println(colors.get("green") +"Type SWAP <INDEX/COLOR> <INDEX/COLOR>"+ colors.get("reset"));
             }
             case PLAY_ASSISTANT_CARD -> {
                 System.out.println(colors.get("green") + "Choose an AssistantCard");
@@ -320,7 +356,6 @@ public class CLI implements UI {
             default -> {}
         }
     }
-
 
     @Override
     public void updateGameView() {
@@ -336,8 +371,7 @@ public class CLI implements UI {
     public void showCommMessage(CommMessage message) {
         if(lastState.equals((ViewState.SETUP)) && message.getType().equals(CommMsgType.ERROR_NICKNAME_UNAVAILABLE)){
             System.out.println("\n"+ message.getType().getMessage());
-            client.closeConnection();
-            chooseNickname();
+            System.out.println("Try to reconnect with a different nickname");
             return;
         }
         if(lastState.equals(ViewState.SETUP) && message.getType().equals(CommMsgType.ERROR_NO_SPACE)){
@@ -347,6 +381,7 @@ public class CLI implements UI {
             return;
         }
         if((lastState.equals(ViewState.SETUP)  || lastState.equals(ViewState.CHOOSE_WIZARD))&& message.getType().equals(CommMsgType.OK)){
+            System.out.println("Waiting for other players...");
             lastState = ViewState.CHOOSE_WIZARD;
             return;
         }
