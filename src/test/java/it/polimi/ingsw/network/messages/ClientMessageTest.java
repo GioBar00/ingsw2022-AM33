@@ -4,6 +4,7 @@ import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.*;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
+import it.polimi.ingsw.network.messages.server.SkipTurn;
 import it.polimi.ingsw.server.model.enums.*;
 import org.junit.jupiter.api.Test;
 

@@ -10,7 +10,9 @@ import it.polimi.ingsw.server.model.player.SchoolBoard;
 import java.util.EnumMap;
 import java.util.List;
 
-
+/**
+ * Game model for the game with teams
+ */
 public class GameModelTeams extends GameModel {
     public GameModelTeams() {
         super(GamePreset.FOUR);
@@ -18,6 +20,7 @@ public class GameModelTeams extends GameModel {
 
     /**
      * Adds a new player to the game only if the game is uninitialized, there is at lest an empty player slot and there isn't any other player with that nickname.
+     *
      * @param playerDetails unique class with details for a player
      * @return if the player was added successfully.
      */
@@ -33,8 +36,9 @@ public class GameModelTeams extends GameModel {
      * the method is called after calculating the influence, whenever there is a change in the team that
      * holds the most influence on the IslandGroup; the method search for the right Team Leader that will
      * have to swap their team's towers with the one already on the island
+     *
      * @param islandGroupIndex index of the IslandGroup considered
-     * @param newTower to be put on the IslandGroup
+     * @param newTower         to be put on the IslandGroup
      */
     @Override
     void swapTowers(int islandGroupIndex, Tower newTower) {
@@ -42,11 +46,11 @@ public class GameModelTeams extends GameModel {
         String leaderNick;
         int teamLeaderIndex = 0;
 
-        if (newTower != oldTower){
+        if (newTower != oldTower) {
             leaderNick = playersManager.getTeams().get(newTower).get(0).getNickname();
-            for(int i = 0; i < playersManager.getPreset().getPlayersNumber(); i++){
-                if (leaderNick.equals(playersManager.getPlayers().get(i).getNickname())){
-                    if (playersManager.getSchoolBoard(playersManager.getPlayers().get(i)).getNumTowers() != 0){
+            for (int i = 0; i < playersManager.getPreset().getPlayersNumber(); i++) {
+                if (leaderNick.equals(playersManager.getPlayers().get(i).getNickname())) {
+                    if (playersManager.getSchoolBoard(playersManager.getPlayers().get(i)).getNumTowers() != 0) {
                         teamLeaderIndex = i;
                         break;
                     }
@@ -70,16 +74,17 @@ public class GameModelTeams extends GameModel {
 
     /**
      * Starts the Game and randomly selects the first Player if the game is initialized.
+     *
      * @return if the game started successfully.
      */
     @Override
-    public boolean startGame(){
+    public boolean startGame() {
         EnumMap<Tower, List<Player>> teams = playersManager.getTeams();
-        for(Tower t: teams.keySet()){
-            if(teams.get(t).size() != 2)
+        for (Tower t : teams.keySet()) {
+            if (teams.get(t).size() != 2)
                 return false;
         }
-        if(teams.keySet().size()!= 2)
+        if (teams.keySet().size() != 2)
             return false;
 
         return super.startGame();

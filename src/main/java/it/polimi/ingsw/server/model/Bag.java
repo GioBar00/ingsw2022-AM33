@@ -6,7 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-class Bag{
+/**
+ * The Bag class is used to store the students that are remaining in the game.
+ */
+class Bag {
     /**
      * students currently in the bag
      */
@@ -18,21 +21,23 @@ class Bag{
 
     /**
      * adds a group of students to the bag
+     *
      * @param newStudents group of students
      */
-    void addStudents(List<StudentColor> newStudents){
+    void addStudents(List<StudentColor> newStudents) {
         students.addAll(newStudents);
     }
 
     /**
      * extracts a random student from the bag
+     *
      * @return student extracted, null if empty
      */
     StudentColor popRandomStudent() {
         int extracted;
         StudentColor temp;
 
-        if(students.size() != 0) {
+        if (students.size() != 0) {
             extracted = ThreadLocalRandom.current().nextInt(0, students.size());
         } else return null;
 
@@ -44,16 +49,17 @@ class Bag{
 
     /**
      * calculates whether the Bag is empty or not
+     *
      * @return true if the Bag is empty, false otherwise
      */
-    boolean isEmpty(){
+    boolean isEmpty() {
         return students.isEmpty();
     }
 
     /**
      * removes all the students from the bag.
      */
-    void empty(){
+    void empty() {
         students.clear();
     }
 }

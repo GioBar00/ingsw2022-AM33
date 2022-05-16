@@ -7,14 +7,40 @@ import it.polimi.ingsw.server.model.enums.Tower;
 
 import java.util.EnumSet;
 
+/**
+ * This class manages the game rounds and the game phases.
+ */
 public class RoundManager {
+    /**
+     * The current game phase.
+     */
     private GamePhase gamePhase;
+    /**
+     * The current round.
+     */
     private int roundNum;
+    /**
+     * If the game is in the last round.
+     */
     private boolean lastRound = false;
+    /**
+     * The maximum number of moves allowed in a turn.
+     */
     private final int maxNumMoves;
+    /**
+     * The number of moves already done in the current turn.
+     */
     private int numMoves = 0;
+    /**
+     * The winning teams.
+     */
     private EnumSet<Tower> winners;
 
+    /**
+     * Constructor.
+     *
+     * @param preset the game preset
+     */
     RoundManager(GamePreset preset) {
         gamePhase = GamePhase.PLANNING;
         roundNum = 0;
@@ -25,6 +51,7 @@ public class RoundManager {
 
     /**
      * Gets the current game phase.
+     *
      * @return the current game phase.
      */
     public GamePhase getGamePhase() {
@@ -33,6 +60,7 @@ public class RoundManager {
 
     /**
      * Gets the current round number.
+     *
      * @return the current round number.
      */
     int getRoundNum() {
@@ -41,6 +69,7 @@ public class RoundManager {
 
     /**
      * Returns if it is the last round.
+     *
      * @return if it is the last round.
      */
     boolean isLastRound() {
@@ -50,12 +79,13 @@ public class RoundManager {
     /**
      * Declares that it is the last round.
      */
-    void setLastRound(){
+    void setLastRound() {
         lastRound = true;
     }
 
     /**
      * Sets the winner.
+     *
      * @param t tower of the winner
      */
     void setWinner(Tower t) {
@@ -64,6 +94,7 @@ public class RoundManager {
 
     /**
      * Sets the winners.
+     *
      * @param ts towers of the winners.
      */
     void setWinners(EnumSet<Tower> ts) {
@@ -72,6 +103,7 @@ public class RoundManager {
 
     /**
      * Gets the winners.
+     *
      * @return the winners.
      */
     EnumSet<Tower> getWinners() {
@@ -82,7 +114,7 @@ public class RoundManager {
      * If not the last round, starts the next round.
      */
     void nextRound() {
-        if(!lastRound) {
+        if (!lastRound) {
             gamePhase = GamePhase.PLANNING;
             roundNum++;
         }
@@ -91,7 +123,7 @@ public class RoundManager {
     /**
      * Starts the action phase
      */
-    public void startActionPhase(){
+    public void startActionPhase() {
         gamePhase = GamePhase.MOVE_STUDENTS;
         numMoves = 0;
     }
@@ -102,8 +134,7 @@ public class RoundManager {
      */
     void addMoves() {
         numMoves++;
-        if(numMoves == maxNumMoves)
-            gamePhase = GamePhase.MOVE_MOTHER_NATURE;
+        if (numMoves == maxNumMoves) gamePhase = GamePhase.MOVE_MOTHER_NATURE;
     }
 
     /**
@@ -115,11 +146,11 @@ public class RoundManager {
 
     /**
      * Returns if the current player has some moves left if it is the correct phase.
+     *
      * @return if the current player can move students.
      */
-    boolean canMoveStudents(){
-        if(!gamePhase.equals(GamePhase.MOVE_STUDENTS))
-            return false;
+    boolean canMoveStudents() {
+        if (!gamePhase.equals(GamePhase.MOVE_STUDENTS)) return false;
         return numMoves < maxNumMoves;
     }
 }

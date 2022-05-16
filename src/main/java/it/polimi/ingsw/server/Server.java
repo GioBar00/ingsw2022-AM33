@@ -114,6 +114,10 @@ public class Server implements EndGameListener, DisconnectListener {
         }
     }
 
+    /**
+     * Handle the first player connection
+     * @param communicationHandler the communication handler of the first player
+     */
     private void handleFirstPlayer(CommunicationHandler communicationHandler) {
          try {
              String nickname = getPlayerNickname(communicationHandler);
@@ -154,6 +158,12 @@ public class Server implements EndGameListener, DisconnectListener {
          }
     }
 
+    /**
+     * Gets the nickname of the player
+     * @param communicationHandler the communication handler of the player
+     * @return the nickname of the player
+     * @throws TimeoutException if the player doesn't send a nickname in time
+     */
     private String getPlayerNickname(CommunicationHandler communicationHandler) throws TimeoutException {
          CountDownLatch latch = new CountDownLatch(1);
          AtomicReference<String> nickname = new AtomicReference<>();
@@ -183,6 +193,10 @@ public class Server implements EndGameListener, DisconnectListener {
         throw new TimeoutException();
     }
 
+    /**
+     * Handles the connection of a new player
+     * @param communicationHandler the communication handler of the player
+     */
     private void handleNewPlayer(CommunicationHandler communicationHandler) {
          try {
              String nickname = getPlayerNickname(communicationHandler);
@@ -190,13 +204,14 @@ public class Server implements EndGameListener, DisconnectListener {
              if (nickname != null) {
                  communicationHandler.setMessageHandler(null);
                  if (controller.isGameStarted()) {
-                     if (virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()) {
-                         communicationHandler.stop(false);
-                         virtualClients.get(nickname).setSocket(communicationHandler.getSocket());
-                         virtualClients.get(nickname).start();
-                     } else {
-                         communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
-                         communicationHandler.stop();
+                     synchronized (this) {
+                         if (virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()) {
+                             communicationHandler.stop(false);
+                             virtualClients.get(nickname).reconnect(communicationHandler.getSocket());
+                         } else {
+                             communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
+                             communicationHandler.stop();
+                         }
                      }
                  } else if (virtualClients.containsKey(nickname)) {
                      communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE));
@@ -214,6 +229,12 @@ public class Server implements EndGameListener, DisconnectListener {
          }
     }
 
+    /**
+     * Creates the virtual client for the player
+     * @param communicationHandler the communication handler of the player
+     * @param nickname the nickname of the player
+     * @return true if the player was added, false otherwise
+     */
     private boolean addPlayer(CommunicationHandler communicationHandler, String nickname) {
          if (controller.addPlayer(nickname)) {
              System.out.println("S: added player " + nickname);

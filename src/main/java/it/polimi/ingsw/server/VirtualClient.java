@@ -5,7 +5,8 @@ import it.polimi.ingsw.network.MessageHandler;
 import it.polimi.ingsw.network.listeners.*;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
-import it.polimi.ingsw.network.messages.client.SkipTurn;
+import it.polimi.ingsw.network.messages.server.GameStateRequest;
+import it.polimi.ingsw.network.messages.server.SkipTurn;
 
 import java.net.Socket;
 
@@ -27,6 +28,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
 
     /**
      * Constructor of VirtualClient
+     *
      * @param identifier the nickname of the player that interfaces with this VirtualClient
      */
     public VirtualClient(String identifier) {
@@ -37,6 +39,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
 
     /**
      * Identifier getter
+     *
      * @return the nickname
      */
     @Override
@@ -46,6 +49,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
 
     /**
      * Method used for know if the client is still connected
+     *
      * @return true if is connected, false in other case
      */
     public synchronized boolean isConnected() {
@@ -69,6 +73,17 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     }
 
     /**
+     * Reconnects the virtual client.
+     *
+     * @param socket the socket of the communication
+     */
+    public void reconnect(Socket socket) {
+        setSocket(socket);
+        start();
+        notifyMessageListeners(new MessageEvent(this, new GameStateRequest()));
+    }
+
+    /**
      * This method stops the message exchange handler
      */
     public synchronized void stop() {
@@ -78,25 +93,24 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     /**
      * Send a Message to the client
      */
-   public void sendMessage(Message message) {
-       if (isConnected()) {
-           System.out.println("VC : send to " + identifier);
-           System.out.println(MessageBuilder.toJson(message));
-           communicationHandler.sendMessage(message);
-       }
-   }
+    public void sendMessage(Message message) {
+        if (isConnected()) {
+            System.out.println("VC : send to " + identifier);
+            System.out.println(MessageBuilder.toJson(message));
+            communicationHandler.sendMessage(message);
+        }
+    }
 
 
     /**
      * Methods from MessageListener Interface for notify to the VirtualClient changes in the model
+     *
      * @param event of the received message
      */
     @Override
     public synchronized void onMessage(MessageEvent event) {
-        if (!isConnected())
-            notifyMessageListeners(new MessageEvent(this, new SkipTurn()));
-        else
-            sendMessage(event.getMessage());
+        if (!isConnected()) notifyMessageListeners(new MessageEvent(this, new SkipTurn()));
+        else sendMessage(event.getMessage());
 
     }
 

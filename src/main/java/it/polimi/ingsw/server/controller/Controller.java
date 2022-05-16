@@ -150,58 +150,67 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
         VirtualClient vc = (VirtualClient)event.getSource();
         Message msg = event.getMessage();
 
-        if (MessageType.retrieveByMessage(msg) == MessageType.SKIP_TURN) {
-            String identifier = ((VirtualClient) event.getSource()).getIdentifier();
-            System.out.println("CONTR: Skip turn from " + identifier);
-            switch (model.getGameState()) {
-                case UNINITIALIZED -> {
-                    if (lobby.containsPlayer(identifier)) {
-                        if (lobby.getMaster().equals(identifier)) {
-                            lobby.removeAllMessageListeners();
-                            notifyEndGame();
-                            model = null;
-                        }
-                        else {
-                            lobby.removePlayer(identifier);
-                            lobby.removeMessageListener(vc);
-                            notifyDisconnectListener(new DisconnectEvent(vc));
+        switch (MessageType.retrieveByMessage(msg)) {
+            case GAME_STATE_REQUEST -> model.notifyCurrentGameStateToPlayer(vc.getIdentifier());
+            case SKIP_TURN -> handleSkipTurn(vc);
+            default -> {
+                switch (model.getGameState()) {
+                    case UNINITIALIZED -> handleGameSetup(vc, msg);
+                    case STARTED -> {
+                        if (!canPlay(vc.getIdentifier())) {
+                            vc.sendMessage(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN));
+                        } else if (isInstantiated()) {
+                            switch (model.getPhase()) {
+                                case PLANNING -> handlePlanningPhase(vc, msg);
+
+                                case MOVE_STUDENTS -> handleMoveStudentPhase(vc, msg);
+
+                                case MOVE_MOTHER_NATURE -> handleMoveMotherNaturePhase(vc, msg);
+
+                                case CHOOSE_CLOUD -> handleChooseCloudPhase(vc, msg);
+                            }
+                        } else {
+                            vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                         }
                     }
                 }
-                case ENDED -> notifyEndGame();
-                default -> {
-                    if (isInstantiated()) {
+            }
+        }
+
+    }
+
+    /**
+     * Handles the skip turn request.
+     * @param vc the virtual client that sent the request
+     */
+    private void handleSkipTurn(VirtualClient vc) {
+        String identifier = vc.getIdentifier();
+        System.out.println("CONTR: Skip turn from " + identifier);
+        switch (model.getGameState()) {
+            case UNINITIALIZED -> {
+                if (lobby.containsPlayer(identifier)) {
+                    if (lobby.getMaster().equals(identifier)) {
+                        lobby.removeAllMessageListeners();
+                        notifyEndGame();
+                        model = null;
+                    }
+                    else {
+                        lobby.removePlayer(identifier);
+                        lobby.removeMessageListener(vc);
                         notifyDisconnectListener(new DisconnectEvent(vc));
-                        if (identifier.equals(model.getCurrentPlayer())) {
-                            model.skipCurrentPlayerTurn();
-                        }
+                    }
+                }
+            }
+            case ENDED -> notifyEndGame();
+            default -> {
+                if (isInstantiated()) {
+                    notifyDisconnectListener(new DisconnectEvent(vc));
+                    if (identifier.equals(model.getCurrentPlayer())) {
+                        model.skipCurrentPlayerTurn();
                     }
                 }
             }
         }
-        else {
-            switch (model.getGameState()) {
-                case UNINITIALIZED -> handleGameSetup(vc, msg);
-                case STARTED -> {
-                    if (!canPlay(vc.getIdentifier())) {
-                        vc.sendMessage(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN));
-                    } else if (isInstantiated()) {
-                        switch (model.getPhase()) {
-                            case PLANNING -> handlePlanningPhase(vc, msg);
-
-                            case MOVE_STUDENTS -> handleMoveStudentPhase(vc, msg);
-
-                            case MOVE_MOTHER_NATURE -> handleMoveMotherNaturePhase(vc, msg);
-
-                            case CHOOSE_CLOUD -> handleChooseCloudPhase(vc, msg);
-                        }
-                    } else {
-                        vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
-                    }
-                }
-            }
-        }
-
     }
 
     /**

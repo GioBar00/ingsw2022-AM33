@@ -9,8 +9,9 @@ import it.polimi.ingsw.server.model.enums.GamePreset;
 public abstract class GameBuilder {
     /**
      * Builds the game based on the preset and the mode.
+     *
      * @param preset of the game to create.
-     * @param mode of the game to create.
+     * @param mode   of the game to create.
      * @return the game.
      */
     public static Game getGame(GamePreset preset, GameMode mode) {
@@ -20,7 +21,7 @@ public abstract class GameBuilder {
         else
             model = new GameModel(preset);
         if (mode == GameMode.EXPERT)
-             return new GameModelExpert(model);
+            return new GameModelExpert(model);
         return model;
     }
 }

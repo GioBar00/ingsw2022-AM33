@@ -43,6 +43,9 @@ public enum MessageType {
     CHOSEN_WIZARD(ChosenWizard.class),
     LOGIN(Login.class),
     START_GAME(StartGame.class),
+
+    // internal messages
+    GAME_STATE_REQUEST(GameStateRequest.class),
     SKIP_TURN(SkipTurn.class);
 
     private static final Map<Class<? extends Message>, MessageType> LOOKUP_MAP;
