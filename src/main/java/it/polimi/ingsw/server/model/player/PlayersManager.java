@@ -181,7 +181,15 @@ public class PlayersManager {
     public void calculatePlayerOrder() {
         List<Integer> ordered = Arrays.asList(playerOrderIndexes);
         ordered.sort((i1, i2) -> {
-            int r = players.get(i1).getAssistantCard().getValue().compareTo(players.get(i2).getAssistantCard().getValue());
+            Integer val1 = 100;
+            Integer val2 = 100;
+            if(players.get(i1).getAssistantCard()!= null){
+                val1 = players.get(i1).getAssistantCard().getValue();
+            }
+            if(players.get(i2).getAssistantCard()!= null){
+                val2 = players.get(i2).getAssistantCard().getValue();
+            }
+            int r = val1.compareTo(val2);
             if(r == 0)
                 return Integer.compare(ordered.indexOf(i1), ordered.indexOf(i1));
             return r;

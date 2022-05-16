@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.actions.requests.MoveMotherNature;
 import it.polimi.ingsw.network.messages.server.CurrentGameState;
 import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.network.listeners.MessageEvent;
@@ -255,6 +256,7 @@ public class GameModelExpert implements Game, EffectHandler {
         for (CharacterCard c: characterCards)
             c.revertEffect(this);
         activatedACharacterCard = false;
+        additionalMotherNatureMovement = 0;
     }
 
     /**
@@ -777,7 +779,18 @@ public class GameModelExpert implements Game, EffectHandler {
                 notifyMessageListener(curr.getNickname(), new MessageEvent(this, m));
             }
         } else {
-            model.notifyPossibleActions();
+            notifyActions();
+        }
+    }
+
+    void notifyActions() {
+        if (model.gameState == GameState.STARTED && model.roundManager.getWinners().isEmpty()) {
+            switch (model.roundManager.getGamePhase()) {
+                case PLANNING -> model.notifyPlayAssistantCard();
+                case MOVE_STUDENTS -> model.notifyMultiplePossibleMoves();
+                case MOVE_MOTHER_NATURE -> model.notifyMoveMotherNature(additionalMotherNatureMovement);
+                case CHOOSE_CLOUD -> model.notifyChooseCloud();
+            }
         }
     }
 }

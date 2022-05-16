@@ -224,6 +224,16 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         if (!playersManager.currentPlayerPlayed(assistantCard))
             return false;
 
+        nextInPlanningPhase(currentPlayer);
+
+        return true;
+    }
+
+    /**
+     * Executes the change of player during the planning phase
+     * @param currentPlayer the current player
+     */
+    private void nextInPlanningPhase (Player currentPlayer) {
         if (currentPlayer.equals(playersManager.getLastPlayer())) {
             roundManager.startActionPhase();
             playersManager.calculatePlayerOrder();
@@ -232,10 +242,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         if(playersManager.getPlayerHand(currentPlayer).size() == 0)
             roundManager.setLastRound();
 
-
         playersManager.nextPlayer();
-
-        return true;
     }
 
     /**
@@ -674,7 +681,10 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     boolean executeSkipTurn() {
         if (gameState != GameState.STARTED)
             return false;
-        nextTurn();
+        if(roundManager.getGamePhase().equals(GamePhase.PLANNING)){
+            nextInPlanningPhase(playersManager.getCurrentPlayer());
+        }
+        else nextTurn();
         return true;
     }
 
@@ -816,7 +826,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             switch (roundManager.getGamePhase()) {
                 case PLANNING -> notifyPlayAssistantCard();
                 case MOVE_STUDENTS -> notifyMultiplePossibleMoves();
-                case MOVE_MOTHER_NATURE -> notifyMoveMotherNature();
+                case MOVE_MOTHER_NATURE -> notifyMoveMotherNature(0);
                 case CHOOSE_CLOUD -> notifyChooseCloud();
             }
         }
@@ -864,9 +874,14 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     /**
      * Notifies the current player to move mother nature.
      */
-    void notifyMoveMotherNature() {
+    void notifyMoveMotherNature(int additionalMoves) {
         Player curr = playersManager.getCurrentPlayer();
-        notifyMessageListener(curr.getNickname(), new MessageEvent(this, new MoveMotherNature(playersManager.getPlayedCard().getMoves())));
+        int nMove = 0;
+        AssistantCard played = playersManager.getPlayedCard();
+        if(played != null)
+            nMove = played.getMoves();
+        nMove = nMove+ additionalMoves;
+        notifyMessageListener(curr.getNickname(), new MessageEvent(this, new MoveMotherNature(nMove)));
     }
 
     /**

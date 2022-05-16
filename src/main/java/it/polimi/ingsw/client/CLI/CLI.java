@@ -15,6 +15,7 @@ import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.server.CurrentGameState;
 import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.network.messages.views.*;
+import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.model.enums.*;
 
 import java.util.*;
@@ -265,23 +266,50 @@ public class CLI implements UI {
         inputParser.setCanChoseWizard(false);
         clearTerminal();
         System.out.println(MessageBuilder.toJson(new CurrentGameState(gameView)));
+
+        System.out.println(getFirstLine());
         //show island
         ArrayList<String> islands = getIslandsLines(gameView.getIslandsView(), gameView.getMotherNatureIndex());
         for (String line : islands) {
             System.out.println(line);
         }
+
+        System.out.println();
         //show details
         //show school boards
         for (PlayerView pv : gameView.getPlayersView()){
+            String text;
+            if(pv.getNickname().equals(nickname))
+                text = colors.get("green") + "Your School Board   " + colors.get("reset");
+            else text = pv.getNickname() + " School Board  ";
+
+            text = text + "Tower : " + pv.getSchoolBoardView().getTower().toString() + "    ";
+            if(pv.getPlayedCard() != null){
+                text = text + "Last Played Card : Value [" + pv.getPlayedCard().getValue() +"] Moves ["+ pv.getPlayedCard().getMoves() +"]     ";
+            }
+            if(gameView.getMode().equals(GameMode.EXPERT)){
+                text = text + "Coin(s) : " + gameView.getPlayerCoins().get(pv.getNickname());
+            }
+            System.out.println(text);
             ArrayList<String> board = getSchoolBoardLines(pv.getSchoolBoardView(), gameView.getPreset());
             for (String line : board) {
                 System.out.println(line);
             }
+            System.out.println();
         }
         //show clouds
         ArrayList<String> clouds = getCloudsLines(gameView.getCloudViews());
         for(String line : clouds)
             System.out.println(line);
+
+        if(gameView.getMode().equals(GameMode.EXPERT)){
+            for(CharacterCardView c : gameView.getCharacterCardView()){
+                for(String i : getCardLines(c)){
+                    System.out.println(i);
+                }
+            }
+
+        }
         showPossibleMoves();
     }
 
@@ -296,7 +324,7 @@ public class CLI implements UI {
             System.out.println("Activate a CharacterCard by typing ACTIVE <name>" + colors.get("reset"));
             StringBuilder text = new StringBuilder("[ ");
             for(String s : characterCard.keySet())
-                text.append(s.toUpperCase()).append(" |");
+                text.append(s.toUpperCase()).append(" | ");
             text = new StringBuilder(text.subSequence(0, text.lastIndexOf("|")) + "] ");
             System.out.println("Available Character Card " + text );
         }
@@ -348,6 +376,7 @@ public class CLI implements UI {
                 }
                 printSwap((SwapStudents)lastRequest);
                 System.out.println(colors.get("green") +"Type SWAP <INDEX/COLOR> <INDEX/COLOR>"+ colors.get("reset"));
+                System.out.println(colors.get("green") +"Type CONCLUDE to end the effect"+ colors.get("reset"));
             }
             case PLAY_ASSISTANT_CARD -> {
                 System.out.println(colors.get("green") + "Choose an AssistantCard");
@@ -717,7 +746,7 @@ public class CLI implements UI {
         schoolBoardLines.add(6, stringBuilder.toString());
 
         // NOMI
-        schoolBoardLines.add(7, "  Entrance\t\t\tHall\t\t\t   Professors\t\s\s\sTowers");
+        schoolBoardLines.add(7, "    Entrance\t\t\t     Hall\t\t\t     Professors\t\s  Towers");
 
         return schoolBoardLines;
     }
@@ -856,7 +885,7 @@ public class CLI implements UI {
 
         int total = characterCardView.getOriginalCost() + characterCardView.getAdditionalCost();
         sb.append(colors.get("white")).append(characterCardView.getOriginalCost()).append("+").append(characterCardView.getAdditionalCost()).append(" = ").append(total).append(colors.get("reset"));
-        sb.append(colors.get("red")).append(" ║").append(colors.get("reset"));
+        sb.append(colors.get("red")).append("   ║").append(colors.get("reset"));
 
         // addictionals (students or blocks)
         cardLines.add(2, sb.toString());
@@ -881,9 +910,12 @@ public class CLI implements UI {
                     studCount++;
                 }
             }
-            if (studCount < 6){
+            if (studCount == 5){
                 sb.append("   ");
                 studCount++;
+            }
+            if( studCount == 4){
+                sb.append("      ");
             }
             sb.append(colors.get("red")).append(" ║").append(colors.get("reset"));
 
@@ -955,14 +987,19 @@ public class CLI implements UI {
         stringBuilder.append(" ");
         for (CloudView cv : cloudViews) {
             stringBuilder.append(colors.get("cyan")).append("║").append(colors.get("reset"));
-            if(cv.getStudents().size() == 2)
-                stringBuilder.append("      ");
+
+            if(cv.getStudents().size() == 3) {
+                if (cv.getStudents().get(2) == null)
+                    stringBuilder.append("   ");
+                else appendStudent(cv.getStudents().get(2), stringBuilder);
+                stringBuilder.append("   ");
+            }
             else {
                 appendStudent(cv.getStudents().get(2), stringBuilder);
-                if (cv.getStudents().size() == 3)
-                    stringBuilder.append("   ");
-                else
-                    appendStudent(cv.getStudents().get(3), stringBuilder);
+                if (cv.getStudents().size() == 4)
+                    if(cv.getStudents().get(3) == null)
+                        stringBuilder.append("   ");
+                    else appendStudent(cv.getStudents().get(3), stringBuilder);
             }
             stringBuilder.append(colors.get("cyan")).append("║").append(colors.get("reset"));
             stringBuilder.append(" ");
@@ -1055,6 +1092,16 @@ public class CLI implements UI {
         s.append(colors.get("blue"));
         s.append("░".repeat(144));
         s.append(colors.get("reset"));
+    }
+
+    private String getFirstLine(){
+        String text = colors.get("green") + "Eriantys            Player : " + nickname;
+        text = text  +  "            Current Player : " + gameView.getCurrentPlayer();
+        if(gameView.getMode().equals(GameMode.EXPERT)){
+            text = text +  "                Coins available : " + gameView.getReserve();
+            text = text + "            Your Coin(s) : " + gameView.getPlayerCoins().get(nickname);
+        }
+        return text;
     }
 }
 

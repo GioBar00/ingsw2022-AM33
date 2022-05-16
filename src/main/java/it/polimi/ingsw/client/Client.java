@@ -87,35 +87,11 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
     }
 
     public boolean setServerAddress(String hostname){
-        this.hostname = hostname;
-        return true;
-        /*
-        if(hostname.toLowerCase().equals("localhost")){
+        if(validate(hostname)){
             this.hostname = hostname;
             return true;
         }
-
-        String [] add = hostname.split(".");
-
-        for(String i: add){
-            System.out.println(i);
-        }
-
-        if(add.length != 4)
-            return false;
-        int val;
-        for(String i : add){
-            if(i.matches("-?\\d+")){
-                val = Integer.parseInt(i);
-                if(val < 0 || val > 255)
-                    return false;
-            }
-            else{ return false;}
-        }
-        this.hostname = hostname;
-        return true;
-
-         */
+        return false;
     }
 
     public boolean setServerPort(String port){
@@ -246,5 +222,11 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
         closeConnection();
         userInterface.serverUnavailable();
         executor.shutdownNow();
+    }
+
+    private boolean validate(String ip) {
+        String PATTERN = "^((0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)\\.){3}(0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)$";
+
+        return ip.matches(PATTERN);
     }
 }

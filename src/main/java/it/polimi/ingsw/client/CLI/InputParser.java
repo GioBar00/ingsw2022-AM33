@@ -92,6 +92,7 @@ public class InputParser{
                         case "ASSISTANT" -> parseAssistantCard(in);
                         case "MOVE" -> parseMoveChoice(in);
                         case "SWAP" -> parseSwapChoice(in);
+                        case "CONCLUDE" -> parseConcludeChoice(in);
                         case "ACTIVE" -> parseCharacterCard(in);
                         case "CLOUD" -> parseCloudChoice(in);
                         case "ISLAND" -> parseIslandChoice(in);
@@ -274,32 +275,30 @@ public class InputParser{
     }
 
     private void parseSwapChoice(String[] in) {
-        if (checkRightMoment(MessageType.MULTIPLE_POSSIBLE_MOVES) || checkRightMoment(MessageType.MOVE_STUDENT)) {
-            if (MessageType.retrieveByMessage(lastRequest).equals(MessageType.SWAP_STUDENTS)) {
+        if (checkRightMoment(MessageType.SWAP_STUDENTS)) {
 
-                SwapStudents req = ((SwapStudents) lastRequest);
-                MoveLocation from = req.getFrom();
-                MoveLocation to = req.getTo();
-                Integer fromIndex;
+            SwapStudents req = ((SwapStudents) lastRequest);
+            MoveLocation from = req.getFrom();
+            MoveLocation to = req.getTo();
+            Integer fromIndex;
 
-                if (in.length == 3 || in.length == 2) {
-                    fromIndex = getSwapInt(from, in[1]);
-                    if (fromIndex != null) {
-                        if (!to.requiresToIndex()) {
-                            if (in.length == 2) {
-                                if (req.getFromIndexesSet().contains(fromIndex)) {
-                                    cli.notifyListener(new SwappedStudents(from, fromIndex, to, null));
-                                    return;
-                                }
+            if (in.length == 3 || in.length == 2) {
+                fromIndex = getSwapInt(from, in[1]);
+                if (fromIndex != null) {
+                    if (!to.requiresToIndex()) {
+                        if (in.length == 2) {
+                            if (req.getFromIndexesSet().contains(fromIndex)) {
+                                cli.notifyListener(new SwappedStudents(from, fromIndex, to, null));
+                                return;
                             }
-                        } else {
-                            if (in.length == 3) {
-                                Integer toIndex = getSwapInt(to, in[2]);
-                                if (toIndex != null) {
-                                    if (req.getToIndexesSet().contains(toIndex)) {
-                                        cli.notifyListener(new SwappedStudents(from, fromIndex, to, toIndex));
-                                        return;
-                                    }
+                        }
+                    } else {
+                        if (in.length == 3) {
+                            Integer toIndex = getSwapInt(to, in[2]);
+                            if (toIndex != null) {
+                                if (req.getToIndexesSet().contains(toIndex)) {
+                                    cli.notifyListener(new SwappedStudents(from, fromIndex, to, toIndex));
+                                    return;
                                 }
                             }
                         }
@@ -322,6 +321,13 @@ public class InputParser{
             }
         }
         return index;
+    }
+
+    private void parseConcludeChoice(String [] in){
+        if (checkRightMoment(MessageType.SWAP_STUDENTS)){
+            cli.notifyListener(new ConcludeCharacterCardEffect());
+        }
+        else printInvalidMessage();
     }
 
     private boolean checkMove(MoveLocation from, int fromIndex, MoveLocation to, Integer toIndex,MoveActionRequest m){
