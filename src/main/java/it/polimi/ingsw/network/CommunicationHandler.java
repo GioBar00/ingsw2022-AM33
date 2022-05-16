@@ -106,12 +106,13 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      * @param socket the socket to set
      */
     public synchronized void setSocket(Socket socket) {
-        if (executor != null){
-            System.out.println("CH : setSocket stop");
+        if (executor != null) {
+            System.out.println("CH : setSocket closing old socket");
             stop();
         }
         this.socket = socket;
         if (!socket.isClosed()) {
+            System.out.println("CH : setSocket set new socket");
             try {
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));

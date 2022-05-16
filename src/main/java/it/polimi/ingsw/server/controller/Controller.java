@@ -170,10 +170,12 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
                 }
                 case ENDED -> notifyEndGame();
                 default -> {
-                    if (isInstantiated())
+                    if (isInstantiated()) {
+                        notifyDisconnectListener(new DisconnectEvent(vc));
                         if (identifier.equals(model.getCurrentPlayer())) {
                             model.skipCurrentPlayerTurn();
                         }
+                    }
                 }
             }
         }

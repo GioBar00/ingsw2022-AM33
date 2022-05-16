@@ -42,13 +42,16 @@ public class Eriantys {
                     server = new Server();
                 }
                 server.handleRequests();
-            } else if (cmd.hasOption("c")) {
-                System.out.println("Starting game in CLI mode");
-                Client client = new Client(new CLI());
-                client.startClient();
             } else {
-                System.out.println("Starting game in GUI mode");
-                Application.launch(GUI.class);
+                Client client;
+                if (cmd.hasOption("c")) {
+                    System.out.println("Starting game in CLI mode");
+                    client = new Client(false);
+                } else {
+                    System.out.println("Starting game in GUI mode");
+                    client = new Client(true);
+                }
+                client.startClient();
             }
 
         } catch (ParseException e) {

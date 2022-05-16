@@ -193,6 +193,7 @@ public class Server implements EndGameListener, DisconnectListener {
                      if (virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()) {
                          communicationHandler.stop(false);
                          virtualClients.get(nickname).setSocket(communicationHandler.getSocket());
+                         virtualClients.get(nickname).start();
                      } else {
                          communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
                          communicationHandler.stop();
@@ -290,9 +291,11 @@ public class Server implements EndGameListener, DisconnectListener {
     @Override
     public synchronized void onDisconnect(DisconnectEvent event) {
         VirtualClient vc = (VirtualClient) event.getSource();
-        controller.removeModelListener(vc);
         vc.stop();
-        virtualClients.remove(vc.getIdentifier());
+        if (!controller.isGameStarted()) {
+            controller.removeModelListener(vc);
+            virtualClients.remove(vc.getIdentifier());
+        }
         System.out.println("S: disconnected player " + vc.getIdentifier());
     }
 }

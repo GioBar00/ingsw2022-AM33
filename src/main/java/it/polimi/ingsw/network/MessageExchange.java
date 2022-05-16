@@ -30,7 +30,7 @@ public abstract class MessageExchange {
         if (line == null)
             disconnectListener.onDisconnect(null);
 
-        //System.out.println("Real message received - " + line);
+        System.out.println("Real message received - " + line);
         return MessageBuilder.fromJson(line);
     }
 

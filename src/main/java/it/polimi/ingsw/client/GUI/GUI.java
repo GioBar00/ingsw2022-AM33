@@ -9,15 +9,46 @@ import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-public class GUI extends Application implements UI{
+import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+
+public class GUI extends Application implements UI {
+
+    private static GUI instance;
+    private static final CountDownLatch instantiationLatch = new CountDownLatch(1);
+
+    public GUI() {
+        instance = this;
+        instantiationLatch.countDown();
+    }
+
+    public synchronized static GUI getInstance() {
+        try {
+            instantiationLatch.await();
+        } catch (InterruptedException e) {
+            return null;
+        }
+        return instance;
+    }
 
     @Override
     public void start(Stage stage) {
-        Group root = new Group();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/start-screen.fxml"));
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            System.out.println("Error loading start screen");
+            System.exit(1);
+        }
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Eriantys");

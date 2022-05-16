@@ -1,5 +1,7 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.client.CLI.CLI;
+import it.polimi.ingsw.client.GUI.GUI;
 import it.polimi.ingsw.network.CommunicationHandler;
 import it.polimi.ingsw.network.MessageHandler;
 import it.polimi.ingsw.network.listeners.DisconnectEvent;
@@ -13,6 +15,7 @@ import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.server.CurrentGameState;
 import it.polimi.ingsw.network.messages.server.CurrentTeams;
+import javafx.application.Application;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -61,14 +64,22 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
     /**
      * Constructor of Virtual Server
      */
-    public Client(UI userInterface){
+    public Client(boolean gui) {
         executor = Executors.newSingleThreadExecutor();
         executor.shutdownNow();
         queue = new LinkedBlockingQueue<>();
         this.communicationHandler = new CommunicationHandler(this);
-        this.userInterface = userInterface;
-        this.userInterface.setClient(this);
-        this.userInterface.setViewListener(this);
+        if (gui) {
+            Application.launch(GUI.class);
+            userInterface = GUI.getInstance();
+            if (userInterface == null) {
+                System.out.println("FATAL ERROR: unable to instantiate GUI");
+                System.exit(1);
+            }
+        } else
+            userInterface = new CLI();
+        userInterface.setClient(this);
+        userInterface.setViewListener(this);
     }
 
     public void startClient(){
@@ -199,9 +210,7 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
                     case CHOOSE_GAME -> userInterface.chooseGame();
                     case CAN_START -> userInterface.hostCanStart();
                     case ERROR_CANT_START -> userInterface.hostCantStart();
-                    case ERROR_TIMEOUT, ERROR_SERVER_UNAVAILABLE -> {
-                        userInterface.serverUnavailable();
-                    }
+                    case ERROR_TIMEOUT, ERROR_SERVER_UNAVAILABLE -> userInterface.serverUnavailable();
                     default -> userInterface.showCommMessage((CommMessage)message);
                 }
             }
