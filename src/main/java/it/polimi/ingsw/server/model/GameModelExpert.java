@@ -649,7 +649,7 @@ public class GameModelExpert implements Game, EffectHandler {
     public CurrentGameState getCurrentGameState(Player destPlayer){
         return new CurrentGameState(new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
                 getCurrentPlayer(), model.islandsManager.getIslandsView(), model.playersManager.getPlayersView(destPlayer), model.motherNatureIndex,
-                reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins));
+                reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins, model.getCloudsView()));
     }
 
     /**

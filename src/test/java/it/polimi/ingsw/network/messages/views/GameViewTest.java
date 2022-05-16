@@ -16,6 +16,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameViewTest {
+    //TODO: test delle cloudViews
     /**
      * game and its components
      */

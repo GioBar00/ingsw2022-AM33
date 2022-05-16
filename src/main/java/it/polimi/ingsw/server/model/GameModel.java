@@ -8,6 +8,7 @@ import it.polimi.ingsw.network.messages.actions.requests.MultiplePossibleMoves;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.server.*;
+import it.polimi.ingsw.network.messages.views.CloudView;
 import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.network.listeners.ConcreteMessageListenerSubscriber;
 import it.polimi.ingsw.network.messages.views.GameView;
@@ -781,7 +782,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return the current gameView
      */
     public CurrentGameState getCurrentGameState(Player destPlayer) {
-        return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(),getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex));
+        return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(),getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex, getCloudsView()));
     }
 
 
@@ -893,5 +894,14 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      */
     public int getMotherNatureIndex() {
         return motherNatureIndex;
+    }
+
+    public ArrayList<CloudView> getCloudsView(){
+        ArrayList<CloudView> cloudsView = new ArrayList<>();
+        for (Cloud c : clouds) {
+            CloudView cv = new CloudView(c.getStudentsForView());
+            cloudsView.add(cv);
+        }
+        return cloudsView;
     }
 }

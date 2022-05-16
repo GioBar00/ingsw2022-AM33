@@ -278,6 +278,10 @@ public class CLI implements UI {
                 System.out.println(line);
             }
         }
+        //show clouds
+        ArrayList<String> clouds = getCloudsLines(gameView.getCloudViews());
+        for(String line : clouds)
+            System.out.println(line);
         showPossibleMoves();
     }
 
@@ -762,9 +766,9 @@ public class CLI implements UI {
                 else
                     stringBuilder.append(" ");
                 appendBlock(igv.isBlocked(), stringBuilder);
-                stringBuilder.append(colors.get("green")).append("║ ");
+                stringBuilder.append(colors.get("green")).append("║");
             }
-            stringBuilder.append(colors.get("blue")).append("░ ");
+            stringBuilder.append(colors.get("blue")).append(" ░ ");
             islandIndex ++;
         }
 
@@ -916,6 +920,68 @@ public class CLI implements UI {
         return cardLines;
     }
 
+    private ArrayList<String> getCloudsLines(List<CloudView> cloudViews){
+        ArrayList<String> cloudsLines = new ArrayList<>();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        // top border
+        stringBuilder.append(" ");
+        for (CloudView cv : cloudViews) {
+            stringBuilder.append(colors.get("cyan")).append("╔══════╗").append(colors.get("reset"));
+            stringBuilder.append(" ");
+        }
+
+        // first line of students
+        cloudsLines.add(0, stringBuilder.toString());
+        stringBuilder.delete(0, stringBuilder.length());
+        for (CloudView cv : cloudViews) {
+            stringBuilder.append(" ");
+            stringBuilder.append(colors.get("cyan")).append("║").append(colors.get("reset"));
+            if (cv.getStudents().get(0) == null)
+                stringBuilder.append("   ");
+            else
+                appendStudent(cv.getStudents().get(0), stringBuilder);
+            if (cv.getStudents().get(1) == null)
+                stringBuilder.append("   ");
+            else
+                appendStudent(cv.getStudents().get(1), stringBuilder);
+            stringBuilder.append(colors.get("cyan")).append("║").append(colors.get("reset"));
+        }
+        stringBuilder.append(" ");
+
+        // second line of students
+        cloudsLines.add(1, stringBuilder.toString());
+        stringBuilder.delete(0, stringBuilder.length());
+        stringBuilder.append(" ");
+        for (CloudView cv : cloudViews) {
+            stringBuilder.append(colors.get("cyan")).append("║").append(colors.get("reset"));
+            if(cv.getStudents().size() == 2)
+                stringBuilder.append("      ");
+            else {
+                appendStudent(cv.getStudents().get(2), stringBuilder);
+                if (cv.getStudents().size() == 3)
+                    stringBuilder.append("   ");
+                else
+                    appendStudent(cv.getStudents().get(3), stringBuilder);
+            }
+            stringBuilder.append(colors.get("cyan")).append("║").append(colors.get("reset"));
+            stringBuilder.append(" ");
+        }
+
+        // bottom border
+        cloudsLines.add(2, stringBuilder.toString());
+        stringBuilder.delete(0, stringBuilder.length());
+        stringBuilder.append(" ");
+        for (CloudView cv : cloudViews) {
+            stringBuilder.append(colors.get("cyan")).append("╚══════╝").append(colors.get("reset"));
+            stringBuilder.append(" ");
+        }
+        cloudsLines.add(3, stringBuilder.toString());
+        stringBuilder.delete(0, stringBuilder.length());
+
+        return cloudsLines;
+    }
+
     private void appendStudent(StudentColor studentColor, StringBuilder s){
         switch (studentColor) {
             case RED -> s.append(colors.get("red")).append(" © ").append(colors.get("reset"));
@@ -987,7 +1053,7 @@ public class CLI implements UI {
 
     private void appendWater(StringBuilder s){
         s.append(colors.get("blue"));
-        s.append("░".repeat(137));
+        s.append("░".repeat(144));
         s.append(colors.get("reset"));
     }
 }

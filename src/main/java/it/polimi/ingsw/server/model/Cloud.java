@@ -58,4 +58,8 @@ class Cloud {
         clearStudents();
         return tmp;
     }
+
+    ArrayList<StudentColor> getStudentsForView(){
+        return students;
+    }
 }
