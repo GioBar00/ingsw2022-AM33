@@ -313,6 +313,8 @@ public class GameModelExpert implements Game, EffectHandler {
             return false;
         if (index < 0 || index >= characterCards.size())
             return false;
+        if (model.getPhase() == GamePhase.PLANNING)
+            return false;
         Player curr = model.playersManager.getCurrentPlayer();
         int totalCost = characterCards.get(index).getTotalCost();
         if (playerCoins.get(curr.getNickname()) < totalCost)
