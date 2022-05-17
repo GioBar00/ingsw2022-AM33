@@ -8,6 +8,7 @@ import it.polimi.ingsw.network.listeners.MessageListener;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.cards.CharacterCard;
 import it.polimi.ingsw.server.model.cards.EffectHandler;
+import it.polimi.ingsw.server.model.cards.Minstrel;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.player.SchoolBoard;
 import it.polimi.ingsw.network.messages.views.CharacterCardView;
@@ -82,6 +83,10 @@ public class GameModelExpert implements Game, EffectHandler {
             characterCards.add(types.get(sel).instantiate());
             types.remove(sel);
         }
+
+        //fixme remove this
+        characterCards.remove(0);
+        characterCards.add(new Minstrel());
 
         reserve = 20;
 
@@ -676,9 +681,14 @@ public class GameModelExpert implements Game, EffectHandler {
      * @return the current game view
      */
     public CurrentGameState getCurrentGameState(Player destPlayer) {
-        return new CurrentGameState(new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
+        if(!model.gameState.equals(GameState.ENDED)) {
+            return new CurrentGameState(new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
+                    getCurrentPlayer(), model.islandsManager.getIslandsView(), model.playersManager.getPlayersView(destPlayer), model.motherNatureIndex,
+                    reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins, model.getCloudsView(), null));
+        }
+        return  new CurrentGameState(new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
                 getCurrentPlayer(), model.islandsManager.getIslandsView(), model.playersManager.getPlayersView(destPlayer), model.motherNatureIndex,
-                reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins, model.getCloudsView()));
+                reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins, model.getCloudsView(), model.roundManager.getWinners()));
     }
 
     /**

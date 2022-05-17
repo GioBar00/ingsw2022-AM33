@@ -18,10 +18,7 @@ import it.polimi.ingsw.server.listeners.EndGameListener;
 import it.polimi.ingsw.server.model.Game;
 import it.polimi.ingsw.server.model.GameBuilder;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
-import it.polimi.ingsw.server.model.enums.GameMode;
-import it.polimi.ingsw.server.model.enums.GamePreset;
-import it.polimi.ingsw.server.model.enums.GameState;
-import it.polimi.ingsw.server.model.enums.Tower;
+import it.polimi.ingsw.server.model.enums.*;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -163,11 +160,8 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
                             switch (model.getPhase()) {
                                 case PLANNING -> handlePlanningPhase(vc, msg);
 
-                                case MOVE_STUDENTS -> handleMoveStudentPhase(vc, msg);
+                                case MOVE_STUDENTS, MOVE_MOTHER_NATURE, CHOOSE_CLOUD -> handlePlayingPhase(vc, msg);
 
-                                case MOVE_MOTHER_NATURE -> handleMoveMotherNaturePhase(vc, msg);
-
-                                case CHOOSE_CLOUD -> handleChooseCloudPhase(vc, msg);
                             }
                         } else {
                             vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
@@ -271,11 +265,11 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
     }
 
     /**
-     * Handle the messages during the "move student" phase
+     * Handle the messages during the playing phase
      * @param vc is the Virtual Client bonded with the request
      * @param msg is the Message
      */
-    private void handleMoveStudentPhase(VirtualClient vc, Message msg) {
+    private void handlePlayingPhase(VirtualClient vc, Message msg) {
         switch (MessageType.retrieveByMessage(msg)){
             case MOVED_STUDENT,SWAPPED_STUDENTS -> {
                 MovedStudent movedStudent = (MovedStudent) msg;
@@ -341,37 +335,26 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
                 if(!model.endEffect())
                     vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
             }
+            case MOVED_MOTHER_NATURE -> {
+                if(model.getPhase().equals(GamePhase.MOVE_MOTHER_NATURE)) {
+                    MovedMotherNature movedMotherNature = (MovedMotherNature) msg;
+                    if (!model.moveMotherNature(movedMotherNature.getNumMoves()))
+                        vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
+                }
+                else vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
+            }
+
+            case CHOSEN_CLOUD -> {
+                if(model.getPhase().equals(GamePhase.CHOOSE_CLOUD)){
+                    ChosenCloud chosenCloud = (ChosenCloud) msg;
+                    if(!model.getStudentsFromCloud(chosenCloud.getCloudIndex()))
+                        vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
+                }
+                else vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
+            }
 
             default -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
         }
-    }
-
-    /**
-     * Handle the messages during the "move mother nature" phase
-     * @param vc is the Virtual Client bonded with the request
-     * @param msg is the Message
-     */
-    private void handleMoveMotherNaturePhase(VirtualClient vc, Message msg) {
-        if(MessageType.retrieveByMessage(msg) == MessageType.MOVED_MOTHER_NATURE){
-            MovedMotherNature movedMotherNature = (MovedMotherNature)msg;
-            if (!model.moveMotherNature(movedMotherNature.getNumMoves()))
-                vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
-        }
-        else vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
-    }
-
-    /**
-     * Handle the messages during the "choose cloud" phase
-     * @param vc is the Virtual Client bonded with the request
-     * @param msg is the Message
-     */
-    private void handleChooseCloudPhase(VirtualClient vc, Message msg) {
-        if(MessageType.retrieveByMessage(msg) == MessageType.CHOSEN_CLOUD){
-            ChosenCloud chosenCloud = (ChosenCloud) msg;
-            if(!model.getStudentsFromCloud(chosenCloud.getCloudIndex()))
-                vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
-        }
-        else vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
     }
 
     /**

@@ -15,7 +15,7 @@ import it.polimi.ingsw.server.model.enums.*;
 
 import java.util.*;
 
-public class InputParser {
+public class InputParser{
 
     private final CLI cli;
 
@@ -36,46 +36,45 @@ public class InputParser {
         isHost = false;
     }
 
-    synchronized void setHost() {
+    synchronized void setHost(){
         isHost = true;
     }
 
-    synchronized boolean isHost() {
+    synchronized boolean isHost(){
         return isHost;
     }
 
-    synchronized void setCanChoseWizard(boolean value) {
+    synchronized void setCanChoseWizard(boolean value){
         canChoseWizard = value;
     }
 
-    synchronized void canWrite() {
+    synchronized  void canWrite(){
         canWrite = true;
     }
 
-    synchronized void cantWrite() {
+    synchronized void cantWrite(){
         canWrite = false;
     }
 
-    synchronized void setCanStart(boolean value) {
+    synchronized void setCanStart(boolean value){
         canStart = value;
     }
 
-    synchronized void setServerStatus(boolean value) {
+    synchronized void setServerStatus(boolean value){
         serverStatus = value;
     }
-
-    synchronized void setLastRequest(Message request) {
+    synchronized void setLastRequest(Message request){
         lastRequest = request;
     }
 
-    synchronized void setWizardsView(WizardsView wizardsView) {
+    synchronized void setWizardsView(WizardsView wizardsView){
         this.wizardsView = wizardsView;
     }
 
-    synchronized void parse(String input) {
+    synchronized void parse(String input){
         try {
             String[] in = input.split(" ");
-            if (!serverStatus) {
+            if(!serverStatus){
                 switch (in[0].toUpperCase()) {
                     case "C" -> cli.close();
                     case "R" -> cli.sendLogin();
@@ -84,7 +83,7 @@ public class InputParser {
                 return;
             }
             if (canWrite) {
-                if (in.length >= 1) {
+                if(in.length >= 1){
                     switch (in[0].toUpperCase()) {
                         case "NEWGAME" -> parseNewGame(in);
                         case "WIZARD" -> parseWizard(in);
@@ -93,60 +92,58 @@ public class InputParser {
                         case "ASSISTANT" -> parseAssistantCard(in);
                         case "MOVE" -> parseMoveChoice(in);
                         case "SWAP" -> parseSwapChoice(in);
-                        case "CONCLUDE" -> parseConcludeChoice(in);
-                        case "ACTIVE" -> parseCharacterCard(in);
+                        case "CONCLUDE" -> parseConcludeChoice();
+                        case "ACTIVATE" -> parseCharacterCard(in);
                         case "CLOUD" -> parseCloudChoice(in);
                         case "ISLAND" -> parseIslandChoice(in);
                         case "COLOR" -> parseColor(in);
                         case "MOTHERNATURE" -> parseMotherNature(in);
                         default -> printInvalidMessage();
                     }
-                } else {
-                    printInvalidMessage();
                 }
+                else{ printInvalidMessage(); }
             } else {
                 System.out.println(cli.colors.get("red") + "Not your turn" + cli.colors.get("reset"));
             }
-        } catch (IndexOutOfBoundsException e) {
+        }catch (IndexOutOfBoundsException e){
             printInvalidMessage();
         }
     }
 
-    private boolean checkRightMoment(MessageType messageType) {
+    private boolean checkRightMoment(MessageType messageType){
         return MessageType.retrieveByMessage(lastRequest).equals(messageType);
     }
 
-    private void printInvalidMessage() {
-        System.out.println(cli.colors.get("red") + "Error invalid message" + cli.colors.get("reset"));
+    private void printInvalidMessage(){
+        System.out.println(cli.colors.get("red") + "Error invalid message"+ cli.colors.get("reset"));
     }
 
-    private void parseNewGame(String[] in) {
-        if (isHost && wizardsView == null && lastRequest == null) {
-            if (in.length == 3) {
-                Set<Integer> set = new HashSet<>();
+    private void parseNewGame(String[] in){
+        if(isHost && wizardsView == null && lastRequest == null){
+            if(in.length == 3){
+                Set <Integer> set = new HashSet<>();
                 set.add(2);
                 set.add(3);
                 set.add(4);
-                if (inIntegerSet(set, in[1]))
-                    if (in[2].equalsIgnoreCase("n") || in[2].equalsIgnoreCase("e")) {
+                if(inIntegerSet(set,in[1]))
+                    if(in[2].equalsIgnoreCase("n") || in[2].equalsIgnoreCase("e")){
                         GameMode mode;
-                        if (in[2].equalsIgnoreCase("n"))
+                        if(in[2].equalsIgnoreCase("n"))
                             mode = GameMode.EASY;
                         else mode = GameMode.EXPERT;
-                        cli.notifyListener(new ChosenGame(GamePreset.getFromNumber(Integer.parseInt(in[1])), mode));
+                        cli.notifyListener(new ChosenGame(GamePreset.getFromNumber(Integer.parseInt(in[1])),mode));
                         return;
                     }
             }
         }
         printInvalidMessage();
     }
-
-    private void parseWizard(String[] in) {
-        if (canChoseWizard) {
-            if (in.length == 2) {
+    private void parseWizard(String[] in){
+        if(canChoseWizard){
+            if(in.length == 2) {
                 Wizard w = Wizard.getWizardFromString(in[1]);
-                if (w != null && wizardsView != null)
-                    if (wizardsView.getAvailableWizards().contains(w)) {
+                if(w != null && wizardsView != null)
+                    if(wizardsView.getAvailableWizards().contains(w)){
                         cli.notifyListener(new ChosenWizard(w));
                         System.out.println("Waiting for other players");
                         return;
@@ -156,13 +153,14 @@ public class InputParser {
         printInvalidMessage();
     }
 
-    private void parseTeam(String[] in) {
-        if (in.length == 2) {
+    private void parseTeam(String[] in){
+        if(in.length == 2) {
             String i = in[1].toUpperCase();
-            if (i.equals(Tower.BLACK.toString())) {
+            if(i.equals(Tower.BLACK.toString())){
                 cli.notifyListener(new ChosenTeam(Tower.BLACK));
                 return;
-            } else if (i.equals(Tower.WHITE.toString())) {
+            }
+            else if (i.equals(Tower.WHITE.toString())) {
                 cli.notifyListener(new ChosenTeam(Tower.WHITE));
                 return;
             }
@@ -170,10 +168,10 @@ public class InputParser {
         printInvalidMessage();
     }
 
-    private void parseStart(String[] in) {
+    private void parseStart(String[] in){
         System.out.println(canStart);
-        if (canStart) {
-            if (in[0].equalsIgnoreCase("START")) {
+        if(canStart){
+            if(in[0].equalsIgnoreCase("START")) {
                 cli.notifyListener(new StartGame());
                 return;
             }
@@ -181,10 +179,10 @@ public class InputParser {
         printInvalidMessage();
     }
 
-    private void parseAssistantCard(String[] in) {
-        if (checkRightMoment(MessageType.PLAY_ASSISTANT_CARD)) {
-            EnumSet<AssistantCard> playableAssistantCard = ((PlayAssistantCard) lastRequest).getPlayableAssistantCards();
-            if (in.length == 2) {
+    private void parseAssistantCard(String[] in){
+        if(checkRightMoment(MessageType.PLAY_ASSISTANT_CARD)){
+            EnumSet <AssistantCard> playableAssistantCard = ((PlayAssistantCard) lastRequest).getPlayableAssistantCards();
+            if(in.length == 2) {
                 if (in[1].matches("-?\\d+")) {
                     AssistantCard as = AssistantCard.getFromInt(Integer.parseInt(in[1]));
                     if (playableAssistantCard.contains(as)) {
@@ -197,13 +195,12 @@ public class InputParser {
             printInvalidMessage();
         }
     }
-
-    private void parseCharacterCard(String[] in) {
-        Map<String, Integer> cards = cli.playableCharacterCards();
-        if (cards != null)
-            if (in.length == 2) {
+    private void parseCharacterCard(String[] in){
+        Map <String, Integer> cards = cli.playableCharacterCards();
+        if(cards != null)
+            if(in.length == 2){
                 in[1] = in[1].toUpperCase();
-                if (cards.containsKey(in[1])) {
+                if(cards.containsKey(in[1])){
                     cli.notifyListener(new ActivatedCharacterCard(cards.get(in[1])));
                     return;
                 }
@@ -211,18 +208,17 @@ public class InputParser {
         printInvalidMessage();
     }
 
-    private boolean inIntegerSet(Set<Integer> available, String in) {
+    private boolean inIntegerSet(Set<Integer> available, String in){
         if (in.matches("-?\\d+")) {
             Integer i = Integer.parseInt(in);
             return available.contains(i);
         }
         return false;
     }
-
-    private void parseIslandChoice(String[] in) {
-        if (checkRightMoment(MessageType.CHOOSE_ISLAND)) {
-            if (in.length == 2) {
-                if (inIntegerSet(((ChooseIsland) lastRequest).getAvailableIslandIndexes(), in[1])) {
+    private void parseIslandChoice(String[] in){
+        if(checkRightMoment(MessageType.CHOOSE_ISLAND) || !cli.playableCharacterCards().isEmpty()){
+            if(in.length == 2){
+                if(inIntegerSet(((ChooseIsland)lastRequest).getAvailableIslandIndexes(), in[1])) {
                     cli.notifyListener(new ChosenIsland(Integer.parseInt(in[1])));
                     return;
                 }
@@ -230,11 +226,10 @@ public class InputParser {
         }
         printInvalidMessage();
     }
-
-    private void parseCloudChoice(String[] in) {
-        if (checkRightMoment(MessageType.CHOOSE_CLOUD)) {
-            if (in.length == 2) {
-                if (inIntegerSet(((ChooseCloud) lastRequest).getAvailableCloudIndexes(), in[1])) {
+    private void parseCloudChoice(String[] in){
+        if(checkRightMoment(MessageType.CHOOSE_CLOUD)){
+            if(in.length == 2){
+                if(inIntegerSet(((ChooseCloud)lastRequest).getAvailableCloudIndexes(), in[1])) {
                     cli.notifyListener(new ChosenCloud(Integer.parseInt(in[1])));
                     return;
                 }
@@ -243,12 +238,12 @@ public class InputParser {
         printInvalidMessage();
     }
 
-    private void parseColor(String[] in) {
-        if (checkRightMoment(MessageType.CHOOSE_STUDENT_COLOR))
-            if (in.length == 2) {
+    private void parseColor(String[] in){
+        if(checkRightMoment(MessageType.CHOOSE_STUDENT_COLOR))
+            if(in.length == 2){
                 StudentColor st = StudentColor.getColorFromString(in[1]);
-                if (st != null) {
-                    if (((ChooseStudentColor) lastRequest).getAvailableStudentColors().contains(st)) {
+                if(st != null){
+                    if(((ChooseStudentColor)lastRequest).getAvailableStudentColors().contains(st)){
                         cli.notifyListener(new ChosenStudentColor(st));
                         return;
                     }
@@ -257,12 +252,12 @@ public class InputParser {
         printInvalidMessage();
     }
 
-    private void parseMotherNature(String[] in) {
-        if (checkRightMoment(MessageType.MOVE_MOTHER_NATURE))
-            if (in.length == 2) {
-                if (in[1].matches("-?\\d+")) {
+    private void parseMotherNature(String[] in){
+        if(checkRightMoment(MessageType.MOVE_MOTHER_NATURE))
+            if(in.length == 2){
+                if(in[1].matches("-?\\d+")){
                     int i = Integer.parseInt(in[1]);
-                    if (i <= ((MoveMotherNature) lastRequest).getMaxNumMoves() && i > 0) {
+                    if(i <= ((MoveMotherNature)lastRequest).getMaxNumMoves() && i > 0){
                         cli.notifyListener(new MovedMotherNature(i));
                         return;
                     }
@@ -270,10 +265,9 @@ public class InputParser {
             }
         printInvalidMessage();
     }
-
-    private void parseMoveChoice(String[] in) {
+    private void parseMoveChoice(String[] in){
         MovedStudent message = checkMoveChoice(in);
-        if (message != null) {
+        if(message!= null){
             cli.notifyListener(message);
             return;
         }
@@ -291,7 +285,7 @@ public class InputParser {
             if (in.length == 3 || in.length == 2) {
                 fromIndex = getSwapInt(from, in[1]);
                 if (fromIndex != null) {
-                    if (!to.requiresToIndex()) {
+                    if (!to.requiresToIndex() && !to.equals(MoveLocation.HALL)) {
                         if (in.length == 2) {
                             if (req.getFromIndexesSet().contains(fromIndex)) {
                                 cli.notifyListener(new SwappedStudents(from, fromIndex, to, null));
@@ -302,8 +296,13 @@ public class InputParser {
                         if (in.length == 3) {
                             Integer toIndex = getSwapInt(to, in[2]);
                             if (toIndex != null) {
-                                if (req.getToIndexesSet().contains(toIndex)) {
-                                    cli.notifyListener(new SwappedStudents(from, fromIndex, to, toIndex));
+                                if(!req.getToIndexesSet().isEmpty()){
+                                    if (req.getToIndexesSet().contains(toIndex)) {
+                                        cli.notifyListener(new SwappedStudents(from, fromIndex, to, toIndex));
+                                    return;
+                                    }
+                                }else{
+                                    System.out.println("Type CONCLUDE ");
                                     return;
                                 }
                             }
@@ -315,7 +314,7 @@ public class InputParser {
         printInvalidMessage();
     }
 
-    private Integer getSwapInt(MoveLocation location, String in) {
+    private Integer getSwapInt(MoveLocation location, String in){
         Integer index = null;
         if (location.equals(MoveLocation.ENTRANCE)) {
             if (in.matches("-?\\d+"))
@@ -329,21 +328,21 @@ public class InputParser {
         return index;
     }
 
-    private void parseConcludeChoice(String[] in) {
-        if (checkRightMoment(MessageType.SWAP_STUDENTS)) {
+    private void parseConcludeChoice(){
+        if (checkRightMoment(MessageType.SWAP_STUDENTS)){
             cli.notifyListener(new ConcludeCharacterCardEffect());
-        } else printInvalidMessage();
+        }
+        else printInvalidMessage();
     }
 
-    private boolean checkMove(MoveLocation from, int fromIndex, MoveLocation to, Integer toIndex, MoveActionRequest m) {
-        return checkMove(from, fromIndex, to, toIndex, m.getFrom(), m.getTo(), m.getFromIndexesSet(), m.getToIndexesSet());
+    private boolean checkMove(MoveLocation from, int fromIndex, MoveLocation to, Integer toIndex,MoveActionRequest m){
+        return checkMove( from, fromIndex, to, toIndex, m.getFrom(), m.getTo(), m.getFromIndexesSet(), m.getToIndexesSet());
     }
-
-    private boolean checkMove(MoveLocation from, int fromIndex, MoveLocation to, Integer toIndex, MoveLocation getFrom, MoveLocation getTo, Set<Integer> getFromIndexesSet, Set<Integer> getToIndexSet) {
-        if (from.equals(getFrom))
-            if (to.equals(getTo))
-                if (getFromIndexesSet.contains(fromIndex))
-                    if (toIndex != null && getToIndexSet != null) {
+    private boolean checkMove(MoveLocation from, int fromIndex, MoveLocation to, Integer toIndex, MoveLocation getFrom, MoveLocation getTo, Set<Integer> getFromIndexesSet, Set<Integer> getToIndexSet){
+        if(from.equals(getFrom))
+            if(to.equals(getTo))
+                if(getFromIndexesSet.contains(fromIndex))
+                    if(toIndex != null && getToIndexSet != null) {
                         return getToIndexSet.contains(toIndex);
                     } else {
                         return toIndex == null && getToIndexSet == null;

@@ -107,6 +107,8 @@ public class RoundManager {
      * @return the winners.
      */
     EnumSet<Tower> getWinners() {
+        if(winners.isEmpty())
+            return EnumSet.noneOf(Tower.class);
         return EnumSet.copyOf(winners);
     }
 

@@ -61,7 +61,7 @@ public abstract class MessageExchange {
      * This method is used to send a message.
      *
      * @param message the message to send.
-     * @param writer  the writer used to write the message.
+     * @param writer the writer used to write the message.
      * @throws IOException if an I/O error occurs.
      */
     public static void sendMessage(Message message, BufferedWriter writer) throws IOException {

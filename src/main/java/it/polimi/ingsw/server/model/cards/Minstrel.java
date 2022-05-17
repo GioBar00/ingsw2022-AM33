@@ -17,7 +17,7 @@ public class Minstrel extends CharacterCard {
      * Creates minstrel.
      */
     public Minstrel() {
-        super(CharacterType.MINSTREL, 1, 1, 2);
+        super(CharacterType.MINSTREL, 1, 0, 2);
     }
 
     /**

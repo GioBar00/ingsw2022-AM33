@@ -1,10 +1,7 @@
 package it.polimi.ingsw.network.messages.views;
 
 import it.polimi.ingsw.network.messages.InvalidMessage;
-import it.polimi.ingsw.server.model.enums.GameMode;
-import it.polimi.ingsw.server.model.enums.GamePhase;
-import it.polimi.ingsw.server.model.enums.GamePreset;
-import it.polimi.ingsw.server.model.enums.GameState;
+import it.polimi.ingsw.server.model.enums.*;
 
 import java.util.*;
 
@@ -60,10 +57,12 @@ public class GameView extends InvalidMessage {
 
     private final List<CloudView> cloudViews;
 
+    private final EnumSet<Tower> winners;
+
     /**
      * constructor of the GameView for an easy game
      */
-    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, ArrayList<CloudView> cloudViews) {
+    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, ArrayList<CloudView> cloudViews, EnumSet<Tower> winners) {
         this.mode = mode;
         this.preset = preset;
         this.state = state;
@@ -76,12 +75,13 @@ public class GameView extends InvalidMessage {
         this.characterCardView = null;
         this.playerCoins = null;
         this.cloudViews = cloudViews;
+        this.winners = winners;
     }
 
     /**
      * constructor of the GameView for an expert game (sets also the attributes for the CharacterCard)
      */
-    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, Integer reserve, List<CharacterCardView> characterCardView, Map<String, Integer> playerCoins, ArrayList<CloudView> cloudViews) {
+    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, Integer reserve, List<CharacterCardView> characterCardView, Map<String, Integer> playerCoins, ArrayList<CloudView> cloudViews, EnumSet<Tower> winners) {
         this.mode = mode;
         this.preset = preset;
         this.state = state;
@@ -94,6 +94,7 @@ public class GameView extends InvalidMessage {
         this.characterCardView = characterCardView;
         this.playerCoins = playerCoins;
         this.cloudViews = cloudViews;
+        this.winners = winners;
     }
 
     /**
@@ -178,5 +179,9 @@ public class GameView extends InvalidMessage {
      */
     public List<CloudView> getCloudViews() {
         return cloudViews;
+    }
+
+    public EnumSet<Tower> getWinners() {
+        return winners;
     }
 }
