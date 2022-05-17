@@ -9,10 +9,25 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 
 public class SchoolBoardView implements Serializable {
+    /**
+     * number of towers still on the board
+     */
     private final int numTowers;
+    /**
+     * type of tower
+     */
     private final Tower tower;
+    /**
+     * students in the hall
+     */
     private final EnumMap<StudentColor, Integer> studentsHall;
+    /**
+     * students in the entrance
+     */
     private final ArrayList<StudentColor> entrance;
+    /**
+     * professors on the board
+     */
     private final EnumSet<StudentColor> professors;
 
     public SchoolBoardView(int numTowers, Tower tower, EnumMap<StudentColor, Integer> studentsHall, ArrayList<StudentColor> entrance, EnumSet<StudentColor> professors) {
@@ -23,22 +38,37 @@ public class SchoolBoardView implements Serializable {
         this.professors = professors;
     }
 
+    /**
+     * @return the number of towers
+     */
     public int getNumTowers() {
         return numTowers;
     }
 
+    /**
+     * @return the type of tower
+     */
     public Tower getTower() {
         return tower;
     }
 
+    /**
+     * @return the students in the hall
+     */
     public EnumMap<StudentColor, Integer> getStudentsHall() {
         return studentsHall;
     }
 
+    /**
+     * @return the students in the entrance
+     */
     public ArrayList<StudentColor> getEntrance() {
         return entrance;
     }
 
+    /**
+     * @return the professors
+     */
     public EnumSet<StudentColor> getProfessors() {
         return professors;
     }

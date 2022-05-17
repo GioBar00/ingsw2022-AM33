@@ -2,8 +2,8 @@ package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.network.messages.ActionRequest;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.server.listeners.MessageEvent;
-import it.polimi.ingsw.server.listeners.MessageListener;
+import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.network.listeners.MessageListener;
 import it.polimi.ingsw.server.model.enums.*;
 import it.polimi.ingsw.server.model.islands.Island;
 import it.polimi.ingsw.server.model.player.Player;
@@ -34,12 +34,14 @@ class GameModelTest {
      */
     Set<String> actionRequestNotified = new HashSet<>();
 
+    private final PlayerConvertor pC = new PlayerConvertor();
+
     /**
      * Adds a new listener to the model.
      * @param identifier nickname of the player.
      */
     void addMessageListener(String identifier) {
-        model.addListener(new MessageListener() {
+        model.addMessageListener(new MessageListener() {
             @Override
             public String getIdentifier() {
                 return identifier;
@@ -109,8 +111,7 @@ class GameModelTest {
             assertEquals(preset.getPlayersNumber() - i, model.getAvailablePlayerSlots());
 
             addMessageListener(i + "");
-            assertTrue(model.addPlayer(i + ""));
-            checkNotifications();
+            assertTrue(model.addPlayer(pC.getPlayer( i + "", Wizard.MERLIN)));
         }
 
         assertEquals(GameState.UNINITIALIZED, model.getGameState());
@@ -122,13 +123,16 @@ class GameModelTest {
         checkEmptyNotifications();
         assertEquals(0,model.islandsManager.getIslandGroup(model.motherNatureIndex).getIslands().get(0).getNumStudents());
         assertEquals(0,model.islandsManager.getIslandGroup((model.motherNatureIndex + 6) % 12).getIslands().get(0).getNumStudents());
+
         numTowersAndStudent();
         playAssistantCard();
     }
 
+
     /**
      * check the integrity of all the movement done by calculating the amount of students and towers
      */
+
     void numTowersAndStudent() {
         int numStud = model.bag.students.size();
         int numTowers = model.playersManager.getPreset().getTowersNumber() * model.playersManager.getPreset().getPlayersNumber();
@@ -156,6 +160,7 @@ class GameModelTest {
             }
         assertEquals(0, numTowers);
     }
+
 
     /**
      * Check the throwing of the exception when one player tries to play a card that has already been played.
@@ -289,7 +294,6 @@ class GameModelTest {
 
         assertEquals((oldMotherNature + maxMoves) % model.islandsManager.getNumIslandGroups(), model.motherNatureIndex);
     }
-
 
     /**
      * Tests the implementation of checkProfessor and calcInfluence. Checks the first assignation of a Professor and then the relocation of
@@ -431,11 +435,11 @@ class GameModelTest {
         model.roundManager.nextRound();
         for (Player ignored : model.playersManager.getPlayers()) {
             for(AssistantCard a : AssistantCard.values()) {
-                if (!a.equals(AssistantCard.ONE))
+                if (!a.equals(AssistantCard.CHEETAH))
                     model.playersManager.currentPlayerPlayed(a);
             }
             clearNotifications();
-            assertTrue(model.playAssistantCard(AssistantCard.ONE));
+            assertTrue(model.playAssistantCard(AssistantCard.CHEETAH));
             checkNotifications();
         }
 
@@ -488,13 +492,13 @@ class GameModelTest {
     @Test
     void removePlayer(){
         GameModel model = new GameModel(GamePreset.THREE);
-
         assertFalse(model.removePlayer("1"));
-        assertTrue(model.addPlayer("1"));
-        assertTrue(model.addPlayer("2"));
+        assertTrue(model.addPlayer(pC.getPlayer("1", Wizard.SENSEI)));
+        assertTrue(model.addPlayer(pC.getPlayer("2", Wizard.SENSEI)));
         assertTrue(model.removePlayer("1"));
         assertFalse(model.removePlayer("1"));
-        assertTrue(model.addPlayer("1"));
-        assertTrue(model.addPlayer("3"));
+        assertTrue(model.addPlayer(pC.getPlayer("1", Wizard.SENSEI)));
+        assertTrue(model.addPlayer(pC.getPlayer("3", Wizard.SENSEI)));
     }
+
 }

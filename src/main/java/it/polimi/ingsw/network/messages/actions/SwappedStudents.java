@@ -1,6 +1,7 @@
 package it.polimi.ingsw.network.messages.actions;
 
 import it.polimi.ingsw.network.messages.actions.MovedStudent;
+import it.polimi.ingsw.network.messages.actions.requests.MoveStudent;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 
@@ -20,6 +21,13 @@ public class SwappedStudents extends MovedStudent {
         super(first, firstIndex, second, secondIndex);
     }
 
+    /**
+     * Creates the message from a MoveStudent message
+     * @param message the message which has to be converted in a SwappedMessage
+     */
+    public SwappedStudents(MovedStudent message){
+        super(message.getFrom(), message.fromIndex, message.getTo(), message.getToIndex());
+    }
     /**
      * @return if the message is valid.
      */

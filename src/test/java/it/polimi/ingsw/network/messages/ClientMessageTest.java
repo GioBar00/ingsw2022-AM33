@@ -1,10 +1,10 @@
 package it.polimi.ingsw.network.messages;
 
-import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.*;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
+import it.polimi.ingsw.network.messages.server.SkipTurn;
 import it.polimi.ingsw.server.model.enums.*;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +25,7 @@ class ClientMessageTest {
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof ActivatedCharacterCard);
-        assertEquals(MessageType.retrieveByMessageClass(original), MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
         assertEquals(original.getCharacterCardIndex(), ((ActivatedCharacterCard)m).getCharacterCardIndex());
     }
 
@@ -38,7 +38,7 @@ class ClientMessageTest {
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof ChosenCloud);
-        assertEquals(MessageType.retrieveByMessageClass(original), MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
         assertEquals(original.getCloudIndex(), ((ChosenCloud)m).getCloudIndex());
     }
 
@@ -51,7 +51,7 @@ class ClientMessageTest {
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof ChosenGame);
-        assertEquals(MessageType.retrieveByMessageClass(original), MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
         assertEquals(original.getPreset(), ((ChosenGame)m).getPreset());
         assertEquals(original.getMode(), ((ChosenGame)m).getMode());
     }
@@ -65,7 +65,7 @@ class ClientMessageTest {
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof ChosenIsland);
-        assertEquals(MessageType.retrieveByMessageClass(original), MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
         assertEquals(original.getIslandIndex(), ((ChosenIsland)m).getIslandIndex());
     }
 
@@ -78,7 +78,7 @@ class ClientMessageTest {
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof ChosenStudentColor);
-        assertEquals(MessageType.retrieveByMessageClass(original), MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
         assertEquals(original.getStudentColor(), ((ChosenStudentColor)m).getStudentColor());
     }
 
@@ -91,7 +91,7 @@ class ClientMessageTest {
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof ChosenTeam);
-        assertEquals(MessageType.retrieveByMessageClass(original), MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
         assertEquals(original.getTower(), ((ChosenTeam)m).getTower());
     }
 
@@ -104,7 +104,7 @@ class ClientMessageTest {
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof ConcludeCharacterCardEffect);
-        assertEquals(MessageType.retrieveByMessageClass(original), MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
     }
 
     /**
@@ -116,7 +116,7 @@ class ClientMessageTest {
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof Login);
-        assertEquals(MessageType.retrieveByMessageClass(original), MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
         assertEquals(original.getNickname(), ((Login)m).getNickname());
     }
 
@@ -129,7 +129,7 @@ class ClientMessageTest {
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof MovedMotherNature);
-        assertEquals(MessageType.retrieveByMessageClass(original), MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
         assertEquals(original.getNumMoves(), ((MovedMotherNature)m).getNumMoves());
     }
 
@@ -142,7 +142,7 @@ class ClientMessageTest {
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof MovedStudent);
-        assertEquals(MessageType.retrieveByMessageClass(original), MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
         assertEquals(original.getFrom(), ((MovedStudent)m).getFrom());
         assertEquals(original.getFromIndex(), ((MovedStudent)m).getFromIndex());
         assertEquals(original.getTo(), ((MovedStudent)m).getTo());
@@ -174,11 +174,11 @@ class ClientMessageTest {
      */
     @Test
     void playedAssistantCard() {
-        PlayedAssistantCard original = new PlayedAssistantCard(AssistantCard.FIVE);
+        PlayedAssistantCard original = new PlayedAssistantCard(AssistantCard.FOX);
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof PlayedAssistantCard);
-        assertEquals(MessageType.retrieveByMessageClass(original), MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
         assertEquals(original.getAssistantCard(), ((PlayedAssistantCard)m).getAssistantCard());
     }
 
@@ -191,7 +191,7 @@ class ClientMessageTest {
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof StartGame);
-        assertEquals(MessageType.retrieveByMessageClass(original), MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
     }
 
     /**
@@ -203,11 +203,22 @@ class ClientMessageTest {
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof SwappedStudents);
-        assertEquals(MessageType.retrieveByMessageClass(original), MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
         assertEquals(original.getFrom(), ((SwappedStudents)m).getFrom());
         assertEquals(original.getFromIndex(), ((SwappedStudents)m).getFromIndex());
         assertEquals(original.getTo(), ((SwappedStudents)m).getTo());
         assertEquals(original.getToIndex(), ((SwappedStudents)m).getToIndex());
+
+        original = new SwappedStudents(new MovedStudent(MoveLocation.ENTRANCE, 2, MoveLocation.HALL,2));
+        m = toAndFromJson(original);
+        assertTrue(m.isValid());
+        assertTrue(m instanceof SwappedStudents);
+        assertEquals(MessageType.retrieveByMessage(original), MessageType.retrieveByMessage(m));
+        assertEquals(original.getFrom(), ((SwappedStudents)m).getFrom());
+        assertEquals(original.getFromIndex(), ((SwappedStudents)m).getFromIndex());
+        assertEquals(original.getTo(), ((SwappedStudents)m).getTo());
+        assertEquals(original.getToIndex(), ((SwappedStudents)m).getToIndex());
+
         // invalid from
         original = new SwappedStudents(null, 2, MoveLocation.HALL, 2);
         m = toAndFromJson(original);
@@ -244,8 +255,23 @@ class ClientMessageTest {
 
         String line = MessageBuilder.toJson(skipTurn);
         Message m = MessageBuilder.fromJson(line);
-        assertEquals(MessageType.SKIP_TURN, MessageType.retrieveByMessageClass(m));
+        assertEquals(MessageType.SKIP_TURN, MessageType.retrieveByMessage(m));
         SkipTurn mes = (SkipTurn)m;
         assertTrue(mes.isValid());
+    }
+
+    /**
+     * Tests the {@link ChosenWizard} message.
+     */
+    @Test
+    void ChosenWizardTest() {
+        ChosenWizard chosenWizard = new ChosenWizard(Wizard.MERLIN);
+        assertTrue(chosenWizard.isValid());
+        assertEquals(Wizard.MERLIN, chosenWizard.getWizard());
+
+        String s = MessageBuilder.toJson(chosenWizard);
+        chosenWizard = (ChosenWizard) MessageBuilder.fromJson(s);
+        assertTrue(chosenWizard.isValid());
+        assertEquals(Wizard.MERLIN, chosenWizard.getWizard());
     }
 }

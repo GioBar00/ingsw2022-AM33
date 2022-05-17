@@ -2,9 +2,11 @@ package it.polimi.ingsw.network.messages.views;
 
 import it.polimi.ingsw.server.model.GameModel;
 import it.polimi.ingsw.server.model.GameModelExpert;
+import it.polimi.ingsw.server.model.PlayerConvertor;
 import it.polimi.ingsw.server.model.cards.*;
 import it.polimi.ingsw.server.model.enums.CharacterType;
 import it.polimi.ingsw.server.model.enums.GamePreset;
+import it.polimi.ingsw.server.model.enums.Wizard;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -17,13 +19,14 @@ class CharacterCardViewTest {
      */
     GameModelExpert gme = new GameModelExpert(new GameModel(GamePreset.THREE));
 
+    PlayerConvertor pC = new PlayerConvertor();
     /**
      * adds the player and prepares the game
      */
     void prepareModel() {
-        gme.addPlayer("1");
-        gme.addPlayer("2");
-        gme.addPlayer("3");
+        gme.addPlayer(pC.getPlayer("1", Wizard.WITCH));
+        gme.addPlayer(pC.getPlayer("2",Wizard.WITCH));
+        gme.addPlayer(pC.getPlayer("3",Wizard.WITCH));
         gme.startGame();
     }
 

@@ -1,11 +1,14 @@
 package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.server.listeners.MessageEvent;
-import it.polimi.ingsw.server.listeners.MessageListener;
+import it.polimi.ingsw.network.messages.server.CurrentGameState;
+import it.polimi.ingsw.server.PlayerDetails;
+import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.network.listeners.MessageListener;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.cards.CharacterCard;
 import it.polimi.ingsw.server.model.cards.EffectHandler;
+import it.polimi.ingsw.server.model.cards.Minstrel;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.player.SchoolBoard;
 import it.polimi.ingsw.network.messages.views.CharacterCardView;
@@ -66,6 +69,7 @@ public class GameModelExpert implements Game, EffectHandler {
 
     /**
      * Changes mode to expert, gets 3 random character cards and initialises reserve.
+     *
      * @param model GameModel to make expert.
      */
     public GameModelExpert(GameModel model) {
@@ -79,6 +83,10 @@ public class GameModelExpert implements Game, EffectHandler {
             characterCards.add(types.get(sel).instantiate());
             types.remove(sel);
         }
+
+        //fixme remove this
+        characterCards.remove(0);
+        characterCards.add(new Minstrel());
 
         reserve = 20;
 
@@ -110,12 +118,13 @@ public class GameModelExpert implements Game, EffectHandler {
 
     /**
      * Adds a new player to the game. Initializes the coins of the player if the player was added successfully.
-     * @param nickname unique identifier of a player
+     *
+     * @param playerDetails unique class with details for a player
      * @return if the player was added successfully.
      */
     @Override
-    public boolean addPlayer(String nickname) {
-        if (model.addPlayer(nickname)) {
+    public boolean addPlayer(PlayerDetails playerDetails) {
+        if (model.addPlayer(playerDetails)) {
             List<Player> players = model.playersManager.getPlayers();
             Player p = players.get(players.size() - 1);
             playerCoins.put(p.getNickname(), 0);
@@ -128,12 +137,12 @@ public class GameModelExpert implements Game, EffectHandler {
      * Initializes the game. Initializes the cards and gives one coin to each player.
      * Add the remaining student on the bag.
      */
-     void initializeGame() {
-        for (Player p: model.playersManager.getPlayers()) {
+    void initializeGame() {
+        for (Player p : model.playersManager.getPlayers()) {
             playerCoins.put(p.getNickname(), 1);
             reserve--;
         }
-        for (CharacterCard c: characterCards)
+        for (CharacterCard c : characterCards)
             c.initialize(this);
     }
 
@@ -145,9 +154,9 @@ public class GameModelExpert implements Game, EffectHandler {
      */
     @Override
     public boolean startGame() {
-        if(model.executeStartGame()){
+        if (model.executeStartGame()) {
             this.initializeGame();
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -164,7 +173,7 @@ public class GameModelExpert implements Game, EffectHandler {
     @Override
     public boolean playAssistantCard(AssistantCard assistantCard) {
         if (model.executePlayAssistantCard(assistantCard)) {
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -194,7 +203,7 @@ public class GameModelExpert implements Game, EffectHandler {
                     reserve--;
                 }
             }
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -206,7 +215,7 @@ public class GameModelExpert implements Game, EffectHandler {
      * moves it to a selected island that is part of a selected IslandGroup only if the player is not activating a card.
      * Notifies the listeners.
      *
-     * @param entranceIndex of the slot occupied by the student that will be moved.
+     * @param entranceIndex    of the slot occupied by the student that will be moved.
      * @param islandGroupIndex of the IslandGroup that contains the selected island.
      * @return if the student was moved successfully.
      */
@@ -215,7 +224,7 @@ public class GameModelExpert implements Game, EffectHandler {
         if (characterCardActivating != null)
             return false;
         if (model.executeMoveStudentToIsland(entranceIndex, islandGroupIndex)) {
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -235,11 +244,11 @@ public class GameModelExpert implements Game, EffectHandler {
         if (characterCardActivating != null)
             return false;
 
-        if (model.moveMotherNature(num, model.playersManager.getPlayedCard().getMoves() + additionalMotherNatureMovement)) {
-            if (model.atLeastOneCloudWithStudents()) {
+        if (model.moveMotherNature(num, model.playersManager.getPlayedCard().getMoves() + additionalMotherNatureMovement, this::calcInfluenceOnIslandGroup)) {
+            if (!model.atLeastOneCloudWithStudents()) {
                 endTurn();
             }
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -250,9 +259,10 @@ public class GameModelExpert implements Game, EffectHandler {
      * Ends the effects of all cards and clears the activated card.
      */
     void endTurn() {
-        for (CharacterCard c: characterCards)
+        for (CharacterCard c : characterCards)
             c.revertEffect(this);
         activatedACharacterCard = false;
+        additionalMotherNatureMovement = 0;
     }
 
     /**
@@ -269,7 +279,7 @@ public class GameModelExpert implements Game, EffectHandler {
 
         if (model.executeGetStudentsFromCloud(cloudIndex)) {
             endTurn();
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -278,14 +288,16 @@ public class GameModelExpert implements Game, EffectHandler {
 
     /**
      * used to get the current player
+     *
      * @return the nickname of the current player
      */
-    public String getCurrentPlayer(){
+    public String getCurrentPlayer() {
         return model.getCurrentPlayer();
     }
 
     /**
      * Return the phase of the Game
+     *
      * @return GamePhase
      */
     @Override
@@ -306,6 +318,8 @@ public class GameModelExpert implements Game, EffectHandler {
             return false;
         if (index < 0 || index >= characterCards.size())
             return false;
+        if (model.getPhase() == GamePhase.PLANNING)
+            return false;
         Player curr = model.playersManager.getCurrentPlayer();
         int totalCost = characterCards.get(index).getTotalCost();
         if (playerCoins.get(curr.getNickname()) < totalCost)
@@ -317,7 +331,7 @@ public class GameModelExpert implements Game, EffectHandler {
         activatedACharacterCard = true;
         if (characterCardActivating.getRequiredChoicesNumber() == 0)
             applyEffect(null);
-        model.notifyPersonalizedGameView();
+        notifyPersonalizedGameState();
         notifyPossibleActions();
         return true;
     }
@@ -336,7 +350,7 @@ public class GameModelExpert implements Game, EffectHandler {
         if (characterCardActivating.applyEffect(this, parameters)) {
             if (characterCardActivating.hasAppliedEffect())
                 characterCardActivating = null;
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -355,7 +369,7 @@ public class GameModelExpert implements Game, EffectHandler {
             return false;
         if (characterCardActivating.endEffect()) {
             characterCardActivating = null;
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -365,8 +379,9 @@ public class GameModelExpert implements Game, EffectHandler {
     /**
      * the method changes the team to which the player belongs; if the player didn't previously belong to any team,
      * it's added as a new member
+     *
      * @param nickname of the player
-     * @param tower of the new team
+     * @param tower    of the new team
      * @return true if the change was successful
      */
     @Override
@@ -376,22 +391,33 @@ public class GameModelExpert implements Game, EffectHandler {
 
     /**
      * Skips the current player's turn.
-     *
-     * @return if the turn was skipped successfully.
      */
     @Override
-    public boolean skipCurrentPlayerTurn() {
+    public void skipCurrentPlayerTurn() {
         if (model.executeSkipTurn()) {
-            model.notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
-            return true;
         }
-        return false;
     }
 
     @Override
     public boolean removePlayer(String nickname) {
         return model.removePlayer(nickname);
+    }
+
+    /**
+     * Notifies the current game state to a player
+     *
+     * @param nickname of the player
+     */
+    @Override
+    public void notifyCurrentGameStateToPlayer(String nickname) {
+        List<Player> players = model.playersManager.getPlayers();
+        for (Player player : players)
+            if (player.getNickname().equals(nickname)) {
+                notifyPersonalizedGameState(player);
+                return;
+            }
     }
 
     /**
@@ -427,11 +453,11 @@ public class GameModelExpert implements Game, EffectHandler {
         List<Player> players = model.playersManager.getPlayers();
         Player curr = model.playersManager.getCurrentPlayer();
         SchoolBoard currSB = model.playersManager.getSchoolBoard();
-        for (Player p: players) {
+        for (Player p : players) {
             if (p != curr) {
                 SchoolBoard sb = model.playersManager.getSchoolBoard(p);
                 EnumSet<StudentColor> playerProfs = sb.getProfessors();
-                for (StudentColor studentColor: StudentColor.values()) {
+                for (StudentColor studentColor : StudentColor.values()) {
                     if (playerProfs.contains(studentColor) && currSB.getStudentsInHall(studentColor) >= sb.getStudentsInHall(studentColor)) {
                         profs.put(studentColor, players.indexOf(p));
                         sb.removeProfessor(studentColor);
@@ -452,7 +478,7 @@ public class GameModelExpert implements Game, EffectHandler {
     public void restoreProfsToOriginalPlayer(EnumMap<StudentColor, Integer> original) {
         List<Player> players = model.playersManager.getPlayers();
         SchoolBoard currSB = model.playersManager.getSchoolBoard();
-        for (StudentColor sc: StudentColor.values()) {
+        for (StudentColor sc : StudentColor.values()) {
             if (original.containsKey(sc)) {
                 currSB.removeProfessor(sc);
                 model.playersManager.getSchoolBoard(players.get(original.get(sc))).addProfessor(sc);
@@ -462,6 +488,7 @@ public class GameModelExpert implements Game, EffectHandler {
 
     /**
      * Calculates the influence on an island group.
+     *
      * @param islandGroupIndex index of the island group.
      * @return if the calcInfluence when well.
      */
@@ -470,7 +497,7 @@ public class GameModelExpert implements Game, EffectHandler {
         if (islandGroupIndex < 0 || islandGroupIndex >= model.islandsManager.getNumIslandGroups())
             return false;
         CharacterCard herbalist = null;
-        for (CharacterCard c: characterCards)
+        for (CharacterCard c : characterCards)
             if (c.canHandleBlocks()) {
                 herbalist = c;
                 break;
@@ -618,7 +645,7 @@ public class GameModelExpert implements Game, EffectHandler {
      */
     @Override
     public void tryRemoveStudentsFromHalls(StudentColor s, int idealAmount) {
-        for (Player p: model.playersManager.getPlayers()) {
+        for (Player p : model.playersManager.getPlayers()) {
             SchoolBoard sb = model.playersManager.getSchoolBoard(p);
             sb.tryRemoveFromHall(s, idealAmount);
         }
@@ -633,23 +660,46 @@ public class GameModelExpert implements Game, EffectHandler {
     }
 
     /**
+     * Notifies each player about the new game state.
+     */
+    private void notifyPersonalizedGameState() {
+        for (Player p : model.playersManager.getPlayers())
+            notifyPersonalizedGameState(p);
+    }
+
+    /**
+     * Notifies a player about the new game state.
+     *
+     * @param p player to notify.
+     */
+    private void notifyPersonalizedGameState(Player p) {
+        notifyMessageListener(p.getNickname(), new MessageEvent(this, getCurrentGameState(p)));
+    }
+
+    /**
      * @param destPlayer the player to whom the gameView will be sent
      * @return the current game view
      */
-    public GameView getGameView(Player destPlayer){
-        return new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
-                model.islandsManager.getIslandsView(), model.playersManager.getPlayersView(destPlayer), model.motherNatureIndex,
-                reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins);
+    public CurrentGameState getCurrentGameState(Player destPlayer) {
+        if(!model.gameState.equals(GameState.ENDED)) {
+            return new CurrentGameState(new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
+                    getCurrentPlayer(), model.islandsManager.getIslandsView(), model.playersManager.getPlayersView(destPlayer), model.motherNatureIndex,
+                    reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins, model.getCloudsView(), null));
+        }
+        return  new CurrentGameState(new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
+                getCurrentPlayer(), model.islandsManager.getIslandsView(), model.playersManager.getPlayersView(destPlayer), model.motherNatureIndex,
+                reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins, model.getCloudsView(), model.roundManager.getWinners()));
     }
 
     /**
      * creates the character card view
+     *
      * @param destPlayerNick the nickname of player to which the characterCardsView will be sent
      * @return data on the current available characterCards
      */
-    public List<CharacterCardView> getCharacterCardsView(String destPlayerNick){
+    public List<CharacterCardView> getCharacterCardsView(String destPlayerNick) {
         List<CharacterCardView> characterCardsView = new ArrayList<>(3);
-        for (CharacterCard cc: characterCards) {
+        for (CharacterCard cc : characterCards) {
             int ogCost = cc.getCost();
             int addCost = cc.getAdditionalCost();
             boolean canUse = false;
@@ -721,8 +771,8 @@ public class GameModelExpert implements Game, EffectHandler {
      * @param listener the listener to add
      */
     @Override
-    public void addListener(MessageListener listener) {
-        model.addListener(listener);
+    public void addMessageListener(MessageListener listener) {
+        model.addMessageListener(listener);
     }
 
     /**
@@ -731,8 +781,8 @@ public class GameModelExpert implements Game, EffectHandler {
      * @param listener the listener to remove
      */
     @Override
-    public void removeListener(MessageListener listener) {
-        model.removeListener(listener);
+    public void removeMessageListener(MessageListener listener) {
+        model.removeMessageListener(listener);
     }
 
     /**
@@ -741,8 +791,8 @@ public class GameModelExpert implements Game, EffectHandler {
      * @param event of the message to notify
      */
     @Override
-    public void notifyListeners(MessageEvent event) {
-        model.notifyListeners(event);
+    public void notifyMessageListeners(MessageEvent event) {
+        model.notifyMessageListeners(event);
     }
 
     /**
@@ -752,8 +802,8 @@ public class GameModelExpert implements Game, EffectHandler {
      * @param event      of the message to notify
      */
     @Override
-    public void notifyListener(String identifier, MessageEvent event) {
-        model.notifyListener(identifier, event);
+    public void notifyMessageListener(String identifier, MessageEvent event) {
+        model.notifyMessageListener(identifier, event);
     }
 
     /**
@@ -764,10 +814,21 @@ public class GameModelExpert implements Game, EffectHandler {
             Message m = characterCardActivating.getRequiredAction(this);
             if (m != null) {
                 Player curr = model.playersManager.getCurrentPlayer();
-                notifyListener(curr.getNickname(), new MessageEvent(this, m));
+                notifyMessageListener(curr.getNickname(), new MessageEvent(this, m));
             }
         } else {
-            model.notifyPossibleActions();
+            notifyActions();
+        }
+    }
+
+    void notifyActions() {
+        if (model.gameState == GameState.STARTED && model.roundManager.getWinners().isEmpty()) {
+            switch (model.roundManager.getGamePhase()) {
+                case PLANNING -> model.notifyPlayAssistantCard();
+                case MOVE_STUDENTS -> model.notifyMultiplePossibleMoves();
+                case MOVE_MOTHER_NATURE -> model.notifyMoveMotherNature(additionalMotherNatureMovement);
+                case CHOOSE_CLOUD -> model.notifyChooseCloud();
+            }
         }
     }
 }

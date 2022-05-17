@@ -52,4 +52,13 @@ public enum GamePreset {
     public EnumSet<Tower> getTowers() {
         return EnumSet.copyOf(towers);
     }
+
+    public static GamePreset getFromNumber(int number){
+        return switch (number) {
+            case 2 -> GamePreset.TWO;
+            case 3 -> GamePreset.THREE;
+            case 4 -> GamePreset.FOUR;
+            default -> null;
+        };
+    }
 }

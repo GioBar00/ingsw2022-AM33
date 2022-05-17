@@ -16,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameModelExpertTest {
 
+    PlayerConvertor pC = new PlayerConvertor();
+
     /**
      * Tests the simulation of an expert game. Stress out the correct
      * @param preset Game Presets
@@ -30,14 +32,13 @@ class GameModelExpertTest {
         assertEquals(GameMode.EXPERT, m.getGameMode());
         assertEquals(20, m.reserve);
         assertFalse(m.startGame());
-
         for (int i = 0; i < preset.getPlayersNumber(); i++) {
             String nick = Integer.toString(i);
-            assertTrue(m.addPlayer(nick));
+            assertTrue(m.addPlayer(pC.getPlayer(nick, Wizard.KING)));
             assertEquals(preset.getPlayersNumber() - i - 1, m.getAvailablePlayerSlots());
         }
 
-        assertFalse(m.addPlayer(":("));
+        assertFalse(m.addPlayer(pC.getPlayer(": (", Wizard.KING)));
 
         int currentReserve = 20 - preset.getPlayersNumber();
 
@@ -151,7 +152,7 @@ class GameModelExpertTest {
         m.characterCards.set(0, herbalist);
 
         for (int i = 0; i < GamePreset.THREE.getPlayersNumber(); i++) {
-            assertTrue(m.addPlayer("" + i));
+            assertTrue(m.addPlayer(pC.getPlayer(i + "", Wizard.KING)));
         }
 
 

@@ -2,6 +2,7 @@ package it.polimi.ingsw.network.messages.views;
 
 import it.polimi.ingsw.server.model.GameModel;
 import it.polimi.ingsw.server.model.GameModelExpert;
+import it.polimi.ingsw.server.model.PlayerConvertor;
 import it.polimi.ingsw.server.model.cards.CharacterCard;
 import it.polimi.ingsw.server.model.enums.*;
 import it.polimi.ingsw.server.model.islands.IslandsManager;
@@ -37,6 +38,9 @@ class GameViewTest {
     Integer reserve;
     List<CharacterCardView> characterCardView;
     Map<String, Integer> playerCoins;
+    List<CloudView> cloudViews;
+
+    PlayerConvertor pC = new PlayerConvertor();
 
     /**
      * set up of the gameModel, before each test
@@ -45,7 +49,7 @@ class GameViewTest {
     void setUpInitial(){
         pmTest = gmTest.getModel().getPlayersManager();
         for(int i = 0; i < GamePreset.THREE.getPlayersNumber(); i++){
-            pmTest.addPlayer(Integer.toString(i));
+            pmTest.addPlayer(pC.getPlayer(Integer.toString(i),Wizard.SENSEI)) ;
         }
         imTest = gmTest.getModel().getIslandsManager();
         playerTowers = new ArrayList<>();
@@ -77,7 +81,7 @@ class GameViewTest {
      * @param destPlayer the player to whom the gameView will be sent
      */
     void setUpGameView(Player destPlayer){
-        gameView = gmTest.getGameView(destPlayer);
+        gameView = gmTest.getCurrentGameState(destPlayer).getGameView();
 
         mode = gameView.getMode();
         preset = gameView.getPreset();
@@ -89,6 +93,7 @@ class GameViewTest {
         reserve = gameView.getReserve();
         characterCardView = gameView.getCharacterCardView();
         playerCoins = gameView.getPlayerCoins();
+        cloudViews = gameView.getCloudViews();
     }
 
     /**
@@ -142,7 +147,7 @@ class GameViewTest {
 
         // currentPlayer plays an assistant card
         Player current = pmTest.getCurrentPlayer();
-        pmTest.currentPlayerPlayed(AssistantCard.ONE);
+        pmTest.currentPlayerPlayed(AssistantCard.CHEETAH);
 
         // player current will have enough coins to play any CharacterCard (3)
         gmTest.getPlayerCoins().put(current.getNickname(), 10);
@@ -167,7 +172,7 @@ class GameViewTest {
             if(current.getNickname().equals(playersView.get(i).getNickname())){
                 assertEquals(9, playersView.get(i).getNumAssistantCards());
                 assertNotNull(playersView.get(i).getAssistantCards());
-                assertEquals(AssistantCard.ONE, playersView.get(i).getPlayedCard());
+                assertEquals(AssistantCard.CHEETAH, playersView.get(i).getPlayedCard());
             } else {
                 assertEquals(10, playersView.get(i).getNumAssistantCards());
                 assertNull(playersView.get(i).getAssistantCards());
@@ -265,6 +270,11 @@ class GameViewTest {
             for (int j = 0; j < 3; j++)
                 if (j != i)
                     assertNotEquals(ccv1.getType(), characterCardView.get(j).getType());
+        }
+
+        assertEquals(3, cloudViews.size());
+        for (int i = 0; i < 3; i++){
+            assertEquals(gmTest.getModel().getClouds().get(i).getStudentsForView(), cloudViews.get(i).getStudents());
         }
     }
 }

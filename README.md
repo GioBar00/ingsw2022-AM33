@@ -21,13 +21,13 @@ The implementation must comply with the [rules](https://www.craniocreations.it/w
 
 | Functionality  | State  |
 |:---------------|:------:|
-| Complete rules |![#FFC800](https://via.placeholder.com/15/FFC800/000000?text=+)|
-| Socket         |![#FFC800](https://via.placeholder.com/15/FFC800/000000?text=+)|
-| CLI            |![#F03C15](https://via.placeholder.com/15/F03C15/000000?text=+)|
-| GUI            |![#F03C15](https://via.placeholder.com/15/F03C15/000000?text=+)|
+| Complete rules |![#4D8B31](https://via.placeholder.com/15/4D8B31/000000?text=+)|
+| Socket         |![#4D8B31](https://via.placeholder.com/15/4D8B31/000000?text=+)|
+| CLI            |![#FFC800](https://via.placeholder.com/15/FFC800/000000?text=+)|
+| GUI            |![#FFC800](https://via.placeholder.com/15/FFC800/000000?text=+)|
 | Character cards|![#4D8B31](https://via.placeholder.com/15/4D8B31/000000?text=+)|
 | 4 players      |![#4D8B31](https://via.placeholder.com/15/4D8B31/000000?text=+)|
-| Disconnections control |![#F03C15](https://via.placeholder.com/15/F03C15/000000?text=+)|
+| Disconnections control |![#FFC800](https://via.placeholder.com/15/FFC800/000000?text=+)|
 
 ##### Legend
 ||State|
@@ -41,5 +41,5 @@ The implementation must comply with the [rules](https://www.craniocreations.it/w
 ## Team
 
 - [Andrea Alari](https://github.com/andrea-alari)
-- [Givanni Barbiero](https://github.com/GioBar00)
+- [Giovanni Barbiero](https://github.com/GioBar00)
 - [Chiara Bordegari](https://github.com/Chiara-Bordegari)

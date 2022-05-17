@@ -19,7 +19,6 @@ public final class MessageBuilder {
      */
     public static String toJson(Message m) {
         Gson g = new GsonBuilder()
-                .setPrettyPrinting()
                 .registerTypeAdapter(Message.class, new MessageSerializer())
                 .create();
         return g.toJson(m, Message.class);
@@ -60,7 +59,7 @@ public final class MessageBuilder {
                     .registerTypeAdapter(MoveActionRequest.class, new MoveSerializer())
                     .create();
             JsonObject jsonObject = new JsonObject();
-            MessageType t = MessageType.retrieveByMessageClass(message);
+            MessageType t = MessageType.retrieveByMessage(message);
             jsonObject.add("type", g.toJsonTree(t));
             jsonObject.add("message", g.toJsonTree(message));
             return jsonObject;

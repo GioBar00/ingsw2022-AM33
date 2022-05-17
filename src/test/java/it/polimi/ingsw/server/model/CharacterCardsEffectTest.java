@@ -1,10 +1,9 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.server.model.GameModel;
-import it.polimi.ingsw.server.model.GameModelExpert;
 import it.polimi.ingsw.server.model.cards.*;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.StudentColor;
+import it.polimi.ingsw.server.model.enums.Wizard;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.player.SchoolBoard;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests all character effects.
  */
 class CharacterCardsEffectTest {
+
+    PlayerConvertor pC = new PlayerConvertor();
     /**
      * game model expert.
      */
@@ -29,9 +30,9 @@ class CharacterCardsEffectTest {
      */
     @BeforeEach
     void prepareModel() {
-        gme.addPlayer("1");
-        gme.addPlayer("2");
-        gme.addPlayer("3");
+        gme.addPlayer(pC.getPlayer("1", Wizard.SENSEI));
+        gme.addPlayer(pC.getPlayer("2", Wizard.SENSEI));
+        gme.addPlayer(pC.getPlayer("3", Wizard.SENSEI));
         gme.startGame();
     }
 
@@ -166,10 +167,10 @@ class CharacterCardsEffectTest {
         schoolBoardCurrent.addToHall(StudentColor.RED);
         schoolBoardCurrent.addProfessor(StudentColor.RED);
 
-        other.addToHall(StudentColor.PINK);
-        other.addToHall(StudentColor.PINK);
-        schoolBoardCurrent.addToHall(StudentColor.PINK);
-        other.addProfessor(StudentColor.PINK);
+        other.addToHall(StudentColor.MAGENTA);
+        other.addToHall(StudentColor.MAGENTA);
+        schoolBoardCurrent.addToHall(StudentColor.MAGENTA);
+        other.addProfessor(StudentColor.MAGENTA);
 
         schoolBoardCurrent.addToHall(StudentColor.GREEN);
         schoolBoardCurrent.addProfessor(StudentColor.GREEN);
@@ -178,7 +179,7 @@ class CharacterCardsEffectTest {
 
         assertTrue(schoolBoardCurrent.getProfessors().contains(StudentColor.RED));
         assertTrue(schoolBoardCurrent.getProfessors().contains(StudentColor.BLUE));
-        assertFalse(schoolBoardCurrent.getProfessors().contains(StudentColor.PINK));
+        assertFalse(schoolBoardCurrent.getProfessors().contains(StudentColor.MAGENTA));
         assertTrue(schoolBoardCurrent.getProfessors().contains(StudentColor.GREEN));
 
         assertFalse(farmer.endEffect());
@@ -187,7 +188,7 @@ class CharacterCardsEffectTest {
 
         assertTrue(schoolBoardCurrent.getProfessors().contains(StudentColor.RED));
         assertFalse(schoolBoardCurrent.getProfessors().contains(StudentColor.BLUE));
-        assertFalse(schoolBoardCurrent.getProfessors().contains(StudentColor.PINK));
+        assertFalse(schoolBoardCurrent.getProfessors().contains(StudentColor.MAGENTA));
         assertTrue(schoolBoardCurrent.getProfessors().contains(StudentColor.GREEN));
 
         assertEquals(1, farmer.getAdditionalCost());
@@ -385,7 +386,7 @@ class CharacterCardsEffectTest {
         for (int i = 0; i < sb.getEntranceCapacity(); i++) {
             sb.removeFromEntrance(i);
         }
-        sb.addToEntrance(StudentColor.PINK);
+        sb.addToEntrance(StudentColor.MAGENTA);
         sb.addToEntrance(StudentColor.RED);
         sb.addToEntrance(StudentColor.GREEN);
 
@@ -416,7 +417,7 @@ class CharacterCardsEffectTest {
         for (StudentColor s: StudentColor.values())
             sb.tryRemoveFromHall(s, 10);
         for (int i = 0; i < 10; i++)
-            sb.addToHall(StudentColor.PINK);
+            sb.addToHall(StudentColor.MAGENTA);
 
         sb.addToHall(StudentColor.BLUE);
         CharacterParameters parameters;
@@ -445,7 +446,7 @@ class CharacterCardsEffectTest {
         EnumMap<StudentColor, Integer> initialHall = gme.getHall();
 
         // test valid effect
-        parameters = new CharacterParameters(StudentColor.PINK, 0);
+        parameters = new CharacterParameters(StudentColor.MAGENTA, 0);
         assertTrue(minstrel.applyEffect(gme, parameters));
         parameters = new CharacterParameters(StudentColor.GREEN, 0);
         assertTrue(minstrel.applyEffect(gme, parameters));
@@ -453,11 +454,11 @@ class CharacterCardsEffectTest {
         checkStudentsAreEqual(initialHall, gme.getHall());
         minstrel.revertEffect(gme);
         // test valid effect with only one move
-        parameters = new CharacterParameters(StudentColor.PINK, 4);
+        parameters = new CharacterParameters(StudentColor.MAGENTA, 4);
         assertTrue(minstrel.applyEffect(gme, parameters));
         assertTrue(minstrel.endEffect());
         assertEquals(1, gme.getStudentsInHall(StudentColor.YELLOW));
-        assertEquals(initialHall.get(StudentColor.PINK) - 1, gme.getStudentsInHall(StudentColor.PINK));
+        assertEquals(initialHall.get(StudentColor.MAGENTA) - 1, gme.getStudentsInHall(StudentColor.MAGENTA));
 
         assertEquals(2, minstrel.getAdditionalCost());
     }

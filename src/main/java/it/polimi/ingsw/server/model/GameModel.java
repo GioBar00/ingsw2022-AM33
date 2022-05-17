@@ -8,9 +8,11 @@ import it.polimi.ingsw.network.messages.actions.requests.MultiplePossibleMoves;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.server.*;
-import it.polimi.ingsw.server.listeners.ConcreteMessageListenerSubscriber;
+import it.polimi.ingsw.network.messages.views.CloudView;
+import it.polimi.ingsw.server.PlayerDetails;
+import it.polimi.ingsw.network.listeners.ConcreteMessageListenerSubscriber;
 import it.polimi.ingsw.network.messages.views.GameView;
-import it.polimi.ingsw.server.listeners.MessageEvent;
+import it.polimi.ingsw.network.listeners.MessageEvent;
 import it.polimi.ingsw.server.model.islands.IslandsManager;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.player.PlayersManager;
@@ -96,6 +98,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
 
     /**
      * Calculates the number of available slots for players to enter.
+     *
      * @return number of available slots
      */
     public int getAvailablePlayerSlots() {
@@ -104,29 +107,27 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
 
     /**
      * Adds a new player to the game only if the game is uninitialized, there is at lest an empty player slot and there isn't any other player with that nickname.
-     * @param nickname unique identifier of a player
+     *
+     * @param playerDetails unique class with details for a player
      * @return if the player was added successfully.
      */
-    public boolean addPlayer(String nickname) {
+    public boolean addPlayer(PlayerDetails playerDetails) {
         if (gameState != GameState.UNINITIALIZED)
             return false;
-        if (playersManager.addPlayer(nickname)) {
-            notifyListeners(new MessageEvent(this, new CurrentTeams(playersManager.getTeamsView())));
-            return true;
-        }
-        return false;
+        return playersManager.addPlayer(playerDetails);
     }
 
     /**
      * Initializes the game by adding one student on each island except where there is mother nature and on the opposite island.
      * Add the remaining student on the bag.
+     *
      * @return if game is UNINITIALIZED or all players have entered.
      */
     boolean initializeGame() {
         if (gameState != GameState.UNINITIALIZED || playersManager.getAvailablePlayerSlots() != 0)
             return false;
 
-        for(StudentColor s: StudentColor.values()) {
+        for (StudentColor s : StudentColor.values()) {
             List<StudentColor> l = Collections.nCopies(2, s);
             bag.addStudents(l);
         }
@@ -138,11 +139,11 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             }
         }
 
-        for(StudentColor s: StudentColor.values()) {
+        for (StudentColor s : StudentColor.values()) {
             bag.addStudents(Collections.nCopies(24, s));
         }
-        for(Cloud c: clouds){
-            for(int i = 0; i < playersManager.getPreset().getCloudCapacity(); i++){
+        for (Cloud c : clouds) {
+            for (int i = 0; i < playersManager.getPreset().getCloudCapacity(); i++) {
                 c.addStudent(bag.popRandomStudent(), i);
             }
         }
@@ -164,10 +165,11 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
 
     /**
      * Starts the Game and randomly selects the first Player if the game is initialized.
+     *
      * @return if the game started successfully.
      */
     boolean executeStartGame() {
-        if(initializeGame()) {
+        if (initializeGame()) {
             int i = ThreadLocalRandom.current().nextInt(0, playersManager.getPreset().getPlayersNumber());
             playersManager.setFirstPlayer(i);
             roundManager.nextRound();
@@ -185,7 +187,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      */
     public boolean startGame() {
         if (executeStartGame()) {
-            notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -195,6 +197,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     /**
      * Try to play an assistant card. If someone has already played it check that the current player hasn't other cards playable.
      * Checks if the player had that card in hand and if it is the correct phase to play a card.
+     *
      * @param assistantCard the card the player wants to play
      * @return if the card was played successfully.
      */
@@ -225,30 +228,39 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         if (!playersManager.currentPlayerPlayed(assistantCard))
             return false;
 
+        nextInPlanningPhase(currentPlayer);
+
+        return true;
+    }
+
+    /**
+     * Executes the change of player during the planning phase
+     *
+     * @param currentPlayer the current player
+     */
+    private void nextInPlanningPhase(Player currentPlayer) {
         if (currentPlayer.equals(playersManager.getLastPlayer())) {
             roundManager.startActionPhase();
             playersManager.calculatePlayerOrder();
         }
 
-        if(playersManager.getPlayerHand(currentPlayer).size() == 0)
+        if (playersManager.getPlayerHand(currentPlayer).size() == 0)
             roundManager.setLastRound();
 
-
         playersManager.nextPlayer();
-
-        return true;
     }
 
     /**
      * Try to play an assistant card. If someone has already played it check that the current player hasn't other cards playable.
      * Checks if the player had that card in hand and if it is the correct phase to play a card.
      * Notifies the listeners.
+     *
      * @param assistantCard the card the player wants to play
      * @return if the card was played successfully.
      */
     public boolean playAssistantCard(AssistantCard assistantCard) {
         if (executePlayAssistantCard(assistantCard)) {
-            notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -258,6 +270,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     /**
      * Moves a student from the Entrance to the Hall of the current player if the player can play, the hall is not full and the index is valid.
      * then proceeds to check if the professors need to be re-distributed between the players
+     *
      * @param entranceIndex of the student that will be moved to the Hall
      * @return if the student was successfully moved to the hall.
      */
@@ -283,12 +296,13 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * Moves a student from the Entrance to the Hall of the current player if the player can play, the hall is not full and the index is valid.
      * then proceeds to check if the professors need to be re-distributed between the players
      * Notifies the listeners.
+     *
      * @param entranceIndex of the student that will be moved to the Hall
      * @return if the student was successfully moved to the hall.
      */
     public boolean moveStudentToHall(int entranceIndex) {
         if (executeMoveStudentToHall(entranceIndex)) {
-            notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -299,7 +313,8 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * Selects a student from the Entrance of the current Player's SchoolBoard, removes it from there and
      * moves it to a selected island that is part of a selected IslandGroup. Checks if the player can play,
      * if it is the correct game state and if the indexes are valid.
-     * @param entranceIndex of the slot occupied by the student that will be moved
+     *
+     * @param entranceIndex    of the slot occupied by the student that will be moved
      * @param islandGroupIndex of the IslandGroup that contains the selected island
      * @return if the student was moved successfully.
      */
@@ -325,13 +340,14 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * moves it to a selected island that is part of a selected IslandGroup. Checks if the player can play,
      * if it is the correct game state and if the indexes are valid.
      * Notifies the listeners.
-     * @param entranceIndex of the slot occupied by the student that will be moved
+     *
+     * @param entranceIndex    of the slot occupied by the student that will be moved
      * @param islandGroupIndex of the IslandGroup that contains the selected island
      * @return if the student was moved successfully.
      */
     public boolean moveStudentToIsland(int entranceIndex, int islandGroupIndex) {
         if (executeMoveStudentToIsland(entranceIndex, islandGroupIndex)) {
-            notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -341,12 +357,13 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     /**
      * Moves mother nature with a maximum movement of the number in the assistant card played.
      * Notifies the listeners.
+     *
      * @param num of moves that MotherNature should make.
      * @return if the move ended successfully.
      */
     public boolean moveMotherNature(int num) {
-        if (moveMotherNature(num, playersManager.getPlayedCard().getMoves())) {
-            notifyPersonalizedGameView();
+        if (moveMotherNature(num, playersManager.getPlayedCard().getMoves(), this::checkInfluence)) {
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -356,10 +373,11 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     /**
      * Moves MotherNature of a selected number of moves, following the order of IslandGroups if the game phase is correct and the num is valid.
      * If there are no clouds with students it skips the "choose cloud" phase.
+     *
      * @param num of moves that MotherNature makes.
      * @return if the move ended successfully.
      */
-    boolean moveMotherNature(int num, int maxNum) {
+    boolean moveMotherNature(int num, int maxNum, InfluenceChecker influenceChecker) {
         if (gameState != GameState.STARTED)
             return false;
         if (roundManager.getGamePhase() != GamePhase.MOVE_MOTHER_NATURE)
@@ -369,7 +387,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             return false;
 
         motherNatureIndex = (motherNatureIndex + num) % islandsManager.getNumIslandGroups();
-        checkInfluence(motherNatureIndex);
+        influenceChecker.checkInfluence(motherNatureIndex);
 
         if (roundManager.getWinners().isEmpty()) {
             boolean cloudWithStud = atLeastOneCloudWithStudents();
@@ -384,11 +402,12 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
 
     /**
      * Checks if at least one cloud has at least one student.
+     *
      * @return if at least one cloud has at least one student.
      */
     boolean atLeastOneCloudWithStudents() {
         boolean b = false;
-        for (Cloud c: clouds)
+        for (Cloud c : clouds)
             if (c.getStudents().size() > 0) {
                 b = true;
                 break;
@@ -399,6 +418,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     /**
      * Moves the student currently residing on a cloud to the Entrance of the current Player if the game state and phase are correct,
      * if the index is valid and if the cloud is not empty.
+     *
      * @param cloudIndex of the selected cloud
      * @return if the students were taken correctly from the cloud and added to the entrance.
      */
@@ -428,12 +448,13 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * Moves the student currently residing on a cloud to the Entrance of the current Player if the game state and phase are correct,
      * if the index is valid and if the cloud is not empty.
      * Notifies the listeners.
+     *
      * @param cloudIndex of the selected cloud
      * @return if the students were taken correctly from the cloud and added to the entrance.
      */
     public boolean getStudentsFromCloud(int cloudIndex) {
         if (executeGetStudentsFromCloud(cloudIndex)) {
-            notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
         }
@@ -455,17 +476,24 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     /**
      * the method checks that che professor of type s is assigned to the correct SchoolBoard and changes its position
      * in case that the current assignment is incorrect
+     *
      * @param s: the color of the professor to be checked
      */
-    void checkProfessor(StudentColor s){
+    void checkProfessor(StudentColor s) {
         Player current = playersManager.getCurrentPlayer();
         SchoolBoard currSch = playersManager.getSchoolBoard(current);
-        boolean found = false;
-        for(Player p: playersManager.getPlayers()){
-            if(!p.equals(current)){
+        for (Player p : playersManager.getPlayers()) {
+            if (!p.equals(current)) {
                 SchoolBoard compSch = playersManager.getSchoolBoard(p);
-                if(compSch.getStudentsInHall(s) < currSch.getStudentsInHall(s)){
-                    if(compSch.getProfessors().contains(s)){
+                if (compSch.getStudentsInHall(s) >= currSch.getStudentsInHall(s)) return;
+            }
+        }
+        boolean found = false;
+        for (Player p : playersManager.getPlayers()) {
+            if (!p.equals(current)) {
+                SchoolBoard compSch = playersManager.getSchoolBoard(p);
+                if (compSch.getStudentsInHall(s) < currSch.getStudentsInHall(s)) {
+                    if (compSch.getProfessors().contains(s)) {
                         found = true;
                         compSch.removeProfessor(s);
                         currSch.addProfessor(s);
@@ -473,12 +501,8 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
                 }
             }
         }
-        if(!found && !currSch.getProfessors().contains(s)){
-            try {
-                currSch.addProfessor(s);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (!found && !currSch.getProfessors().contains(s)) {
+            currSch.addProfessor(s);
         }
     }
 
@@ -489,6 +513,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * can be merged with the ones next to it.
      * In order to calculate the influence of the various Players, the method calls an overloaded version
      * of checkInfluence.
+     *
      * @param islandGroupIndex of the IslandGroup in question
      */
     void checkInfluence(int islandGroupIndex) {
@@ -504,13 +529,13 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * Overloaded version of checkInfluence that uses particular parameters to handel the effects of the CharacterCards.
      * Groups players by tower color then finds the tower color that has the highest influence.
      *
-     * @param islandGroupIndex of the IslandGroup on which the influence is calculated
-     * @param skipTowers true in case that the CharacterCard "Centaur" is activated (during the turn the
-     *                   towers of the IslandGroup will not be counted for the computation on the influence)
+     * @param islandGroupIndex    of the IslandGroup on which the influence is calculated
+     * @param skipTowers          true in case that the CharacterCard "Centaur" is activated (during the turn the
+     *                            towers of the IslandGroup will not be counted for the computation on the influence)
      * @param additionalInfluence adds two extra points to the Player that has activated the CharacterCard
      *                            of the Knight
-     * @param skipStudentColor during the computation of the influence, the students of the colors decided by the Player
-     *                         that has activated the CharacterCard "Harvester" will not be counted
+     * @param skipStudentColor    during the computation of the influence, the students of the colors decided by the Player
+     *                            that has activated the CharacterCard "Harvester" will not be counted
      * @return the tower that belongs to the player/players with the most influence
      */
     Tower checkInfluence(int islandGroupIndex, boolean skipTowers, int additionalInfluence, EnumSet<StudentColor> skipStudentColor) {
@@ -523,31 +548,26 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         Tower tower = islandsManager.getTower(islandGroupIndex);
         if (tower != null) {
             profs = EnumSet.noneOf(StudentColor.class);
-            for (Player p: playersByTower.get(tower)) {
+            for (Player p : playersByTower.get(tower)) {
                 profs.addAll(playersManager.getSchoolBoard(p).getProfessors());
             }
             profs.removeAll(skipStudentColor);
-            maxInfluence = skipTowers ?
-                    islandsManager.calcInfluence(profs, islandGroupIndex):
-                    islandsManager.calcInfluence(tower, profs, islandGroupIndex);
+            maxInfluence = skipTowers ? islandsManager.calcInfluence(profs, islandGroupIndex) : islandsManager.calcInfluence(tower, profs, islandGroupIndex);
             if (playersByTower.get(tower).contains(playersManager.getCurrentPlayer()))
                 maxInfluence += additionalInfluence;
-        }
-        else
-            maxInfluence = 0;
+        } else maxInfluence = 0;
 
-        if (tower != null)
-            playersByTower.remove(tower);
+        if (tower != null) playersByTower.remove(tower);
 
         // check influence for others
-        for (Map.Entry<Tower, List<Player>> entry: playersByTower.entrySet()) {
+        for (Map.Entry<Tower, List<Player>> entry : playersByTower.entrySet()) {
             profs = EnumSet.noneOf(StudentColor.class);
-            for (Player p: entry.getValue()) {
+            for (Player p : entry.getValue()) {
                 profs.addAll(playersManager.getSchoolBoard(p).getProfessors());
             }
             profs.removeAll(skipStudentColor);
             int influence = skipTowers ?
-                    islandsManager.calcInfluence(profs, islandGroupIndex):
+                    islandsManager.calcInfluence(profs, islandGroupIndex) :
                     islandsManager.calcInfluence(entry.getKey(), profs, islandGroupIndex);
             if (entry.getValue().contains(playersManager.getCurrentPlayer()))
                 influence += additionalInfluence;
@@ -566,10 +586,11 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * them back on the SchoolBoard of the Player that they belong to, selects the current most influential Player
      * and puts its towers on the islands. If the IslandGroup originally didn't have any tower, the first part of the
      * method is skipped.
+     *
      * @param islandGroupIndex index of the IslandGroup considered
-     * @param newTower to be put on the IslandGroup
+     * @param newTower         to be put on the IslandGroup
      */
-    void swapTowers(int islandGroupIndex, Tower newTower){
+    void swapTowers(int islandGroupIndex, Tower newTower) {
         Tower oldTower = islandsManager.getTower(islandGroupIndex);
 
         if (newTower != oldTower) {
@@ -595,6 +616,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * which can put blocks on an IslandGroup to stop Players from positioning a Tower there: if the method is called
      * on a blocked IslandGroup, the blocks need to be removed.
      * If there are 3 or less island groups the game ends.
+     *
      * @param islandGroupIndex of the islandGroup considered
      * @return the number of blocks (prohibit cards) that need to be removed from the IslandGroup and put
      * back on the "Herbalist" card
@@ -630,8 +652,9 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
 
     /**
      * fixes mother nature's index when two island groups are merged
+     *
      * @param index of the first island group
-     * @param next index of the next island group.
+     * @param next  index of the next island group.
      * @return new index of the merged island groups.
      */
     private int fixIslandGroupsIndexes(int index, int next) {
@@ -649,14 +672,16 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
 
     /**
      * used to get the current player
+     *
      * @return the nickname of the current player
      */
-    public String getCurrentPlayer(){
+    public String getCurrentPlayer() {
         return playersManager.getCurrentPlayer().getNickname();
     }
 
     /**
      * Return the phase of the Game
+     *
      * @return GamePhase
      */
     @Override
@@ -672,35 +697,55 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     boolean executeSkipTurn() {
         if (gameState != GameState.STARTED)
             return false;
-        nextTurn();
+        if (roundManager.getGamePhase().equals(GamePhase.PLANNING)) {
+            nextInPlanningPhase(playersManager.getCurrentPlayer());
+        } else nextTurn();
         return true;
     }
 
     /**
      * Skips the current player's turn.
-     *
-     * @return if the turn was skipped successfully.
      */
     @Override
-    public boolean skipCurrentPlayerTurn() {
+    public void skipCurrentPlayerTurn() {
         if (executeSkipTurn()) {
-            notifyPersonalizedGameView();
+            notifyPersonalizedGameState();
             notifyPossibleActions();
-            return true;
         }
-        return false;
     }
 
+    /**
+     * Remove a player from the game
+     *
+     * @param nickname of the player
+     * @return if the player was removed
+     */
     @Override
     public boolean removePlayer(String nickname) {
         return playersManager.removePlayer(nickname);
     }
 
     /**
+     * Notifies the current game state to a player
+     *
+     * @param nickname of the player
+     */
+    @Override
+    public void notifyCurrentGameStateToPlayer(String nickname) {
+        List<Player> players = playersManager.getPlayers();
+        for (Player player : players)
+            if (player.getNickname().equals(nickname)) {
+                notifyPersonalizedGameState(player);
+                return;
+            }
+
+    }
+
+    /**
      * Advances the Game to the next round.
      * If it is the last round it checks the winner.
      */
-    void nextRound(){
+    void nextRound() {
         if (roundManager.isLastRound()) {
             calculateWinners();
             return;
@@ -718,7 +763,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * If there are no more students this will be the last round.
      */
     void refillClouds() {
-        for (Cloud c: clouds) {
+        for (Cloud c : clouds) {
             for (int i = 0; i < playersManager.getPreset().getCloudCapacity(); i++) {
                 StudentColor s = bag.popRandomStudent();
                 if (s == null) {
@@ -739,9 +784,9 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
 
         EnumSet<Tower> winners = EnumSet.noneOf(Tower.class);
         int minNumTower = playersManager.getPreset().getTowersNumber() + 1;
-        for (Map.Entry<Tower, List<Player>> entry: playersByTower.entrySet()) {
+        for (Map.Entry<Tower, List<Player>> entry : playersByTower.entrySet()) {
             int numTower = 0;
-            for (Player p: entry.getValue())
+            for (Player p : entry.getValue())
                 numTower += playersManager.getSchoolBoard(p).getNumTowers();
             if (numTower < minNumTower) {
                 minNumTower = numTower;
@@ -752,9 +797,9 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         if (winners.size() > 1) {
 
             Map<Integer, EnumSet<Tower>> towersByNumProfs = new HashMap<>();
-            for (Tower t: winners) {
+            for (Tower t : winners) {
                 int numProfs = 0;
-                for (Player p: playersByTower.get(t))
+                for (Player p : playersByTower.get(t))
                     numProfs += playersManager.getSchoolBoard(p).getProfessors().size();
                 if (towersByNumProfs.containsKey(numProfs))
                     towersByNumProfs.get(numProfs).add(t);
@@ -774,9 +819,12 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param destPlayer the player to whom the gameView will be sent
      * @return the current gameView
      */
-    public GameView getGameView(Player destPlayer) {
-        return new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex);
+    public CurrentGameState getCurrentGameState(Player destPlayer) {
+        if(gameState == GameState.ENDED)
+            return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex, getCloudsView(),roundManager.getWinners()));
+        return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex, getCloudsView(),null));
     }
+
 
     /**
      * @return playerManager, for tests purposes
@@ -795,9 +843,18 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     /**
      * Notifies each player about the new game state.
      */
-    void notifyPersonalizedGameView() {
-        for (Player p: playersManager.getPlayers())
-            notifyListener(p.getNickname(), new MessageEvent(this, getGameView(p)));
+    void notifyPersonalizedGameState() {
+        for (Player p : playersManager.getPlayers())
+            notifyPersonalizedGameState(p);
+    }
+
+    /**
+     * Notifies a player about the new game state.
+     *
+     * @param player the player to notify
+     */
+    void notifyPersonalizedGameState(Player player) {
+        notifyMessageListener(player.getNickname(), new MessageEvent(this, getCurrentGameState(player)));
     }
 
     /**
@@ -808,7 +865,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             switch (roundManager.getGamePhase()) {
                 case PLANNING -> notifyPlayAssistantCard();
                 case MOVE_STUDENTS -> notifyMultiplePossibleMoves();
-                case MOVE_MOTHER_NATURE -> notifyMoveMotherNature();
+                case MOVE_MOTHER_NATURE -> notifyMoveMotherNature(0);
                 case CHOOSE_CLOUD -> notifyChooseCloud();
             }
         }
@@ -819,7 +876,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      */
     void notifyPlayAssistantCard() {
         Player curr = playersManager.getCurrentPlayer();
-        notifyListener(curr.getNickname(), new MessageEvent(this, playersManager.getPossibleAssistantCards()));
+        notifyMessageListener(curr.getNickname(), new MessageEvent(this, playersManager.getPossibleAssistantCards()));
     }
 
     /**
@@ -850,15 +907,20 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         moves.add(new MoveStudent(MoveLocation.ENTRANCE, hallEntranceIndexes, MoveLocation.HALL, null));
         Message m = new MultiplePossibleMoves(moves);
 
-        notifyListener(curr.getNickname(), new MessageEvent(this, m));
+        notifyMessageListener(curr.getNickname(), new MessageEvent(this, m));
     }
 
     /**
      * Notifies the current player to move mother nature.
      */
-    void notifyMoveMotherNature() {
+    void notifyMoveMotherNature(int additionalMoves) {
         Player curr = playersManager.getCurrentPlayer();
-        notifyListener(curr.getNickname(), new MessageEvent(this, new MoveMotherNature(playersManager.getPlayedCard().getMoves())));
+        int nMove = 0;
+        AssistantCard played = playersManager.getPlayedCard();
+        if (played != null)
+            nMove = played.getMoves();
+        nMove = nMove + additionalMoves;
+        notifyMessageListener(curr.getNickname(), new MessageEvent(this, new MoveMotherNature(nMove)));
     }
 
     /**
@@ -871,7 +933,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             if (clouds.get(i).getStudents().size() > 0)
                 cloudIndexes.add(i);
         }
-        notifyListener(curr.getNickname(), new MessageEvent(this, new ChooseCloud(cloudIndexes)));
+        notifyMessageListener(curr.getNickname(), new MessageEvent(this, new ChooseCloud(cloudIndexes)));
     }
 
     /**
@@ -886,5 +948,18 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      */
     public int getMotherNatureIndex() {
         return motherNatureIndex;
+    }
+
+    public ArrayList<CloudView> getCloudsView() {
+        ArrayList<CloudView> cloudsView = new ArrayList<>();
+        for (Cloud c : clouds) {
+            CloudView cv = new CloudView(c.getStudentsForView());
+            cloudsView.add(cv);
+        }
+        return cloudsView;
+    }
+
+    public List<Cloud> getClouds() {
+        return List.copyOf(clouds);
     }
 }

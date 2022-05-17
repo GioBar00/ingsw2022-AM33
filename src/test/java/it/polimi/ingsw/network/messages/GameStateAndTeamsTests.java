@@ -1,13 +1,14 @@
 package it.polimi.ingsw.network.messages;
 
-import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.server.CurrentGameState;
-import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.network.messages.views.*;
 import it.polimi.ingsw.server.model.GameModel;
 import it.polimi.ingsw.server.model.GameModelExpert;
+import it.polimi.ingsw.server.model.PlayerConvertor;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.Tower;
+import it.polimi.ingsw.server.model.enums.Wizard;
+import it.polimi.ingsw.server.model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,21 +18,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class GameStateAndTeamsTests {
     GameModelExpert gm = new GameModelExpert(new GameModel(GamePreset.FOUR));
 
+    PlayerConvertor pC =new PlayerConvertor();
     /**
      * initialized the gameModel before each test
      */
     @BeforeEach
     void startGame(){
         for(int i = 0; i < GamePreset.FOUR.getPlayersNumber(); i++){
-            gm.getModel().getPlayersManager().addPlayer(Integer.toString(i));
-        }
-        for(int i = 0; i < GamePreset.FOUR.getPlayersNumber(); i++){
             Tower t;
             if (i%2 == 0)
                 t = Tower.WHITE;
             else
                 t = Tower.BLACK;
-            gm.getModel().getPlayersManager().changeTeam(Integer.toString(i), t);
+            gm.getModel().getPlayersManager().addPlayer(pC.getPlayer(Integer.toString(i), Wizard.MERLIN, t));
         }
         gm.startGame();
     }
@@ -41,7 +40,7 @@ class GameStateAndTeamsTests {
      */
     @Test
     void CurrentGameStateTest(){
-        CurrentGameState original = new CurrentGameState(gm.getGameView(gm.getModel().getPlayersManager().getCurrentPlayer()));
+        CurrentGameState original = gm.getCurrentGameState(gm.getModel().getPlayersManager().getCurrentPlayer());
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof CurrentGameState);
@@ -82,7 +81,7 @@ class GameStateAndTeamsTests {
         assertEquals(original.getGameView().getMotherNatureIndex(), ((CurrentGameState) m).getGameView().getMotherNatureIndex());
         for (int i = 0; i < 3; i++){
             CharacterCardView ogccv = original.getGameView().getCharacterCardView().get(i);
-            CharacterCardView mccv = original.getGameView().getCharacterCardView().get(i);
+            CharacterCardView mccv = ((CurrentGameState) m).getGameView().getCharacterCardView().get(i);
             assertEquals(ogccv.getType(), mccv.getType());
             assertEquals(ogccv.getOriginalCost(), mccv.getOriginalCost());
             assertEquals(ogccv.getAdditionalCost(), mccv.getAdditionalCost());
@@ -91,28 +90,25 @@ class GameStateAndTeamsTests {
         }
         assertEquals(original.getGameView().getReserve(), ((CurrentGameState) m).getGameView().getReserve());
         assertEquals(original.getGameView().getPlayerCoins(), ((CurrentGameState) m).getGameView().getPlayerCoins());
+        for (int i = 0; i < 4; i++){
+            CloudView ogcloudsv = original.getGameView().getCloudViews().get(i);
+            CloudView mcloudsv = ((CurrentGameState) m).getGameView().getCloudViews().get(i);
+            assertEquals(ogcloudsv.getStudents(), mcloudsv.getStudents());
+        }
         // test null message
         original = new CurrentGameState(null);
         m = toAndFromJson(original);
         assertFalse(m.isValid());
-        // TODO: aggiungere i test per i campi a null (a blocchi/esclusione o intero?)
-    }
-
-    /**
-     * test for the message CurrentTeams
-     */
-    @Test
-    void CurrentTeamsTest(){
-        CurrentTeams original = new CurrentTeams(gm.getModel().getPlayersManager().getTeamsView());
-        Message m = toAndFromJson(original);
-        assertTrue(m.isValid());
-        assertTrue(m instanceof CurrentTeams);
-        assertEquals(original.getTeamsView().getLobby(), ((CurrentTeams) m).getTeamsView().getLobby());
-        assertEquals(original.getTeamsView().getTeams(), ((CurrentTeams) m).getTeamsView().getTeams());
-        // test null message
-        original = new CurrentTeams(null);
+        // test first if of isValid()
+        Player dest = gm.getModel().getPlayersManager().getCurrentPlayer();
+        GameView gameView = new GameView(gm.getGameMode(), null, gm.getGameState(), gm.getPhase(), gm.getCurrentPlayer(), gm.getModel().getIslandsManager().getIslandsView(), gm.getModel().getPlayersManager().getPlayersView(dest), gm.getModel().getMotherNatureIndex(), gm.getReserve(), gm.getCharacterCardsView(dest.getNickname()), gm.getPlayerCoins(), gm.getModel().getCloudsView(), null);
+        assertEquals(dest.getNickname(), gameView.getCurrentPlayer());
+        original = new CurrentGameState(new GameView(gm.getGameMode(), null, gm.getGameState(), gm.getPhase(), gm.getCurrentPlayer(), gm.getModel().getIslandsManager().getIslandsView(), gm.getModel().getPlayersManager().getPlayersView(dest), gm.getModel().getMotherNatureIndex(), gm.getReserve(), gm.getCharacterCardsView(dest.getNickname()), gm.getPlayerCoins(), gm.getModel().getCloudsView(), null));
         m = toAndFromJson(original);
         assertFalse(m.isValid());
-        // there's no test for empty fields because both the teams and the lobby can have null fields
+        // test second if fo isValid()
+        original = new CurrentGameState(new GameView(gm.getGameMode(), gm.getModel().getPlayersManager().getPreset(), gm.getGameState(), gm.getPhase(),gm.getCurrentPlayer(), gm.getModel().getIslandsManager().getIslandsView(), null, gm.getModel().getMotherNatureIndex(), gm.getReserve(), gm.getCharacterCardsView(dest.getNickname()), gm.getPlayerCoins(), gm.getModel().getCloudsView(),null));
+        m = toAndFromJson(original);
+        assertFalse(m.isValid());
     }
 }

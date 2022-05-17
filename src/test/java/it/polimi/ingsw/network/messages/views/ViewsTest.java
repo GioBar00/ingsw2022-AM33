@@ -1,23 +1,20 @@
 package it.polimi.ingsw.network.messages.views;
 
-import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.server.model.GameModel;
 import it.polimi.ingsw.server.model.GameModelTeams;
-import it.polimi.ingsw.server.model.enums.AssistantCard;
-import it.polimi.ingsw.server.model.enums.GamePreset;
-import it.polimi.ingsw.server.model.enums.StudentColor;
-import it.polimi.ingsw.server.model.enums.Tower;
+import it.polimi.ingsw.server.model.PlayerConvertor;
+import it.polimi.ingsw.server.model.enums.*;
 import it.polimi.ingsw.server.model.islands.IslandsManager;
 import it.polimi.ingsw.server.model.player.PlayersManager;
 import it.polimi.ingsw.server.model.player.SchoolBoard;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ViewsTest {
+    PlayerConvertor pC = new PlayerConvertor();
 
     /**
      * test for the playersView for the standard GameModel with two and three players
@@ -27,9 +24,8 @@ class ViewsTest {
         for (GamePreset preset : GamePreset.values()) {
             if (!preset.equals(GamePreset.FOUR)){
                 PlayersManager pmTest = new PlayersManager(preset);
-
-                for(int i = 0; i < preset.getPlayersNumber(); i++){
-                    pmTest.addPlayer(Integer.toString(i));
+                for(int i = 0; i< preset.getPlayersNumber(); i++){
+                    assertTrue(pmTest.addPlayer(pC.getPlayer(Integer.toString(i), Wizard.SENSEI, Tower.WHITE)));
                 }
 
                 ArrayList<PlayerView> playerViewTest = pmTest.getPlayersView(pmTest.getPlayers().get(0));
@@ -52,7 +48,7 @@ class ViewsTest {
                     assertNull(pv.getPlayedCard());
                 }
 
-                pmTest.currentPlayerPlayed(AssistantCard.ONE);
+                pmTest.currentPlayerPlayed(AssistantCard.CHEETAH);
 
                 ArrayList<PlayerView> playerViewTest_2 = pmTest.getPlayersView(pmTest.getCurrentPlayer());
 
@@ -62,7 +58,7 @@ class ViewsTest {
                 }
 
                 assertNotNull(playerViewTest.get(0).getAssistantCards());
-                assertFalse(playerViewTest_2.get(0).getAssistantCards().contains(AssistantCard.ONE));
+                assertFalse(playerViewTest_2.get(0).getAssistantCards().contains(AssistantCard.CHEETAH));
                 assertEquals(playerViewTest_2.get(0).getNumAssistantCards(), 9);
                 for (int i = 1; i < preset.getPlayersNumber(); i++){
                     assertNull(playerViewTest.get(i).getAssistantCards());
@@ -86,15 +82,11 @@ class ViewsTest {
         GameModel gmTeams = new GameModelTeams();
         PlayersManager pmTest = gmTeams.getPlayersManager();
 
-        assertTrue(gmTeams.addPlayer("whiteLeader"));
-        assertTrue(gmTeams.addPlayer("blackLeader"));
-        assertTrue(gmTeams.addPlayer("whiteOther"));
-        assertTrue(gmTeams.addPlayer("blackOther"));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteLeader", Wizard.SENSEI, Tower.WHITE)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackLeader", Wizard.SENSEI, Tower.BLACK)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteOther", Wizard.SENSEI, Tower.WHITE)));
+        assertTrue(gmTeams.addPlayer(pC.getPlayer("blackOther", Wizard.SENSEI, Tower.BLACK)));
 
-        assertTrue(gmTeams.changeTeam("whiteLeader", Tower.WHITE));
-        assertTrue(gmTeams.changeTeam("blackLeader", Tower.BLACK));
-        assertTrue(gmTeams.changeTeam("whiteOther", Tower.WHITE));
-        assertTrue(gmTeams.changeTeam("blackOther", Tower.BLACK));
 
         ArrayList<PlayerView> playerViewTest = pmTest.getPlayersView(pmTest.getPlayers().get(0));
 
@@ -118,18 +110,6 @@ class ViewsTest {
             assertEquals(pv.getNumAssistantCards(), 10);
             assertNull(pv.getPlayedCard());
         }
-
-        TeamsView tv = new CurrentTeams(gmTeams.getPlayersManager().getTeamsView()).getTeamsView();
-        List<String> lobby = tv.getLobby();
-
-        assertFalse(tv.getTeams().isEmpty());
-        assertEquals(2, tv.getTeams().get(Tower.WHITE).size());
-        assertTrue(tv.getTeams().get(Tower.WHITE).contains("whiteLeader"));
-        assertTrue(tv.getTeams().get(Tower.WHITE).contains("whiteOther"));
-        assertEquals(2, tv.getTeams().get(Tower.BLACK).size());
-        assertTrue(tv.getTeams().get(Tower.BLACK).contains("blackLeader"));
-        assertTrue(tv.getTeams().get(Tower.BLACK).contains("blackOther"));
-        assertEquals(0, lobby.size());
     }
 
     /**

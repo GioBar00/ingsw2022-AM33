@@ -29,7 +29,7 @@ public class SwapStudents extends MoveStudent {
         if(from != null && to != null) {
             if (from.requiresIndex() && (fromIndexesSet == null || fromIndexesSet.isEmpty()))
                 return false;
-            if (to.requiresIndex() && (toIndexesSet == null || toIndexesSet.isEmpty()))
+            if (to.requiresIndex() && (toIndexesSet == null))
                 return false;
             if (from != MoveLocation.ENTRANCE) {
                 try {

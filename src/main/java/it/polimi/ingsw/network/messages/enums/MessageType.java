@@ -26,6 +26,7 @@ public enum MessageType {
     COMM_MESSAGE(CommMessage.class),
     CURRENT_TEAMS(CurrentTeams.class),
     CURRENT_GAME_STATE(CurrentGameState.class),
+    AVAILABLE_WIZARDS(AvailableWizards.class),
 
     // client messages
     PLAYED_ASSISTANT_CARD(PlayedAssistantCard.class),
@@ -39,8 +40,12 @@ public enum MessageType {
     CONCLUDE_CHARACTER_CARD_EFFECT(ConcludeCharacterCardEffect.class),
     CHOSEN_GAME(ChosenGame.class),
     CHOSEN_TEAM(ChosenTeam.class),
+    CHOSEN_WIZARD(ChosenWizard.class),
     LOGIN(Login.class),
     START_GAME(StartGame.class),
+
+    // internal messages
+    GAME_STATE_REQUEST(GameStateRequest.class),
     SKIP_TURN(SkipTurn.class);
 
     private static final Map<Class<? extends Message>, MessageType> LOOKUP_MAP;
@@ -74,7 +79,7 @@ public enum MessageType {
      * @param message the message
      * @return the type of the message
      */
-    public static MessageType retrieveByMessageClass(Message message) {
+    public static MessageType retrieveByMessage(Message message) {
         if (LOOKUP_MAP.containsKey(message.getClass()))
             return LOOKUP_MAP.get(message.getClass());
         return INVALID;
