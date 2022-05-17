@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.CLI;
+package it.polimi.ingsw.client.cli;
 
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
