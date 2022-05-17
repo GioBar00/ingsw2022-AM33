@@ -81,7 +81,7 @@ class GameStateAndTeamsTests {
         assertEquals(original.getGameView().getMotherNatureIndex(), ((CurrentGameState) m).getGameView().getMotherNatureIndex());
         for (int i = 0; i < 3; i++){
             CharacterCardView ogccv = original.getGameView().getCharacterCardView().get(i);
-            CharacterCardView mccv = original.getGameView().getCharacterCardView().get(i);
+            CharacterCardView mccv = ((CurrentGameState) m).getGameView().getCharacterCardView().get(i);
             assertEquals(ogccv.getType(), mccv.getType());
             assertEquals(ogccv.getOriginalCost(), mccv.getOriginalCost());
             assertEquals(ogccv.getAdditionalCost(), mccv.getAdditionalCost());
@@ -90,6 +90,11 @@ class GameStateAndTeamsTests {
         }
         assertEquals(original.getGameView().getReserve(), ((CurrentGameState) m).getGameView().getReserve());
         assertEquals(original.getGameView().getPlayerCoins(), ((CurrentGameState) m).getGameView().getPlayerCoins());
+        for (int i = 0; i < 4; i++){
+            CloudView ogcloudsv = original.getGameView().getCloudViews().get(i);
+            CloudView mcloudsv = ((CurrentGameState) m).getGameView().getCloudViews().get(i);
+            assertEquals(ogcloudsv.getStudents(), mcloudsv.getStudents());
+        }
         // test null message
         original = new CurrentGameState(null);
         m = toAndFromJson(original);
@@ -106,25 +111,4 @@ class GameStateAndTeamsTests {
         m = toAndFromJson(original);
         assertFalse(m.isValid());
     }
-
-    //TODO: fix + aggiungi test delle clouds
-    /*
-     * test for the message CurrentTeams
-     */
-    /*
-    @Test
-    void CurrentTeamsTest(){
-        CurrentTeams original = new CurrentTeams(gm.getModel().getPlayersManager().getTeamsView());
-        Message m = toAndFromJson(original);
-        assertTrue(m.isValid());
-        assertTrue(m instanceof CurrentTeams);
-        assertEquals(original.getTeamsView().getLobby(), ((CurrentTeams) m).getTeamsView().getLobby());
-        assertEquals(original.getTeamsView().getTeams(), ((CurrentTeams) m).getTeamsView().getTeams());
-        // test null message
-        original = new CurrentTeams(null);
-        m = toAndFromJson(original);
-        assertFalse(m.isValid());
-        // there's no test for empty fields because both the teams and the lobby can have null fields
-    }
-    */
 }

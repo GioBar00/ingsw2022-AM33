@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Class that represents a cloud of the game
  */
-class Cloud {
+public class Cloud {
     /**
      * students present on the cloud
      */
@@ -62,7 +62,10 @@ class Cloud {
         return tmp;
     }
 
-    ArrayList<StudentColor> getStudentsForView() {
+    /**
+     * @return the students to create the view
+     */
+    public ArrayList<StudentColor> getStudentsForView() {
         return students;
     }
 }

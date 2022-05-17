@@ -16,7 +16,6 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameViewTest {
-    //TODO: test delle cloudViews
     /**
      * game and its components
      */
@@ -39,6 +38,7 @@ class GameViewTest {
     Integer reserve;
     List<CharacterCardView> characterCardView;
     Map<String, Integer> playerCoins;
+    List<CloudView> cloudViews;
 
     PlayerConvertor pC = new PlayerConvertor();
 
@@ -93,6 +93,7 @@ class GameViewTest {
         reserve = gameView.getReserve();
         characterCardView = gameView.getCharacterCardView();
         playerCoins = gameView.getPlayerCoins();
+        cloudViews = gameView.getCloudViews();
     }
 
     /**
@@ -269,6 +270,11 @@ class GameViewTest {
             for (int j = 0; j < 3; j++)
                 if (j != i)
                     assertNotEquals(ccv1.getType(), characterCardView.get(j).getType());
+        }
+
+        assertEquals(3, cloudViews.size());
+        for (int i = 0; i < 3; i++){
+            assertEquals(gmTest.getModel().getClouds().get(i).getStudentsForView(), cloudViews.get(i).getStudents());
         }
     }
 }

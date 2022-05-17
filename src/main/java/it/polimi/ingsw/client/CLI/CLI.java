@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 
 import static it.polimi.ingsw.server.model.enums.StudentColor.*;
 
-
+//TODO: JavaDoc
 public class CLI implements UI {
     private Client client;
     private String nickname;
@@ -757,7 +757,7 @@ public class CLI implements UI {
         StringBuilder stringBuilder = new StringBuilder();
 
         // water layer
-        appendWater(stringBuilder);
+        appendWater(stringBuilder, views);
 
         islandsLines.add(0, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
@@ -856,7 +856,7 @@ public class CLI implements UI {
         // water layer
         islandsLines.add(5, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
-        appendWater(stringBuilder);
+        appendWater(stringBuilder, views);
         islandsLines.add(6, stringBuilder.toString());
 
         return islandsLines;
@@ -885,8 +885,8 @@ public class CLI implements UI {
         sb.append(colors.get("red")).append("║ ").append(colors.get("reset"));
 
         int total = characterCardView.getOriginalCost() + characterCardView.getAdditionalCost();
-        sb.append(colors.get("white")).append(characterCardView.getOriginalCost()).append("+").append(characterCardView.getAdditionalCost()).append(" = ").append(total).append(colors.get("reset"));
-        sb.append(colors.get("red")).append("   ║").append(colors.get("reset"));
+        sb.append(colors.get("white")).append(characterCardView.getOriginalCost()).append("+").append(characterCardView.getAdditionalCost()).append(" = $").append(total).append(colors.get("reset"));
+        sb.append(colors.get("red")).append("  ║").append(colors.get("reset"));
 
         // addictionals (students or blocks)
         cardLines.add(2, sb.toString());
@@ -1092,9 +1092,14 @@ public class CLI implements UI {
             }
     }
 
-    private void appendWater(StringBuilder s) {
+    private void appendWater(StringBuilder s, List<IslandGroupView> igv) {
+        int i = 144;
+        if(igv.size() < 12){
+            // 108 are the spaces occupaid by the island alone, the rest of the formula is for the spaces
+            i = igv.size() * 3 + 108;
+        }
         s.append(colors.get("blue"));
-        s.append("░".repeat(144));
+        s.append("░".repeat(i));
         s.append(colors.get("reset"));
     }
 

@@ -107,4 +107,5 @@ public class LobbyTest {
         assertTrue(lobby.changeTeam("p1", Tower.BLACK));
         assertTrue(lobby.canStart());
     }
+
 }

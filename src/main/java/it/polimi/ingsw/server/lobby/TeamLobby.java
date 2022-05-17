@@ -10,13 +10,18 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-//todo test and javadoc
+//todo test
 public class TeamLobby extends Lobby {
 
     public TeamLobby(int maxPlayers) {
         super(maxPlayers);
     }
 
+    /**
+     * method to add a player to the lobby
+     * @param nickname of the player
+     * @return true if the method was executed without errors
+     */
     @Override
     public boolean addPlayer(String nickname){
         if(super.addPlayer(nickname)){
@@ -26,6 +31,9 @@ public class TeamLobby extends Lobby {
         return false;
     }
 
+    /**
+     * @return true if the teams are balanced and the game can be started
+     */
     @Override
     public boolean canStart() {
         if(!super.canStart())
@@ -45,6 +53,12 @@ public class TeamLobby extends Lobby {
         }
     }
 
+    /**
+     * method to allow a player to change their teams
+     * @param nickname of the player
+     * @param tower of the teams that the player wants to be added to
+     * @return true if the method was executed correctly
+     */
     @Override
     public boolean changeTeam(String nickname, Tower tower) {
         PlayerDetails update = null;
@@ -63,6 +77,9 @@ public class TeamLobby extends Lobby {
         else return false;
     }
 
+    /**
+     * @return the teams view
+     */
     @Override
     public TeamsView getTeamView() {
         EnumMap<Tower, List<String>> teams = new EnumMap<>(Tower.class);
