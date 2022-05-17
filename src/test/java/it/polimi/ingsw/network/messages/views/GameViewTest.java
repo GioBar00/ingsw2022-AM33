@@ -146,7 +146,7 @@ class GameViewTest {
 
         // currentPlayer plays an assistant card
         Player current = pmTest.getCurrentPlayer();
-        pmTest.currentPlayerPlayed(AssistantCard.ONE);
+        pmTest.currentPlayerPlayed(AssistantCard.CHEETAH);
 
         // player current will have enough coins to play any CharacterCard (3)
         gmTest.getPlayerCoins().put(current.getNickname(), 10);
@@ -171,7 +171,7 @@ class GameViewTest {
             if(current.getNickname().equals(playersView.get(i).getNickname())){
                 assertEquals(9, playersView.get(i).getNumAssistantCards());
                 assertNotNull(playersView.get(i).getAssistantCards());
-                assertEquals(AssistantCard.ONE, playersView.get(i).getPlayedCard());
+                assertEquals(AssistantCard.CHEETAH, playersView.get(i).getPlayedCard());
             } else {
                 assertEquals(10, playersView.get(i).getNumAssistantCards());
                 assertNull(playersView.get(i).getAssistantCards());

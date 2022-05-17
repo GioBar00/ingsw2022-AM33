@@ -4,7 +4,7 @@ package it.polimi.ingsw.server.model.enums;
  * types of students, by color
  */
 public enum StudentColor {
-    GREEN, RED, YELLOW, PINK, BLUE;
+    GREEN, RED, YELLOW, MAGENTA, BLUE;
 
     private static final StudentColor[] values = StudentColor.values();
 
@@ -18,7 +18,7 @@ public enum StudentColor {
             case "green" -> GREEN;
             case "red" -> RED;
             case "yellow" -> YELLOW;
-            case "pink" -> PINK;
+            case "magenta" -> MAGENTA;
             case "blue" -> BLUE;
             default -> null;
         };

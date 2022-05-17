@@ -174,7 +174,7 @@ class ClientMessageTest {
      */
     @Test
     void playedAssistantCard() {
-        PlayedAssistantCard original = new PlayedAssistantCard(AssistantCard.FIVE);
+        PlayedAssistantCard original = new PlayedAssistantCard(AssistantCard.FOX);
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
         assertTrue(m instanceof PlayedAssistantCard);

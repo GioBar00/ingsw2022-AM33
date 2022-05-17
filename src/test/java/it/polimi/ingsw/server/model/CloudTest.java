@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.server.model.Cloud;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import org.junit.jupiter.api.Test;
 
@@ -18,11 +17,11 @@ class CloudTest {
         Cloud testCloud = new Cloud(3);
 
         assertTrue(testCloud.popStudents().isEmpty());
-        testCloud.addStudent(StudentColor.PINK, 0);
+        testCloud.addStudent(StudentColor.MAGENTA, 0);
         testCloud.addStudent(StudentColor.RED, 1);
         testCloud.addStudent(StudentColor.YELLOW, 2);
 
-        assertSame(testCloud.getStudents().get(0), StudentColor.PINK);
+        assertSame(testCloud.getStudents().get(0), StudentColor.MAGENTA);
         assertSame(testCloud.getStudents().get(1), StudentColor.RED);
         assertSame(testCloud.getStudents().get(2), StudentColor.YELLOW);
 

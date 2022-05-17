@@ -435,11 +435,11 @@ class GameModelTest {
         model.roundManager.nextRound();
         for (Player ignored : model.playersManager.getPlayers()) {
             for(AssistantCard a : AssistantCard.values()) {
-                if (!a.equals(AssistantCard.ONE))
+                if (!a.equals(AssistantCard.CHEETAH))
                     model.playersManager.currentPlayerPlayed(a);
             }
             clearNotifications();
-            assertTrue(model.playAssistantCard(AssistantCard.ONE));
+            assertTrue(model.playAssistantCard(AssistantCard.CHEETAH));
             checkNotifications();
         }
 

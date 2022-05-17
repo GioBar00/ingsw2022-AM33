@@ -70,7 +70,7 @@ class ServerMessagesTest {
      */
     @Test
     void chooseStudentColor() {
-        EnumSet<StudentColor> students = EnumSet.of(StudentColor.BLUE, StudentColor.PINK);
+        EnumSet<StudentColor> students = EnumSet.of(StudentColor.BLUE, StudentColor.MAGENTA);
         ChooseStudentColor original = new ChooseStudentColor(students);
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
@@ -123,7 +123,7 @@ class ServerMessagesTest {
      */
     @Test
     void playAssistantCard() {
-        EnumSet<AssistantCard> cards = EnumSet.of(AssistantCard.ONE, AssistantCard.THREE);
+        EnumSet<AssistantCard> cards = EnumSet.of(AssistantCard.CHEETAH, AssistantCard.CAT);
         PlayAssistantCard original = new PlayAssistantCard(cards);
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());

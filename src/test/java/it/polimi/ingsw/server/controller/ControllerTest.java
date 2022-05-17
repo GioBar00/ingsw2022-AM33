@@ -153,14 +153,14 @@ class ControllerTest {
         ModelListener current = modelListeners.getByNickname(controller.getCurrentPlayer());
 
         //first player play a card
-        controller.handleMessage(new MessageEvent(current, new PlayedAssistantCard(AssistantCard.FOUR)));
+        controller.handleMessage(new MessageEvent(current, new PlayedAssistantCard(AssistantCard.EAGLE)));
         assertTrue(current.queueContains(MessageType.CURRENT_GAME_STATE));
 
         for(ModelListener m : modelListeners.mL)
             m.clearQueue();
 
         //first player play a card when is not his turn
-        controller.handleMessage(new MessageEvent(current, new PlayedAssistantCard(AssistantCard.TWO)));
+        controller.handleMessage(new MessageEvent(current, new PlayedAssistantCard(AssistantCard.OSTRICH)));
         assertTrue(current.queueContains(MessageType.COMM_MESSAGE));
 
         //second player send an invalid message for the phase
@@ -169,12 +169,12 @@ class ControllerTest {
         assertTrue(current.queueContains(MessageType.COMM_MESSAGE));
 
         //second player try a not legit move
-        controller.handleMessage(new MessageEvent(current, new PlayedAssistantCard(AssistantCard.FOUR)));
+        controller.handleMessage(new MessageEvent(current, new PlayedAssistantCard(AssistantCard.EAGLE)));
         assertTrue(current.queueContains(MessageType.COMM_MESSAGE));
         assertEquals(current.getIdentifier(),controller.getCurrentPlayer());
 
         //second player play a card
-        controller.handleMessage(new MessageEvent(current, new PlayedAssistantCard(AssistantCard.TWO)));
+        controller.handleMessage(new MessageEvent(current, new PlayedAssistantCard(AssistantCard.OSTRICH)));
         assertTrue(current.queueContains(MessageType.CURRENT_GAME_STATE));
 
         for(ModelListener m : modelListeners.mL)

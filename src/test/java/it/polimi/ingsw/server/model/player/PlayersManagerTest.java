@@ -70,22 +70,22 @@ class PlayersManagerTest {
         assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.WITCH)));
         assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.WITCH)));
 
-        assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.EAGLE));
         pm.nextPlayer();
-        assertTrue(pm.currentPlayerPlayed(AssistantCard.TWO));
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.OSTRICH));
         pm.nextPlayer();
-        assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.EAGLE));
         pm.nextPlayer();
 
         pm.calculatePlayerOrder();
         assertEquals("Pl2",pm.getPlayers().get(0).getNickname());
         assertEquals("Pl1",pm.getPlayers().get(1).getNickname());
         assertEquals("Pl3",pm.getPlayers().get(2).getNickname());
-        assertTrue(pm.currentPlayerPlayed(AssistantCard.SEVEN));
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.OCTOPUS));
         pm.nextPlayer();
-        assertTrue(pm.currentPlayerPlayed(AssistantCard.TWO));
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.OSTRICH));
         pm.nextPlayer();
-        assertTrue(pm.currentPlayerPlayed(AssistantCard.ONE));
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.CHEETAH));
 
         pm.calculatePlayerOrder();
         assertEquals("Pl3",pm.getPlayers().get(0).getNickname());
@@ -104,11 +104,11 @@ class PlayersManagerTest {
         assertTrue(pm.addPlayer(pC.getPlayer("Pl2",Wizard.WITCH)));
         assertTrue(pm.addPlayer(pC.getPlayer("Pl3",Wizard.WITCH)));
 
-        assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.EAGLE));
         pm.nextPlayer();
-        assertTrue(pm.currentPlayerPlayed(AssistantCard.TWO));
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.OSTRICH));
         pm.nextPlayer();
-        assertTrue(pm.currentPlayerPlayed(AssistantCard.FOUR));
+        assertTrue(pm.currentPlayerPlayed(AssistantCard.EAGLE));
         pm.nextPlayer();
 
         pm.calculatePlayerOrder();

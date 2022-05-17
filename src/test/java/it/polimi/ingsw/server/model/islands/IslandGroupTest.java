@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model.islands;
 
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
-import it.polimi.ingsw.server.model.islands.IslandGroup;
 import org.junit.jupiter.api.Test;
 
 import java.util.EnumSet;
@@ -66,8 +65,8 @@ class IslandGroupTest {
 
         assertEquals(2, ig1.getIslands().get(2).getNumStudents(StudentColor.RED));
 
-        ig1.addStudent(StudentColor.PINK);
-        assertEquals(1, ig1.getIslands().get(1).getNumStudents(StudentColor.PINK));
+        ig1.addStudent(StudentColor.MAGENTA);
+        assertEquals(1, ig1.getIslands().get(1).getNumStudents(StudentColor.MAGENTA));
     }
 
     /**
@@ -81,7 +80,7 @@ class IslandGroupTest {
 
         ig1.addStudent(StudentColor.BLUE);
         ig1.addStudent(StudentColor.RED);
-        ig1.addStudent(StudentColor.PINK);
+        ig1.addStudent(StudentColor.MAGENTA);
 
         ig2.addStudent(StudentColor.YELLOW);
         ig2.addStudent(StudentColor.GREEN);
@@ -91,7 +90,7 @@ class IslandGroupTest {
         assertEquals(2, ig1.size());
         assertEquals(1, ig1.getIslands().get(0).students.get(StudentColor.BLUE));
         assertEquals(1, ig1.getIslands().get(0).students.get(StudentColor.RED));
-        assertEquals(1, ig1.getIslands().get(0).students.get(StudentColor.PINK));
+        assertEquals(1, ig1.getIslands().get(0).students.get(StudentColor.MAGENTA));
         assertEquals(1, ig1.getIslands().get(1).students.get(StudentColor.YELLOW));
         assertEquals(1, ig1.getIslands().get(1).students.get(StudentColor.GREEN));
     }

@@ -1,6 +1,5 @@
 package it.polimi.ingsw.network.messages.views;
 
-import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.server.model.GameModel;
 import it.polimi.ingsw.server.model.GameModelTeams;
 import it.polimi.ingsw.server.model.PlayerConvertor;
@@ -11,7 +10,6 @@ import it.polimi.ingsw.server.model.player.SchoolBoard;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,7 +48,7 @@ class ViewsTest {
                     assertNull(pv.getPlayedCard());
                 }
 
-                pmTest.currentPlayerPlayed(AssistantCard.ONE);
+                pmTest.currentPlayerPlayed(AssistantCard.CHEETAH);
 
                 ArrayList<PlayerView> playerViewTest_2 = pmTest.getPlayersView(pmTest.getCurrentPlayer());
 
@@ -60,7 +58,7 @@ class ViewsTest {
                 }
 
                 assertNotNull(playerViewTest.get(0).getAssistantCards());
-                assertFalse(playerViewTest_2.get(0).getAssistantCards().contains(AssistantCard.ONE));
+                assertFalse(playerViewTest_2.get(0).getAssistantCards().contains(AssistantCard.CHEETAH));
                 assertEquals(playerViewTest_2.get(0).getNumAssistantCards(), 9);
                 for (int i = 1; i < preset.getPlayersNumber(); i++){
                     assertNull(playerViewTest.get(i).getAssistantCards());
