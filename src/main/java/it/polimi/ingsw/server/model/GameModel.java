@@ -362,7 +362,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return if the move ended successfully.
      */
     public boolean moveMotherNature(int num) {
-        if (moveMotherNature(num, playersManager.getPlayedCard().getMoves())) {
+        if (moveMotherNature(num, playersManager.getPlayedCard().getMoves(), this::checkInfluence)) {
             notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
@@ -377,7 +377,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param num of moves that MotherNature makes.
      * @return if the move ended successfully.
      */
-    boolean moveMotherNature(int num, int maxNum) {
+    boolean moveMotherNature(int num, int maxNum, InfluenceChecker influenceChecker) {
         if (gameState != GameState.STARTED)
             return false;
         if (roundManager.getGamePhase() != GamePhase.MOVE_MOTHER_NATURE)
@@ -387,7 +387,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             return false;
 
         motherNatureIndex = (motherNatureIndex + num) % islandsManager.getNumIslandGroups();
-        checkInfluence(motherNatureIndex);
+        influenceChecker.checkInfluence(motherNatureIndex);
 
         if (roundManager.getWinners().isEmpty()) {
             boolean cloudWithStud = atLeastOneCloudWithStudents();
