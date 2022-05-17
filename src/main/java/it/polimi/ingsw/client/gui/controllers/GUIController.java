@@ -12,4 +12,9 @@ public interface GUIController {
      * @param gui the GUI of the controller.
      */
     void setGUI(GUI gui);
+
+    /**
+     * This method is used to initialize the controller and stage.
+     */
+    void init();
 }

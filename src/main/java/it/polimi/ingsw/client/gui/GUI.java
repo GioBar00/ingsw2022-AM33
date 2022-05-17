@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.UI;
+import it.polimi.ingsw.client.gui.controllers.GUIController;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.server.CommMessage;
@@ -49,6 +50,13 @@ public class GUI extends Application implements UI {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Eriantys");
+        stage.setMinHeight(800.0);
+        stage.setMinWidth(1200.0);
+
+        GUIController controller = loader.getController();
+        controller.setGUI(this);
+        controller.init();
+
         stage.show();
     }
 

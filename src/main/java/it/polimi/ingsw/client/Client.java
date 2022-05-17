@@ -86,7 +86,7 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
     }
 
     public boolean setServerAddress(String hostname) {
-        if (validate(hostname)) {
+        if (validateServerString(hostname)) {
             this.hostname = hostname;
             return true;
         }
@@ -227,9 +227,9 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
         executor.shutdownNow();
     }
 
-    private boolean validate(String ip) {
+    public static boolean validateServerString(String server) {
         String ipPattern = "^((0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)\\.){3}(0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)$";
         String domainPattern = "^((?!-)[A-Za-z\\d-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$";
-        return ip.matches(ipPattern) || ip.matches(domainPattern) || ip.equals("localhost");
+        return server.matches(ipPattern) || server.matches(domainPattern) || server.equals("localhost");
     }
 }
