@@ -240,7 +240,7 @@ public class GameModelExpert implements Game, EffectHandler {
             return false;
 
         if (model.moveMotherNature(num, model.playersManager.getPlayedCard().getMoves() + additionalMotherNatureMovement, this::calcInfluenceOnIslandGroup)) {
-            if (model.atLeastOneCloudWithStudents()) {
+            if (!model.atLeastOneCloudWithStudents()) {
                 endTurn();
             }
             notifyPersonalizedGameState();

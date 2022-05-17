@@ -1,11 +1,7 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.client.CLI.CLI;
 import it.polimi.ingsw.client.Client;
-import it.polimi.ingsw.client.GUI.GUI;
-import it.polimi.ingsw.client.UI;
 import it.polimi.ingsw.server.Server;
-import javafx.application.Application;
 import org.apache.commons.cli.*;
 
 /**

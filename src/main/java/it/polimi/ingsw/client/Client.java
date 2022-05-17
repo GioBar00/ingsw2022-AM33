@@ -18,7 +18,6 @@ import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import javafx.application.Application;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,7 +26,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Class for client-side communication
  */
-public class Client implements MessageHandler, ViewListener, Runnable , DisconnectListener {
+public class Client implements MessageHandler, ViewListener, Runnable, DisconnectListener {
 
     /**
      * the hostname for the connection
@@ -82,22 +81,22 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
         userInterface.setViewListener(this);
     }
 
-    public void startClient(){
+    public void startClient() {
         userInterface.showStartScreen();
     }
 
-    public boolean setServerAddress(String hostname){
-        if(validate(hostname)){
+    public boolean setServerAddress(String hostname) {
+        if (validate(hostname)) {
             this.hostname = hostname;
             return true;
         }
         return false;
     }
 
-    public boolean setServerPort(String port){
-        if(port.matches("-?\\d+")){
+    public boolean setServerPort(String port) {
+        if (port.matches("-?\\d+")) {
             int portValue = Integer.parseInt(port);
-            if(portValue < 1024 || portValue > 65535)
+            if (portValue < 1024 || portValue > 65535)
                 return false;
             this.port = portValue;
             return true;
@@ -105,19 +104,19 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
         return false;
     }
 
-    public void setNickname(String nickname){
+    public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
     /**
      * This method sets up the connection and starts the communicationHandler.
      */
-    public void startConnection(){
+    public void startConnection() {
         try {
             communicationHandler.setSocket(new Socket(hostname, port));
             communicationHandler.setDisconnectListener(this);
             communicationHandler.start();
-            if(executor.isShutdown()) {
+            if (executor.isShutdown()) {
                 executor = Executors.newSingleThreadExecutor();
                 executor.submit(this);
             }
@@ -129,6 +128,7 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
 
     /**
      * This method is called when a message is received.
+     *
      * @param message the message received.
      */
     @Override
@@ -139,6 +139,7 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
 
     /**
      * Method called when the user want to update the model.
+     *
      * @param message the request.
      */
     @Override
@@ -147,14 +148,15 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
         communicationHandler.sendMessage(message);
     }
 
-    public boolean sendLogin(){
-        if(nickname != null && hostname != null && port != 0) {
+    public boolean sendLogin() {
+        if (nickname != null && hostname != null && port != 0) {
             startConnection();
             onMessage(new Login(nickname));
             return true;
         }
         return false;
     }
+
     /**
      * Task for the Client.
      * Takes the messages from the model and apply the changes to the view.
@@ -162,7 +164,7 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
     @Override
     public void run() {
         Message message;
-        while(!Thread.interrupted()){
+        while (!Thread.interrupted()) {
             try {
                 message = queue.take();
                 System.out.println("CL : " + message.getClass().getName());
@@ -175,31 +177,32 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
 
     /**
      * Method for updating the view based on the received  messages.
+     *
      * @param message a Message from the model.
      */
-    public synchronized void updateView(Message message){
+    public synchronized void updateView(Message message) {
         System.out.println(MessageBuilder.toJson(message));
 
-        switch (MessageType.retrieveByMessage(message)){
+        switch (MessageType.retrieveByMessage(message)) {
             case COMM_MESSAGE -> {
-                switch (((CommMessage)message).getType()){
+                switch (((CommMessage) message).getType()) {
                     case CHOOSE_GAME -> userInterface.chooseGame();
                     case CAN_START -> userInterface.hostCanStart();
                     case ERROR_CANT_START -> userInterface.hostCantStart();
                     case ERROR_TIMEOUT, ERROR_SERVER_UNAVAILABLE -> userInterface.serverUnavailable();
-                    default -> userInterface.showCommMessage((CommMessage)message);
+                    default -> userInterface.showCommMessage((CommMessage) message);
                 }
             }
             case AVAILABLE_WIZARDS -> {
-                userInterface.setWizardView(((AvailableWizards)message).getWizardsView());
+                userInterface.setWizardView(((AvailableWizards) message).getWizardsView());
                 userInterface.showWizardMenu();
             }
-            case CURRENT_TEAMS -> userInterface.setTeamsView(((CurrentTeams)message).getTeamsView());
+            case CURRENT_TEAMS -> userInterface.setTeamsView(((CurrentTeams) message).getTeamsView());
             case PLAY_ASSISTANT_CARD, MULTIPLE_POSSIBLE_MOVES, CHOOSE_CLOUD, CHOOSE_ISLAND, CHOOSE_STUDENT_COLOR, MOVE_MOTHER_NATURE, MOVE_STUDENT, SWAP_STUDENTS ->
                     userInterface.setPossibleMoves(message);
 
             case CURRENT_GAME_STATE -> {
-                userInterface.setGameView(((CurrentGameState)message).getGameView());
+                userInterface.setGameView(((CurrentGameState) message).getGameView());
                 userInterface.showGameScreen();
             }
         }
@@ -208,7 +211,7 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
     /**
      * End the connection
      */
-    public void closeConnection(){
+    public void closeConnection() {
         communicationHandler.stop();
     }
 
@@ -225,8 +228,8 @@ public class Client implements MessageHandler, ViewListener, Runnable , Disconne
     }
 
     private boolean validate(String ip) {
-        String PATTERN = "^((0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)\\.){3}(0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)$";
-
-        return ip.matches(PATTERN);
+        String ipPattern = "^((0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)\\.){3}(0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)$";
+        String domainPattern = "^((?!-)[A-Za-z\\d-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$";
+        return ip.matches(ipPattern) || ip.matches(domainPattern) || ip.equals("localhost");
     }
 }

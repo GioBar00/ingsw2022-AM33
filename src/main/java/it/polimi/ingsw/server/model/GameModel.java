@@ -112,8 +112,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return if the player was added successfully.
      */
     public boolean addPlayer(PlayerDetails playerDetails) {
-        if (gameState != GameState.UNINITIALIZED)
-            return false;
+        if (gameState != GameState.UNINITIALIZED) return false;
         return playersManager.addPlayer(playerDetails);
     }
 
@@ -124,8 +123,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return if game is UNINITIALIZED or all players have entered.
      */
     boolean initializeGame() {
-        if (gameState != GameState.UNINITIALIZED || playersManager.getAvailablePlayerSlots() != 0)
-            return false;
+        if (gameState != GameState.UNINITIALIZED || playersManager.getAvailablePlayerSlots() != 0) return false;
 
         for (StudentColor s : StudentColor.values()) {
             List<StudentColor> l = Collections.nCopies(2, s);
@@ -202,8 +200,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return if the card was played successfully.
      */
     boolean executePlayAssistantCard(AssistantCard assistantCard) {
-        if (gameState != GameState.STARTED || roundManager.getGamePhase() != GamePhase.PLANNING)
-            return false;
+        if (gameState != GameState.STARTED || roundManager.getGamePhase() != GamePhase.PLANNING) return false;
 
         ArrayList<AssistantCard> played = new ArrayList<>();
         Player currentPlayer = playersManager.getCurrentPlayer();
@@ -220,13 +217,11 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
 
         if (played.contains(assistantCard)) {
             for (AssistantCard a : playerHand) {
-                if (!played.contains(a))
-                    return false;
+                if (!played.contains(a)) return false;
             }
         }
 
-        if (!playersManager.currentPlayerPlayed(assistantCard))
-            return false;
+        if (!playersManager.currentPlayerPlayed(assistantCard)) return false;
 
         nextInPlanningPhase(currentPlayer);
 
@@ -244,8 +239,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             playersManager.calculatePlayerOrder();
         }
 
-        if (playersManager.getPlayerHand(currentPlayer).size() == 0)
-            roundManager.setLastRound();
+        if (playersManager.getPlayerHand(currentPlayer).size() == 0) roundManager.setLastRound();
 
         playersManager.nextPlayer();
     }
@@ -275,8 +269,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return if the student was successfully moved to the hall.
      */
     boolean executeMoveStudentToHall(int entranceIndex) {
-        if (gameState != GameState.STARTED || !roundManager.canMoveStudents())
-            return false;
+        if (gameState != GameState.STARTED || !roundManager.canMoveStudents()) return false;
 
         SchoolBoard currSch = playersManager.getSchoolBoard();
         StudentColor moved = currSch.getStudentInEntrance(entranceIndex);
@@ -319,8 +312,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return if the student was moved successfully.
      */
     boolean executeMoveStudentToIsland(int entranceIndex, int islandGroupIndex) {
-        if (gameState != GameState.STARTED || !roundManager.canMoveStudents())
-            return false;
+        if (gameState != GameState.STARTED || !roundManager.canMoveStudents()) return false;
 
         SchoolBoard currSch = playersManager.getSchoolBoard();
         StudentColor moved = currSch.getStudentInEntrance(entranceIndex);
@@ -378,13 +370,10 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return if the move ended successfully.
      */
     boolean moveMotherNature(int num, int maxNum, InfluenceChecker influenceChecker) {
-        if (gameState != GameState.STARTED)
-            return false;
-        if (roundManager.getGamePhase() != GamePhase.MOVE_MOTHER_NATURE)
-            return false;
+        if (gameState != GameState.STARTED) return false;
+        if (roundManager.getGamePhase() != GamePhase.MOVE_MOTHER_NATURE) return false;
 
-        if (num > maxNum || num <= 0)
-            return false;
+        if (num > maxNum || num <= 0) return false;
 
         motherNatureIndex = (motherNatureIndex + num) % islandsManager.getNumIslandGroups();
         influenceChecker.checkInfluence(motherNatureIndex);
@@ -423,17 +412,13 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return if the students were taken correctly from the cloud and added to the entrance.
      */
     public boolean executeGetStudentsFromCloud(int cloudIndex) {
-        if (gameState != GameState.STARTED)
-            return false;
-        if (roundManager.getGamePhase() != GamePhase.CHOOSE_CLOUD)
-            return false;
-        if (cloudIndex < 0 || cloudIndex >= playersManager.getPreset().getCloudsNumber())
-            return false;
+        if (gameState != GameState.STARTED) return false;
+        if (roundManager.getGamePhase() != GamePhase.CHOOSE_CLOUD) return false;
+        if (cloudIndex < 0 || cloudIndex >= playersManager.getPreset().getCloudsNumber()) return false;
 
         List<StudentColor> studs = clouds.get(cloudIndex).popStudents();
 
-        if (studs.size() == 0)
-            return false;
+        if (studs.size() == 0) return false;
 
         for (StudentColor s : studs) {
             playersManager.getSchoolBoard().addToEntrance(s);
@@ -469,7 +454,8 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             nextRound();
         } else {
             playersManager.nextPlayer();
-            roundManager.startActionPhase();
+            if (playersManager.getPlayedCard() == null) nextTurn();
+            else roundManager.startActionPhase();
         }
     }
 
@@ -485,8 +471,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         for (Player p : playersManager.getPlayers()) {
             if (!p.equals(current)) {
                 SchoolBoard compSch = playersManager.getSchoolBoard(p);
-                if (compSch.getStudentsInHall(s) >= currSch.getStudentsInHall(s))
-                    return;
+                if (compSch.getStudentsInHall(s) >= currSch.getStudentsInHall(s)) return;
             }
         }
         boolean found = false;
@@ -553,16 +538,12 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
                 profs.addAll(playersManager.getSchoolBoard(p).getProfessors());
             }
             profs.removeAll(skipStudentColor);
-            maxInfluence = skipTowers ?
-                    islandsManager.calcInfluence(profs, islandGroupIndex) :
-                    islandsManager.calcInfluence(tower, profs, islandGroupIndex);
+            maxInfluence = skipTowers ? islandsManager.calcInfluence(profs, islandGroupIndex) : islandsManager.calcInfluence(tower, profs, islandGroupIndex);
             if (playersByTower.get(tower).contains(playersManager.getCurrentPlayer()))
                 maxInfluence += additionalInfluence;
-        } else
-            maxInfluence = 0;
+        } else maxInfluence = 0;
 
-        if (tower != null)
-            playersByTower.remove(tower);
+        if (tower != null) playersByTower.remove(tower);
 
         // check influence for others
         for (Map.Entry<Tower, List<Player>> entry : playersByTower.entrySet()) {
@@ -571,11 +552,8 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
                 profs.addAll(playersManager.getSchoolBoard(p).getProfessors());
             }
             profs.removeAll(skipStudentColor);
-            int influence = skipTowers ?
-                    islandsManager.calcInfluence(profs, islandGroupIndex) :
-                    islandsManager.calcInfluence(entry.getKey(), profs, islandGroupIndex);
-            if (entry.getValue().contains(playersManager.getCurrentPlayer()))
-                influence += additionalInfluence;
+            int influence = skipTowers ? islandsManager.calcInfluence(profs, islandGroupIndex) : islandsManager.calcInfluence(entry.getKey(), profs, islandGroupIndex);
+            if (entry.getValue().contains(playersManager.getCurrentPlayer())) influence += additionalInfluence;
             if (influence > maxInfluence) {
                 maxInfluence = influence;
                 tower = entry.getKey();
@@ -636,21 +614,18 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         bothBlocked = islandsManager.getIslandGroup(previous).isBlocked() && islandsManager.getIslandGroup(next).isBlocked();
 
         if (islandsManager.checkMergeNext(islandGroupIndex)) {
-            if (bothBlocked)
-                numBlocks++;
+            if (bothBlocked) numBlocks++;
             islandGroupIndex = fixIslandGroupsIndexes(islandGroupIndex, next);
         }
 
         bothBlocked = islandsManager.getIslandGroup(islandGroupIndex).isBlocked() && islandsManager.getIslandGroup(previous).isBlocked();
 
         if (islandsManager.checkMergePrevious(islandGroupIndex)) {
-            if (bothBlocked)
-                numBlocks++;
+            if (bothBlocked) numBlocks++;
             fixIslandGroupsIndexes(previous, islandGroupIndex);
         }
 
-        if (islandsManager.getNumIslandGroups() <= 3)
-            calculateWinners();
+        if (islandsManager.getNumIslandGroups() <= 3) calculateWinners();
 
         return numBlocks;
     }
@@ -666,8 +641,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         if (next == 0) {
             index--;
             motherNatureIndex--;
-            if (motherNatureIndex < 0)
-                motherNatureIndex = islandsManager.getNumIslandGroups() - 1;
+            if (motherNatureIndex < 0) motherNatureIndex = islandsManager.getNumIslandGroups() - 1;
         }
         if (motherNatureIndex > index) {
             motherNatureIndex--;
@@ -700,8 +674,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return if the turn was skipped successfully.
      */
     boolean executeSkipTurn() {
-        if (gameState != GameState.STARTED)
-            return false;
+        if (gameState != GameState.STARTED) return false;
         if (roundManager.getGamePhase().equals(GamePhase.PLANNING)) {
             nextInPlanningPhase(playersManager.getCurrentPlayer());
         } else nextTurn();
@@ -796,8 +769,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             if (numTower < minNumTower) {
                 minNumTower = numTower;
                 winners = EnumSet.of(entry.getKey());
-            } else if (numTower == minNumTower)
-                winners.add(entry.getKey());
+            } else if (numTower == minNumTower) winners.add(entry.getKey());
         }
         if (winners.size() > 1) {
 
@@ -806,8 +778,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
                 int numProfs = 0;
                 for (Player p : playersByTower.get(t))
                     numProfs += playersManager.getSchoolBoard(p).getProfessors().size();
-                if (towersByNumProfs.containsKey(numProfs))
-                    towersByNumProfs.get(numProfs).add(t);
+                if (towersByNumProfs.containsKey(numProfs)) towersByNumProfs.get(numProfs).add(t);
                 else {
                     towersByNumProfs.put(numProfs, EnumSet.of(t));
                 }
@@ -896,8 +867,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             StudentColor s = currSb.getStudentInEntrance(i);
             if (s != null) {
                 validEntranceIndexes.add(i);
-                if (currSb.getStudentsInHall(s) < 10)
-                    hallEntranceIndexes.add(i);
+                if (currSb.getStudentsInHall(s) < 10) hallEntranceIndexes.add(i);
             }
         }
 
@@ -920,8 +890,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         Player curr = playersManager.getCurrentPlayer();
         int nMove = 0;
         AssistantCard played = playersManager.getPlayedCard();
-        if (played != null)
-            nMove = played.getMoves();
+        if (played != null) nMove = played.getMoves();
         nMove = nMove + additionalMoves;
         notifyMessageListener(curr.getNickname(), new MessageEvent(this, new MoveMotherNature(nMove)));
     }
@@ -933,8 +902,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         Player curr = playersManager.getCurrentPlayer();
         Set<Integer> cloudIndexes = new HashSet<>();
         for (int i = 0; i < clouds.size(); i++) {
-            if (clouds.get(i).getStudents().size() > 0)
-                cloudIndexes.add(i);
+            if (clouds.get(i).getStudents().size() > 0) cloudIndexes.add(i);
         }
         notifyMessageListener(curr.getNickname(), new MessageEvent(this, new ChooseCloud(cloudIndexes)));
     }
