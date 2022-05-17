@@ -239,7 +239,7 @@ public class GameModelExpert implements Game, EffectHandler {
         if (characterCardActivating != null)
             return false;
 
-        if (model.moveMotherNature(num, model.playersManager.getPlayedCard().getMoves() + additionalMotherNatureMovement)) {
+        if (model.moveMotherNature(num, model.playersManager.getPlayedCard().getMoves() + additionalMotherNatureMovement, this::calcInfluenceOnIslandGroup)) {
             if (model.atLeastOneCloudWithStudents()) {
                 endTurn();
             }

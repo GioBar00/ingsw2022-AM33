@@ -25,7 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * This class represents the game model.
  */
-public class GameModel extends ConcreteMessageListenerSubscriber implements Game {
+public class GameModel extends ConcreteMessageListenerSubscriber implements Game, InfluenceChecker {
     /**
      * Game mode.
      */
@@ -362,7 +362,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return if the move ended successfully.
      */
     public boolean moveMotherNature(int num) {
-        if (moveMotherNature(num, playersManager.getPlayedCard().getMoves())) {
+        if (moveMotherNature(num, playersManager.getPlayedCard().getMoves(), this)) {
             notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
@@ -377,7 +377,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param num of moves that MotherNature makes.
      * @return if the move ended successfully.
      */
-    boolean moveMotherNature(int num, int maxNum) {
+    boolean moveMotherNature(int num, int maxNum, InfluenceChecker influenceChecker) {
         if (gameState != GameState.STARTED)
             return false;
         if (roundManager.getGamePhase() != GamePhase.MOVE_MOTHER_NATURE)
@@ -387,7 +387,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             return false;
 
         motherNatureIndex = (motherNatureIndex + num) % islandsManager.getNumIslandGroups();
-        checkInfluence(motherNatureIndex);
+        influenceChecker.checkInfluence(motherNatureIndex);
 
         if (roundManager.getWinners().isEmpty()) {
             boolean cloudWithStud = atLeastOneCloudWithStudents();
@@ -517,7 +517,8 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      *
      * @param islandGroupIndex of the IslandGroup in question
      */
-    void checkInfluence(int islandGroupIndex) {
+    @Override
+    public void checkInfluence(int islandGroupIndex) {
         Tower tower = checkInfluence(islandGroupIndex, false, 0, EnumSet.noneOf(StudentColor.class));
         if (tower != null && tower != islandsManager.getTower(islandGroupIndex)) {
             swapTowers(islandGroupIndex, tower);
