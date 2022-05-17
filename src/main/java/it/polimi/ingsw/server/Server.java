@@ -111,6 +111,7 @@ public class Server implements EndGameListener, DisconnectListener {
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
+            System.exit(1);
         }
     }
 
