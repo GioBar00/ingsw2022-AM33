@@ -524,11 +524,11 @@ public class CLI implements UI {
     /**
      * Notifies the listener that a request has occurred.
      *
-     * @param event the request to notify
+     * @param message the request to notify
      */
     @Override
-    public void notifyListener(Message event) {
-        listener.onMessage(event);
+    public void notifyViewListener(Message message) {
+        listener.onMessage(message);
     }
 
     EnumSet<StudentColor> fromIntegersToEnums(Set<Integer> choices) {

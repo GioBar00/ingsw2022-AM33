@@ -1,19 +1,25 @@
 package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.event.ActionEvent;
 
 public class StartScreenController implements GUIController {
-
     private GUI gui;
 
+    @FXML
+    public AnchorPane root;
+    @FXML
+    public ImageView imgBackground;
     @FXML
     public ImageView imgTitle;
     @FXML
@@ -27,13 +33,11 @@ public class StartScreenController implements GUIController {
     @FXML
     public Button btnStart;
     @FXML
+    public ImageView imgStart;
+    @FXML
     public Button btnPlay;
     @FXML
     public Button btnMute;
-    @FXML
-    public AnchorPane root;
-    @FXML
-    public ImageView imgBackground;
 
     /**
      * This method is used to set the GUI of the controller.
@@ -49,12 +53,10 @@ public class StartScreenController implements GUIController {
 
         root.heightProperty().addListener((obs, oldVal, newVal) -> {
             imgBackground.setFitHeight(newVal.doubleValue());
-            imgTitle.setFitWidth((root.getWidth() + root.getHeight()) / 4);
+            imgTitle.setFitWidth((root.getWidth() / 3 + root.getHeight() / 1.5) / 2);
         });
 
-        root.widthProperty().addListener((obs, oldVal, newVal) -> {
-            imgTitle.setFitWidth((root.getWidth() + root.getHeight()) / 4);
-        });
+        root.widthProperty().addListener((obs, oldVal, newVal) -> imgTitle.setFitWidth((root.getWidth() / 3 + root.getHeight() / 1.5) / 2));
 
         grpConnect.setDisable(true);
         grpConnect.setVisible(false);
@@ -69,6 +71,9 @@ public class StartScreenController implements GUIController {
             if (newValue.length() > 20)
                 txtFieldNickname.setText(oldValue);
         });
+
+        btnStart.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> imgStart.setImage(GUI.imagesByPath.get(ImagePath.START_HIGHLIGHTED)));
+        btnStart.addEventHandler(MouseEvent.MOUSE_EXITED, e -> imgStart.setImage(GUI.imagesByPath.get(ImagePath.START)));
 
     }
 
@@ -99,8 +104,15 @@ public class StartScreenController implements GUIController {
 
     @FXML
     public void handleStartButton(ActionEvent actionEvent) {
-        if (checkFields())
-            System.out.println("Starting game");
+        if (checkFields()) {
+            String server = txtFieldServer.getText().isEmpty() ? "localhost" : txtFieldServer.getText();
+            int port = txtFieldPort.getText().isEmpty() ? 1234 : Integer.parseInt(txtFieldPort.getText());
+            String nickname = txtFieldNickname.getText();
+            gui.getClient().setServerAddress(server);
+            gui.getClient().setServerPort(String.valueOf(port));
+            gui.getClient().setNickname(nickname);
+            gui.getClient().sendLogin();
+        }
     }
 
 

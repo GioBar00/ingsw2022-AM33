@@ -69,7 +69,7 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
         queue = new LinkedBlockingQueue<>();
         this.communicationHandler = new CommunicationHandler(this);
         if (gui) {
-            Application.launch(GUI.class);
+            Executors.newSingleThreadExecutor().execute((() -> Application.launch(GUI.class)));
             userInterface = GUI.getInstance();
             if (userInterface == null) {
                 System.out.println("FATAL ERROR: unable to instantiate GUI");

@@ -19,7 +19,7 @@
          <children>
             <ImageView fx:id="imgBackground" fitHeight="800.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../graphics/start-screen-background.png" />
+                  <Image url="@../images/start-screen-background.png" />
                </image>
             </ImageView>
          </children>
@@ -44,7 +44,7 @@
                <children>
                   <ImageView fx:id="imgTitle" fitWidth="500.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../graphics/title.png" />
+                        <Image url="@../images/title.png" />
                      </image>
                   </ImageView>
                </children>
@@ -131,9 +131,9 @@
                      <children>
                         <Button fx:id="btnStart" mnemonicParsing="false" onAction="#handleStartButton" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <graphic>
-                              <ImageView fitHeight="50.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="imgStart" fitHeight="50.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../graphics/icons/start.png" />
+                                    <Image url="@../images/icons/start.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -148,7 +148,7 @@
                      <graphic>
                         <ImageView fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../graphics/icons/play.png" />
+                              <Image url="@../images/icons/play.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -161,7 +161,7 @@
                      <graphic>
                         <ImageView fitHeight="60.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../graphics/icons/volume.png" />
+                              <Image url="@../images/icons/volume.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -172,7 +172,7 @@
       </GridPane>
       <ImageView fitHeight="50.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
          <image>
-            <Image url="@../graphics/cranio-creations-logo.png" />
+            <Image url="@../images/cranio-creations-logo.png" />
          </image>
       </ImageView>
    </children>
