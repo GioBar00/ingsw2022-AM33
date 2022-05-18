@@ -54,7 +54,6 @@ public class TestClient implements MessageHandler, DisconnectListener {
         switch (MessageType.retrieveByMessage(m)) {
             case COMM_MESSAGE -> {
                 if (((CommMessage) m).getType() == CommMsgType.CHOOSE_GAME) {
-                    //FIXME: view chose game
                     System.out.println(nickname +": choose game");
                 } else
                     System.out.println("ERROR: " + nickname + ": " + ((CommMessage) m).getType().getMessage());

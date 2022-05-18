@@ -410,8 +410,8 @@ public class CLI implements UI {
                 System.out.println("Type COLOR <COLOR>" + colors.get("reset"));
             }
             case MOVE_MOTHER_NATURE -> {
-                System.out.println(colors.get("green") + "You have to chose a StudentColor");
-                System.out.println("Insert the number of steps mother nature has to take [up to " +
+                System.out.println(colors.get("green") + "You have to move Mother Nature");
+                System.out.println("Insert the number of steps Mother Mature has to take [up to " +
                         ((MoveMotherNature) lastRequest).getMaxNumMoves() + " ]");
                 System.out.println("Type MOTHERNATURE <STEPS>" + colors.get("reset"));
             }

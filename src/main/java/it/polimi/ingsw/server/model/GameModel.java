@@ -25,7 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * This class represents the game model.
  */
-public class GameModel extends ConcreteMessageListenerSubscriber implements Game {
+public class GameModel extends ConcreteMessageListenerSubscriber implements Game, ProfessorChecker {
     /**
      * Game mode.
      */
@@ -274,7 +274,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param entranceIndex of the student that will be moved to the Hall
      * @return if the student was successfully moved to the hall.
      */
-    boolean executeMoveStudentToHall(int entranceIndex) {
+    boolean executeMoveStudentToHall(int entranceIndex, ProfessorChecker professorChecker) {
         if (gameState != GameState.STARTED || !roundManager.canMoveStudents())
             return false;
 
@@ -283,7 +283,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         if (moved != null) {
             if (currSch.moveToHall(entranceIndex)) {
                 currSch.removeFromEntrance(entranceIndex);
-                checkProfessor(moved);
+                professorChecker.checkProfessor(moved);
                 roundManager.addMoves();
                 return true;
             }
@@ -301,7 +301,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return if the student was successfully moved to the hall.
      */
     public boolean moveStudentToHall(int entranceIndex) {
-        if (executeMoveStudentToHall(entranceIndex)) {
+        if (executeMoveStudentToHall(entranceIndex, this)) {
             notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
@@ -439,8 +439,6 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             playersManager.getSchoolBoard().addToEntrance(s);
         }
 
-        nextTurn();
-
         return true;
     }
 
@@ -454,6 +452,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      */
     public boolean getStudentsFromCloud(int cloudIndex) {
         if (executeGetStudentsFromCloud(cloudIndex)) {
+            nextTurn();
             notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
@@ -479,7 +478,8 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      *
      * @param s: the color of the professor to be checked
      */
-    void checkProfessor(StudentColor s) {
+    @Override
+    public void checkProfessor(StudentColor s) {
         Player current = playersManager.getCurrentPlayer();
         SchoolBoard currSch = playersManager.getSchoolBoard(current);
         for (Player p : playersManager.getPlayers()) {

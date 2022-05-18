@@ -134,7 +134,6 @@ public abstract class CharacterCard {
             appliedEffect = false;
             currentChoicesNumber = 0;
         }
-
     }
 
     /**
@@ -177,6 +176,15 @@ public abstract class CharacterCard {
      */
     public EnumMap<StudentColor, Integer> getStudents() {
         return new EnumMap<>(StudentColor.class);
+    }
+
+    /**
+     * Add to the record of original professors the player who owned it
+     * @param s the professor
+     * @param player the owner
+     */
+    public void addToOriginal(StudentColor s, Integer player){
+
     }
 
     /**
