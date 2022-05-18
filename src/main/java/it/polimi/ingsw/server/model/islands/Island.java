@@ -6,17 +6,22 @@ import it.polimi.ingsw.server.model.enums.Tower;
 
 import java.util.EnumMap;
 
+/**
+ * This class represents an Island
+ */
 public class Island {
+
     /**
      * tower positioned on the island (while there is none is null)
      */
     private Tower tower;
+
     /**
      * enumMap to keep trace of the number of students of each type
      */
     final EnumMap<StudentColor, Integer> students;
 
-    public Island(){
+    public Island() {
         students = new EnumMap<>(StudentColor.class);
         for (StudentColor s : StudentColor.values()) {
             students.put(s, 0);
@@ -26,52 +31,57 @@ public class Island {
 
     /**
      * method to access the tower of the island
+     *
      * @return the tower
      */
-    Tower getTower(){
+    Tower getTower() {
         return tower;
     }
 
     /**
      * method to set the tower of the island
+     *
      * @param tower: new tower to be set
      */
-    void setTower(Tower tower){
+    void setTower(Tower tower) {
         this.tower = tower;
     }
 
     /**
      * adds one student of a specific type on the Island
+     *
      * @param s type of the student to be added
      */
-    void addStudent(StudentColor s){
+    void addStudent(StudentColor s) {
         students.put(s, students.get(s) + 1);
     }
 
     /**
      * calculates the total number of students on the island, regardless of color
+     *
      * @return total number of students
      */
     public int getNumStudents() {
         int num = 0;
-        for (StudentColor s: StudentColor.values())
+        for (StudentColor s : StudentColor.values())
             num += students.get(s);
         return num;
     }
 
     /**
      * calculates the number if student of a specific type present on the island
+     *
      * @param s type of the student
      * @return number of student of type s
      */
-    public int getNumStudents(StudentColor s){
+    public int getNumStudents(StudentColor s) {
         return students.get(s);
     }
 
     /**
      * @return the current islandView
      */
-    public IslandView getIslandView (){
+    public IslandView getIslandView() {
         return new IslandView(tower, students);
     }
 }

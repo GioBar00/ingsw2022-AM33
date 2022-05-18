@@ -20,12 +20,17 @@ import java.util.concurrent.ThreadLocalRandom;
  * Composite pattern.
  */
 public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
+
+    /**
+     * The model of the game
+     */
     final GameModel model;
 
     /**
      * Reserve of coins in the game.
      */
     int reserve;
+
     /**
      * Number of coins for each player.
      */
@@ -40,22 +45,27 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
      * Character card that is being activated.
      */
     CharacterCard characterCardActivating;
+
     /**
      * If a card was activated this turn.
      */
     boolean activatedACharacterCard = false;
+
     /**
      * Additional movement that mother nature can make.
      */
     int additionalMotherNatureMovement = 0;
+
     /**
      * If to skip counting towers for influence.
      */
     boolean skipTowers = false;
+
     /**
      * Additional influence points to add to current player.
      */
     int additionalInfluence = 0;
+
     /**
      * Student colors to skip during influence counting.
      */
@@ -397,6 +407,12 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
         }
     }
 
+    /**
+     * Remove a player from the game
+     *
+     * @param nickname of the player
+     * @return if the player was removed
+     */
     @Override
     public boolean removePlayer(String nickname) {
         return model.removePlayer(nickname);
@@ -824,7 +840,10 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
         }
     }
 
-    void notifyActions() {
+    /**
+     * Notifies the current player to perform an action.
+     */
+    private void notifyActions() {
         if (model.gameState == GameState.STARTED && model.roundManager.getWinners().isEmpty()) {
             switch (model.roundManager.getGamePhase()) {
                 case PLANNING -> model.notifyPlayAssistantCard();

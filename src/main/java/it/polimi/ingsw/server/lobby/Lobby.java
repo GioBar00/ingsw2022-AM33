@@ -116,7 +116,12 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
         return new ArrayList<>(players);
     }
 
-
+    /**
+     * Remove a player from the lobby
+     *
+     * @param nickname of player who has to be removed
+     * @return false if the player is the host, true otherwise
+     */
     public boolean removePlayer(String nickname) {
         if (nickname.equals(players.get(0).getNickname())) {
             return false;
@@ -131,10 +136,22 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
         return false;
     }
 
+    /**
+     * Changes the team of a specified player
+     *
+     * @param nickname of the player who wants to change the team
+     * @param tower    that represent the team
+     * @return false if the method is not implemented
+     */
     public boolean changeTeam(String nickname, Tower tower) {
         return false;
     }
 
+    /**
+     * Getter for the team view
+     *
+     * @return the current teams
+     */
     public TeamsView getTeamView() {
         return null;
     }
@@ -159,11 +176,19 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
         return new WizardsView(EnumSet.copyOf(wizards));
     }
 
+    /**
+     * Sends the available Wizards to a specified player
+     *
+     * @param identifier the player who has to receive available Wizards
+     */
     public void notifyAvailableWizards(String identifier) {
         System.out.println("Sending initial stats to " + identifier);
         notifyMessageListener(identifier, new MessageEvent(this, new AvailableWizards(getWizardsView())));
     }
 
+    /**
+     * Sends the available Wizards to all players
+     */
     public void notifyAvailableWizards() {
         for (PlayerDetails pd : players) {
             if (pd.getWizard() == null)
@@ -171,22 +196,39 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
         }
     }
 
+    /**
+     * Sends the team view to a specified player
+     *
+     * @param identifier the payer who has to receive the Team View
+     */
     public void notifyTeams(String identifier) {
         if (getTeamView() != null)
             notifyMessageListener(identifier, new MessageEvent(this, new CurrentTeams(getTeamView())));
     }
 
+    /**
+     * Sends the team view to all players
+     */
     public void notifyTeams() {
         if (getTeamView() != null)
             notifyMessageListeners(new MessageEvent(this, new CurrentTeams(getTeamView())));
     }
 
+    /**
+     * Notifies the start to the host
+     */
     void sendStart() {
         if (canStart()) {
             notifyMessageListener(getMaster(), new MessageEvent(this, new CommMessage(CommMsgType.CAN_START)));
         }
     }
 
+    /**
+     * Method for know if a player is inside the lobby
+     *
+     * @param identifier the nickname of the player
+     * @return true if the player is already in the lobby, false otherwise
+     */
     public boolean containsPlayer(String identifier) {
         for (PlayerDetails pd : players) {
             if (pd.getNickname().equals(identifier))

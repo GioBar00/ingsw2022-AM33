@@ -7,6 +7,7 @@ import it.polimi.ingsw.server.model.enums.GamePreset;
  * Used to build the Game based on the preset and the mode.
  */
 public abstract class GameBuilder {
+
     /**
      * Builds the game based on the preset and the mode.
      *

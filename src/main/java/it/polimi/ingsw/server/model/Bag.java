@@ -10,11 +10,15 @@ import java.util.concurrent.ThreadLocalRandom;
  * The Bag class is used to store the students that are remaining in the game.
  */
 class Bag {
+
     /**
      * students currently in the bag
      */
     LinkedList<StudentColor> students;
 
+    /**
+     * Public constructor for a Bag
+     */
     public Bag() {
         students = new LinkedList<>();
     }

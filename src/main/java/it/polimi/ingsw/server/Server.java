@@ -38,7 +38,7 @@ public class Server implements EndGameListener, DisconnectListener {
 
     /**
      * Game Controller
-      */
+     */
     private Controller controller;
 
     /**
@@ -60,6 +60,7 @@ public class Server implements EndGameListener, DisconnectListener {
 
     /**
      * Server's constructor method
+     *
      * @param port tcp port of the server
      */
     public Server(int port) {
@@ -68,6 +69,9 @@ public class Server implements EndGameListener, DisconnectListener {
         resetGame();
     }
 
+    /**
+     * Reset the controller
+     */
     private void resetGame() {
         controller = new Controller();
         controller.setEndGameListener(this);
@@ -80,7 +84,7 @@ public class Server implements EndGameListener, DisconnectListener {
      * Main Method used for instantiate Virtual Client if is permitted.
      * Each of this Virtual Client are run on different threads
      */
-     public void handleRequests() {
+    public void handleRequests() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("S: server ready");
             while (!Thread.interrupted()) {
@@ -99,7 +103,8 @@ public class Server implements EndGameListener, DisconnectListener {
                                 communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_SERVER_UNAVAILABLE));
                                 communicationHandler.stop();
                             });
-                            case NORMAL -> Executors.newSingleThreadExecutor().execute(() -> handleNewPlayer(communicationHandler));
+                            case NORMAL ->
+                                    Executors.newSingleThreadExecutor().execute(() -> handleNewPlayer(communicationHandler));
                         }
                     }
                 } catch (Throwable e) {
@@ -117,69 +122,72 @@ public class Server implements EndGameListener, DisconnectListener {
 
     /**
      * Handle the first player connection
+     *
      * @param communicationHandler the communication handler of the first player
      */
     private void handleFirstPlayer(CommunicationHandler communicationHandler) {
-         try {
-             String nickname = getPlayerNickname(communicationHandler);
-             if (nickname != null) {
-                 CountDownLatch countDownLatch = new CountDownLatch(1);
-                 communicationHandler.setMessageHandler((message) -> {
-                     if (message.isValid() && MessageType.retrieveByMessage(message) == MessageType.CHOSEN_GAME) {
-                         ChosenGame choice = (ChosenGame) message;
-                         controller.setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
-                         synchronized (this) {
-                             state = ServerState.NORMAL;
-                             countDownLatch.countDown();
-                             addPlayer(communicationHandler, nickname);
-                         }
-                     } else
-                         communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
-                 });
+        try {
+            String nickname = getPlayerNickname(communicationHandler);
+            if (nickname != null) {
+                CountDownLatch countDownLatch = new CountDownLatch(1);
+                communicationHandler.setMessageHandler((message) -> {
+                    if (message.isValid() && MessageType.retrieveByMessage(message) == MessageType.CHOSEN_GAME) {
+                        ChosenGame choice = (ChosenGame) message;
+                        controller.setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
+                        synchronized (this) {
+                            state = ServerState.NORMAL;
+                            countDownLatch.countDown();
+                            addPlayer(communicationHandler, nickname);
+                        }
+                    } else
+                        communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
+                });
 
-                 communicationHandler.sendMessage(new CommMessage(CommMsgType.CHOOSE_GAME));
+                communicationHandler.sendMessage(new CommMessage(CommMsgType.CHOOSE_GAME));
 
-                 try {
-                     if (!countDownLatch.await(30, TimeUnit.SECONDS)) {
-                         throw new TimeoutException();
-                     }
-                 } catch (InterruptedException ignored) {}
+                try {
+                    if (!countDownLatch.await(30, TimeUnit.SECONDS)) {
+                        throw new TimeoutException();
+                    }
+                } catch (InterruptedException ignored) {
+                }
 
-             } else {
-                 synchronized (this) {
-                     state = ServerState.EMPTY;
-                 }
-             }
-         } catch (TimeoutException e) {
-             communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
-             communicationHandler.stop();
-             synchronized (this) {
-                 state = ServerState.EMPTY;
-             }
-         }
+            } else {
+                synchronized (this) {
+                    state = ServerState.EMPTY;
+                }
+            }
+        } catch (TimeoutException e) {
+            communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
+            communicationHandler.stop();
+            synchronized (this) {
+                state = ServerState.EMPTY;
+            }
+        }
     }
 
     /**
      * Gets the nickname of the player
+     *
      * @param communicationHandler the communication handler of the player
      * @return the nickname of the player
      * @throws TimeoutException if the player doesn't send a nickname in time
      */
     private String getPlayerNickname(CommunicationHandler communicationHandler) throws TimeoutException {
-         CountDownLatch latch = new CountDownLatch(1);
-         AtomicReference<String> nickname = new AtomicReference<>();
-         communicationHandler.setMessageHandler((message) -> {
-             if (message.isValid() && MessageType.retrieveByMessage(message) == MessageType.LOGIN) {
-                 Login login = (Login) message;
-                 nickname.set(login.getNickname());
-             } else {
-                 communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
-                 nickname.set(null);
-             }
-             latch.countDown();
-         });
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<String> nickname = new AtomicReference<>();
+        communicationHandler.setMessageHandler((message) -> {
+            if (message.isValid() && MessageType.retrieveByMessage(message) == MessageType.LOGIN) {
+                Login login = (Login) message;
+                nickname.set(login.getNickname());
+            } else {
+                communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
+                nickname.set(null);
+            }
+            latch.countDown();
+        });
 
-         communicationHandler.start();
+        communicationHandler.start();
 
         try {
             if (latch.await(10, TimeUnit.SECONDS) && nickname.get() != null) {
@@ -189,69 +197,73 @@ public class Server implements EndGameListener, DisconnectListener {
                 communicationHandler.setMessageHandler(null);
                 return null;
             }
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException ignored) {
+        }
         communicationHandler.setMessageHandler(null);
         throw new TimeoutException();
     }
 
     /**
      * Handles the connection of a new player
+     *
      * @param communicationHandler the communication handler of the player
      */
     private void handleNewPlayer(CommunicationHandler communicationHandler) {
-         try {
-             String nickname = getPlayerNickname(communicationHandler);
+        try {
+            String nickname = getPlayerNickname(communicationHandler);
 
-             if (nickname != null) {
-                 communicationHandler.setMessageHandler(null);
-                 if (controller.isGameStarted()) {
-                     synchronized (this) {
-                         if (virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()) {
-                             communicationHandler.stop(false);
-                             virtualClients.get(nickname).reconnect(communicationHandler.getSocket());
-                         } else {
-                             communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
-                             communicationHandler.stop();
-                         }
-                     }
-                 } else if (virtualClients.containsKey(nickname)) {
-                     communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE));
-                     communicationHandler.stop();
-                 } else {
-                     if (!addPlayer(communicationHandler, nickname)){
-                         communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
-                         communicationHandler.stop();
-                     }
-                 }
-             }
-         } catch (TimeoutException e) {
-             communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
-             communicationHandler.stop();
-         }
+            if (nickname != null) {
+                communicationHandler.setMessageHandler(null);
+                if (controller.isGameStarted()) {
+                    synchronized (this) {
+                        if (virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()) {
+                            communicationHandler.stop(false);
+                            virtualClients.get(nickname).reconnect(communicationHandler.getSocket());
+                        } else {
+                            communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
+                            communicationHandler.stop();
+                        }
+                    }
+                } else if (virtualClients.containsKey(nickname)) {
+                    communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE));
+                    communicationHandler.stop();
+                } else {
+                    if (!addPlayer(communicationHandler, nickname)) {
+                        communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
+                        communicationHandler.stop();
+                    }
+                }
+            }
+        } catch (TimeoutException e) {
+            communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
+            communicationHandler.stop();
+        }
     }
 
     /**
      * Creates the virtual client for the player
+     *
      * @param communicationHandler the communication handler of the player
-     * @param nickname the nickname of the player
+     * @param nickname             the nickname of the player
      * @return true if the player was added, false otherwise
      */
     private boolean addPlayer(CommunicationHandler communicationHandler, String nickname) {
-         if (controller.addPlayer(nickname)) {
-             System.out.println("S: added player " + nickname);
-             communicationHandler.stop(false);
-             VirtualClient vc = new VirtualClient(nickname);
-             startVirtualClient(vc, communicationHandler.getSocket());
-             virtualClients.put(nickname, vc);
-             controller.sendInitialStats(vc);
-             return true;
-         }
-         return false;
+        if (controller.addPlayer(nickname)) {
+            System.out.println("S: added player " + nickname);
+            communicationHandler.stop(false);
+            VirtualClient vc = new VirtualClient(nickname);
+            startVirtualClient(vc, communicationHandler.getSocket());
+            virtualClients.put(nickname, vc);
+            controller.sendInitialStats(vc);
+            return true;
+        }
+        return false;
     }
 
     /**
      * Starts a virtual client and adds it to the model listeners. Adds the controller to the VirtualClient listeners
-     * @param vc the VirtualClient
+     *
+     * @param vc     the VirtualClient
      * @param socket Socket for connection
      */
     private void startVirtualClient(VirtualClient vc, Socket socket) {
@@ -265,11 +277,12 @@ public class Server implements EndGameListener, DisconnectListener {
      * Method called by Virtual Client if the connection is lost. Server removes the thread from execution and remove the
      * virtual Client bonded with the nickname of disconnected player.
      * Calls method skip turn on controller.
+     *
      * @param event of the connection
      */
     @Override
     public synchronized void onEndGameEvent(EndGameEvent event) {
-        for(VirtualClient vc : virtualClients.values()) {
+        for (VirtualClient vc : virtualClients.values()) {
             controller.removeModelListener(vc);
             vc.stop();
         }
@@ -284,16 +297,17 @@ public class Server implements EndGameListener, DisconnectListener {
 
     /**
      * Getter of the controller
+     *
      * @return the controller
      */
-    public Controller getController(){
+    public Controller getController() {
         return controller;
     }
 
     /**
      * Closes the controller thread
      */
-    public void stopController(){
+    public void stopController() {
         executor.shutdownNow();
     }
 

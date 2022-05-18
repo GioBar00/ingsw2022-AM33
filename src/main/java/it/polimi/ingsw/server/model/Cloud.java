@@ -11,11 +11,17 @@ import java.util.List;
  * Class that represents a cloud of the game
  */
 public class Cloud {
+
     /**
      * students present on the cloud
      */
     private final ArrayList<StudentColor> students;
 
+    /**
+     * Public constructor of a Cloud
+     *
+     * @param capacity the number of the students that the cloud can hold
+     */
     Cloud(int capacity) {
         this.students = new ArrayList<>(capacity);
         students.addAll(Collections.nCopies(capacity, null));

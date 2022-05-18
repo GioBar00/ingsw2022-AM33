@@ -11,9 +11,13 @@ import java.util.EnumMap;
 import java.util.List;
 
 /**
- * Game model for the game with teams
+ * Game model for the game with teams, extends GameModel interface
  */
 public class GameModelTeams extends GameModel {
+
+    /**
+     * Constructor of a GameModelTeam
+     */
     public GameModelTeams() {
         super(GamePreset.FOUR);
     }
