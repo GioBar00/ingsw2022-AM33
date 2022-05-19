@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="209.0" prefWidth="484.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.ingsw.client.gui.controllers.SchoolBoardController">
+    <ImageView fitHeight="210.0" fitWidth="500.0" layoutX="168.0" layoutY="98.0" pickOnBounds="true"
+               preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Image url="@../graphics/board.png"/>
+    </ImageView>
+    <GridPane fx:id="ent_hall_prof_grid" layoutX="12.0" layoutY="18.0" prefHeight="172.0" prefWidth="354.0"
+              AnchorPane.bottomAnchor="19.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="118.0"
+              AnchorPane.topAnchor="18.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="103.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="103.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="95.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="97.0" minWidth="10.0" prefWidth="97.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="97.0" minWidth="10.0" prefWidth="97.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="97.0" minWidth="10.0" prefWidth="97.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="97.0" minWidth="10.0" prefWidth="97.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="97.0" minWidth="10.0" prefWidth="97.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="97.0" minWidth="10.0" prefWidth="97.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="97.0" minWidth="10.0" prefWidth="97.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="97.0" minWidth="10.0" prefWidth="97.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="97.0" minWidth="10.0" prefWidth="97.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="97.0" minWidth="10.0" prefWidth="97.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="95.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        </rowConstraints>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="4"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="4"/>
+        <AnchorPane fx:id="greenProf" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14"/>
+        <AnchorPane fx:id="redProf" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14"
+                    GridPane.rowIndex="1"/>
+        <AnchorPane fx:id="yellowProf" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14"
+                    GridPane.rowIndex="2"/>
+        <AnchorPane fx:id="magentaProf" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14"
+                    GridPane.rowIndex="3"/>
+        <AnchorPane fx:id="blueProf" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14"
+                    GridPane.rowIndex="4"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4"
+                    GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4"
+                    GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4"
+                    GridPane.rowIndex="4"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="7"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="8"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="9"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="10"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="11"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5"
+                    GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4"
+                    GridPane.rowIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6"
+                    GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="7"
+                    GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="8"
+                    GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="9"
+                    GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="10"
+                    GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="11"
+                    GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12"
+                    GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5"
+                    GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5"
+                    GridPane.rowIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5"
+                    GridPane.rowIndex="4"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6"
+                    GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6"
+                    GridPane.rowIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6"
+                    GridPane.rowIndex="4"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="7"
+                    GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="7"
+                    GridPane.rowIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="7"
+                    GridPane.rowIndex="4"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="8"
+                    GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="9"
+                    GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="10"
+                    GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="11"
+                    GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12"
+                    GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="8"
+                    GridPane.rowIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="8"
+                    GridPane.rowIndex="4"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="9"
+                    GridPane.rowIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="9"
+                    GridPane.rowIndex="4"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="10"
+                    GridPane.rowIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12"
+                    GridPane.rowIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="11"
+                    GridPane.rowIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="10"
+                    GridPane.rowIndex="4"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="11"
+                    GridPane.rowIndex="4"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12"
+                    GridPane.rowIndex="4"/>
+    </GridPane>
+    <GridPane fx:id="towers_grid" layoutX="388.0" layoutY="36.0" prefHeight="137.0" prefWidth="74.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        </rowConstraints>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    </GridPane>
+</AnchorPane>
