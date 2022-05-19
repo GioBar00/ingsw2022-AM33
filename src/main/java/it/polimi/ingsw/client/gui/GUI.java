@@ -6,6 +6,7 @@ import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.enums.SceneFXMLPath;
 import it.polimi.ingsw.client.gui.controllers.ChooseWizardController;
 import it.polimi.ingsw.client.gui.controllers.GUIController;
+import it.polimi.ingsw.client.gui.controllers.TeamLobbyController;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
@@ -18,6 +19,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -37,6 +39,7 @@ public class GUI extends Application implements UI {
 
     private Client client;
 
+    private TeamsView teamsView;
     private ViewListener listener;
 
     public GUI() {
@@ -134,7 +137,18 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setTeamsView(TeamsView teamsView) {
-        System.out.println("Setting teams view");
+        this.teamsView = teamsView;
+        Platform.runLater(() -> {
+            ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).controller()).setLabels(teamsView);
+            stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).scene());
+            stage.setTitle("Eriantys");
+            stage.setMinHeight(500.0);
+            stage.setMinWidth(680.0);
+            stage.setResizable(false);
+            stage.getIcons().add(imagesByPath.get(ImagePath.ICON));
+            stage.setOnHiding(event -> stop());
+            stage.show();
+        });
     }
 
     /**
@@ -180,6 +194,7 @@ public class GUI extends Application implements UI {
         Platform.runLater(() -> {
             stage.getScene().getRoot().setDisable(true);
             Stage chooseWizardStage = new Stage();
+            chooseWizardStage.setTitle("Choose a Wizard");
             chooseWizardStage.setScene(sceneByPath.get(SceneFXMLPath.CHOOSE_WIZARD).scene());
             chooseWizardStage.setMinHeight(150.0);
             chooseWizardStage.setMinWidth(300.0);
@@ -202,7 +217,17 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void hostCanStart() {
-        System.out.println("Host can start");
+        if(teamsView != null){
+            Platform.runLater(() -> {
+                ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).controller()).setCanStart();
+                stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).scene());
+                stage.setResizable(false);
+                stage.setTitle("Eriantys");
+                stage.getIcons().add(imagesByPath.get(ImagePath.ICON));
+                stage.setOnHiding(event -> stop());
+                stage.show();
+            });
+        }
     }
 
     /**
@@ -210,7 +235,16 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void hostCantStart() {
-        System.out.println("Host cant start");
+        if(teamsView != null){
+            Platform.runLater(() -> {
+                ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).controller()).setCantStart();
+                stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).scene());
+                stage.setResizable(false);
+                stage.getIcons().add(imagesByPath.get(ImagePath.ICON));
+                stage.setOnHiding(event -> stop());
+                stage.show();
+            });
+        }
     }
 
     /**
