@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.ChooseWizardController">
+   <children>
+      <HBox layoutX="-13.0" layoutY="-68.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ImageView fitHeight="425.0" fitWidth="2141.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/start-screen-background.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+      <AnchorPane layoutX="20.0" prefHeight="170.0" prefWidth="115.0" AnchorPane.bottomAnchor="110.0" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="120.0">
+         <children>
+            <ImageView fitHeight="170.0" fitWidth="127.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/wizards/sensei.jpg" />
+               </image>
+            </ImageView>
+            <Button fx:id="senseiBtn" onAction="#selectedSensei" layoutY="157.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="115.0" text="Sensei" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="160.0" prefHeight="170.0" prefWidth="115.0" AnchorPane.bottomAnchor="110.0" AnchorPane.leftAnchor="170.0" AnchorPane.topAnchor="120.0">
+         <children>
+            <ImageView fitHeight="170.0" fitWidth="115.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/wizards/witch.jpg" />
+               </image>
+            </ImageView>
+            <Button fx:id="witchBtn" onAction="#selectedWitch" layoutY="157.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="114.0" text="Witch" />
+         </children>
+      </AnchorPane>
+      <AnchorPane prefHeight="170.0" prefWidth="115.0" AnchorPane.bottomAnchor="110.0" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="120.0">
+         <children>
+            <ImageView fitHeight="170.0" fitWidth="115.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/wizards/merlin.jpg" />
+               </image>
+            </ImageView>
+            <Button fx:id="merlinBtn" onAction="#selectedMerlin" layoutY="157.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="114.0" text="Merlin" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="461.0" prefHeight="170.0" prefWidth="114.0" AnchorPane.bottomAnchor="110.0" AnchorPane.leftAnchor="461.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="120.0">
+         <children>
+            <ImageView fitHeight="170.0" fitWidth="114.0" layoutX="-1.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/wizards/king.jpg" />
+               </image>
+            </ImageView>
+            <Button fx:id="kingBtn" onAction="#selectedKing" layoutX="-2.0" layoutY="155.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="115.0" text="King" />
+         </children>
+      </AnchorPane>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="310.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="20.0">
+         <children>
+            <Text fill="WHITE" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose a Wizard" textAlignment="CENTER" wrappingWidth="540.0">
+               <font>
+                  <Font size="27.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

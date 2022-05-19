@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.UI;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.enums.SceneFXMLPath;
+import it.polimi.ingsw.client.gui.controllers.ChooseWizardController;
 import it.polimi.ingsw.client.gui.controllers.GUIController;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
@@ -12,8 +13,6 @@ import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
-import it.polimi.ingsw.server.model.enums.GameMode;
-import it.polimi.ingsw.server.model.enums.GamePreset;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -31,7 +30,7 @@ public class GUI extends Application implements UI {
 
     private static GUI instance;
     private static final CountDownLatch instantiationLatch = new CountDownLatch(1);
-    private final EnumMap<SceneFXMLPath, Scene> sceneByPath = new EnumMap<>(SceneFXMLPath.class);
+    private final EnumMap<SceneFXMLPath, SceneController> sceneByPath = new EnumMap<>(SceneFXMLPath.class);
     public final static EnumMap<ImagePath, Image> imagesByPath = new EnumMap<>(ImagePath.class);
 
     private Stage stage;
@@ -55,7 +54,7 @@ public class GUI extends Application implements UI {
         return instance;
     }
 
-    private Scene loadFXML(String path) {
+    private SceneController loadFXML(String path) {
         try {
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(path)));
             Scene scene = new Scene(loader.load());
@@ -63,7 +62,7 @@ public class GUI extends Application implements UI {
             scene.setUserData(controller);
             controller.setGUI(this);
             controller.init();
-            return scene;
+            return new SceneController(scene, controller);
         } catch (IOException | NullPointerException e) {
             System.err.println("Error loading fxml: " + path);
             stop();
@@ -93,7 +92,7 @@ public class GUI extends Application implements UI {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        Scene scene = sceneByPath.get(SceneFXMLPath.START_SCREEN);
+        Scene scene = sceneByPath.get(SceneFXMLPath.START_SCREEN).scene();
         stage.setScene(scene);
         stage.setTitle("Eriantys");
         stage.setMinHeight(800.0);
@@ -127,7 +126,7 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setWizardView(WizardsView wizardsView) {
-        System.out.println("Setting wizard view");
+        ((ChooseWizardController)sceneByPath.get(SceneFXMLPath.CHOOSE_WIZARD).controller()).setClickableButtons(wizardsView);
     }
 
     /**
@@ -143,7 +142,7 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setGameView(GameView gameView) {
-        System.out.println("Setting game view");
+
     }
 
     /**
@@ -155,9 +154,10 @@ public class GUI extends Application implements UI {
             stage.getScene().getRoot().setDisable(true);
             Stage chooseGameStage = new Stage();
             chooseGameStage.setTitle("Create a new game");
-            chooseGameStage.setScene(sceneByPath.get(SceneFXMLPath.CHOOSE_GAME));
-            chooseGameStage.setMinHeight(150.0);
-            chooseGameStage.setMinWidth(300.0);
+            chooseGameStage.setScene(sceneByPath.get(SceneFXMLPath.CHOOSE_GAME).scene());
+            chooseGameStage.setMinHeight(400.0);
+            chooseGameStage.setMinWidth(600.0);
+            chooseGameStage.getIcons().add(imagesByPath.get(ImagePath.ICON));
             chooseGameStage.setResizable(false);
             chooseGameStage.showAndWait();
         });
@@ -177,6 +177,16 @@ public class GUI extends Application implements UI {
     @Override
     public void showWizardMenu() {
         System.out.println("Showing wizard menu");
+        Platform.runLater(() -> {
+            stage.getScene().getRoot().setDisable(true);
+            Stage chooseWizardStage = new Stage();
+            chooseWizardStage.setScene(sceneByPath.get(SceneFXMLPath.CHOOSE_WIZARD).scene());
+            chooseWizardStage.setMinHeight(150.0);
+            chooseWizardStage.setMinWidth(300.0);
+            chooseWizardStage.getIcons().add(imagesByPath.get(ImagePath.ICON));
+            chooseWizardStage.setResizable(false);
+            chooseWizardStage.showAndWait();
+        });
     }
 
     /**

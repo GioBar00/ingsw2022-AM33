@@ -2,8 +2,8 @@ package it.polimi.ingsw.client.enums;
 
 public enum SceneFXMLPath {
     START_SCREEN("/fxml/start-screen.fxml"),
-    CHOOSE_GAME("/fxml/choose-game.fxml");
-
+    CHOOSE_GAME("/fxml/choose-game.fxml"),
+    CHOOSE_WIZARD("/fxml/choose-wizard.fxml");
     private final String path;
 
     SceneFXMLPath(String path) {

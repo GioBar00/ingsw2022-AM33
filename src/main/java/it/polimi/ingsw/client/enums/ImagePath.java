@@ -5,7 +5,8 @@ public enum ImagePath {
     START("/images/icons/start.png"),
     START_HIGHLIGHTED("/images/icons/start-highlighted.png"),
     VOLUME("/images/icons/volume.png"),
-    MUTE("/images/icons/mute.png");
+    MUTE("/images/icons/mute.png"),
+    TITLE("/images/title.png");
 
 
     private final String path;
