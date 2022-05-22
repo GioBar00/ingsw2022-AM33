@@ -110,6 +110,7 @@ public class StartScreenController implements GUIController {
             String nickname = txtFieldNickname.getText();
             gui.getClient().setServerAddress(server);
             gui.getClient().setServerPort(String.valueOf(port));
+            gui.setNickname(nickname);
             gui.getClient().setNickname(nickname);
             gui.getClient().sendLogin();
         }

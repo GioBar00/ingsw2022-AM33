@@ -65,6 +65,7 @@ public class TeamLobbyController implements GUIController {
         blackLabels = new Label[4];
         whiteLabels = new Label[4];
         lobbyLabels = new Label[4];
+        fillLabels();
     }
 
     /**
@@ -132,7 +133,7 @@ public class TeamLobbyController implements GUIController {
      * @param view a TeamView
      */
     public void setLabels(TeamsView view) {
-        fillLabels();
+
 
         int i = 0;
         for (String s : view.getTeams().get(Tower.BLACK)) {

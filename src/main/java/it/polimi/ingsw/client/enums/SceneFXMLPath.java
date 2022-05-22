@@ -4,8 +4,8 @@ public enum SceneFXMLPath {
     START_SCREEN("/fxml/start-screen.fxml"),
     CHOOSE_GAME("/fxml/choose-game.fxml"),
     CHOOSE_WIZARD("/fxml/choose-wizard.fxml"),
-
-    TEAM_LOBBY("/fxml/lobby-screen.fxml");
+    TEAM_LOBBY("/fxml/lobby-screen.fxml"),
+    CHOOSE_ASSISTANT("/fxml/lobby-screen.fxml");
     private final String path;
 
     SceneFXMLPath(String path) {

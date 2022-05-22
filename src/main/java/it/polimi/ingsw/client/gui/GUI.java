@@ -4,14 +4,18 @@ import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.UI;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.enums.SceneFXMLPath;
+import it.polimi.ingsw.client.gui.controllers.AssistantCardController;
 import it.polimi.ingsw.client.gui.controllers.ChooseWizardController;
 import it.polimi.ingsw.client.gui.controllers.GUIController;
 import it.polimi.ingsw.client.gui.controllers.TeamLobbyController;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
+import it.polimi.ingsw.network.messages.actions.requests.PlayAssistantCard;
+import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.views.GameView;
+import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
 import javafx.application.Application;
@@ -32,7 +36,7 @@ public class GUI extends Application implements UI {
 
     private static GUI instance;
     private static final CountDownLatch instantiationLatch = new CountDownLatch(1);
-    private final EnumMap<SceneFXMLPath, SceneController> sceneByPath = new EnumMap<>(SceneFXMLPath.class);
+    private final EnumMap<SceneFXMLPath, Scene> sceneByPath = new EnumMap<>(SceneFXMLPath.class);
     public final static EnumMap<ImagePath, Image> imagesByPath = new EnumMap<>(ImagePath.class);
 
     private Stage stage;
@@ -41,6 +45,9 @@ public class GUI extends Application implements UI {
 
     private TeamsView teamsView;
     private ViewListener listener;
+    private Message lastRequest;
+
+    private String nickname;
 
     public GUI() {
         instance = this;
@@ -57,7 +64,7 @@ public class GUI extends Application implements UI {
         return instance;
     }
 
-    private SceneController loadFXML(String path) {
+    private Scene loadFXML(String path) {
         try {
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(path)));
             Scene scene = new Scene(loader.load());
@@ -65,7 +72,7 @@ public class GUI extends Application implements UI {
             scene.setUserData(controller);
             controller.setGUI(this);
             controller.init();
-            return new SceneController(scene, controller);
+            return scene;
         } catch (IOException | NullPointerException e) {
             System.err.println("Error loading fxml: " + path);
             stop();
@@ -95,7 +102,7 @@ public class GUI extends Application implements UI {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        Scene scene = sceneByPath.get(SceneFXMLPath.START_SCREEN).scene();
+        Scene scene = sceneByPath.get(SceneFXMLPath.START_SCREEN);
         stage.setScene(scene);
         stage.setTitle("Eriantys");
         stage.setMinHeight(800.0);
@@ -129,7 +136,7 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setWizardView(WizardsView wizardsView) {
-        ((ChooseWizardController)sceneByPath.get(SceneFXMLPath.CHOOSE_WIZARD).controller()).setClickableButtons(wizardsView);
+        ((ChooseWizardController)sceneByPath.get(SceneFXMLPath.CHOOSE_WIZARD).getUserData()).setClickableButtons(wizardsView);
     }
 
     /**
@@ -139,8 +146,8 @@ public class GUI extends Application implements UI {
     public void setTeamsView(TeamsView teamsView) {
         this.teamsView = teamsView;
         Platform.runLater(() -> {
-            ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).controller()).setLabels(teamsView);
-            stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).scene());
+            ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).getUserData()).setLabels(teamsView);
+            stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY));
             stage.setTitle("Eriantys");
             stage.setMinHeight(500.0);
             stage.setMinWidth(680.0);
@@ -156,7 +163,14 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setGameView(GameView gameView) {
-
+        for (PlayerView pv : gameView.getPlayersView()) {
+            if (pv.getNickname().equals(nickname)){
+                if(pv.getPlayedCard() != null){
+                    ((AssistantCardController)sceneByPath.get(SceneFXMLPath.CHOOSE_ASSISTANT).getUserData()).setPlayedCard(pv.getPlayedCard());
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -168,7 +182,7 @@ public class GUI extends Application implements UI {
             stage.getScene().getRoot().setDisable(true);
             Stage chooseGameStage = new Stage();
             chooseGameStage.setTitle("Create a new game");
-            chooseGameStage.setScene(sceneByPath.get(SceneFXMLPath.CHOOSE_GAME).scene());
+            chooseGameStage.setScene(sceneByPath.get(SceneFXMLPath.CHOOSE_GAME));
             chooseGameStage.setMinHeight(400.0);
             chooseGameStage.setMinWidth(600.0);
             chooseGameStage.getIcons().add(imagesByPath.get(ImagePath.ICON));
@@ -195,7 +209,7 @@ public class GUI extends Application implements UI {
             stage.getScene().getRoot().setDisable(true);
             Stage chooseWizardStage = new Stage();
             chooseWizardStage.setTitle("Choose a Wizard");
-            chooseWizardStage.setScene(sceneByPath.get(SceneFXMLPath.CHOOSE_WIZARD).scene());
+            chooseWizardStage.setScene(sceneByPath.get(SceneFXMLPath.CHOOSE_WIZARD));
             chooseWizardStage.setMinHeight(150.0);
             chooseWizardStage.setMinWidth(300.0);
             chooseWizardStage.getIcons().add(imagesByPath.get(ImagePath.ICON));
@@ -219,8 +233,8 @@ public class GUI extends Application implements UI {
     public void hostCanStart() {
         if(teamsView != null){
             Platform.runLater(() -> {
-                ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).controller()).setCanStart();
-                stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).scene());
+                ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).getUserData()).setCanStart();
+                stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY));
                 stage.setResizable(false);
                 stage.setTitle("Eriantys");
                 stage.getIcons().add(imagesByPath.get(ImagePath.ICON));
@@ -237,8 +251,8 @@ public class GUI extends Application implements UI {
     public void hostCantStart() {
         if(teamsView != null){
             Platform.runLater(() -> {
-                ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).controller()).setCantStart();
-                stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).scene());
+                ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).getUserData()).setCantStart();
+                stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY));
                 stage.setResizable(false);
                 stage.getIcons().add(imagesByPath.get(ImagePath.ICON));
                 stage.setOnHiding(event -> stop());
@@ -260,9 +274,21 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setPossibleMoves(Message message) {
-        System.out.println("Setting possible moves");
+        lastRequest = message;
+        processLastRequest(lastRequest);
     }
 
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    private void processLastRequest(Message message) {
+        switch (MessageType.retrieveByMessage(message)){
+            case PLAY_ASSISTANT_CARD -> {
+                ((AssistantCardController)sceneByPath.get(SceneFXMLPath.CHOOSE_ASSISTANT).getUserData()).setPlayable(((PlayAssistantCard)message).getPlayableAssistantCards());
+            }
+        }
+    }
     @Override
     public void serverUnavailable() {
         System.out.println("Server unavailable");
