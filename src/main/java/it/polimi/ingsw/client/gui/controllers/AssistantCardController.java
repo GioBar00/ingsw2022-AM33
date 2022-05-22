@@ -11,6 +11,9 @@ import javafx.scene.image.ImageView;
 
 import java.util.*;
 
+/**
+ * The controller related to choose-assistant view
+ */
 public class AssistantCardController implements GUIController {
     private GUI gui;
 
@@ -58,8 +61,14 @@ public class AssistantCardController implements GUIController {
 
     private EnumMap<AssistantCard, AssistantView> assistantViews;
 
-    private List<AssistantCard> played;
+    private final List<AssistantCard> played;
 
+    /**
+     * The constructor
+     */
+    public AssistantCardController() {
+        played = new ArrayList<>();
+    }
 
     /**
      * This method is used to set the GUI of the controller.
@@ -71,39 +80,58 @@ public class AssistantCardController implements GUIController {
         this.gui = gui;
     }
 
+    /**
+     * This methods set the values in the assistant card view
+     *
+     * @param playableAssistantCards an EnumSet of playable card
+     */
     public void setPlayable(EnumSet<AssistantCard> playableAssistantCards) {
 
         ArrayList<AssistantCard> notPlayable = new ArrayList<>(Arrays.asList(AssistantCard.values()));
 
-        for(AssistantCard assistantCard : playableAssistantCards){
+        for (AssistantCard assistantCard : playableAssistantCards) {
             notPlayable.remove(assistantCard);
             enableCard(assistantCard);
         }
-        for(AssistantCard assistantCard : played){
+        for (AssistantCard assistantCard : played) {
             notPlayable.remove(assistantCard);
             playedCard(assistantCard);
         }
 
-        for(AssistantCard assistantCard : notPlayable){
+        for (AssistantCard assistantCard : notPlayable) {
             deactivateCard(assistantCard);
             deactivateCard(assistantCard);
         }
 
     }
 
+    /**
+     * Adds the last played card into the played cards
+     *
+     * @param assistantCard the last played card
+     */
     public void setPlayedCard(AssistantCard assistantCard) {
-        if(played.contains(assistantCard))
+        if (played.contains(assistantCard))
             return;
         played.add(assistantCard);
     }
 
+    /**
+     * This method gives to the user the possibility of play a specified card.
+     *
+     * @param assistantCard the card the player could play.
+     */
     private void enableCard(AssistantCard assistantCard) {
-        assert getImagePath(assistantCard) != null;
         assistantViews.get(assistantCard).assistantImage.setImage(new Image(getImagePath(assistantCard).getPath()));
         assistantViews.get(assistantCard).assistantButton.setDisable(false);
         assistantViews.get(assistantCard).assistantButton.setVisible(true);
     }
 
+    /**
+     * This method disables a card in the GUI showing that was already played.
+     *
+     * @param assistantCard the card that was already played.
+     */
     private void playedCard(AssistantCard assistantCard) {
         assistantViews.get(assistantCard).assistantImage.setImage(new Image(ImagePath.BACK_CARD.getPath()));
         assistantViews.get(assistantCard).assistantButton.setDisable(true);
@@ -111,11 +139,22 @@ public class AssistantCardController implements GUIController {
 
     }
 
+    /**
+     * This methods disables a button related to a card cause is not playable in the current turn.
+     *
+     * @param assistantCard the card that can't be played now.
+     */
     private void deactivateCard(AssistantCard assistantCard) {
         assistantViews.get(assistantCard).assistantImage.setImage(new Image(getImagePath(assistantCard).getPath()));
         assistantViews.get(assistantCard).assistantButton.setDisable(true);
         assistantViews.get(assistantCard).assistantButton.setVisible(false);
     }
+
+    /**
+     * Send a {@link PlayedAssistantCard} reqest to the server.
+     *
+     * @param card the card the player wants to play.@
+     */
     @FXML
     public void playAssistantCard(AssistantCard card) {
         gui.notifyViewListener(new PlayedAssistantCard(card));
@@ -151,6 +190,12 @@ public class AssistantCardController implements GUIController {
 
     }
 
+    /**
+     * This method returns the path of the image related to a specified Assistant CArd
+     *
+     * @param card the card
+     * @return the ImagePath of the card
+     */
     private ImagePath getImagePath(AssistantCard card) {
         switch (card) {
             case CHEETAH -> {
@@ -188,6 +233,9 @@ public class AssistantCardController implements GUIController {
         return null;
     }
 
+    /**
+     * Private class that contains the button and imageView related to an Assistant card
+     */
     private static class AssistantView {
         Button assistantButton;
         ImageView assistantImage;
