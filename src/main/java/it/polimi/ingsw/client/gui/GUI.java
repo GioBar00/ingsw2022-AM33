@@ -102,8 +102,7 @@ public class GUI extends Application implements UI {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        Scene scene = sceneByPath.get(SceneFXMLPath.START_SCREEN);
-        stage.setScene(scene);
+        showStartScreen();
         stage.setTitle("Eriantys");
         stage.setMinHeight(800.0);
         stage.setMinWidth(1200.0);
@@ -197,6 +196,11 @@ public class GUI extends Application implements UI {
     @Override
     public void showStartScreen() {
         System.out.println("Showing start screen");
+        Platform.runLater(() -> {
+            Scene scene = sceneByPath.get(SceneFXMLPath.START_SCREEN);
+            stage.setScene(scene);
+        });
+
     }
 
     /**
