@@ -8,23 +8,31 @@ import it.polimi.ingsw.server.model.enums.Wizard;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * A Class that holds all the information of a player
+ */
 public class Player {
+
     /**
      * nickname of the player
      */
     private final String nickname;
+
     /**
      * wizard of the player
      */
     private final Wizard wizard;
+
     /**
      * assistantCards of the player
      */
     private final ArrayList<AssistantCard> assistantCards;
+
     /**
      * assistantCard currently player by the player
      */
     private AssistantCard playedCard;
+
     /**
      * schoolBoard of the player
      */
@@ -32,11 +40,12 @@ public class Player {
 
     /**
      * Constructor of Player
-     * @param nickname nickname chosen by the player
-     * @param wizard random wizard given to the player
+     *
+     * @param nickname    nickname chosen by the player
+     * @param wizard      random wizard given to the player
      * @param schoolBoard the schoolBoard related to the student
      */
-    Player(String nickname, Wizard wizard, SchoolBoard schoolBoard){
+    Player(String nickname, Wizard wizard, SchoolBoard schoolBoard) {
         this.nickname = nickname;
         this.wizard = wizard;
         this.assistantCards = new ArrayList<>();
@@ -47,6 +56,7 @@ public class Player {
 
     /**
      * Used to get the nickname
+     *
      * @return the nickname of the Player
      */
     public String getNickname() {
@@ -55,6 +65,7 @@ public class Player {
 
     /**
      * Used to get the wizard
+     *
      * @return the wizard of the Player
      */
     Wizard getWizard() {
@@ -63,6 +74,7 @@ public class Player {
 
     /**
      * Used to get the schoolBoard
+     *
      * @return the schoolBoard of the Player
      */
     SchoolBoard getSchoolBoard() {
@@ -71,6 +83,7 @@ public class Player {
 
     /**
      * Calculates the last played card
+     *
      * @return the last played card
      */
     AssistantCard getAssistantCard() {
@@ -79,11 +92,12 @@ public class Player {
 
     /**
      * Tries to play an AssistantCard
+     *
      * @param card the card the player wants to play
      * @return if the card was played successfully.
      */
-    boolean playAssistantCard (AssistantCard card) {
-        if(!assistantCards.contains(card))
+    boolean playAssistantCard(AssistantCard card) {
+        if (!assistantCards.contains(card))
             return false;
         playedCard = card;
         assistantCards.remove(card);
@@ -99,9 +113,10 @@ public class Player {
 
     /**
      * Calculates the remaining cards of the player
+     *
      * @return a list of remaining cards
      */
-    public ArrayList<AssistantCard> getHand(){
+    public ArrayList<AssistantCard> getHand() {
         return new ArrayList<>(assistantCards);
     }
 
@@ -109,17 +124,17 @@ public class Player {
      * @param isDestPlayer whether the player considered to build the view is the one to whom the gameView will be sent
      * @return the playerView of the current player
      */
-    public PlayerView getPlayerView(boolean isDestPlayer){
+    public PlayerView getPlayerView(boolean isDestPlayer) {
         SchoolBoardView sbView = getSchoolBoard().getSchoolBoardView();
         ArrayList<AssistantCard> assistantCardsView = null;
         int numAssistantCards = 10;
 
-        if (isDestPlayer){
+        if (isDestPlayer) {
             assistantCardsView = assistantCards;
         }
         for (AssistantCard as : AssistantCard.values()) {
-            if(!assistantCards.contains(as)) {
-                numAssistantCards --;
+            if (!assistantCards.contains(as)) {
+                numAssistantCards--;
             }
         }
 

@@ -89,16 +89,13 @@ public class CLI implements UI {
 
     @Override
     public void serverUnavailable() {
-        System.out.println("We are sorry, the server is unavailable");
-        System.out.println("Press C for closing the game or R for reconnecting");
         if (executorService == null) {
+            System.out.println("We are sorry, the server is unavailable");
+            System.out.println("Type a character if you want to close the application");
             String in = input.nextLine();
-            if (in.length() > 0) {
-                if (in.substring(0, 1).equalsIgnoreCase("c")) {
-                    input.close();
-                } else showStartScreen();
-            } else serverUnavailable();
         } else {
+            System.out.println("We are sorry, the server is unavailable");
+            System.out.println("Press C for close the game or R for reconnect");
             inputParser.setServerStatus(false);
         }
     }
@@ -137,10 +134,13 @@ public class CLI implements UI {
     @Override
     public void showStartScreen() {
         printGameName();
+        printRequests();
+    }
+
+    private void printRequests(){
         requestServerAddress();
         chooseNickname();
     }
-
     private void printGameName() {
         clearTerminal();
         System.out.println(colors.get("yellow") + "███████╗██████╗ ██╗ █████╗ ███╗   ██╗████████╗██╗   ██╗███████╗");
@@ -171,7 +171,9 @@ public class CLI implements UI {
             nickname = input.nextLine();
             if (nickname.length() > 25)
                 System.out.println("Nickname has to be shorter than 25 characters");
-        } while (nickname.length() > 25);
+            if(nickname.equals(""))
+                System.out.println("Nickname cannot be null");
+        } while (nickname.length() > 25 || nickname.equals(""));
         client.setNickname(nickname);
         sendLogin();
     }
@@ -366,7 +368,8 @@ public class CLI implements UI {
 
         if (gameView.getState().equals(GameState.ENDED)) {
             if (gameView.getWinners() != null)
-                System.out.println("Team " + gameView.getWinners().toString());
+                System.out.println(colors.get("yellow") + gameView.getWinners().toString() + " has won" + colors.get("reset") );
+            else System.out.println(colors.get("yellow") + "The game ended with a draw" + colors.get("reset"));
             System.exit(0);
         }
 
@@ -410,8 +413,8 @@ public class CLI implements UI {
                 System.out.println("Type COLOR <COLOR>" + colors.get("reset"));
             }
             case MOVE_MOTHER_NATURE -> {
-                System.out.println(colors.get("green") + "You have to chose a StudentColor");
-                System.out.println("Insert the number of steps mother nature has to take [up to " +
+                System.out.println(colors.get("green") + "You have to move Mother Nature");
+                System.out.println("Insert the number of steps Mother Mature has to take [up to " +
                         ((MoveMotherNature) lastRequest).getMaxNumMoves() + " ]");
                 System.out.println("Type MOTHERNATURE <STEPS>" + colors.get("reset"));
             }
@@ -471,8 +474,7 @@ public class CLI implements UI {
         }
         if (lastState.equals(ViewState.SETUP) && message.getType().equals(CommMsgType.ERROR_NO_SPACE)) {
             System.out.println("Sorry the match is full");
-            client.closeConnection();
-            executorService.shutdownNow();
+            System.exit(0);
             return;
         }
         if ((lastState.equals(ViewState.SETUP) || lastState.equals(ViewState.CHOOSE_WIZARD)) && message.getType().equals(CommMsgType.OK)) {
@@ -524,11 +526,11 @@ public class CLI implements UI {
     /**
      * Notifies the listener that a request has occurred.
      *
-     * @param event the request to notify
+     * @param message the request to notify
      */
     @Override
-    public void notifyListener(Message event) {
-        listener.onMessage(event);
+    public void notifyViewListener(Message message) {
+        listener.onMessage(message);
     }
 
     EnumSet<StudentColor> fromIntegersToEnums(Set<Integer> choices) {
@@ -1048,7 +1050,9 @@ public class CLI implements UI {
                 else appendStudent(cv.getStudents().get(2), stringBuilder);
                 stringBuilder.append("   ");
             } else {
-                appendStudent(cv.getStudents().get(2), stringBuilder);
+                if (cv.getStudents().get(2) == null)
+                    stringBuilder.append("   ");
+                else appendStudent(cv.getStudents().get(2), stringBuilder);
                 if (cv.getStudents().size() == 4)
                     if (cv.getStudents().get(3) == null)
                         stringBuilder.append("   ");

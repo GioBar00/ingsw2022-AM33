@@ -131,7 +131,7 @@ public class InputParser{
                         if(in[2].equalsIgnoreCase("n"))
                             mode = GameMode.EASY;
                         else mode = GameMode.EXPERT;
-                        cli.notifyListener(new ChosenGame(GamePreset.getFromNumber(Integer.parseInt(in[1])),mode));
+                        cli.notifyViewListener(new ChosenGame(GamePreset.getFromNumber(Integer.parseInt(in[1])),mode));
                         return;
                     }
             }
@@ -144,7 +144,7 @@ public class InputParser{
                 Wizard w = Wizard.getWizardFromString(in[1]);
                 if(w != null && wizardsView != null)
                     if(wizardsView.getAvailableWizards().contains(w)){
-                        cli.notifyListener(new ChosenWizard(w));
+                        cli.notifyViewListener(new ChosenWizard(w));
                         System.out.println("Waiting for other players");
                         return;
                     }
@@ -157,11 +157,11 @@ public class InputParser{
         if(in.length == 2) {
             String i = in[1].toUpperCase();
             if(i.equals(Tower.BLACK.toString())){
-                cli.notifyListener(new ChosenTeam(Tower.BLACK));
+                cli.notifyViewListener(new ChosenTeam(Tower.BLACK));
                 return;
             }
             else if (i.equals(Tower.WHITE.toString())) {
-                cli.notifyListener(new ChosenTeam(Tower.WHITE));
+                cli.notifyViewListener(new ChosenTeam(Tower.WHITE));
                 return;
             }
         }
@@ -172,7 +172,7 @@ public class InputParser{
         System.out.println(canStart);
         if(canStart){
             if(in[0].equalsIgnoreCase("START")) {
-                cli.notifyListener(new StartGame());
+                cli.notifyViewListener(new StartGame());
                 return;
             }
         }
@@ -186,7 +186,7 @@ public class InputParser{
                 if (in[1].matches("-?\\d+")) {
                     AssistantCard as = AssistantCard.getFromInt(Integer.parseInt(in[1]));
                     if (playableAssistantCard.contains(as)) {
-                        cli.notifyListener(new PlayedAssistantCard(as));
+                        cli.notifyViewListener(new PlayedAssistantCard(as));
                         cantWrite();
                         return;
                     }
@@ -201,7 +201,7 @@ public class InputParser{
             if(in.length == 2){
                 in[1] = in[1].toUpperCase();
                 if(cards.containsKey(in[1])){
-                    cli.notifyListener(new ActivatedCharacterCard(cards.get(in[1])));
+                    cli.notifyViewListener(new ActivatedCharacterCard(cards.get(in[1])));
                     return;
                 }
             }
@@ -219,7 +219,7 @@ public class InputParser{
         if(checkRightMoment(MessageType.CHOOSE_ISLAND) || !cli.playableCharacterCards().isEmpty()){
             if(in.length == 2){
                 if(inIntegerSet(((ChooseIsland)lastRequest).getAvailableIslandIndexes(), in[1])) {
-                    cli.notifyListener(new ChosenIsland(Integer.parseInt(in[1])));
+                    cli.notifyViewListener(new ChosenIsland(Integer.parseInt(in[1])));
                     return;
                 }
             }
@@ -230,7 +230,7 @@ public class InputParser{
         if(checkRightMoment(MessageType.CHOOSE_CLOUD)){
             if(in.length == 2){
                 if(inIntegerSet(((ChooseCloud)lastRequest).getAvailableCloudIndexes(), in[1])) {
-                    cli.notifyListener(new ChosenCloud(Integer.parseInt(in[1])));
+                    cli.notifyViewListener(new ChosenCloud(Integer.parseInt(in[1])));
                     return;
                 }
             }
@@ -244,7 +244,7 @@ public class InputParser{
                 StudentColor st = StudentColor.getColorFromString(in[1]);
                 if(st != null){
                     if(((ChooseStudentColor)lastRequest).getAvailableStudentColors().contains(st)){
-                        cli.notifyListener(new ChosenStudentColor(st));
+                        cli.notifyViewListener(new ChosenStudentColor(st));
                         return;
                     }
                 }
@@ -258,7 +258,7 @@ public class InputParser{
                 if(in[1].matches("-?\\d+")){
                     int i = Integer.parseInt(in[1]);
                     if(i <= ((MoveMotherNature)lastRequest).getMaxNumMoves() && i > 0){
-                        cli.notifyListener(new MovedMotherNature(i));
+                        cli.notifyViewListener(new MovedMotherNature(i));
                         return;
                     }
                 }
@@ -268,7 +268,7 @@ public class InputParser{
     private void parseMoveChoice(String[] in){
         MovedStudent message = checkMoveChoice(in);
         if(message!= null){
-            cli.notifyListener(message);
+            cli.notifyViewListener(message);
             return;
         }
         printInvalidMessage();
@@ -288,7 +288,7 @@ public class InputParser{
                     if (!to.requiresToIndex() && !to.equals(MoveLocation.HALL)) {
                         if (in.length == 2) {
                             if (req.getFromIndexesSet().contains(fromIndex)) {
-                                cli.notifyListener(new SwappedStudents(from, fromIndex, to, null));
+                                cli.notifyViewListener(new SwappedStudents(from, fromIndex, to, null));
                                 return;
                             }
                         }
@@ -298,7 +298,7 @@ public class InputParser{
                             if (toIndex != null) {
                                 if(!req.getToIndexesSet().isEmpty()){
                                     if (req.getToIndexesSet().contains(toIndex)) {
-                                        cli.notifyListener(new SwappedStudents(from, fromIndex, to, toIndex));
+                                        cli.notifyViewListener(new SwappedStudents(from, fromIndex, to, toIndex));
                                     return;
                                     }
                                 }else{
@@ -330,7 +330,7 @@ public class InputParser{
 
     private void parseConcludeChoice(){
         if (checkRightMoment(MessageType.SWAP_STUDENTS)){
-            cli.notifyListener(new ConcludeCharacterCardEffect());
+            cli.notifyViewListener(new ConcludeCharacterCardEffect());
         }
         else printInvalidMessage();
     }

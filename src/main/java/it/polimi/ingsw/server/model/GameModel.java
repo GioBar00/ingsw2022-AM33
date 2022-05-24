@@ -25,35 +25,43 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * This class represents the game model.
  */
-public class GameModel extends ConcreteMessageListenerSubscriber implements Game {
+public class GameModel extends ConcreteMessageListenerSubscriber implements Game, ProfessorChecker {
+
     /**
      * Game mode.
      */
     GameMode gameMode;
+
     /**
      * Game state.
      */
     GameState gameState;
+
     /**
      * Round manager.
      */
     RoundManager roundManager;
+
     /**
      * Players manager.
      */
     final PlayersManager playersManager;
+
     /**
      * Islands manager.
      */
     final IslandsManager islandsManager;
+
     /**
      * Bag.
      */
     final Bag bag;
+
     /**
      * Current mother nature index.
      */
     int motherNatureIndex;
+
     /**
      * Clouds list.
      */
@@ -274,7 +282,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param entranceIndex of the student that will be moved to the Hall
      * @return if the student was successfully moved to the hall.
      */
-    boolean executeMoveStudentToHall(int entranceIndex) {
+    boolean executeMoveStudentToHall(int entranceIndex, ProfessorChecker professorChecker) {
         if (gameState != GameState.STARTED || !roundManager.canMoveStudents())
             return false;
 
@@ -283,7 +291,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         if (moved != null) {
             if (currSch.moveToHall(entranceIndex)) {
                 currSch.removeFromEntrance(entranceIndex);
-                checkProfessor(moved);
+                professorChecker.checkProfessor(moved);
                 roundManager.addMoves();
                 return true;
             }
@@ -301,7 +309,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return if the student was successfully moved to the hall.
      */
     public boolean moveStudentToHall(int entranceIndex) {
-        if (executeMoveStudentToHall(entranceIndex)) {
+        if (executeMoveStudentToHall(entranceIndex, this)) {
             notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
@@ -439,8 +447,6 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             playersManager.getSchoolBoard().addToEntrance(s);
         }
 
-        nextTurn();
-
         return true;
     }
 
@@ -454,6 +460,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      */
     public boolean getStudentsFromCloud(int cloudIndex) {
         if (executeGetStudentsFromCloud(cloudIndex)) {
+            nextTurn();
             notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
@@ -469,7 +476,9 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             nextRound();
         } else {
             playersManager.nextPlayer();
-            roundManager.startActionPhase();
+            if (playersManager.getPlayedCard() == null)
+                nextTurn();
+            else roundManager.startActionPhase();
         }
     }
 
@@ -479,7 +488,8 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      *
      * @param s: the color of the professor to be checked
      */
-    void checkProfessor(StudentColor s) {
+    @Override
+    public void checkProfessor(StudentColor s) {
         Player current = playersManager.getCurrentPlayer();
         SchoolBoard currSch = playersManager.getSchoolBoard(current);
         for (Player p : playersManager.getPlayers()) {
@@ -559,6 +569,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
 
         if (tower != null) playersByTower.remove(tower);
 
+        Map<Tower, Integer> influences = new HashMap<>();
         // check influence for others
         for (Map.Entry<Tower, List<Player>> entry : playersByTower.entrySet()) {
             profs = EnumSet.noneOf(StudentColor.class);
@@ -571,12 +582,40 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
                     islandsManager.calcInfluence(entry.getKey(), profs, islandGroupIndex);
             if (entry.getValue().contains(playersManager.getCurrentPlayer()))
                 influence += additionalInfluence;
-            if (influence > maxInfluence) {
-                maxInfluence = influence;
-                tower = entry.getKey();
-            }
+            influences.put(entry.getKey(), influence);
         }
 
+        Tower higherValue = findMaxInfluence(influences);
+        if (higherValue != null) {
+            if (influences.get(higherValue) > maxInfluence)
+                return higherValue;
+        }
+        return null;
+    }
+
+    /**
+     * Find the tower with the max influence, in case of draw returns null
+     *
+     * @param influences a map that contains tower and its influence
+     * @return the tower related to the higher influence. Null if there is a draw or the tower
+     * doesn't exist
+     */
+    private Tower findMaxInfluence(Map<Tower, Integer> influences) {
+        int maxInfluence = 0;
+        Tower tower = null;
+        for (Map.Entry<Tower, Integer> entry : influences.entrySet()) {
+            if (entry.getValue() > maxInfluence) {
+                tower = entry.getKey();
+                maxInfluence = entry.getValue();
+            }
+        }
+        if (tower != null) {
+            for (Map.Entry<Tower, Integer> entry : influences.entrySet()) {
+                if (!entry.getKey().equals(tower))
+                    if (entry.getValue() == maxInfluence)
+                        return null;
+            }
+        }
         return tower;
     }
 
@@ -820,9 +859,9 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return the current gameView
      */
     public CurrentGameState getCurrentGameState(Player destPlayer) {
-        if(gameState == GameState.ENDED)
-            return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex, getCloudsView(),roundManager.getWinners()));
-        return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex, getCloudsView(),null));
+        if (gameState == GameState.ENDED)
+            return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex, getCloudsView(), roundManager.getWinners()));
+        return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex, getCloudsView(), null));
     }
 
 
@@ -950,6 +989,11 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         return motherNatureIndex;
     }
 
+    /**
+     * Getter for the CloudViews
+     *
+     * @return an ArrayList filled with CloudViews
+     */
     public ArrayList<CloudView> getCloudsView() {
         ArrayList<CloudView> cloudsView = new ArrayList<>();
         for (Cloud c : clouds) {
@@ -959,6 +1003,9 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         return cloudsView;
     }
 
+    /**
+     * @return a copy og the clouds
+     */
     public List<Cloud> getClouds() {
         return List.copyOf(clouds);
     }

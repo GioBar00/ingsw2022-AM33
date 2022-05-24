@@ -24,8 +24,9 @@ public class Farmer extends CharacterCard {
 
     /**
      * Applies the effect of the character card. Tries to give the professors to the current player if the students in the hall is equal.
+     *
      * @param effectHandler handler for the effects.
-     * @param parameters for the effect.
+     * @param parameters    for the effect.
      * @return if the effect was applied.
      */
     @Override
@@ -39,7 +40,19 @@ public class Farmer extends CharacterCard {
     }
 
     /**
+     * Add to the record of original professors the player who owned it
+     *
+     * @param s      the professor
+     * @param player the owner
+     */
+    @Override
+    public void addToOriginal(StudentColor s, Integer player) {
+        original.put(s, player);
+    }
+
+    /**
      * Reverts the effect of the character card.
+     *
      * @param effectHandler handler for the effects.
      */
     @Override

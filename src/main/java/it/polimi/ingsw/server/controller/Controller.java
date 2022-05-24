@@ -3,10 +3,12 @@ package it.polimi.ingsw.server.controller;
 import it.polimi.ingsw.network.listeners.*;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
+import it.polimi.ingsw.network.messages.actions.requests.SwapStudents;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
 import it.polimi.ingsw.network.messages.client.ChosenWizard;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
+import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.server.listeners.EndGameEvent;
@@ -271,7 +273,7 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
      */
     private void handlePlayingPhase(VirtualClient vc, Message msg) {
         switch (MessageType.retrieveByMessage(msg)){
-            case MOVED_STUDENT,SWAPPED_STUDENTS -> {
+            case MOVED_STUDENT -> {
                 MovedStudent movedStudent = (MovedStudent) msg;
                 CharacterParameters parameters;
 
@@ -310,7 +312,29 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
                     default: vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                 }
             }
+            case SWAPPED_STUDENTS -> {
+                SwappedStudents movedStudent = (SwappedStudents) msg;
+                CharacterParameters parameters;
 
+                switch (movedStudent.getFrom()){
+                    case ENTRANCE -> {
+                        if(movedStudent.getTo() == MoveLocation.HALL){
+                            parameters = CharacterChoiceAdapter.convert(movedStudent);
+                            if(!model.applyEffect(parameters))
+                                vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
+                        }
+                    }
+                    case CARD -> {
+                        if (movedStudent.getTo() == MoveLocation.ENTRANCE) {
+                            parameters = CharacterChoiceAdapter.convert((MovedStudent)movedStudent);
+                            if(!model.applyEffect(parameters))
+                                vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
+                        }
+                    }
+                    default  -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
+                }
+
+            }
             case ACTIVATED_CHARACTER_CARD -> {
                 ActivatedCharacterCard activatedCharacterCard = (ActivatedCharacterCard) msg;
                 if(!model.activateCharacterCard(activatedCharacterCard.getCharacterCardIndex()))

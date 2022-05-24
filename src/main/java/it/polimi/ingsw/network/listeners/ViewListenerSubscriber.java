@@ -15,7 +15,7 @@ public interface ViewListenerSubscriber {
 
     /**
      * Notifies the listener that a request has occurred.
-     * @param event the request to notify
+     * @param message the request to notify
      */
-    void notifyListener(Message event);
+    void notifyViewListener(Message message);
 }

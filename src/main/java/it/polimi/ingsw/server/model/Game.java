@@ -9,6 +9,7 @@ import it.polimi.ingsw.server.model.enums.*;
  * Game interface. It exposes the methods to change the state of the game.
  */
 public interface Game extends MessageListenerSubscriber {
+
     /**
      * @return current game mode.
      */

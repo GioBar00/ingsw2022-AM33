@@ -10,21 +10,29 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-//todo test
+/**
+ * Class that handle the game lobby if the party is a team game
+ */
 public class TeamLobby extends Lobby {
 
+    /**
+     * Public constructor
+     *
+     * @param maxPlayers the number of the max players that can be hosted
+     */
     public TeamLobby(int maxPlayers) {
         super(maxPlayers);
     }
 
     /**
      * method to add a player to the lobby
+     *
      * @param nickname of the player
      * @return true if the method was executed without errors
      */
     @Override
-    public boolean addPlayer(String nickname){
-        if(super.addPlayer(nickname)){
+    public boolean addPlayer(String nickname) {
+        if (super.addPlayer(nickname)) {
             notifyMessageListeners(new MessageEvent(this, new CurrentTeams(getTeamView())));
             return true;
         }
@@ -36,13 +44,13 @@ public class TeamLobby extends Lobby {
      */
     @Override
     public boolean canStart() {
-        if(!super.canStart())
+        if (!super.canStart())
             return false;
         else {
             int black = 0;
             int white = 0;
-            for(PlayerDetails p : players) {
-                if(p.getTower()!= null) {
+            for (PlayerDetails p : players) {
+                if (p.getTower() != null) {
                     if (p.getTower().equals(Tower.WHITE))
                         white++;
                     else if (p.getTower().equals(Tower.BLACK))
@@ -55,26 +63,26 @@ public class TeamLobby extends Lobby {
 
     /**
      * method to allow a player to change their teams
+     *
      * @param nickname of the player
-     * @param tower of the teams that the player wants to be added to
+     * @param tower    of the teams that the player wants to be added to
      * @return true if the method was executed correctly
      */
     @Override
     public boolean changeTeam(String nickname, Tower tower) {
         PlayerDetails update = null;
-        if(tower.equals(Tower.GREY))
+        if (tower.equals(Tower.GREY))
             return false;
-        for(PlayerDetails p : players){
-            if(p.getNickname().equals(nickname))
+        for (PlayerDetails p : players) {
+            if (p.getNickname().equals(nickname))
                 update = p;
         }
-        if(update != null) {
+        if (update != null) {
             update.setTower(tower);
             notifyTeams();
             sendStart();
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     /**

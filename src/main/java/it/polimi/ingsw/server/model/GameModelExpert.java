@@ -5,10 +5,7 @@ import it.polimi.ingsw.network.messages.server.CurrentGameState;
 import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.network.listeners.MessageEvent;
 import it.polimi.ingsw.network.listeners.MessageListener;
-import it.polimi.ingsw.server.model.cards.CharacterParameters;
-import it.polimi.ingsw.server.model.cards.CharacterCard;
-import it.polimi.ingsw.server.model.cards.EffectHandler;
-import it.polimi.ingsw.server.model.cards.Minstrel;
+import it.polimi.ingsw.server.model.cards.*;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.player.SchoolBoard;
 import it.polimi.ingsw.network.messages.views.CharacterCardView;
@@ -22,10 +19,10 @@ import java.util.concurrent.ThreadLocalRandom;
  * Changes mode of the Game to expert mode.
  * Composite pattern.
  */
-public class GameModelExpert implements Game, EffectHandler {
+public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
 
     /**
-     * GameModel to change in expert mode.
+     * The model of the game
      */
     final GameModel model;
 
@@ -33,6 +30,7 @@ public class GameModelExpert implements Game, EffectHandler {
      * Reserve of coins in the game.
      */
     int reserve;
+
     /**
      * Number of coins for each player.
      */
@@ -42,30 +40,41 @@ public class GameModelExpert implements Game, EffectHandler {
      * Character cards in the game.
      */
     final List<CharacterCard> characterCards;
+
     /**
      * Character card that is being activated.
      */
     CharacterCard characterCardActivating;
+
     /**
      * If a card was activated this turn.
      */
     boolean activatedACharacterCard = false;
+
     /**
      * Additional movement that mother nature can make.
      */
     int additionalMotherNatureMovement = 0;
+
     /**
      * If to skip counting towers for influence.
      */
     boolean skipTowers = false;
+
     /**
      * Additional influence points to add to current player.
      */
     int additionalInfluence = 0;
+
     /**
      * Student colors to skip during influence counting.
      */
     final EnumSet<StudentColor> skipStudentColors = EnumSet.noneOf(StudentColor.class);
+
+    /**
+     * Flag set if the farmer card has been activated
+     */
+    private boolean farmerActivated = false;
 
     /**
      * Changes mode to expert, gets 3 random character cards and initialises reserve.
@@ -84,9 +93,6 @@ public class GameModelExpert implements Game, EffectHandler {
             types.remove(sel);
         }
 
-        //fixme remove this
-        characterCards.remove(0);
-        characterCards.add(new Minstrel());
 
         reserve = 20;
 
@@ -195,7 +201,7 @@ public class GameModelExpert implements Game, EffectHandler {
 
         Player p = model.playersManager.getCurrentPlayer();
         StudentColor sc = model.playersManager.getSchoolBoard(p).getStudentInEntrance(entranceIndex);
-        if (sc != null && model.executeMoveStudentToHall(entranceIndex)) {
+        if (sc != null && model.executeMoveStudentToHall(entranceIndex, this)) {
 
             if (model.playersManager.getSchoolBoard(p).getStudentsInHall(sc) % 3 == 0) {
                 if (reserve > 0) {
@@ -279,6 +285,7 @@ public class GameModelExpert implements Game, EffectHandler {
 
         if (model.executeGetStudentsFromCloud(cloudIndex)) {
             endTurn();
+            model.nextTurn();
             notifyPersonalizedGameState();
             notifyPossibleActions();
             return true;
@@ -400,6 +407,12 @@ public class GameModelExpert implements Game, EffectHandler {
         }
     }
 
+    /**
+     * Remove a player from the game
+     *
+     * @param nickname of the player
+     * @return if the player was removed
+     */
     @Override
     public boolean removePlayer(String nickname) {
         return model.removePlayer(nickname);
@@ -466,6 +479,7 @@ public class GameModelExpert implements Game, EffectHandler {
                 }
             }
         }
+        farmerActivated = true;
         return profs;
     }
 
@@ -476,14 +490,19 @@ public class GameModelExpert implements Game, EffectHandler {
      */
     @Override
     public void restoreProfsToOriginalPlayer(EnumMap<StudentColor, Integer> original) {
-        List<Player> players = model.playersManager.getPlayers();
-        SchoolBoard currSB = model.playersManager.getSchoolBoard();
-        for (StudentColor sc : StudentColor.values()) {
-            if (original.containsKey(sc)) {
-                currSB.removeProfessor(sc);
-                model.playersManager.getSchoolBoard(players.get(original.get(sc))).addProfessor(sc);
+        if (farmerActivated) {
+            List<Player> players = model.playersManager.getPlayers();
+            SchoolBoard currSB = model.playersManager.getSchoolBoard();
+            for (StudentColor sc : StudentColor.values()) {
+                if (original.containsKey(sc)) {
+                    if (model.playersManager.getSchoolBoard(players.get(original.get(sc))).getStudentsInHall(sc) >= currSB.getStudentsInHall(sc)) {
+                        currSB.removeProfessor(sc);
+                        model.playersManager.getSchoolBoard(players.get(original.get(sc))).addProfessor(sc);
+                    }
+                }
             }
         }
+        farmerActivated = false;
     }
 
     /**
@@ -681,12 +700,12 @@ public class GameModelExpert implements Game, EffectHandler {
      * @return the current game view
      */
     public CurrentGameState getCurrentGameState(Player destPlayer) {
-        if(!model.gameState.equals(GameState.ENDED)) {
+        if (!model.gameState.equals(GameState.ENDED)) {
             return new CurrentGameState(new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
                     getCurrentPlayer(), model.islandsManager.getIslandsView(), model.playersManager.getPlayersView(destPlayer), model.motherNatureIndex,
                     reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins, model.getCloudsView(), null));
         }
-        return  new CurrentGameState(new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
+        return new CurrentGameState(new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
                 getCurrentPlayer(), model.islandsManager.getIslandsView(), model.playersManager.getPlayersView(destPlayer), model.motherNatureIndex,
                 reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins, model.getCloudsView(), model.roundManager.getWinners()));
     }
@@ -821,7 +840,10 @@ public class GameModelExpert implements Game, EffectHandler {
         }
     }
 
-    void notifyActions() {
+    /**
+     * Notifies the current player to perform an action.
+     */
+    private void notifyActions() {
         if (model.gameState == GameState.STARTED && model.roundManager.getWinners().isEmpty()) {
             switch (model.roundManager.getGamePhase()) {
                 case PLANNING -> model.notifyPlayAssistantCard();
@@ -830,5 +852,61 @@ public class GameModelExpert implements Game, EffectHandler {
                 case CHOOSE_CLOUD -> model.notifyChooseCloud();
             }
         }
+    }
+
+    /**
+     * the method checks that che professor of type s is assigned to the correct SchoolBoard and changes its position
+     * in case that the current assignment is incorrect
+     *
+     * @param s : the color of the professor to be checked
+     */
+    @Override
+    public void checkProfessor(StudentColor s) {
+        if (farmerActivated) {
+            Player current = model.playersManager.getCurrentPlayer();
+            List<Player> players = model.playersManager.getPlayers();
+            SchoolBoard currSch = model.playersManager.getSchoolBoard();
+            for (Player p : model.playersManager.getPlayers()) {
+                if (!p.equals(current)) {
+                    SchoolBoard compSch = model.playersManager.getSchoolBoard(p);
+                    if (compSch.getStudentsInHall(s) > currSch.getStudentsInHall(s)) return;
+                }
+            }
+            boolean found = false;
+            for (Player p : model.playersManager.getPlayers()) {
+                if (!p.equals(current) && !found) {
+                    SchoolBoard compSch = model.playersManager.getSchoolBoard(p);
+                    if (compSch.getStudentsInHall(s) == currSch.getStudentsInHall(s)) {
+                        if (compSch.getProfessors().contains(s)) {
+                            CharacterCard farmer = null;
+                            for (CharacterCard c : characterCards) {
+                                if (c instanceof Farmer) {
+                                    farmer = c;
+                                    break;
+                                }
+                            }
+                            found = true;
+                            compSch.removeProfessor(s);
+                            currSch.addProfessor(s);
+                            assert farmer != null;
+                            farmer.addToOriginal(s, players.indexOf(p));
+                        }
+                    }
+                    if (compSch.getStudentsInHall(s) < currSch.getStudentsInHall(s)) {
+                        if (compSch.getProfessors().contains(s)) {
+                            found = true;
+                            compSch.removeProfessor(s);
+                            currSch.addProfessor(s);
+                        }
+                    }
+                }
+            }
+            if (!found && !currSch.getProfessors().contains(s)) {
+                currSch.addProfessor(s);
+            }
+            return;
+        }
+
+        model.checkProfessor(s);
     }
 }

@@ -1,15 +1,21 @@
 package it.polimi.ingsw.server.model.player;
 
-import it.polimi.ingsw.network.messages.views.PlayerView;
-import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.actions.requests.PlayAssistantCard;
+import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.server.PlayerDetails;
-import it.polimi.ingsw.server.model.enums.*;
+import it.polimi.ingsw.server.model.enums.AssistantCard;
+import it.polimi.ingsw.server.model.enums.GamePreset;
+import it.polimi.ingsw.server.model.enums.Tower;
+import it.polimi.ingsw.server.model.enums.Wizard;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * This Class manages players during the match. Gives methods for modify SchoolBoards and Player hands
+ */
 public class PlayersManager {
+
     /**
      * preset of the current game
      */
@@ -35,19 +41,20 @@ public class PlayersManager {
 
     /**
      * Constructor of PlayerManager
+     *
      * @param preset of the current game
      */
-    public PlayersManager(GamePreset preset){
-            this.preset = preset;
-            this.currentPlayerOrderIndex = 0;
-            this.playerOrderIndexes = new Integer[preset.getPlayersNumber()];
-            this.players = new ArrayList<>(preset.getPlayersNumber());
-            for (int i= 0; i < preset.getPlayersNumber(); i++ ) {
-                playerOrderIndexes[i] = i;
-            }
-            for (Tower t: preset.getTowers()) {
-                teams.put(t, new LinkedList<>());
-            }
+    public PlayersManager(GamePreset preset) {
+        this.preset = preset;
+        this.currentPlayerOrderIndex = 0;
+        this.playerOrderIndexes = new Integer[preset.getPlayersNumber()];
+        this.players = new ArrayList<>(preset.getPlayersNumber());
+        for (int i = 0; i < preset.getPlayersNumber(); i++) {
+            playerOrderIndexes[i] = i;
+        }
+        for (Tower t : preset.getTowers()) {
+            teams.put(t, new LinkedList<>());
+        }
     }
 
     /**
@@ -67,21 +74,23 @@ public class PlayersManager {
     /**
      * Change state of current player to his next
      */
-    public void nextPlayer(){
+    public void nextPlayer() {
         currentPlayerOrderIndex = (currentPlayerOrderIndex + 1) % preset.getPlayersNumber();
     }
 
     /**
      * Starting from a random Player, calculate a clockwise order
      */
-    public void setFirstPlayer(int firstPlayer){
-        for(int i = 0; i < preset.getPlayersNumber(); i ++){
+    public void setFirstPlayer(int firstPlayer) {
+        for (int i = 0; i < preset.getPlayersNumber(); i++) {
             playerOrderIndexes[i] = firstPlayer;
             firstPlayer = (firstPlayer + 1) % preset.getPlayersNumber();
         }
     }
+
     /**
      * Calculates the number of available slots for players to enter.
+     *
      * @return number of available slots
      */
     public int getAvailablePlayerSlots() {
@@ -90,23 +99,25 @@ public class PlayersManager {
 
     /**
      * Method for getting the last Player of the current round
+     *
      * @return last Player
      */
-    public Player getLastPlayer(){
+    public Player getLastPlayer() {
         return players.get(playerOrderIndexes[preset.getPlayersNumber() - 1]);
     }
 
     /**
      * Adds a new player to the game if there are no other players with the same nickname.
+     *
      * @param playerDetails unique class with details for a player
      * @return if the player was added successfully.
      */
     public boolean addPlayer(PlayerDetails playerDetails) {
         // get random tower from available ones
-        if(playerDetails.getTower() == null){
+        if (playerDetails.getTower() == null) {
             List<Tower> availableTowers = new LinkedList<>(preset.getTowers().stream().toList());
 
-            for (Player p: players)
+            for (Player p : players)
                 availableTowers.removeIf(x -> x.equals(p.getSchoolBoard().getTower()));
 
             if (availableTowers.size() > 0) {
@@ -120,6 +131,7 @@ public class PlayersManager {
 
     /**
      * Adds a new player to the game with a specific tower if there are no other players with the same nickname.
+     *
      * @param nickname unique identifier of a player
      * @return if the player was added successfully.
      */
@@ -141,6 +153,7 @@ public class PlayersManager {
 
     /**
      * Use to get the schoolBoard related to a player
+     *
      * @param p is the player
      * @return the schoolBoard of player p
      */
@@ -150,6 +163,7 @@ public class PlayersManager {
 
     /**
      * Use to get the schoolBoard of current player
+     *
      * @return the schoolBoard of current player
      */
     public SchoolBoard getSchoolBoard() {
@@ -158,10 +172,11 @@ public class PlayersManager {
 
     /**
      * Returns the player who is playing
+     *
      * @return current Player
      */
     public Player getCurrentPlayer() {
-            return players.get(playerOrderIndexes[currentPlayerOrderIndex]);
+        return players.get(playerOrderIndexes[currentPlayerOrderIndex]);
     }
 
     /**
@@ -169,7 +184,7 @@ public class PlayersManager {
      * Ex: 3 2 0 1 --> 3 0 1 2
      */
     public void calculateClockwiseOrder() {
-        for(int i = 1; i < playerOrderIndexes.length; i++) {
+        for (int i = 1; i < playerOrderIndexes.length; i++) {
             playerOrderIndexes[i] = (playerOrderIndexes[i - 1] + 1) % playerOrderIndexes.length;
         }
     }
@@ -183,14 +198,14 @@ public class PlayersManager {
         ordered.sort((i1, i2) -> {
             Integer val1 = 100;
             Integer val2 = 100;
-            if(players.get(i1).getAssistantCard()!= null){
+            if (players.get(i1).getAssistantCard() != null) {
                 val1 = players.get(i1).getAssistantCard().getValue();
             }
-            if(players.get(i2).getAssistantCard()!= null){
+            if (players.get(i2).getAssistantCard() != null) {
                 val2 = players.get(i2).getAssistantCard().getValue();
             }
             int r = val1.compareTo(val2);
-            if(r == 0)
+            if (r == 0)
                 return Integer.compare(ordered.indexOf(i1), ordered.indexOf(i1));
             return r;
         });
@@ -200,27 +215,30 @@ public class PlayersManager {
 
     /**
      * Assigns to the current Player the card he wants to play
+     *
      * @param c the card a Player is trying to play
      * @return if the card was played successfully.
      */
     public boolean currentPlayerPlayed(AssistantCard c) {
-         return getCurrentPlayer().playAssistantCard(c);
+        return getCurrentPlayer().playAssistantCard(c);
     }
 
     /**
      * Calculates the remaining AssistantCard in the hand of one Player
+     *
      * @param p the Player
      * @return a list of remaining cards
      */
-    public ArrayList<AssistantCard> getPlayerHand(Player p){
+    public ArrayList<AssistantCard> getPlayerHand(Player p) {
         return p.getHand();
     }
 
     /**
      * Calculates a list that contains all the players
-     * @return  a list of all the players
+     *
+     * @return a list of all the players
      */
-    public ArrayList<Player> getPlayers(){
+    public ArrayList<Player> getPlayers() {
         ArrayList<Player> ret = new ArrayList<>(preset.getPlayersNumber());
         for (int i = 0; i < players.size(); i++) {
             ret.add(players.get(playerOrderIndexes[i]));
@@ -230,39 +248,40 @@ public class PlayersManager {
 
     /**
      * Method for getting the last card played by one Player.
+     *
      * @param p the Player
      * @return the last played card
      */
-    public AssistantCard getPlayedCard(Player p){
+    public AssistantCard getPlayedCard(Player p) {
         return p.getAssistantCard();
     }
 
     /**
-     * Method for getting the last card played the current player.
+     * Method for getting the last card played by the current player.
+     *
      * @return the last played card
      */
-    public AssistantCard getPlayedCard(){
+    public AssistantCard getPlayedCard() {
         return getCurrentPlayer().getAssistantCard();
     }
 
     /**
      * deletes all the old played cards
      */
-    public void clearAllPlayedCards(){
-        for(Player p: players){
+    public void clearAllPlayedCards() {
+        for (Player p : players) {
             p.clearPlayedCard();
         }
     }
-
 
 
     /**
      * @param destPlayer the player to whom the view is going to be sent
      * @return the array of current playerViews
      */
-    public ArrayList<PlayerView> getPlayersView(Player destPlayer){
+    public ArrayList<PlayerView> getPlayersView(Player destPlayer) {
         ArrayList<PlayerView> playersView = new ArrayList<>();
-        for(Player p : players){
+        for (Player p : players) {
             PlayerView addition = p.getPlayerView(p.equals(destPlayer));
             playersView.add(addition);
         }
@@ -286,12 +305,13 @@ public class PlayersManager {
 
     /**
      * Remove a player from the party
+     *
      * @param nickname of the player
      * @return if the player has been removed
      */
-    public boolean removePlayer(String nickname){
-        for(Player p : players){
-            if(p.getNickname().equals(nickname)){
+    public boolean removePlayer(String nickname) {
+        for (Player p : players) {
+            if (p.getNickname().equals(nickname)) {
                 players.remove(p);
                 teams.get(p.getSchoolBoard().getTower()).remove(p);
 
