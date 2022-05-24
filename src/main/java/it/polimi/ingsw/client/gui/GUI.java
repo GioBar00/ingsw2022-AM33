@@ -144,17 +144,7 @@ public class GUI extends Application implements UI {
     @Override
     public void setTeamsView(TeamsView teamsView) {
         this.teamsView = teamsView;
-        Platform.runLater(() -> {
-            ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).getUserData()).setLabels(teamsView);
-            stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY));
-            stage.setTitle("Eriantys");
-            stage.setMinHeight(500.0);
-            stage.setMinWidth(680.0);
-            stage.setResizable(false);
-            stage.getIcons().add(imagesByPath.get(ImagePath.ICON));
-            stage.setOnHiding(event -> stop());
-            stage.show();
-        });
+        showLobbyScreen();
     }
 
     /**
@@ -228,7 +218,13 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showLobbyScreen() {
-        System.out.println("Showing lobby screen");
+        Platform.runLater(() -> {
+            ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).getUserData()).setLabels(teamsView);
+            stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY));
+            stage.setMinHeight(500.0);
+            stage.setMinWidth(680.0);
+            stage.setResizable(false);
+        });
     }
 
     /**
