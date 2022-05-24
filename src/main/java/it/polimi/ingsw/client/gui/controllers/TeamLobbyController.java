@@ -65,7 +65,7 @@ public class TeamLobbyController implements GUIController {
         blackLabels = new Label[4];
         whiteLabels = new Label[4];
         lobbyLabels = new Label[4];
-        fillLabels();
+
     }
 
     /**
@@ -85,6 +85,7 @@ public class TeamLobbyController implements GUIController {
     public void init() {
         startButton.setVisible(false);
         startButton.setDisable(true);
+        fillLabels();
     }
 
     /**

@@ -196,10 +196,11 @@ public class GUI extends Application implements UI {
     @Override
     public void showStartScreen() {
         System.out.println("Showing start screen");
-        Platform.runLater(() -> {
-            Scene scene = sceneByPath.get(SceneFXMLPath.START_SCREEN);
-            stage.setScene(scene);
-        });
+        if (stage != null)
+            Platform.runLater(() -> {
+                Scene scene = sceneByPath.get(SceneFXMLPath.START_SCREEN);
+                stage.setScene(scene);
+            });
 
     }
 

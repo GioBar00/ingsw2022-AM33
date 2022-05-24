@@ -865,7 +865,7 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
         if (farmerActivated) {
             Player current = model.playersManager.getCurrentPlayer();
             List<Player> players = model.playersManager.getPlayers();
-            SchoolBoard currSch = model.playersManager.getSchoolBoard(current);
+            SchoolBoard currSch = model.playersManager.getSchoolBoard();
             for (Player p : model.playersManager.getPlayers()) {
                 if (!p.equals(current)) {
                     SchoolBoard compSch = model.playersManager.getSchoolBoard(p);

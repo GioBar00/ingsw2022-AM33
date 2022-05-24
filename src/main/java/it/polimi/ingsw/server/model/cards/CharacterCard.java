@@ -41,27 +41,32 @@ public abstract class CharacterCard {
 
     /**
      * Constructs the card with no required choices.
+     *
      * @param type of the card.
      * @param cost of the card.
      */
     CharacterCard(CharacterType type, int cost) {
         this(type, cost, 0, 0);
     }
+
     /**
      * Constructs the card with required choices.
-     * @param type of the card.
-     * @param cost of the card.
+     *
+     * @param type                  of the card.
+     * @param cost                  of the card.
      * @param requiredChoicesNumber of the card.
      */
     CharacterCard(CharacterType type, int cost, int requiredChoicesNumber) {
         this(type, cost, requiredChoicesNumber, requiredChoicesNumber);
     }
+
     /**
      * Constructs the card.
-     * @param type of the card.
-     * @param cost of the card.
+     *
+     * @param type                  of the card.
+     * @param cost                  of the card.
      * @param requiredChoicesNumber of the card.
-     * @param maximumChoicesNumber of the card.
+     * @param maximumChoicesNumber  of the card.
      */
     CharacterCard(CharacterType type, int cost, int requiredChoicesNumber, int maximumChoicesNumber) {
         this.type = type;
@@ -87,7 +92,7 @@ public abstract class CharacterCard {
     /**
      * @return total cost.
      */
-    public int getTotalCost(){
+    public int getTotalCost() {
         return cost + additionalCost;
     }
 
@@ -100,20 +105,24 @@ public abstract class CharacterCard {
 
     /**
      * Initializes the character card.
+     *
      * @param effectHandler handler for the effects.
      */
-    public void initialize(EffectHandler effectHandler) {}
+    public void initialize(EffectHandler effectHandler) {
+    }
 
     /**
      * Applies the effect of the character card.
+     *
      * @param effectHandler handler for the effects.
-     * @param parameters for the effect.
+     * @param parameters    for the effect.
      * @return if the effect was applied.
      */
     public abstract boolean applyEffect(EffectHandler effectHandler, CharacterParameters parameters);
 
     /**
      * Ends the effect if at least the required choices were make.
+     *
      * @return if the effect was ended correctly.
      */
     public boolean endEffect() {
@@ -127,6 +136,7 @@ public abstract class CharacterCard {
 
     /**
      * Reverts the effect of the character card if the effect is not permanent.
+     *
      * @param effectHandler handler for the effects.
      */
     public void revertEffect(EffectHandler effectHandler) {
@@ -154,15 +164,17 @@ public abstract class CharacterCard {
     /**
      * @return if it can handle blocks.
      */
-    public boolean canHandleBlocks(){
+    public boolean canHandleBlocks() {
         return false;
     }
 
     /**
      * Adds number of blocks back to the card.
+     *
      * @param num of blocks to add.
      */
-    public void addNumBlocks(int num) {}
+    public void addNumBlocks(int num) {
+    }
 
     /**
      * @return if it contains students.
@@ -180,11 +192,11 @@ public abstract class CharacterCard {
 
     /**
      * Add to the record of original professors the player who owned it
-     * @param s the professor
+     *
+     * @param s      the professor
      * @param player the owner
      */
-    public void addToOriginal(StudentColor s, Integer player){
-
+    public void addToOriginal(StudentColor s, Integer player) {
     }
 
     /**
@@ -192,7 +204,7 @@ public abstract class CharacterCard {
      */
     static Set<Integer> getAvailableStudentsOrdinal(EnumMap<StudentColor, Integer> students) {
         Set<Integer> availableStudents = new HashSet<>();
-        for (Map.Entry<StudentColor, Integer> entry: students.entrySet())
+        for (Map.Entry<StudentColor, Integer> entry : students.entrySet())
             if (students.get(entry.getKey()) > 0)
                 availableStudents.add(entry.getKey().ordinal());
         return availableStudents;
@@ -220,7 +232,7 @@ public abstract class CharacterCard {
     /**
      * @return num of blocks
      */
-    public int getNumBlocks(){
+    public int getNumBlocks() {
         return 0;
     }
 }

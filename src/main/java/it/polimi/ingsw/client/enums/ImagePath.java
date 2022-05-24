@@ -7,7 +7,7 @@ public enum ImagePath {
     VOLUME("/images/icons/volume.png"),
     MUTE("/images/icons/mute.png"),
     GREEN_STUDENT("/images/pawns/students/green.png"),
-    RED_STUDENT("images/pawns/students/red.png"),
+    RED_STUDENT("/images/pawns/students/red.png"),
     YELLOW_STUDENT("/images/pawns/students/yellow.png"),
     MAGENTA_STUDENT("/images/pawns/students/magenta.png"),
     BLUE_STUDENTS("/images/pawns/students/blue.png"),
