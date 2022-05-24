@@ -19,8 +19,6 @@ import javafx.application.Application;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -55,21 +53,16 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
      */
     private final LinkedBlockingQueue<Message> queue;
 
-    /**
-     * The executor used to handle the message exchange.
-     */
-    private ExecutorService executor;
+    private volatile boolean stopped = true;
 
     /**
      * Constructor of Virtual Server
      */
     public Client(boolean gui) {
-        executor = Executors.newSingleThreadExecutor();
-        executor.shutdownNow();
         queue = new LinkedBlockingQueue<>();
         this.communicationHandler = new CommunicationHandler(this);
         if (gui) {
-            Executors.newSingleThreadExecutor().execute((() -> Application.launch(GUI.class)));
+            new Thread(() -> Application.launch(GUI.class)).start();
             userInterface = GUI.getInstance();
             if (userInterface == null) {
                 System.out.println("FATAL ERROR: unable to instantiate GUI");
@@ -116,9 +109,9 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
             communicationHandler.setSocket(new Socket(hostname, port));
             communicationHandler.setDisconnectListener(this);
             communicationHandler.start();
-            if (executor.isShutdown()) {
-                executor = Executors.newSingleThreadExecutor();
-                executor.submit(this);
+            if (stopped) {
+                stopped = false;
+                new Thread(this).start();
             }
         } catch (IOException e) {
             userInterface.serverUnavailable();
@@ -164,7 +157,7 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
     @Override
     public void run() {
         Message message;
-        while (!Thread.interrupted()) {
+        while (!stopped) {
             try {
                 message = queue.take();
                 System.out.println("CL : " + message.getClass().getName());
@@ -180,7 +173,7 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
      *
      * @param message a Message from the model.
      */
-    public synchronized void updateView(Message message) {
+    public void updateView(Message message) {
         System.out.println(MessageBuilder.toJson(message));
 
         switch (MessageType.retrieveByMessage(message)) {
@@ -224,7 +217,7 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
     public void onDisconnect(DisconnectEvent event) {
         closeConnection();
         userInterface.serverUnavailable();
-        executor.shutdownNow();
+        stopped = true;
     }
 
     public static boolean validateServerString(String server) {

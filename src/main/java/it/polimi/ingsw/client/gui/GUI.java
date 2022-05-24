@@ -54,7 +54,7 @@ public class GUI extends Application implements UI {
         instantiationLatch.countDown();
     }
 
-    public synchronized static GUI getInstance() {
+    public static GUI getInstance() {
         try {
             if (!instantiationLatch.await(5, TimeUnit.SECONDS))
                 return null;
@@ -135,7 +135,7 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setWizardView(WizardsView wizardsView) {
-        ((ChooseWizardController)sceneByPath.get(SceneFXMLPath.CHOOSE_WIZARD).getUserData()).setClickableButtons(wizardsView);
+        Platform.runLater(() -> ((ChooseWizardController)sceneByPath.get(SceneFXMLPath.CHOOSE_WIZARD).getUserData()).setClickableButtons(wizardsView));
     }
 
     /**

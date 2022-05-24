@@ -1,6 +1,7 @@
 package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.network.listeners.*;
+import it.polimi.ingsw.network.messages.InvalidMessage;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class is used to handle the message exchange between the server and the client and vice versa.
@@ -46,11 +48,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     private final LinkedBlockingQueue<Message> queue;
 
     /**
-     * The executor used to handle the message exchange.
-     */
-    private ExecutorService executor;
-
-    /**
      * Listener used to handle the disconnection.
      */
     private DisconnectListener disconnectListener;
@@ -63,12 +60,14 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     /**
      * The latch used to check if the pong has been received.
      */
-    private CountDownLatch latch;
+    private CountDownLatch latch = new CountDownLatch(1);
 
     /**
      * The timer used to send ping messages.
      */
     private Timer timer;
+
+    private volatile boolean stopped = true;
 
     /**
      * Constructor.
@@ -98,8 +97,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     public CommunicationHandler(MessageHandler messageHandler, Boolean isMaster) {
         this.messageHandler = messageHandler;
         queue = new LinkedBlockingQueue<>();
-        executor = Executors.newSingleThreadExecutor();
-        executor.shutdownNow();
         this.isMaster = isMaster;
     }
 
@@ -109,10 +106,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      * @param socket the socket to set
      */
     public synchronized void setSocket(Socket socket) {
-        if (executor != null) {
-            System.out.println("CH : setSocket closing old socket");
-            stop();
-        }
         this.socket = socket;
         if (!socket.isClosed()) {
             System.out.println("CH : setSocket set new socket");
@@ -147,7 +140,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      * @return if the connection is still alive.
      */
     public synchronized boolean isConnected() {
-        return socket != null && !socket.isClosed() && !executor.isShutdown();
+        return socket != null && !socket.isClosed() && !stopped;
     }
 
     /**
@@ -171,7 +164,8 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      */
     private void handleOutput() {
         try {
-            while (!Thread.interrupted()) {
+            System.out.println("CH: Start handle output");
+            while (!stopped) {
                 Message m = null;
                 try {
                     m = queue.take();
@@ -180,7 +174,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                 }
                 MessageExchange.sendMessage(m, writer);
             }
-            System.out.println("CH : output stop");
+            System.out.println("CH: Stop handle output");
         } catch (IOException e) {
             System.out.println("CH : handleOutput IOException");
         }
@@ -191,7 +185,8 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      */
     private void handleInput() {
         try {
-            while (!Thread.interrupted()) {
+            System.out.println("CH: Start handle input");
+            while (!stopped) {
                 Message message = MessageExchange.receiveMessage(reader, (event) -> {
                     notifyDisconnectListener(new DisconnectEvent(this));
                     System.out.println("CH : handleInput stop");
@@ -207,6 +202,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                     } else if (isMaster) sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
                 }
             }
+            System.out.println("CH: Stopped handle input");
         } catch (IOException e) {
             System.out.println("CH : handleInput IOException");
         }
@@ -274,10 +270,11 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     public synchronized void start() {
         if (socket == null) return;
         if (socket.isClosed()) System.out.println("MessageExchangeHandler: Socket is closed");
-        if (executor == null || executor.isShutdown()) {
-            executor = Executors.newFixedThreadPool(2);
-            executor.submit(this::handleInput);
-            executor.submit(this::handleOutput);
+        if (stopped) {
+            stopped = false;
+            queue.clear();
+            new Thread(this::handleInput).start();
+            new Thread(this::handleOutput).start();
             startTimer();
             System.out.println("CH : start");
         }
@@ -296,10 +293,11 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      * @param closeSocket if the socket should be closed
      */
     public synchronized void stop(boolean closeSocket) {
-        if (!executor.isShutdown()) {
+        if (!stopped) {
+            stopped = true;
             System.out.println("CH : stop");
             timer.cancel();
-            executor.shutdownNow();
+            queue.add(new InvalidMessage());
         }
         if (closeSocket) {
             try {
