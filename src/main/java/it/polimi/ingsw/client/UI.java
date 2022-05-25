@@ -12,7 +12,6 @@ import it.polimi.ingsw.network.messages.views.WizardsView;
  */
 public interface UI extends ViewListenerSubscriber {
 
-    void setClient (Client client);
     void setWizardView(WizardsView wizardsView);
 
     void setTeamsView(TeamsView teamsView);

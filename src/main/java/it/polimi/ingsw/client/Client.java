@@ -1,7 +1,5 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.client.cli.CLI;
-import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.network.CommunicationHandler;
 import it.polimi.ingsw.network.MessageHandler;
 import it.polimi.ingsw.network.listeners.DisconnectEvent;
@@ -15,7 +13,6 @@ import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.server.CurrentGameState;
 import it.polimi.ingsw.network.messages.server.CurrentTeams;
-import javafx.application.Application;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -58,20 +55,10 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
     /**
      * Constructor of Virtual Server
      */
-    public Client(boolean gui) {
+    public Client(UI ui) {
         queue = new LinkedBlockingQueue<>();
         this.communicationHandler = new CommunicationHandler(this);
-        if (gui) {
-            new Thread(() -> Application.launch(GUI.class)).start();
-            userInterface = GUI.getInstance();
-            if (userInterface == null) {
-                System.out.println("FATAL ERROR: unable to instantiate GUI");
-                System.exit(1);
-            }
-        } else
-            userInterface = new CLI();
-        userInterface.setClient(this);
-        userInterface.setViewListener(this);
+        userInterface = ui;
     }
 
     public void startClient() {

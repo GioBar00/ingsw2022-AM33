@@ -33,9 +33,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class GUI extends Application implements UI {
-
-    private static GUI instance;
-    private static final CountDownLatch instantiationLatch = new CountDownLatch(1);
     private final EnumMap<SceneFXMLPath, Scene> sceneByPath = new EnumMap<>(SceneFXMLPath.class);
     public final static EnumMap<ImagePath, Image> imagesByPath = new EnumMap<>(ImagePath.class);
 
@@ -48,21 +45,6 @@ public class GUI extends Application implements UI {
     private Message lastRequest;
 
     private String nickname;
-
-    public GUI() {
-        instance = this;
-        instantiationLatch.countDown();
-    }
-
-    public static GUI getInstance() {
-        try {
-            if (!instantiationLatch.await(5, TimeUnit.SECONDS))
-                return null;
-        } catch (InterruptedException e) {
-            return null;
-        }
-        return instance;
-    }
 
     private Scene loadFXML(String path) {
         try {
@@ -102,24 +84,21 @@ public class GUI extends Application implements UI {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        showStartScreen();
         stage.setTitle("Eriantys");
         stage.setMinHeight(800.0);
         stage.setMinWidth(1200.0);
         stage.getIcons().add(imagesByPath.get(ImagePath.ICON));
         stage.setOnHiding(event -> stop());
         stage.show();
+
+        client = new Client(this);
+        setViewListener(client);
+        client.startClient();
     }
 
     @Override
     public void stop() {
        System.exit(0);
-    }
-
-    @Override
-    public void setClient(Client client) {
-        System.out.println("Setting client");
-        this.client = client;
     }
 
     public Client getClient() {
@@ -176,7 +155,7 @@ public class GUI extends Application implements UI {
             chooseGameStage.setMinWidth(600.0);
             chooseGameStage.getIcons().add(imagesByPath.get(ImagePath.ICON));
             chooseGameStage.setResizable(false);
-            chooseGameStage.showAndWait();
+            chooseGameStage.show();
         });
     }
 
@@ -209,7 +188,7 @@ public class GUI extends Application implements UI {
             chooseWizardStage.setMinWidth(300.0);
             chooseWizardStage.getIcons().add(imagesByPath.get(ImagePath.ICON));
             chooseWizardStage.setResizable(false);
-            chooseWizardStage.showAndWait();
+            chooseWizardStage.show();
         });
     }
 

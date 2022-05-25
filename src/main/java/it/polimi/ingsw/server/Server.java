@@ -97,14 +97,14 @@ public class Server implements EndGameListener, DisconnectListener {
                         switch (state) {
                             case EMPTY -> {
                                 state = ServerState.HANDLING_FIRST;
-                                Executors.newSingleThreadExecutor().execute(() -> handleFirstPlayer(communicationHandler));
+                                new Thread(() -> handleFirstPlayer(communicationHandler)).start();
                             }
                             case HANDLING_FIRST -> Executors.newSingleThreadExecutor().submit(() -> {
                                 communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_SERVER_UNAVAILABLE));
                                 communicationHandler.stop();
                             });
                             case NORMAL ->
-                                    Executors.newSingleThreadExecutor().execute(() -> handleNewPlayer(communicationHandler));
+                                    new Thread(() -> handleNewPlayer(communicationHandler)).start();
                         }
                     }
                 } catch (Throwable e) {
@@ -153,6 +153,7 @@ public class Server implements EndGameListener, DisconnectListener {
                 }
 
             } else {
+                communicationHandler.stop();
                 synchronized (this) {
                     state = ServerState.EMPTY;
                 }
@@ -213,12 +214,11 @@ public class Server implements EndGameListener, DisconnectListener {
             String nickname = getPlayerNickname(communicationHandler);
 
             if (nickname != null) {
-                communicationHandler.setMessageHandler(null);
+                communicationHandler.setMessageHandler((m) -> {});
                 if (controller.isGameStarted()) {
                     synchronized (this) {
                         if (virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()) {
-                            communicationHandler.stop(false);
-                            virtualClients.get(nickname).reconnect(communicationHandler.getSocket());
+                            virtualClients.get(nickname).reconnect(communicationHandler);
                         } else {
                             communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
                             communicationHandler.stop();
@@ -233,7 +233,8 @@ public class Server implements EndGameListener, DisconnectListener {
                         communicationHandler.stop();
                     }
                 }
-            }
+            } else
+                communicationHandler.stop();
         } catch (TimeoutException e) {
             communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
             communicationHandler.stop();
@@ -250,9 +251,8 @@ public class Server implements EndGameListener, DisconnectListener {
     private boolean addPlayer(CommunicationHandler communicationHandler, String nickname) {
         if (controller.addPlayer(nickname)) {
             System.out.println("S: added player " + nickname);
-            communicationHandler.stop(false);
             VirtualClient vc = new VirtualClient(nickname);
-            startVirtualClient(vc, communicationHandler.getSocket());
+            connectToVirtualClient(vc, communicationHandler);
             virtualClients.put(nickname, vc);
             controller.sendInitialStats(vc);
             return true;
@@ -264,13 +264,14 @@ public class Server implements EndGameListener, DisconnectListener {
      * Starts a virtual client and adds it to the model listeners. Adds the controller to the VirtualClient listeners
      *
      * @param vc     the VirtualClient
-     * @param socket Socket for connection
+     * @param communicationHandler handler for connection
      */
-    private void startVirtualClient(VirtualClient vc, Socket socket) {
-        vc.setSocket(socket);
+    private void connectToVirtualClient(VirtualClient vc, CommunicationHandler communicationHandler) {
+        vc.setCommunicationHandler(communicationHandler);
+        communicationHandler.setDisconnectListener(vc);
+        communicationHandler.setMessageHandler(vc);
         controller.addModelListener(vc);
         vc.addMessageListener(controller);
-        vc.start();
     }
 
     /**

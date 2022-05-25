@@ -24,7 +24,7 @@ import static it.polimi.ingsw.server.model.enums.StudentColor.*;
 
 
 public class CLI implements UI {
-    private Client client;
+    private final Client client;
     private String nickname;
     private final String os;
     private final Scanner input;
@@ -57,10 +57,8 @@ public class CLI implements UI {
         colors.put("white", "\033[37m");
         inputParser = new InputParser(this);
         input = new Scanner(System.in);
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
+        client = new Client(this);
+        setViewListener(client);
     }
 
     @Override
