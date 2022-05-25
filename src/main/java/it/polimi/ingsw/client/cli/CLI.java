@@ -454,16 +454,6 @@ public class CLI implements UI {
     }
 
     @Override
-    public void updateGameView() {
-
-    }
-
-    @Override
-    public void updateLobbyView() {
-
-    }
-
-    @Override
     public void showCommMessage(CommMessage message) {
         if (lastState.equals((ViewState.SETUP)) && message.getType().equals(CommMsgType.ERROR_NICKNAME_UNAVAILABLE)) {
             System.out.println("\n" + message.getType().getMessage());

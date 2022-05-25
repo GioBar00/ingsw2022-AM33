@@ -5,6 +5,7 @@ import it.polimi.ingsw.network.messages.client.ChosenWizard;
 import it.polimi.ingsw.network.messages.views.WizardsView;
 import it.polimi.ingsw.server.model.enums.Wizard;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
@@ -23,6 +24,7 @@ public class ChooseWizardController implements GUIController {
     public Button senseiBtn;
 
     private GUI gui;
+    private Parent root;
 
     /**
      * This method is used to set the GUI of the controller.
@@ -40,6 +42,26 @@ public class ChooseWizardController implements GUIController {
     @Override
     public void init() {
 
+    }
+
+    /**
+     * This method is used to set the parent of the controller.
+     *
+     * @param parent the parent of the controller.
+     */
+    @Override
+    public void setParent(Parent parent) {
+        root = parent;
+    }
+
+    /**
+     * This method returns the node of the controller.
+     *
+     * @return the node of the controller.
+     */
+    @Override
+    public Parent getParent() {
+        return root;
     }
 
     /**
@@ -84,7 +106,7 @@ public class ChooseWizardController implements GUIController {
      *
      * @param wizardsView for set the available buttons
      */
-    public void setClickableButtons(WizardsView wizardsView) {
+    public void updateWizards(WizardsView wizardsView) {
         Button btn;
         for (Wizard w : Wizard.values()) {
             btn = getButtonFromWizard(w);

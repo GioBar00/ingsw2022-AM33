@@ -6,12 +6,15 @@ import it.polimi.ingsw.network.messages.client.StartGame;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.server.model.enums.Tower;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 public class TeamLobbyController implements GUIController {
 
     private GUI gui;
+
+    private Parent root;
 
     @FXML
     public Button startButton;
@@ -89,6 +92,26 @@ public class TeamLobbyController implements GUIController {
     }
 
     /**
+     * This method is used to set the parent of the controller.
+     *
+     * @param parent the parent of the controller.
+     */
+    @Override
+    public void setParent(Parent parent) {
+        root = parent;
+    }
+
+    /**
+     * This method returns the node of the controller.
+     *
+     * @return the node of the controller.
+     */
+    @Override
+    public Parent getParent() {
+        return root;
+    }
+
+    /**
      * This method sends a change team request to the server, the chosen team is the white one
      */
     @FXML
@@ -133,7 +156,7 @@ public class TeamLobbyController implements GUIController {
      *
      * @param view a TeamView
      */
-    public void setLabels(TeamsView view) {
+    public void updateTeams(TeamsView view) {
 
 
         int i = 0;

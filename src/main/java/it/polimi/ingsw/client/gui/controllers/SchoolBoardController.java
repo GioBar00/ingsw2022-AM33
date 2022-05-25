@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.gui.controllers;
 import it.polimi.ingsw.client.Coordinates;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
+import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.views.SchoolBoardView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
@@ -10,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,9 +19,9 @@ import javafx.scene.layout.GridPane;
 
 import java.util.*;
 
-public class SchoolBoardController implements GUIController{
+public class SchoolBoardController implements GUIController {
 
-    private GUI schoolBoardGUI;
+    private GUI gui;
 
     private final Map<Integer, Coordinates> entranceMap = new HashMap<>();
 
@@ -28,6 +30,8 @@ public class SchoolBoardController implements GUIController{
     private final EnumMap<StudentColor, Map<Integer, Coordinates>> hallMap = new EnumMap<>(StudentColor.class);
 
     private final EnumMap<StudentColor, Coordinates> profsMap = new EnumMap<>(StudentColor.class);
+
+    private Parent root;
 
     @FXML
     private Button blueHallButton;
@@ -93,7 +97,7 @@ public class SchoolBoardController implements GUIController{
      */
     @Override
     public void setGUI(GUI gui) {
-        this.schoolBoardGUI = gui;
+        this.gui = gui;
     }
 
     @Override
@@ -129,7 +133,7 @@ public class SchoolBoardController implements GUIController{
         int column = 3;
         for (int i = 0; i < 9; i++) {
             entranceMap.put(i, new Coordinates(row, column));
-            if (column == 3){
+            if (column == 3) {
                 row++;
                 column = 1;
             } else
@@ -149,7 +153,7 @@ public class SchoolBoardController implements GUIController{
         //profsMap
         profsMap.put(StudentColor.GREEN, new Coordinates(0, 1));
         profsMap.put(StudentColor.RED, new Coordinates(2, 1));
-        profsMap.put(StudentColor.YELLOW, new Coordinates(4,1));
+        profsMap.put(StudentColor.YELLOW, new Coordinates(4, 1));
         profsMap.put(StudentColor.MAGENTA, new Coordinates(6, 1));
         profsMap.put(StudentColor.BLUE, new Coordinates(8, 1));
 
@@ -165,49 +169,69 @@ public class SchoolBoardController implements GUIController{
         }
     }
 
-    public Image getStudentImage(StudentColor sc){
+    /**
+     * This method is used to set the parent of the controller.
+     *
+     * @param parent the parent of the controller.
+     */
+    @Override
+    public void setParent(Parent parent) {
+        root = parent;
+    }
+
+    /**
+     * This method returns the node of the controller.
+     *
+     * @return the node of the controller.
+     */
+    @Override
+    public Parent getParent() {
+        return root;
+    }
+
+    public Image getStudentImage(StudentColor sc) {
         Image student = null;
         switch (sc) {
-            case GREEN -> student = GUI.imagesByPath.get(ImagePath.GREEN_STUDENT);
-            case RED -> student = GUI.imagesByPath.get(ImagePath.RED_STUDENT);
-            case YELLOW -> student = GUI.imagesByPath.get(ImagePath.YELLOW_STUDENT);
-            case MAGENTA -> student = GUI.imagesByPath.get(ImagePath.MAGENTA_STUDENT);
-            case BLUE -> student = GUI.imagesByPath.get(ImagePath.BLUE_STUDENTS);
+            case GREEN -> student = ResourceLoader.loadImage(ImagePath.GREEN_STUDENT);
+            case RED -> student = ResourceLoader.loadImage(ImagePath.RED_STUDENT);
+            case YELLOW -> student = ResourceLoader.loadImage(ImagePath.YELLOW_STUDENT);
+            case MAGENTA -> student = ResourceLoader.loadImage(ImagePath.MAGENTA_STUDENT);
+            case BLUE -> student = ResourceLoader.loadImage(ImagePath.BLUE_STUDENTS);
         }
         return student;
     }
 
-    public Image getProfImage(StudentColor sc){
+    public Image getProfImage(StudentColor sc) {
         Image prof = null;
         switch (sc) {
-            case GREEN -> prof = GUI.imagesByPath.get(ImagePath.GREEN_PROF);
-            case RED -> prof = GUI.imagesByPath.get(ImagePath.RED_PROF);
-            case YELLOW -> prof = GUI.imagesByPath.get(ImagePath.YELLOW_PROF);
-            case MAGENTA -> prof = GUI.imagesByPath.get(ImagePath.MAGENTA_PROF);
-            case BLUE -> prof = GUI.imagesByPath.get(ImagePath.BLUE_PROF);
+            case GREEN -> prof = ResourceLoader.loadImage(ImagePath.GREEN_PROF);
+            case RED -> prof = ResourceLoader.loadImage(ImagePath.RED_PROF);
+            case YELLOW -> prof = ResourceLoader.loadImage(ImagePath.YELLOW_PROF);
+            case MAGENTA -> prof = ResourceLoader.loadImage(ImagePath.MAGENTA_PROF);
+            case BLUE -> prof = ResourceLoader.loadImage(ImagePath.BLUE_PROF);
         }
         return prof;
     }
 
-    public Image getTowerImage(Tower t){
+    public Image getTowerImage(Tower t) {
         Image tower = null;
-        switch (t){
-            case WHITE -> tower = GUI.imagesByPath.get(ImagePath.WHITE_TOWER);
-            case GREY -> tower = GUI.imagesByPath.get(ImagePath.GRAY_TOWER);
-            case BLACK -> tower = GUI.imagesByPath.get(ImagePath.BLACK_TOWER);
+        switch (t) {
+            case WHITE -> tower = ResourceLoader.loadImage(ImagePath.WHITE_TOWER);
+            case GREY -> tower = ResourceLoader.loadImage(ImagePath.GRAY_TOWER);
+            case BLACK -> tower = ResourceLoader.loadImage(ImagePath.BLACK_TOWER);
         }
         return tower;
     }
 
-    public void setSchoolBoardView (SchoolBoardView schoolBoardView){
+    public void setSchoolBoardView(SchoolBoardView schoolBoardView) {
         setEntrance(schoolBoardView.getEntrance());
         setHall(schoolBoardView.getStudentsHall());
         setProfs(schoolBoardView.getProfessors());
         setTowers(schoolBoardView.getNumTowers(), schoolBoardView.getTower());
     }
 
-    public void setEntrance (ArrayList<StudentColor> entrance){
-        for (int i = 0; i < 9; i++){
+    public void setEntrance(ArrayList<StudentColor> entrance) {
+        for (int i = 0; i < 9; i++) {
             if (entrance.get(i) != null) {
                 Image studentImage = getStudentImage(entrance.get(i));
                 ImageView imageView = new ImageView(studentImage);
@@ -219,9 +243,9 @@ public class SchoolBoardController implements GUIController{
         }
     }
 
-    public void setHall(EnumMap<StudentColor, Integer> hall){
+    public void setHall(EnumMap<StudentColor, Integer> hall) {
         for (StudentColor sc : StudentColor.values()) {
-            for (int i = 0; i < 10; i++){
+            for (int i = 0; i < 10; i++) {
                 if (i < hall.get(sc)) {
                     Image studentImage = getStudentImage(sc);
                     ImageView imageView = new ImageView(studentImage);
@@ -234,9 +258,9 @@ public class SchoolBoardController implements GUIController{
         }
     }
 
-    public void setProfs(EnumSet<StudentColor> professors){
+    public void setProfs(EnumSet<StudentColor> professors) {
         for (StudentColor sc : StudentColor.values()) {
-            if (professors.contains(sc)){
+            if (professors.contains(sc)) {
                 Image profImage = getProfImage(sc);
                 ImageView imageView = new ImageView(profImage);
                 profsGrid.add(imageView, profsMap.get(sc).getRow(), profsMap.get(sc).getColumn());
@@ -247,9 +271,9 @@ public class SchoolBoardController implements GUIController{
         }
     }
 
-    public void setTowers(int numTowers, Tower tower){
-        for (int i = 0; i < 8; i++){
-            if (i < numTowers){
+    public void setTowers(int numTowers, Tower tower) {
+        for (int i = 0; i < 8; i++) {
+            if (i < numTowers) {
                 Image towerImage = getTowerImage(tower);
                 ImageView imageView = new ImageView(towerImage);
                 towersGrid.add(imageView, towersMap.get(i).getRow(), towersMap.get(i).getColumn());
@@ -269,11 +293,11 @@ public class SchoolBoardController implements GUIController{
         return nodes;
     }
 
-    public void removeImagesFromCell (GridPane gridPane, int row, int column){
+    public void removeImagesFromCell(GridPane gridPane, int row, int column) {
         int num = getNodesFromGrid(gridPane, row, column).size();
-        if (num > 0){
+        if (num > 0) {
             List<Node> nodes = getNodesFromGrid(gridPane, row, column);
-            for (int j = 0; j < num; j++){
+            for (int j = 0; j < num; j++) {
                 Node toBeRemoved = nodes.get(j);
                 if (toBeRemoved instanceof ImageView)
                     entranceGrid.getChildren().remove(toBeRemoved);
@@ -281,7 +305,4 @@ public class SchoolBoardController implements GUIController{
         }
     }
 
-    public GUI getSchoolBoardGUI() {
-        return schoolBoardGUI;
-    }
 }

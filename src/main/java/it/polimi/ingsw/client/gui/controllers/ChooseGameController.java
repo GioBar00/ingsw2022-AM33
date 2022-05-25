@@ -7,6 +7,7 @@ import it.polimi.ingsw.server.model.enums.GamePreset;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
@@ -25,6 +26,7 @@ public class ChooseGameController implements GUIController {
     public Button btnCreateGame;
 
     private GUI gui;
+    private Parent root;
 
 
     /**
@@ -46,6 +48,26 @@ public class ChooseGameController implements GUIController {
         radioBtn3.setSelected(false);
         radioBtn4.setSelected(false);
         checkBoxExpert.setSelected(false);
+    }
+
+    /**
+     * This method is used to set the parent of the controller.
+     *
+     * @param parent the parent of the controller.
+     */
+    @Override
+    public void setParent(Parent parent) {
+        root = parent;
+    }
+
+    /**
+     * This method returns the node of the controller.
+     *
+     * @return the node of the controller.
+     */
+    @Override
+    public Parent getParent() {
+        return root;
     }
 
     /**

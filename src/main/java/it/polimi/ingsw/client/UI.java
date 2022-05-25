@@ -37,9 +37,6 @@ public interface UI extends ViewListenerSubscriber {
     void serverUnavailable();
 
     void close();
-    void updateGameView();
-
-    void updateLobbyView();
 
     void showCommMessage(CommMessage message);
 }

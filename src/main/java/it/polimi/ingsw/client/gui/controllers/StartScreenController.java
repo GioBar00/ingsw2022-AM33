@@ -3,8 +3,9 @@ package it.polimi.ingsw.client.gui.controllers;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
-import javafx.event.EventHandler;
+import it.polimi.ingsw.client.gui.ResourceLoader;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -14,8 +15,8 @@ import javafx.scene.layout.GridPane;
 import javafx.event.ActionEvent;
 
 public class StartScreenController implements GUIController {
-    private GUI gui;
 
+    private GUI gui;
     @FXML
     public AnchorPane root;
     @FXML
@@ -58,9 +59,6 @@ public class StartScreenController implements GUIController {
 
         root.widthProperty().addListener((obs, oldVal, newVal) -> imgTitle.setFitWidth((root.getWidth() / 3 + root.getHeight() / 1.5) / 2));
 
-        grpConnect.setDisable(true);
-        grpConnect.setVisible(false);
-
         txtFieldPort.textProperty().addListener((observableValue, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 txtFieldPort.setText(newValue.replaceAll("\\D", ""));
@@ -72,9 +70,30 @@ public class StartScreenController implements GUIController {
                 txtFieldNickname.setText(oldValue);
         });
 
-        btnStart.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> imgStart.setImage(GUI.imagesByPath.get(ImagePath.START_HIGHLIGHTED)));
-        btnStart.addEventHandler(MouseEvent.MOUSE_EXITED, e -> imgStart.setImage(GUI.imagesByPath.get(ImagePath.START)));
+        btnStart.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> imgStart.setImage(ResourceLoader.loadImage(ImagePath.START_HIGHLIGHTED)));
+        btnStart.addEventHandler(MouseEvent.MOUSE_EXITED, e -> imgStart.setImage(ResourceLoader.loadImage(ImagePath.START)));
 
+        hideCenter(true);
+    }
+
+    /**
+     * This method is used to set the parent of the controller.
+     *
+     * @param parent the parent of the controller.
+     */
+    @Override
+    public void setParent(Parent parent) {
+        // root already set
+    }
+
+    /**
+     * This method returns the node of the controller.
+     *
+     * @return the node of the controller.
+     */
+    @Override
+    public Parent getParent() {
+        return root;
     }
 
     private boolean checkFields() {
@@ -94,12 +113,16 @@ public class StartScreenController implements GUIController {
         return true;
     }
 
+    private void hideCenter(boolean hide) {
+        btnPlay.setVisible(hide);
+        btnPlay.setDisable(!hide);
+        grpConnect.setDisable(hide);
+        grpConnect.setVisible(!hide);
+    }
+
     @FXML
     public void handlePlayButton(ActionEvent actionEvent) {
-        btnPlay.setVisible(false);
-        btnPlay.setDisable(true);
-        grpConnect.setDisable(false);
-        grpConnect.setVisible(true);
+        hideCenter(false);
     }
 
     @FXML
@@ -115,8 +138,4 @@ public class StartScreenController implements GUIController {
             gui.getClient().sendLogin();
         }
     }
-
-
-
-
 }

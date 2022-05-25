@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.network.messages.actions.PlayedAssistantCard;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,6 +17,7 @@ import java.util.*;
  */
 public class AssistantCardController implements GUIController {
     private GUI gui;
+    private Parent root;
 
     @FXML
     public Button cheetahBtn;
@@ -188,6 +190,26 @@ public class AssistantCardController implements GUIController {
         assistantViews.put(AssistantCard.ELEPHANT, new AssistantView(elephantBtn, elephantImg));
         assistantViews.put(AssistantCard.TURTLE, new AssistantView(turtleBtn, turtleImg));
 
+    }
+
+    /**
+     * This method is used to set the parent of the controller.
+     *
+     * @param parent the parent of the controller.
+     */
+    @Override
+    public void setParent(Parent parent) {
+        root = parent;
+    }
+
+    /**
+     * This method returns the node of the controller.
+     *
+     * @return the node of the controller.
+     */
+    @Override
+    public Parent getParent() {
+        return root;
     }
 
     /**

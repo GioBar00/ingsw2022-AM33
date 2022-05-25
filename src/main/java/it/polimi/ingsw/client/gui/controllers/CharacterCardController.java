@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.gui.GUI;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -10,6 +11,7 @@ import javafx.scene.image.ImageView;
 public class CharacterCardController implements GUIController {
 
     private GUI gui;
+    private Parent root;
 
     @FXML
     public ImageView characterImg;
@@ -56,5 +58,25 @@ public class CharacterCardController implements GUIController {
     @Override
     public void init() {
 
+    }
+
+    /**
+     * This method is used to set the parent of the controller.
+     *
+     * @param parent the parent of the controller.
+     */
+    @Override
+    public void setParent(Parent parent) {
+        root = parent;
+    }
+
+    /**
+     * This method returns the node of the controller.
+     *
+     * @return the node of the controller.
+     */
+    @Override
+    public Parent getParent() {
+        return root;
     }
 }
