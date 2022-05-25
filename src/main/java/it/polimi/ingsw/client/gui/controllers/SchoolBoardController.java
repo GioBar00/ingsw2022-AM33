@@ -7,6 +7,8 @@ import it.polimi.ingsw.network.messages.views.SchoolBoardView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -208,7 +210,10 @@ public class SchoolBoardController implements GUIController{
         for (int i = 0; i < 9; i++){
             if (entrance.get(i) != null) {
                 Image studentImage = getStudentImage(entrance.get(i));
-                entranceGrid.add(new ImageView(studentImage), entranceMap.get(i).getRow(), entranceMap.get(i).getColumn());
+                ImageView imageView = new ImageView(studentImage);
+                entranceGrid.add(imageView, entranceMap.get(i).getRow(), entranceMap.get(i).getColumn());
+                GridPane.setHalignment(imageView, HPos.CENTER);
+                GridPane.setValignment(imageView, VPos.CENTER);
             } else
                 removeImagesFromCell(entranceGrid, entranceMap.get(i).getRow(), entranceMap.get(i).getColumn());
         }
@@ -219,7 +224,10 @@ public class SchoolBoardController implements GUIController{
             for (int i = 0; i < 10; i++){
                 if (i < hall.get(sc)) {
                     Image studentImage = getStudentImage(sc);
-                    hallGrid.add(new ImageView(studentImage), hallMap.get(sc).get(i).getRow(), hallMap.get(sc).get(i).getColumn());
+                    ImageView imageView = new ImageView(studentImage);
+                    hallGrid.add(imageView, hallMap.get(sc).get(i).getRow(), hallMap.get(sc).get(i).getColumn());
+                    GridPane.setHalignment(imageView, HPos.CENTER);
+                    GridPane.setValignment(imageView, VPos.CENTER);
                 } else
                     removeImagesFromCell(hallGrid, hallMap.get(sc).get(i).getRow(), hallMap.get(sc).get(i).getColumn());
             }
@@ -230,7 +238,10 @@ public class SchoolBoardController implements GUIController{
         for (StudentColor sc : StudentColor.values()) {
             if (professors.contains(sc)){
                 Image profImage = getProfImage(sc);
-                profsGrid.add(new ImageView(profImage), profsMap.get(sc).getRow(), profsMap.get(sc).getColumn());
+                ImageView imageView = new ImageView(profImage);
+                profsGrid.add(imageView, profsMap.get(sc).getRow(), profsMap.get(sc).getColumn());
+                GridPane.setHalignment(imageView, HPos.CENTER);
+                GridPane.setValignment(imageView, VPos.CENTER);
             } else
                 removeImagesFromCell(profsGrid, profsMap.get(sc).getRow(), profsMap.get(sc).getColumn());
         }
@@ -240,7 +251,10 @@ public class SchoolBoardController implements GUIController{
         for (int i = 0; i < 8; i++){
             if (i < numTowers){
                 Image towerImage = getTowerImage(tower);
-                towersGrid.add(new ImageView(towerImage), towersMap.get(i).getRow(), towersMap.get(i).getColumn());
+                ImageView imageView = new ImageView(towerImage);
+                towersGrid.add(imageView, towersMap.get(i).getRow(), towersMap.get(i).getColumn());
+                GridPane.setHalignment(imageView, HPos.CENTER);
+                GridPane.setValignment(imageView, VPos.CENTER);
             } else
                 removeImagesFromCell(towersGrid, towersMap.get(i).getRow(), towersMap.get(i).getColumn());
         }
