@@ -10,7 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
-public class TeamLobbyController implements GUIController {
+public class TeamLobbyController implements GUIController,LobbyController {
 
     private GUI gui;
 
@@ -138,6 +138,7 @@ public class TeamLobbyController implements GUIController {
     /**
      * Activates the start button
      */
+    @Override
     public void setCanStart() {
         startButton.setVisible(true);
         startButton.setDisable(false);
@@ -146,6 +147,7 @@ public class TeamLobbyController implements GUIController {
     /**
      * Deactivates the start button
      */
+    @Override
     public void setCantStart() {
         startButton.setVisible(false);
         startButton.setDisable(true);

@@ -6,6 +6,7 @@ public enum ImagePath {
     START_HIGHLIGHTED("/images/icons/start-highlighted.png"),
     VOLUME("/images/icons/volume.png"),
     MUTE("/images/icons/mute.png"),
+    PROHIBITION("/images/icons/cancel.png"),
     GREEN_STUDENT("/images/pawns/students/green.png"),
     RED_STUDENT("/images/pawns/students/red.png"),
     YELLOW_STUDENT("/images/pawns/students/yellow.png"),
