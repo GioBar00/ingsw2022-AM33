@@ -135,22 +135,36 @@ public class StartScreenController implements GUIController {
         grpConnect.setVisible(!hide);
     }
 
+    public void disableCenter(boolean disable) {
+        grpConnect.setDisable(disable);
+    }
+
     @FXML
-    public void handlePlayButton(ActionEvent actionEvent) {
+    public void handlePlayButton() {
         hideCenter(false);
     }
 
     @FXML
-    public void handleStartButton(ActionEvent actionEvent) {
+    public void handleStartButton() {
+        disableCenter(true);
         if (checkFields()) {
             String server = txtFieldServer.getText().isEmpty() ? "localhost" : txtFieldServer.getText();
             int port = txtFieldPort.getText().isEmpty() ? 1234 : Integer.parseInt(txtFieldPort.getText());
             String nickname = txtFieldNickname.getText();
-            gui.getClient().setServerAddress(server);
-            gui.getClient().setServerPort(String.valueOf(port));
-            gui.setNickname(nickname);
-            gui.getClient().setNickname(nickname);
-            gui.getClient().sendLogin();
+            if (gui.getClient().setServerAddress(server, port)) {
+                new Thread(() -> {
+                    gui.setNickname(nickname);
+                    gui.getClient().setNickname(nickname);
+                    gui.getClient().sendLogin();
+                }).start();
+            } else
+                System.out.println("Server address and port not valid");
+
         }
+    }
+
+    @FXML
+    public void handleMuteButton() {
+        System.out.println("Mute");
     }
 }

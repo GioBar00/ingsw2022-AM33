@@ -153,16 +153,19 @@ public class CLI implements UI {
 
     private void requestServerAddress() {
         String server;
-        String port;
+        int port;
         do {
-            System.out.print("\n" + colors.get("reset") + "Insert Server ip/address -> ");
-            server = input.nextLine();
-        } while (!client.setServerAddress(server));
-
-        do {
-            System.out.print("Insert port -> ");
-            port = input.nextLine();
-        } while (!client.setServerPort(port));
+            do {
+                System.out.print("\n" + colors.get("reset") + "Insert Server ip/address -> ");
+                server = input.nextLine();
+            } while (!Client.validateServerString(server));
+            String portString;
+            do {
+                System.out.print("Insert port -> ");
+                portString = input.nextLine();
+            } while (!Client.validateServerPort(portString));
+            port = Integer.parseInt(portString);
+        } while (!client.setServerAddress(server, port));
     }
 
     private void chooseNickname() {

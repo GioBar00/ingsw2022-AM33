@@ -37,6 +37,8 @@ public class GUI extends Application implements UI {
 
     private LobbyController lobbyController;
 
+    private StartScreenController startScreenController;
+
     private ViewState viewState = ViewState.SETUP;
 
     @Override
@@ -76,6 +78,8 @@ public class GUI extends Application implements UI {
 
     /**
      * This method checks if the wizard controller is already loaded.
+     *
+     * @return true if the controller was loaded, false otherwise.
      */
     private boolean checkChooseWizardController() {
         if (chooseWizardController == null) {
@@ -88,11 +92,34 @@ public class GUI extends Application implements UI {
 
     /**
      * This method checks if the lobby controller is already loaded.
+     *
+     * @return true if the controller was loaded, false otherwise.
      */
     private boolean checkTeamLobbyController() {
         if (lobbyController == null || !lobbyController.canHandleTeams()) {
             lobbyController = (TeamLobbyController) ResourceLoader.loadFXML(FXMLPath.TEAM_LOBBY, this);
             Platform.runLater(lobbyController::init);
+            return true;
+        }
+        return false;
+    }
+
+    private void checkLobbyController() {
+        if(lobbyController == null) {
+            lobbyController = (NormalLobbyController) ResourceLoader.loadFXML(FXMLPath.LOBBY, this);
+            Platform.runLater(lobbyController::init);
+        }
+    }
+
+    /**
+     * This method checks if the start screen controller is already loaded.
+     *
+     * @return true if the controller was loaded, false otherwise.
+     */
+    private boolean checkStartScreenController() {
+        if (startScreenController == null) {
+            startScreenController = (StartScreenController) ResourceLoader.loadFXML(FXMLPath.START_SCREEN, this);
+            Platform.runLater(startScreenController::init);
             return true;
         }
         return false;
@@ -144,12 +171,14 @@ public class GUI extends Application implements UI {
     @Override
     public void chooseGame() {
         Platform.runLater(() -> {
-            stage.getScene().getRoot().setDisable(true);
+            if (startScreenController != null)
+                startScreenController.disableCenter(true);
             Stage chooseGameStage = new Stage();
             GUIController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_GAME, this);
             chooseGameStage.setTitle("Create a new game");
             chooseGameStage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
             controller.loadScene(chooseGameStage);
+            chooseGameStage.setAlwaysOnTop(true);
             chooseGameStage.show();
         });
     }
@@ -160,14 +189,12 @@ public class GUI extends Application implements UI {
     @Override
     public void showStartScreen() {
         System.out.println("Showing start screen");
-        if (stage != null)
-            Platform.runLater(() -> {
-                GUIController controller = ResourceLoader.loadFXML(FXMLPath.START_SCREEN, this);
-                controller.init();
-                controller.loadScene(stage);
-                if (!stage.isShowing())
-                    stage.show();
-            });
+        checkStartScreenController();
+        Platform.runLater(() -> {
+            startScreenController.loadScene(stage);
+            if (!stage.isShowing())
+                stage.show();
+        });
     }
 
     /**
@@ -178,18 +205,26 @@ public class GUI extends Application implements UI {
         System.out.println("Showing wizard menu");
         checkLobbyController();
         Platform.runLater(() -> {
-            stage.getScene().getRoot().setDisable(true);
+            if (startScreenController != null)
+                startScreenController.disableCenter(true);
             Stage chooseWizardStage = new Stage();
             chooseWizardStage.setTitle("Choose a Wizard");
             chooseWizardStage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
             chooseWizardStage.onHidingProperty().set(event -> {
+                if (chooseWizardController.hasChosenWizard()) {
+                    viewState = ViewState.CHOOSE_TEAM;
+                    if (lobbyController != null)
+                        showLobbyScreen();
+                } else {
+                    viewState = ViewState.SETUP;
+                    client.closeConnection();
+                }
                 chooseWizardController = null;
-                viewState = ViewState.CHOOSE_TEAM;
-                if (lobbyController != null)
-                    showLobbyScreen();
             });
             chooseWizardController.loadScene(chooseWizardStage);
+            chooseWizardStage.setAlwaysOnTop(true);
             chooseWizardStage.show();
+            viewState = ViewState.CHOOSE_WIZARD;
         });
     }
 
@@ -199,14 +234,9 @@ public class GUI extends Application implements UI {
     @Override
     public void showLobbyScreen() {
         Platform.runLater(() -> lobbyController.loadScene(stage));
+        startScreenController = null;
     }
 
-    private void checkLobbyController() {
-        if(lobbyController == null) {
-            lobbyController = (NormalLobbyController) ResourceLoader.loadFXML(FXMLPath.LOBBY, this);
-            Platform.runLater(lobbyController::init);
-        }
-    }
     /**
      *
      */
@@ -261,6 +291,11 @@ public class GUI extends Application implements UI {
     @Override
     public void serverUnavailable() {
         System.out.println("Server unavailable");
+        if (viewState == ViewState.SETUP) {
+            if (startScreenController != null) {
+                startScreenController.disableCenter(false);
+            }
+        }
     }
 
     /**

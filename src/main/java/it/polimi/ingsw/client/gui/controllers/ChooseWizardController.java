@@ -4,11 +4,15 @@ import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.network.messages.client.ChosenWizard;
 import it.polimi.ingsw.network.messages.views.WizardsView;
 import it.polimi.ingsw.server.model.enums.Wizard;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChooseWizardController implements GUIController {
 
@@ -24,8 +28,12 @@ public class ChooseWizardController implements GUIController {
     @FXML
     public Button senseiBtn;
 
+    private final Map<Button, Wizard> wizardByButton = new HashMap<>(4);
+
     private GUI gui;
     private Parent root;
+
+    private boolean choseWizard = false;
 
     /**
      * This method is used to set the GUI of the controller.
@@ -42,7 +50,10 @@ public class ChooseWizardController implements GUIController {
      */
     @Override
     public void init() {
-
+        wizardByButton.put(merlinBtn, Wizard.MERLIN);
+        wizardByButton.put(witchBtn, Wizard.WITCH);
+        wizardByButton.put(kingBtn, Wizard.KING);
+        wizardByButton.put(senseiBtn, Wizard.SENSEI);
     }
 
     /**
@@ -79,41 +90,22 @@ public class ChooseWizardController implements GUIController {
     }
 
     /**
+     * @return if the player has chosen a wizard
+     */
+    public boolean hasChosenWizard() {
+        return choseWizard;
+    }
+
+    /**
      * This method is used to handle the event of clicking the Merlin button.
      */
     @FXML
-    public void selectedMerlin() {
-        gui.notifyViewListener(new ChosenWizard(Wizard.MERLIN));
-        closeScene(merlinBtn);
+    public void handleButtonAction(ActionEvent actionEvent) {
+        choseWizard = true;
+        Button btn = (Button) actionEvent.getSource();
+        gui.notifyViewListener(new ChosenWizard(wizardByButton.get(btn)));
+        closeScene();
     }
-
-    /**
-     * This method is used to handle the event of clicking the Witch button.
-     */
-    @FXML
-    public void selectedWitch() {
-        gui.notifyViewListener(new ChosenWizard(Wizard.WITCH));
-        closeScene(witchBtn);
-    }
-
-    /**
-     * This method is used to handle the event of clicking the King button.
-     */
-    @FXML
-    public void selectedKing() {
-        gui.notifyViewListener(new ChosenWizard(Wizard.KING));
-        closeScene(kingBtn);
-    }
-
-    /**
-     * This method is used to handle the event of clicking the Sensei button.
-     */
-    @FXML
-    public void selectedSensei() {
-        gui.notifyViewListener(new ChosenWizard(Wizard.SENSEI));
-        closeScene(senseiBtn);
-    }
-
 
     /**
      * Set which button could be clicked.
@@ -124,13 +116,11 @@ public class ChooseWizardController implements GUIController {
         Button btn;
         for (Wizard w : Wizard.values()) {
             btn = getButtonFromWizard(w);
-            assert btn != null;
             btn.setDisable(true);
             btn.setVisible(false);
         }
         for (Wizard w : wizardsView.getAvailableWizards()) {
             btn = getButtonFromWizard(w);
-            assert btn != null;
             btn.setDisable(false);
             btn.setVisible(true);
         }
@@ -138,32 +128,20 @@ public class ChooseWizardController implements GUIController {
 
     /**
      * Close the Wizard scene
-     *
-     * @param button of the scene that has to be closed
      */
-    private void closeScene(Button button) {
-        gui.getStage().getScene().getRoot().setDisable(false);
-        ((Stage) button.getScene().getWindow()).close();
+    private void closeScene() {
+        ((Stage) root.getScene().getWindow()).close();
     }
 
     /**
      * Return the button related to a specified wizard
      */
     private Button getButtonFromWizard(Wizard wizard) {
-        switch (wizard) {
-            case SENSEI -> {
-                return senseiBtn;
-            }
-            case WITCH -> {
-                return witchBtn;
-            }
-            case MERLIN -> {
-                return merlinBtn;
-            }
-            case KING -> {
-                return kingBtn;
-            }
-        }
-        return null;
+        return switch (wizard) {
+            case MERLIN -> merlinBtn;
+            case WITCH -> witchBtn;
+            case KING -> kingBtn;
+            case SENSEI -> senseiBtn;
+        };
     }
 }

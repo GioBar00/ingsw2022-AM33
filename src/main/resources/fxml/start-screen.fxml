@@ -157,7 +157,7 @@
             </AnchorPane>
             <VBox alignment="BOTTOM_LEFT" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="2">
                <children>
-                  <Button fx:id="btnMute" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: transparent;">
+                  <Button fx:id="btnMute" mnemonicParsing="false" onAction="#handleMuteButton" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: transparent;">
                      <graphic>
                         <ImageView fitHeight="60.0" pickOnBounds="true" preserveRatio="true">
                            <image>
