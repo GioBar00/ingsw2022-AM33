@@ -6,6 +6,7 @@ import it.polimi.ingsw.network.messages.views.WizardsView;
 import it.polimi.ingsw.server.model.enums.Wizard;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
@@ -62,6 +63,19 @@ public class ChooseWizardController implements GUIController {
     @Override
     public Parent getParent() {
         return root;
+    }
+
+    /**
+     * This method is used to load the scene of the controller on the stage.
+     *
+     * @param stage the stage to load the scene on.
+     */
+    @Override
+    public void loadScene(Stage stage) {
+        stage.setScene(new Scene(getParent()));
+        stage.setMinHeight(150.0);
+        stage.setMinWidth(300.0);
+        stage.setResizable(false);
     }
 
     /**

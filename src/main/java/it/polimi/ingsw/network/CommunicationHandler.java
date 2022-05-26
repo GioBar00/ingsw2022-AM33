@@ -181,7 +181,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
             System.out.println("CH: Start handle input");
             while (!stopped) {
                 Message message = MessageExchange.receiveMessage(reader, (event) -> {
-                    notifyDisconnectIfNotAlreadyDone();
                     System.out.println("CH : handleInput stop");
                     stop();
                 });
@@ -286,9 +285,9 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
             queue.add(new InvalidMessage());
         }
         try {
+            if (socket != null) socket.close();
             if (reader != null) reader.close();
             if (writer != null) writer.close();
-            if (socket != null) socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

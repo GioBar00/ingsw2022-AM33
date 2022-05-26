@@ -65,6 +65,7 @@ public class CLI implements UI {
     public void setWizardView(WizardsView wizardsView) {
         this.wizardsView = wizardsView;
         inputParser.setWizardsView(wizardsView);
+        showWizardMenu();
     }
 
     @Override
@@ -76,6 +77,7 @@ public class CLI implements UI {
     @Override
     synchronized public void setGameView(GameView gameView) {
         this.gameView = gameView;
+        showGameScreen();
     }
 
     @Override

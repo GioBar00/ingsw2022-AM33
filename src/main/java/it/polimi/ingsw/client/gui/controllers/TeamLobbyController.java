@@ -154,6 +154,14 @@ public class TeamLobbyController implements LobbyController {
     }
 
     /**
+     * @return if the lobby can handle teams.
+     */
+    @Override
+    public boolean canHandleTeams() {
+        return true;
+    }
+
+    /**
      * Show the name of the players in the right team
      *
      * @param view a TeamView

@@ -53,10 +53,8 @@ public class GUI extends Application implements UI {
     public void start(Stage stage) {
         this.stage = stage;
         stage.setTitle("Eriantys");
-        stage.setMinHeight(800.0);
-        stage.setMinWidth(1200.0);
         stage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
-        stage.setOnHiding(event -> stop());
+        stage.setOnCloseRequest(event -> stop());
 
         client = new Client(this);
         setViewListener(client);
@@ -79,22 +77,25 @@ public class GUI extends Application implements UI {
     /**
      * This method checks if the wizard controller is already loaded.
      */
-    private void checkChooseWizardController() {
+    private boolean checkChooseWizardController() {
         if (chooseWizardController == null) {
             chooseWizardController = (ChooseWizardController) ResourceLoader.loadFXML(FXMLPath.CHOOSE_WIZARD, this);
             Platform.runLater(chooseWizardController::init);
+            return true;
         }
+        return false;
     }
 
     /**
      * This method checks if the lobby controller is already loaded.
      */
-    private void checkTeamLobbyController() {
-        //TODO i know is an instance of but i think is better than putting a flag.
-        if (!(lobbyController instanceof TeamLobbyController)) {
+    private boolean checkTeamLobbyController() {
+        if (lobbyController == null || !lobbyController.canHandleTeams()) {
             lobbyController = (TeamLobbyController) ResourceLoader.loadFXML(FXMLPath.TEAM_LOBBY, this);
             Platform.runLater(lobbyController::init);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -102,8 +103,10 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setWizardView(WizardsView wizardsView) {
-        checkChooseWizardController();
+        boolean show = checkChooseWizardController();
         Platform.runLater(() -> chooseWizardController.updateWizards(wizardsView));
+        if (show)
+            showWizardMenu();
     }
 
     /**
@@ -111,8 +114,7 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setTeamsView(TeamsView teamsView) {
-        boolean show = viewState == ViewState.CHOOSE_TEAM;
-        checkTeamLobbyController();
+        boolean show = viewState == ViewState.CHOOSE_TEAM && checkTeamLobbyController();
         Platform.runLater(() -> ((TeamLobbyController)lobbyController).updateTeams(teamsView));
         if (show)
             showLobbyScreen();
@@ -144,12 +146,10 @@ public class GUI extends Application implements UI {
         Platform.runLater(() -> {
             stage.getScene().getRoot().setDisable(true);
             Stage chooseGameStage = new Stage();
+            GUIController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_GAME, this);
             chooseGameStage.setTitle("Create a new game");
-            chooseGameStage.setScene(new Scene(ResourceLoader.loadFXML(FXMLPath.CHOOSE_GAME, this).getParent()));
-            chooseGameStage.setMinHeight(400.0);
-            chooseGameStage.setMinWidth(600.0);
             chooseGameStage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
-            chooseGameStage.setResizable(false);
+            controller.loadScene(chooseGameStage);
             chooseGameStage.show();
         });
     }
@@ -164,7 +164,7 @@ public class GUI extends Application implements UI {
             Platform.runLater(() -> {
                 GUIController controller = ResourceLoader.loadFXML(FXMLPath.START_SCREEN, this);
                 controller.init();
-                stage.setScene(new Scene(controller.getParent()));
+                controller.loadScene(stage);
                 if (!stage.isShowing())
                     stage.show();
             });
@@ -176,26 +176,21 @@ public class GUI extends Application implements UI {
     @Override
     public void showWizardMenu() {
         System.out.println("Showing wizard menu");
-        checkChooseWizardController();
-        setUpLobbyController();
+        checkLobbyController();
         Platform.runLater(() -> {
             stage.getScene().getRoot().setDisable(true);
             Stage chooseWizardStage = new Stage();
             chooseWizardStage.setTitle("Choose a Wizard");
-            chooseWizardStage.setScene(new Scene(chooseWizardController.getParent()));
-            chooseWizardStage.setMinHeight(150.0);
-            chooseWizardStage.setMinWidth(300.0);
             chooseWizardStage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
-            chooseWizardStage.setResizable(false);
             chooseWizardStage.onHidingProperty().set(event -> {
                 chooseWizardController = null;
                 viewState = ViewState.CHOOSE_TEAM;
                 if (lobbyController != null)
                     showLobbyScreen();
             });
+            chooseWizardController.loadScene(chooseWizardStage);
             chooseWizardStage.show();
         });
-
     }
 
     /**
@@ -203,15 +198,10 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showLobbyScreen() {
-        Platform.runLater(() -> {
-            stage.setScene(new Scene(lobbyController.getParent()));
-            stage.setMinHeight(500.0);
-            stage.setMinWidth(680.0);
-            stage.setResizable(false);
-        });
+        Platform.runLater(() -> lobbyController.loadScene(stage));
     }
 
-    private void setUpLobbyController() {
+    private void checkLobbyController() {
         if(lobbyController == null) {
             lobbyController = (NormalLobbyController) ResourceLoader.loadFXML(FXMLPath.LOBBY, this);
             Platform.runLater(lobbyController::init);
@@ -223,18 +213,7 @@ public class GUI extends Application implements UI {
     @Override
     public void hostCanStart() {
         if(lobbyController != null) {
-            Platform.runLater(() -> {
-                lobbyController.setCanStart();
-                // FIXME: ??????
-                /*
-                stage.setScene(sceneByPath.get(FXMLPath.TEAM_LOBBY));
-                stage.setResizable(false);
-                stage.setTitle("Eriantys");
-                stage.getIcons().add(imagesByPath.get(ImagePath.ICON));
-                stage.setOnHiding(event -> stop());
-                stage.show();
-                 */
-            });
+            Platform.runLater(() -> lobbyController.setCanStart());
         }
     }
 
@@ -243,18 +222,8 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void hostCantStart() {
-        if(lobbyController != null){
-            Platform.runLater(() -> {
-                lobbyController.setCantStart();
-                // FIXME: ??????
-                /*
-                stage.setScene(sceneByPath.get(FXMLPath.TEAM_LOBBY));
-                stage.setResizable(false);
-                stage.getIcons().add(imagesByPath.get(ImagePath.ICON));
-                stage.setOnHiding(event -> stop());
-                stage.show();
-                 */
-            });
+        if(lobbyController != null) {
+            Platform.runLater(() -> lobbyController.setCantStart());
         }
     }
 

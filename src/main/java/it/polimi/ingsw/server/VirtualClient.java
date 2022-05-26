@@ -80,7 +80,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     /**
      * This method stops the message exchange handler
      */
-    public synchronized void stop() {
+    public void stop() {
         communicationHandler.stop();
     }
 

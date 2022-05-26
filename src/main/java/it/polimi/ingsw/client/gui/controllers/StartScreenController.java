@@ -6,6 +6,7 @@ import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -13,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.event.ActionEvent;
+import javafx.stage.Stage;
 
 public class StartScreenController implements GUIController {
 
@@ -94,6 +96,19 @@ public class StartScreenController implements GUIController {
     @Override
     public Parent getParent() {
         return root;
+    }
+
+    /**
+     * This method is used to load the scene of the controller on the stage.
+     *
+     * @param stage the stage to load the scene on.
+     */
+    @Override
+    public void loadScene(Stage stage) {
+        stage.setScene(new Scene(getParent()));
+        stage.setMinHeight(800.0);
+        stage.setMinWidth(1200.0);
+        stage.setResizable(true);
     }
 
     private boolean checkFields() {

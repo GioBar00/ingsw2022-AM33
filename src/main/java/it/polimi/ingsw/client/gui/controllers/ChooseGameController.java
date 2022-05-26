@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
@@ -71,6 +72,19 @@ public class ChooseGameController implements GUIController {
     }
 
     /**
+     * This method is used to load the scene of the controller on the stage.
+     *
+     * @param stage the stage to load the scene on.
+     */
+    @Override
+    public void loadScene(Stage stage) {
+        stage.setScene(new Scene(getParent()));
+        stage.setMinHeight(400.0);
+        stage.setMinWidth(600.0);
+        stage.setResizable(false);
+    }
+
+    /**
      * This method is used to handle the event of clicking the button to create a new game.
      */
     @FXML
@@ -83,7 +97,6 @@ public class ChooseGameController implements GUIController {
         }
         GameMode mode = checkBoxExpert.isSelected() ? GameMode.EXPERT : GameMode.EASY;
         gui.notifyViewListener(new ChosenGame(preset, mode));
-        gui.getStage().getScene().getRoot().setDisable(false);
-        ((Stage) btnCreateGame.getScene().getWindow()).close();
+        ((Stage) root.getScene().getWindow()).close();
     }
 }

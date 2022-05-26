@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.gui.controllers;
 import it.polimi.ingsw.client.gui.GUI;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.stage.Stage;
 
 /**
  * This class is a controller of the GUI.
@@ -34,4 +35,13 @@ public interface GUIController {
      * @return the node of the controller.
      */
     Parent getParent();
+
+    /**
+     * This method is used to load the scene of the controller on the stage.
+     *
+     * @param stage the stage to load the scene on.
+     */
+    default void loadScene(Stage stage) {
+
+    }
 }
