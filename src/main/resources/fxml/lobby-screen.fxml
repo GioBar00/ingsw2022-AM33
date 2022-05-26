@@ -12,29 +12,27 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.NormalLobbyController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="680.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.NormalLobbyController">
    <children>
       <HBox layoutX="-936.0" layoutY="-94.0" prefHeight="510.0" prefWidth="2492.0">
          <children>
-            <ImageView fitHeight="511.0" fitWidth="2525.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="795.0" fitWidth="3848.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/start-screen-background.png" />
                </image>
             </ImageView>
          </children>
       </HBox>
-      <GridPane prefHeight="400.0" prefWidth="600.0">
+      <GridPane prefHeight="505.0" prefWidth="684.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="443.20001220703125" minWidth="10.0" prefWidth="431.20001220703125" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="143.0" minWidth="100.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="245.4" minHeight="10.0" prefHeight="217.6" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="194.20000305175785" minHeight="10.0" prefHeight="100.60000000000002" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="109.333349609375" minHeight="10.0" prefHeight="108.26665344238282" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="333.0666137695313" minHeight="10.0" prefHeight="287.7333465576172" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="194.20000305175785" minHeight="10.0" prefHeight="77.33338623046876" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -63,12 +61,14 @@
                   </AnchorPane>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                      <children>
-                        <Button fx:id="startBtn" onAction="#sendStart" layoutX="174.0" layoutY="27.0" mnemonicParsing="false" style="-fx-background-color: transparent;" />
-                        <ImageView  fitHeight="35.0" fitWidth="78.0" layoutX="162.0" layoutY="55.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/icons/start-highlighted.png" />
-                           </image>
-                        </ImageView>
+                        <Button fx:id="startBtn" layoutX="174.0" layoutY="27.0" mnemonicParsing="false" onAction="#sendStart" style="-fx-background-color: transparent;">
+                           <graphic>
+                              <ImageView fitHeight="35.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/icons/start-highlighted.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></Button>
                      </children>
                   </AnchorPane>
                </children>

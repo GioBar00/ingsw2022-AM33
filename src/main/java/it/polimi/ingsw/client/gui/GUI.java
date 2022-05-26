@@ -5,10 +5,7 @@ import it.polimi.ingsw.client.UI;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.enums.ViewState;
-import it.polimi.ingsw.client.gui.controllers.AssistantCardController;
-import it.polimi.ingsw.client.gui.controllers.ChooseWizardController;
-import it.polimi.ingsw.client.gui.controllers.GUIController;
-import it.polimi.ingsw.client.gui.controllers.TeamLobbyController;
+import it.polimi.ingsw.client.gui.controllers.*;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
@@ -38,7 +35,7 @@ public class GUI extends Application implements UI {
 
     private ChooseWizardController chooseWizardController;
 
-    private TeamLobbyController teamLobbyController;
+    private LobbyController lobbyController;
 
     private ViewState viewState = ViewState.SETUP;
 
@@ -93,9 +90,10 @@ public class GUI extends Application implements UI {
      * This method checks if the lobby controller is already loaded.
      */
     private void checkTeamLobbyController() {
-        if (teamLobbyController == null) {
-            teamLobbyController = (TeamLobbyController) ResourceLoader.loadFXML(FXMLPath.TEAM_LOBBY, this);
-            Platform.runLater(teamLobbyController::init);
+        //TODO i know is an instance of but i think is better than putting a flag.
+        if (!(lobbyController instanceof TeamLobbyController)) {
+            lobbyController = (TeamLobbyController) ResourceLoader.loadFXML(FXMLPath.TEAM_LOBBY, this);
+            Platform.runLater(lobbyController::init);
         }
     }
 
@@ -113,9 +111,9 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setTeamsView(TeamsView teamsView) {
-        boolean show = viewState == ViewState.CHOOSE_TEAM && teamLobbyController == null;
+        boolean show = viewState == ViewState.CHOOSE_TEAM;
         checkTeamLobbyController();
-        Platform.runLater(() -> teamLobbyController.updateTeams(teamsView));
+        Platform.runLater(() -> ((TeamLobbyController)lobbyController).updateTeams(teamsView));
         if (show)
             showLobbyScreen();
     }
@@ -179,6 +177,7 @@ public class GUI extends Application implements UI {
     public void showWizardMenu() {
         System.out.println("Showing wizard menu");
         checkChooseWizardController();
+        setUpLobbyController();
         Platform.runLater(() -> {
             stage.getScene().getRoot().setDisable(true);
             Stage chooseWizardStage = new Stage();
@@ -191,11 +190,12 @@ public class GUI extends Application implements UI {
             chooseWizardStage.onHidingProperty().set(event -> {
                 chooseWizardController = null;
                 viewState = ViewState.CHOOSE_TEAM;
-                if (teamLobbyController != null)
+                if (lobbyController != null)
                     showLobbyScreen();
             });
             chooseWizardStage.show();
         });
+
     }
 
     /**
@@ -203,23 +203,28 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showLobbyScreen() {
-        checkTeamLobbyController();
         Platform.runLater(() -> {
-            stage.setScene(new Scene(teamLobbyController.getParent()));
+            stage.setScene(new Scene(lobbyController.getParent()));
             stage.setMinHeight(500.0);
             stage.setMinWidth(680.0);
             stage.setResizable(false);
         });
     }
 
+    private void setUpLobbyController() {
+        if(lobbyController == null) {
+            lobbyController = (NormalLobbyController) ResourceLoader.loadFXML(FXMLPath.LOBBY, this);
+            Platform.runLater(lobbyController::init);
+        }
+    }
     /**
      *
      */
     @Override
     public void hostCanStart() {
-        if(teamLobbyController != null) {
+        if(lobbyController != null) {
             Platform.runLater(() -> {
-                teamLobbyController.setCanStart();
+                lobbyController.setCanStart();
                 // FIXME: ??????
                 /*
                 stage.setScene(sceneByPath.get(FXMLPath.TEAM_LOBBY));
@@ -238,9 +243,9 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void hostCantStart() {
-        if(teamLobbyController != null){
+        if(lobbyController != null){
             Platform.runLater(() -> {
-                teamLobbyController.setCantStart();
+                lobbyController.setCantStart();
                 // FIXME: ??????
                 /*
                 stage.setScene(sceneByPath.get(FXMLPath.TEAM_LOBBY));

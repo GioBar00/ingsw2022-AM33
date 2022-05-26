@@ -7,7 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 
 
-public class NormalLobbyController implements GUIController, LobbyController {
+public class NormalLobbyController implements LobbyController {
 
     private GUI gui;
 

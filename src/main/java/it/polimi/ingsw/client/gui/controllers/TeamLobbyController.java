@@ -10,7 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
-public class TeamLobbyController implements GUIController,LobbyController {
+public class TeamLobbyController implements LobbyController {
 
     private GUI gui;
 
