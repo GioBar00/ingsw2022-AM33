@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.gui.controllers;
 import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
+import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.views.CharacterCardView;
 import it.polimi.ingsw.network.messages.views.GameView;
@@ -145,20 +146,6 @@ public class GameController implements GUIController {
     }
 
     /**
-     * Adds node to anchor pane and sets the anchors.
-     *
-     * @param anchorPane to add the node to
-     * @param node       to add
-     */
-    private void addToAnchorPane(AnchorPane anchorPane, Node node) {
-        anchorPane.getChildren().add(node);
-        AnchorPane.setTopAnchor(node, 0.0);
-        AnchorPane.setBottomAnchor(node, 0.0);
-        AnchorPane.setRightAnchor(node, 0.0);
-        AnchorPane.setLeftAnchor(node, 0.0);
-    }
-
-    /**
      * This method returns the player view of the player with a given nickname.
      *
      * @param nickname of the player.
@@ -235,8 +222,8 @@ public class GameController implements GUIController {
         stage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
         controller.loadScene(stage);
         stage.setAlwaysOnTop(true);
-        stage.showAndWait();
-        gridRoot.setDisable(false);
+        stage.setOnHiding(event -> gridRoot.setDisable(false));
+        stage.show();
     }
 
     /**
@@ -249,7 +236,7 @@ public class GameController implements GUIController {
             if (characterCardControllers.size() <= i) {
                 CharacterCardController characterCardController = (CharacterCardController) ResourceLoader.loadFXML(FXMLPath.CHARACTER_CARD, gui);
                 characterCardController.init();
-                addToAnchorPane(characterCardPanes.get(i), characterCardController.getParent());
+                GUIUtils.addToAnchorPane(characterCardPanes.get(i), characterCardController.getParent());
                 characterCardControllers.add(characterCardController);
             }
             characterCardControllers.get(i).setCharacterView(characterCardViews.get(i));
@@ -257,6 +244,7 @@ public class GameController implements GUIController {
     }
 
     public void updateGameView(GameView gameView) {
-
+        this.gameView = gameView;
+        updateCharacterCardControllers(gameView.getCharacterCardView());
     }
 }
