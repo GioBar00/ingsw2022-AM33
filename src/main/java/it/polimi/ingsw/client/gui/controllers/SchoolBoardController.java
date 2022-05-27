@@ -202,7 +202,9 @@ public class SchoolBoardController implements GUIController {
             if (entrance.get(i) != null) {
                 Image studentImage = GUIUtils.getStudentImage(entrance.get(i));
                 ImageView imageView = new ImageView(studentImage);
-                entranceGrid.add(imageView, entranceMap.get(i).getRow(), entranceMap.get(i).getColumn());
+                imageView.setFitWidth(57);
+                imageView.setFitHeight(57);
+                entranceGrid.add(imageView, entranceMap.get(i).getColumn(), entranceMap.get(i).getRow());
                 GridPane.setHalignment(imageView, HPos.CENTER);
                 GridPane.setValignment(imageView, VPos.CENTER);
             } else
@@ -216,7 +218,7 @@ public class SchoolBoardController implements GUIController {
                 if (i < hall.get(sc)) {
                     Image studentImage = GUIUtils.getStudentImage(sc);
                     ImageView imageView = new ImageView(studentImage);
-                    hallGrid.add(imageView, hallMap.get(sc).get(i).getRow(), hallMap.get(sc).get(i).getColumn());
+                    hallGrid.add(imageView, hallMap.get(sc).get(i).getColumn(), hallMap.get(sc).get(i).getRow());
                     GridPane.setHalignment(imageView, HPos.CENTER);
                     GridPane.setValignment(imageView, VPos.CENTER);
                 } else
@@ -230,7 +232,7 @@ public class SchoolBoardController implements GUIController {
             if (professors.contains(sc)) {
                 Image profImage = GUIUtils.getProfImage(sc);
                 ImageView imageView = new ImageView(profImage);
-                profsGrid.add(imageView, profsMap.get(sc).getRow(), profsMap.get(sc).getColumn());
+                profsGrid.add(imageView, profsMap.get(sc).getColumn(), profsMap.get(sc).getRow());
                 GridPane.setHalignment(imageView, HPos.CENTER);
                 GridPane.setValignment(imageView, VPos.CENTER);
             } else
@@ -243,7 +245,7 @@ public class SchoolBoardController implements GUIController {
             if (i < numTowers) {
                 Image towerImage = GUIUtils.getTowerImage(tower);
                 ImageView imageView = new ImageView(towerImage);
-                towersGrid.add(imageView, towersMap.get(i).getRow(), towersMap.get(i).getColumn());
+                towersGrid.add(imageView, towersMap.get(i).getColumn(), towersMap.get(i).getRow());
                 GridPane.setHalignment(imageView, HPos.CENTER);
                 GridPane.setValignment(imageView, VPos.CENTER);
             } else

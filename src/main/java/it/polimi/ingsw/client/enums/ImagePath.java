@@ -60,7 +60,10 @@ public enum ImagePath {
 
     THIEF("/images/cards/character/thief.jpg"),
 
-    CLOUD("/images/cloud.png");
+    CLOUD("/images/cloud.png"),
+    ISLAND1("/images/island1.png"),
+    ISLAND2("/images/island2.png"),
+    ISLAND3("/images/island3.png");
 
 
     private final String path;
