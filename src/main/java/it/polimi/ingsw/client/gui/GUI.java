@@ -269,7 +269,7 @@ public class GUI extends Application implements UI {
      * @param message
      */
     @Override
-    public void setPossibleMoves(Message message) {
+    public void setPossibleActions(Message message) {
         lastRequest = message;
         processLastRequest(lastRequest);
     }
