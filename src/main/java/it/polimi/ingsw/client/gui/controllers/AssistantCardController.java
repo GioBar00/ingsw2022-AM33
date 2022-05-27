@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
+import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.actions.PlayedAssistantCard;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
@@ -178,7 +179,7 @@ public class AssistantCardController implements GUIController {
             btn.setDisable(true);
             ImageView imageView = assistantViews.get(assistantCard).imageView();
             imageView.setVisible(false);
-            imageView.setImage(getImage(assistantCard));
+            imageView.setImage(GUIUtils.getAssistantCard(assistantCard));
         }
 
     }
@@ -203,24 +204,4 @@ public class AssistantCardController implements GUIController {
         return root;
     }
 
-    /**
-     * This method returns the path of the image related to a specified Assistant CArd
-     *
-     * @param card the card
-     * @return the ImagePath of the card
-     */
-    private Image getImage(AssistantCard card) {
-        return switch (card) {
-            case CAT -> ResourceLoader.loadImage(ImagePath.CAT);
-            case CHEETAH -> ResourceLoader.loadImage(ImagePath.CHEETAH);
-            case DOG -> ResourceLoader.loadImage(ImagePath.DOG);
-            case ELEPHANT -> ResourceLoader.loadImage(ImagePath.ELEPHANT);
-            case FOX -> ResourceLoader.loadImage(ImagePath.FOX);
-            case OCTOPUS -> ResourceLoader.loadImage(ImagePath.OCTOPUS);
-            case SNAKE -> ResourceLoader.loadImage(ImagePath.SNAKE);
-            case TURTLE -> ResourceLoader.loadImage(ImagePath.TURTLE);
-            case EAGLE -> ResourceLoader.loadImage(ImagePath.EAGLE);
-            case OSTRICH -> ResourceLoader.loadImage(ImagePath.OSTRICH);
-        };
-    }
 }

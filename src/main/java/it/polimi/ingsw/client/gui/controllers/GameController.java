@@ -243,8 +243,18 @@ public class GameController implements GUIController {
         }
     }
 
+    private void updatePlayerControllers() {
+        for(PlayerView p : gameView.getPlayersView()) {
+            if(p.getNickname().equals(gui.getNickname())){
+                PlayerController playerController = (PlayerController) ResourceLoader.loadFXML(FXMLPath.PLAYER_VIEW, gui);
+                playerController.init();
+                GUIUtils.addToAnchorPane(anchorPaneBoard0, playerController.getParent());
+            }
+        }
+    }
     public void updateGameView(GameView gameView) {
         this.gameView = gameView;
         updateCharacterCardControllers(gameView.getCharacterCardView());
+
     }
 }

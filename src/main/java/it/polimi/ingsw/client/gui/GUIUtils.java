@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.enums.ImagePath;
+import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.CharacterType;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
@@ -102,5 +103,26 @@ public abstract class GUIUtils {
         AnchorPane.setBottomAnchor(node, 0.0);
         AnchorPane.setRightAnchor(node, 0.0);
         AnchorPane.setLeftAnchor(node, 0.0);
+    }
+
+    /**
+     * This method returns the path of the image related to a specified Assistant CArd
+     *
+     * @param card the card
+     * @return the ImagePath of the card
+     */
+    public static Image getAssistantCard(AssistantCard card) {
+        return switch (card) {
+            case CAT -> ResourceLoader.loadImage(ImagePath.CAT);
+            case CHEETAH -> ResourceLoader.loadImage(ImagePath.CHEETAH);
+            case DOG -> ResourceLoader.loadImage(ImagePath.DOG);
+            case ELEPHANT -> ResourceLoader.loadImage(ImagePath.ELEPHANT);
+            case FOX -> ResourceLoader.loadImage(ImagePath.FOX);
+            case OCTOPUS -> ResourceLoader.loadImage(ImagePath.OCTOPUS);
+            case SNAKE -> ResourceLoader.loadImage(ImagePath.SNAKE);
+            case TURTLE -> ResourceLoader.loadImage(ImagePath.TURTLE);
+            case EAGLE -> ResourceLoader.loadImage(ImagePath.EAGLE);
+            case OSTRICH -> ResourceLoader.loadImage(ImagePath.OSTRICH);
+        };
     }
 }
