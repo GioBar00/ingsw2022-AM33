@@ -11,6 +11,7 @@ import it.polimi.ingsw.server.model.enums.AssistantCard;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -112,6 +113,21 @@ public class GameController implements GUIController {
     @Override
     public Parent getParent() {
         return root;
+    }
+
+    /**
+     * This method is used to load the scene of the controller on the stage.
+     *
+     * @param stage the stage to load the scene on.
+     */
+    @Override
+    public void loadScene(Stage stage) {
+        stage.setScene(new Scene(getParent()));
+        stage.setResizable(true);
+        stage.setMinHeight(0.0);
+        stage.setMinWidth(0.0);
+        stage.setMaximized(true);
+        stage.setResizable(false);
     }
 
     /**
@@ -238,5 +254,9 @@ public class GameController implements GUIController {
             }
             characterCardControllers.get(i).setCharacterView(characterCardViews.get(i));
         }
+    }
+
+    public void updateGameView(GameView gameView) {
+
     }
 }
