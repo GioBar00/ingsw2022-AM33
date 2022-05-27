@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
+import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.views.IslandGroupView;
 import it.polimi.ingsw.network.messages.views.IslandView;
@@ -157,12 +158,7 @@ public class IslandController implements GUIController{
     }
 
     public void setTowerImage(Tower tower){
-        Image t = null;
-        switch (tower) {
-            case WHITE -> t = ResourceLoader.loadImage(ImagePath.WHITE_TOWER);
-            case GREY -> t = ResourceLoader.loadImage(ImagePath.GRAY_TOWER);
-            case BLACK -> t = ResourceLoader.loadImage(ImagePath.BLACK_TOWER);
-        }
+        Image t = GUIUtils.getTowerImage(tower);
         if (t!=null)
             towerImage.setImage(t);
         else
