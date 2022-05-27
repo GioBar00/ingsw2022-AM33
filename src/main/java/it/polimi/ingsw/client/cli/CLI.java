@@ -81,7 +81,7 @@ public class CLI implements UI {
     }
 
     @Override
-    synchronized public void setPossibleMoves(Message message) {
+    synchronized public void setPossibleActions(Message message) {
         lastRequest = message;
         inputParser.setLastRequest(message);
         showPossibleMoves();

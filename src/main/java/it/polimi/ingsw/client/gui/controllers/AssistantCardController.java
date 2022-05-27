@@ -2,13 +2,17 @@ package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
+import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.actions.PlayedAssistantCard;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import java.util.*;
 
@@ -16,8 +20,19 @@ import java.util.*;
  * The controller related to choose-assistant view
  */
 public class AssistantCardController implements GUIController {
+
+    /**
+     * Private record that contains the button and imageView related to an Assistant card
+     */
+    private record AssistantView(Button button, ImageView imageView) {
+    }
+
+    @FXML
+    public Text lblTitle;
+
     private GUI gui;
     private Parent root;
+    private boolean choseAnAssistant = false;
 
     @FXML
     public Button cheetahBtn;
@@ -63,15 +78,6 @@ public class AssistantCardController implements GUIController {
 
     private EnumMap<AssistantCard, AssistantView> assistantViews;
 
-    private final List<AssistantCard> played;
-
-    /**
-     * The constructor
-     */
-    public AssistantCardController() {
-        played = new ArrayList<>();
-    }
-
     /**
      * This method is used to set the GUI of the controller.
      *
@@ -83,73 +89,58 @@ public class AssistantCardController implements GUIController {
     }
 
     /**
+     * This method is used to load the scene of the controller on the stage.
+     *
+     * @param stage the stage to load the scene on.
+     */
+    @Override
+    public void loadScene(Stage stage) {
+        stage.setScene(new Scene(getParent()));
+        stage.setMinHeight(540.0);
+        stage.setMinWidth(870.0);
+        stage.setResizable(false);
+    }
+
+    /**
+     * @return if the player has chosen an assistant
+     */
+    public boolean hasChosenAnAssistant() {
+        return choseAnAssistant;
+    }
+
+    /**
      * This methods set the values in the assistant card view
      *
      * @param playableAssistantCards an EnumSet of playable card
      */
     public void setPlayable(EnumSet<AssistantCard> playableAssistantCards) {
-
-        ArrayList<AssistantCard> notPlayable = new ArrayList<>(Arrays.asList(AssistantCard.values()));
-
-        for (AssistantCard assistantCard : playableAssistantCards) {
-            notPlayable.remove(assistantCard);
-            enableCard(assistantCard);
+        lblTitle.setText("Choose an assistant card");
+        for (AssistantCard card : playableAssistantCards) {
+            assistantViews.get(card).button().setVisible(true);
+            assistantViews.get(card).button().setDisable(false);
+            showAssistantCard(card);
         }
-        for (AssistantCard assistantCard : played) {
-            notPlayable.remove(assistantCard);
-            playedCard(assistantCard);
+    }
+
+    /**
+     * This method shows the image of the cards
+     *
+     * @param assistantCards the cards to show
+     */
+    public void showAssistantCards(EnumSet<AssistantCard> assistantCards) {
+        lblTitle.setText("Your assistant cards");
+        for (AssistantCard card : assistantCards) {
+            showAssistantCard(card);
         }
-
-        for (AssistantCard assistantCard : notPlayable) {
-            deactivateCard(assistantCard);
-            deactivateCard(assistantCard);
-        }
-
     }
 
     /**
-     * Adds the last played card into the played cards
+     * This method shows the image of the card
      *
-     * @param assistantCard the last played card
+     * @param card the card to show
      */
-    public void setPlayedCard(AssistantCard assistantCard) {
-        if (played.contains(assistantCard))
-            return;
-        played.add(assistantCard);
-    }
-
-    /**
-     * This method gives to the user the possibility of play a specified card.
-     *
-     * @param assistantCard the card the player could play.
-     */
-    private void enableCard(AssistantCard assistantCard) {
-        assistantViews.get(assistantCard).assistantImage.setImage(new Image(getImagePath(assistantCard).getPath()));
-        assistantViews.get(assistantCard).assistantButton.setDisable(false);
-        assistantViews.get(assistantCard).assistantButton.setVisible(true);
-    }
-
-    /**
-     * This method disables a card in the GUI showing that was already played.
-     *
-     * @param assistantCard the card that was already played.
-     */
-    private void playedCard(AssistantCard assistantCard) {
-        assistantViews.get(assistantCard).assistantImage.setImage(new Image(ImagePath.BACK_CARD.getPath()));
-        assistantViews.get(assistantCard).assistantButton.setDisable(true);
-        assistantViews.get(assistantCard).assistantButton.setVisible(false);
-
-    }
-
-    /**
-     * This methods disables a button related to a card cause is not playable in the current turn.
-     *
-     * @param assistantCard the card that can't be played now.
-     */
-    private void deactivateCard(AssistantCard assistantCard) {
-        assistantViews.get(assistantCard).assistantImage.setImage(new Image(getImagePath(assistantCard).getPath()));
-        assistantViews.get(assistantCard).assistantButton.setDisable(true);
-        assistantViews.get(assistantCard).assistantButton.setVisible(false);
+    private void showAssistantCard(AssistantCard card) {
+        assistantViews.get(card).imageView.setVisible(true);
     }
 
     /**
@@ -159,6 +150,7 @@ public class AssistantCardController implements GUIController {
      */
     @FXML
     public void playAssistantCard(AssistantCard card) {
+        choseAnAssistant = true;
         gui.notifyViewListener(new PlayedAssistantCard(card));
     }
 
@@ -167,17 +159,6 @@ public class AssistantCardController implements GUIController {
      */
     @Override
     public void init() {
-        cheetahBtn.setOnAction(e -> playAssistantCard(AssistantCard.CHEETAH));
-        ostrichBtn.setOnAction(e -> playAssistantCard(AssistantCard.OSTRICH));
-        catBtn.setOnAction(e -> playAssistantCard(AssistantCard.CAT));
-        eagleBtn.setOnAction(e -> playAssistantCard(AssistantCard.EAGLE));
-        foxBtn.setOnAction(e -> playAssistantCard(AssistantCard.FOX));
-        snakeBtn.setOnAction(e -> playAssistantCard(AssistantCard.SNAKE));
-        octopusBtn.setOnAction(e -> playAssistantCard(AssistantCard.OCTOPUS));
-        dogBtn.setOnAction(e -> playAssistantCard(AssistantCard.DOG));
-        elephantBtn.setOnAction(e -> playAssistantCard(AssistantCard.ELEPHANT));
-        turtleBtn.setOnAction(e -> playAssistantCard(AssistantCard.TURTLE));
-
         assistantViews = new EnumMap<>(AssistantCard.class);
         assistantViews.put(AssistantCard.CHEETAH, new AssistantView(cheetahBtn, cheetahImg));
         assistantViews.put(AssistantCard.OSTRICH, new AssistantView(ostrichBtn, ostrichImg));
@@ -189,6 +170,16 @@ public class AssistantCardController implements GUIController {
         assistantViews.put(AssistantCard.DOG, new AssistantView(dogBtn, dogImg));
         assistantViews.put(AssistantCard.ELEPHANT, new AssistantView(elephantBtn, elephantImg));
         assistantViews.put(AssistantCard.TURTLE, new AssistantView(turtleBtn, turtleImg));
+
+        for (AssistantCard assistantCard : AssistantCard.values()) {
+            Button btn = assistantViews.get(assistantCard).button();
+            btn.setOnAction(e -> playAssistantCard(assistantCard));
+            btn.setVisible(false);
+            btn.setDisable(true);
+            ImageView imageView = assistantViews.get(assistantCard).imageView();
+            imageView.setVisible(false);
+            imageView.setImage(getImage(assistantCard));
+        }
 
     }
 
@@ -218,53 +209,18 @@ public class AssistantCardController implements GUIController {
      * @param card the card
      * @return the ImagePath of the card
      */
-    private ImagePath getImagePath(AssistantCard card) {
-        switch (card) {
-            case CHEETAH -> {
-                return ImagePath.CHEETAH;
-            }
-            case OSTRICH -> {
-                return ImagePath.OSTRICH;
-            }
-            case CAT -> {
-                return ImagePath.CAT;
-            }
-            case EAGLE -> {
-                return ImagePath.EAGLE;
-            }
-            case FOX -> {
-                return ImagePath.FOX;
-            }
-            case SNAKE -> {
-                return ImagePath.SNAKE;
-            }
-            case OCTOPUS -> {
-                return ImagePath.OCTOPUS;
-            }
-            case DOG -> {
-                return ImagePath.DOG;
-            }
-            case ELEPHANT -> {
-                return ImagePath.ELEPHANT;
-            }
-            case TURTLE -> {
-                return ImagePath.TURTLE;
-            }
-
-        }
-        return null;
-    }
-
-    /**
-     * Private class that contains the button and imageView related to an Assistant card
-     */
-    private static class AssistantView {
-        Button assistantButton;
-        ImageView assistantImage;
-
-        AssistantView(Button button, ImageView imageView) {
-            assistantButton = button;
-            assistantImage = imageView;
-        }
+    private Image getImage(AssistantCard card) {
+        return switch (card) {
+            case CAT -> ResourceLoader.loadImage(ImagePath.CAT);
+            case CHEETAH -> ResourceLoader.loadImage(ImagePath.CHEETAH);
+            case DOG -> ResourceLoader.loadImage(ImagePath.DOG);
+            case ELEPHANT -> ResourceLoader.loadImage(ImagePath.ELEPHANT);
+            case FOX -> ResourceLoader.loadImage(ImagePath.FOX);
+            case OCTOPUS -> ResourceLoader.loadImage(ImagePath.OCTOPUS);
+            case SNAKE -> ResourceLoader.loadImage(ImagePath.SNAKE);
+            case TURTLE -> ResourceLoader.loadImage(ImagePath.TURTLE);
+            case EAGLE -> ResourceLoader.loadImage(ImagePath.EAGLE);
+            case OSTRICH -> ResourceLoader.loadImage(ImagePath.OSTRICH);
+        };
     }
 }

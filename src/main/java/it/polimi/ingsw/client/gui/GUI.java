@@ -37,6 +37,8 @@ public class GUI extends Application implements UI {
 
     private StartScreenController startScreenController;
 
+    private GameController gameController;
+
     private ViewState viewState = ViewState.SETUP;
 
     @Override
@@ -89,7 +91,7 @@ public class GUI extends Application implements UI {
     }
 
     /**
-     * This method checks if the lobby controller is already loaded.
+     * This method checks if the team lobby controller is already loaded.
      *
      * @return true if the controller was loaded, false otherwise.
      */
@@ -102,11 +104,28 @@ public class GUI extends Application implements UI {
         return false;
     }
 
+    /**
+     * This method checks if the lobby controller is already loaded.
+     */
     private void checkLobbyController() {
         if(lobbyController == null) {
             lobbyController = (NormalLobbyController) ResourceLoader.loadFXML(FXMLPath.LOBBY, this);
             Platform.runLater(lobbyController::init);
         }
+    }
+
+    /**
+     * This method checks if the game controller is already loaded.
+     *
+     * @return true if the controller was loaded, false otherwise.
+     */
+    private boolean checkGameController() {
+        if (gameController == null) {
+            gameController = (GameController) ResourceLoader.loadFXML(FXMLPath.GAME_SCREEN, this);
+            Platform.runLater(gameController::init);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -150,17 +169,12 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setGameView(GameView gameView) {
-        /*
-        for (PlayerView pv : gameView.getPlayersView()) {
-            if (pv.getNickname().equals(nickname)){
-                if(pv.getPlayedCard() != null){
-                    ((AssistantCardController)sceneByPath.get(FXMLPath.CHOOSE_ASSISTANT).getUserData()).setPlayedCard(pv.getPlayedCard());
-                    break;
-                }
-            }
+        boolean show = checkGameController();
+        Platform.runLater(() -> gameController.updateGameView(gameView));
+        if (show) {
+            viewState = ViewState.PLAYING;
+            showGameScreen();
         }
-
-         */
     }
 
     /**
@@ -261,14 +275,15 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showGameScreen() {
-        System.out.println("Showing game screen");
+        Platform.runLater(() -> gameController.loadScene(stage));
+        lobbyController = null;
     }
 
     /**
      * @param message
      */
     @Override
-    public void setPossibleMoves(Message message) {
+    public void setPossibleActions(Message message) {
         lastRequest = message;
         processLastRequest(lastRequest);
     }

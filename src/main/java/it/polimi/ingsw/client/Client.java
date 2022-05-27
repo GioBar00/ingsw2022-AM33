@@ -166,7 +166,7 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
             case AVAILABLE_WIZARDS -> userInterface.setWizardView(((AvailableWizards) message).getWizardsView());
             case CURRENT_TEAMS -> userInterface.setTeamsView(((CurrentTeams) message).getTeamsView());
             case PLAY_ASSISTANT_CARD, MULTIPLE_POSSIBLE_MOVES, CHOOSE_CLOUD, CHOOSE_ISLAND, CHOOSE_STUDENT_COLOR, MOVE_MOTHER_NATURE, MOVE_STUDENT, SWAP_STUDENTS ->
-                    userInterface.setPossibleMoves(message);
+                    userInterface.setPossibleActions(message);
 
             case CURRENT_GAME_STATE -> userInterface.setGameView(((CurrentGameState) message).getGameView());
         }

@@ -32,7 +32,7 @@ public interface UI extends ViewListenerSubscriber {
 
     void showGameScreen();
 
-    void setPossibleMoves(Message message);
+    void setPossibleActions(Message message);
 
     void serverUnavailable();
 
