@@ -93,6 +93,7 @@ public class CLI implements UI {
             System.out.println("We are sorry, the server is unavailable");
             System.out.println("Type a character if you want to close the application");
             String in = input.nextLine();
+            System.exit(0);
         } else {
             System.out.println("We are sorry, the server is unavailable");
             System.out.println("Press C for close the game or R for reconnect");
@@ -110,7 +111,7 @@ public class CLI implements UI {
     @Override
     public void close() {
         inputParser.cantWrite();
-        executorService.shutdownNow();
+        System.exit(0);
     }
 
     @Override

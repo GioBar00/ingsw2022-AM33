@@ -2,23 +2,21 @@ package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.UI;
-import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.enums.FXMLPath;
+import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.enums.ViewState;
 import it.polimi.ingsw.client.gui.controllers.*;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
-import it.polimi.ingsw.network.messages.actions.requests.PlayAssistantCard;
-import it.polimi.ingsw.network.messages.enums.MessageType;
+import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.views.GameView;
-import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.util.MissingResourceException;
@@ -195,6 +193,7 @@ public class GUI extends Application implements UI {
             if (!stage.isShowing())
                 stage.show();
         });
+
     }
 
     /**
@@ -311,6 +310,15 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showCommMessage(CommMessage message) {
+        if(message.getType().equals(CommMsgType.OK))
+            return;
+
+        Platform.runLater(() -> {
+            Alert messageAlert = new Alert(Alert.AlertType.ERROR);
+            messageAlert.setContentText(message.getType().getMessage());
+            messageAlert.show();
+        });
+
         System.out.println("Showing comm message");
         System.out.println(MessageBuilder.toJson(message));
     }

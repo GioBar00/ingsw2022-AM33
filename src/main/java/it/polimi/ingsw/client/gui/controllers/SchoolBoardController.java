@@ -1,9 +1,8 @@
 package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.Coordinates;
-import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
-import it.polimi.ingsw.client.gui.ResourceLoader;
+import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.network.messages.views.SchoolBoardView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
@@ -189,39 +188,7 @@ public class SchoolBoardController implements GUIController {
         return root;
     }
 
-    public Image getStudentImage(StudentColor sc) {
-        Image student = null;
-        switch (sc) {
-            case GREEN -> student = ResourceLoader.loadImage(ImagePath.GREEN_STUDENT);
-            case RED -> student = ResourceLoader.loadImage(ImagePath.RED_STUDENT);
-            case YELLOW -> student = ResourceLoader.loadImage(ImagePath.YELLOW_STUDENT);
-            case MAGENTA -> student = ResourceLoader.loadImage(ImagePath.MAGENTA_STUDENT);
-            case BLUE -> student = ResourceLoader.loadImage(ImagePath.BLUE_STUDENTS);
-        }
-        return student;
-    }
 
-    public Image getProfImage(StudentColor sc) {
-        Image prof = null;
-        switch (sc) {
-            case GREEN -> prof = ResourceLoader.loadImage(ImagePath.GREEN_PROF);
-            case RED -> prof = ResourceLoader.loadImage(ImagePath.RED_PROF);
-            case YELLOW -> prof = ResourceLoader.loadImage(ImagePath.YELLOW_PROF);
-            case MAGENTA -> prof = ResourceLoader.loadImage(ImagePath.MAGENTA_PROF);
-            case BLUE -> prof = ResourceLoader.loadImage(ImagePath.BLUE_PROF);
-        }
-        return prof;
-    }
-
-    public Image getTowerImage(Tower t) {
-        Image tower = null;
-        switch (t) {
-            case WHITE -> tower = ResourceLoader.loadImage(ImagePath.WHITE_TOWER);
-            case GREY -> tower = ResourceLoader.loadImage(ImagePath.GRAY_TOWER);
-            case BLACK -> tower = ResourceLoader.loadImage(ImagePath.BLACK_TOWER);
-        }
-        return tower;
-    }
 
     public void setSchoolBoardView(SchoolBoardView schoolBoardView) {
         setEntrance(schoolBoardView.getEntrance());
@@ -233,7 +200,7 @@ public class SchoolBoardController implements GUIController {
     public void setEntrance(ArrayList<StudentColor> entrance) {
         for (int i = 0; i < 9; i++) {
             if (entrance.get(i) != null) {
-                Image studentImage = getStudentImage(entrance.get(i));
+                Image studentImage = GUIUtils.getStudentImage(entrance.get(i));
                 ImageView imageView = new ImageView(studentImage);
                 entranceGrid.add(imageView, entranceMap.get(i).getRow(), entranceMap.get(i).getColumn());
                 GridPane.setHalignment(imageView, HPos.CENTER);
@@ -247,7 +214,7 @@ public class SchoolBoardController implements GUIController {
         for (StudentColor sc : StudentColor.values()) {
             for (int i = 0; i < 10; i++) {
                 if (i < hall.get(sc)) {
-                    Image studentImage = getStudentImage(sc);
+                    Image studentImage = GUIUtils.getStudentImage(sc);
                     ImageView imageView = new ImageView(studentImage);
                     hallGrid.add(imageView, hallMap.get(sc).get(i).getRow(), hallMap.get(sc).get(i).getColumn());
                     GridPane.setHalignment(imageView, HPos.CENTER);
@@ -261,7 +228,7 @@ public class SchoolBoardController implements GUIController {
     public void setProfs(EnumSet<StudentColor> professors) {
         for (StudentColor sc : StudentColor.values()) {
             if (professors.contains(sc)) {
-                Image profImage = getProfImage(sc);
+                Image profImage = GUIUtils.getProfImage(sc);
                 ImageView imageView = new ImageView(profImage);
                 profsGrid.add(imageView, profsMap.get(sc).getRow(), profsMap.get(sc).getColumn());
                 GridPane.setHalignment(imageView, HPos.CENTER);
@@ -274,7 +241,7 @@ public class SchoolBoardController implements GUIController {
     public void setTowers(int numTowers, Tower tower) {
         for (int i = 0; i < 8; i++) {
             if (i < numTowers) {
-                Image towerImage = getTowerImage(tower);
+                Image towerImage = GUIUtils.getTowerImage(tower);
                 ImageView imageView = new ImageView(towerImage);
                 towersGrid.add(imageView, towersMap.get(i).getRow(), towersMap.get(i).getColumn());
                 GridPane.setHalignment(imageView, HPos.CENTER);
