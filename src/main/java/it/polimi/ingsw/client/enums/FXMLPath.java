@@ -11,8 +11,10 @@ public enum FXMLPath {
     GAME_SCREEN("/fxml/game-screen.fxml"),
     SCHOOL_BOARD("/fxml/school-board.fxml"),
     ISLAND("/fxml/island.fxml"),
+    ISLANDS("/fxml/islands.fxml"),
+    CLOUD("/fxml/cloud.fxml"),
+    PLAYER("/fxml/player.fxml");
 
-    PLAYER_VIEW("/fxml/player.fxml");
     private final String path;
 
     FXMLPath(String path) {

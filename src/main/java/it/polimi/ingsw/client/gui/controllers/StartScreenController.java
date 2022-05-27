@@ -5,7 +5,6 @@ import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -13,7 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.event.ActionEvent;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class StartScreenController implements GUIController {
@@ -81,10 +80,10 @@ public class StartScreenController implements GUIController {
     /**
      * This method is used to set the parent of the controller.
      *
-     * @param parent the parent of the controller.
+     * @param root the parent of the controller.
      */
     @Override
-    public void setParent(Parent parent) {
+    public void setRootPane(Pane root) {
         // root already set
     }
 
@@ -94,7 +93,7 @@ public class StartScreenController implements GUIController {
      * @return the node of the controller.
      */
     @Override
-    public Parent getParent() {
+    public Pane getRootPane() {
         return root;
     }
 
@@ -105,7 +104,7 @@ public class StartScreenController implements GUIController {
      */
     @Override
     public void loadScene(Stage stage) {
-        stage.setScene(new Scene(getParent()));
+        stage.setScene(new Scene(getRootPane()));
         stage.setMinHeight(800.0);
         stage.setMinWidth(1200.0);
         stage.setResizable(true);

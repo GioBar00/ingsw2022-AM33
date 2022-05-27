@@ -18,15 +18,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class GameStateAndTeamsTests {
     GameModelExpert gm = new GameModelExpert(new GameModel(GamePreset.FOUR));
 
-    PlayerConvertor pC =new PlayerConvertor();
+    PlayerConvertor pC = new PlayerConvertor();
+
     /**
      * initialized the gameModel before each test
      */
     @BeforeEach
-    void startGame(){
-        for(int i = 0; i < GamePreset.FOUR.getPlayersNumber(); i++){
+    void startGame() {
+        for (int i = 0; i < GamePreset.FOUR.getPlayersNumber(); i++) {
             Tower t;
-            if (i%2 == 0)
+            if (i % 2 == 0)
                 t = Tower.WHITE;
             else
                 t = Tower.BLACK;
@@ -39,7 +40,7 @@ class GameStateAndTeamsTests {
      * test for the message CurrentGameState
      */
     @Test
-    void CurrentGameStateTest(){
+    void CurrentGameStateTest() {
         CurrentGameState original = gm.getCurrentGameState(gm.getModel().getPlayersManager().getCurrentPlayer());
         Message m = toAndFromJson(original);
         assertTrue(m.isValid());
@@ -79,7 +80,7 @@ class GameStateAndTeamsTests {
             }
         }
         assertEquals(original.getGameView().getMotherNatureIndex(), ((CurrentGameState) m).getGameView().getMotherNatureIndex());
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             CharacterCardView ogccv = original.getGameView().getCharacterCardView().get(i);
             CharacterCardView mccv = ((CurrentGameState) m).getGameView().getCharacterCardView().get(i);
             assertEquals(ogccv.getType(), mccv.getType());
@@ -90,7 +91,7 @@ class GameStateAndTeamsTests {
         }
         assertEquals(original.getGameView().getReserve(), ((CurrentGameState) m).getGameView().getReserve());
         assertEquals(original.getGameView().getPlayerCoins(), ((CurrentGameState) m).getGameView().getPlayerCoins());
-        for (int i = 0; i < 4; i++){
+        for (int i = 0; i < 4; i++) {
             CloudView ogcloudsv = original.getGameView().getCloudViews().get(i);
             CloudView mcloudsv = ((CurrentGameState) m).getGameView().getCloudViews().get(i);
             assertEquals(ogcloudsv.getStudents(), mcloudsv.getStudents());
@@ -107,7 +108,7 @@ class GameStateAndTeamsTests {
         m = toAndFromJson(original);
         assertFalse(m.isValid());
         // test second if fo isValid()
-        original = new CurrentGameState(new GameView(gm.getGameMode(), gm.getModel().getPlayersManager().getPreset(), gm.getGameState(), gm.getPhase(),gm.getCurrentPlayer(), gm.getModel().getIslandsManager().getIslandsView(), null, gm.getModel().getMotherNatureIndex(), gm.getReserve(), gm.getCharacterCardsView(dest.getNickname()), gm.getPlayerCoins(), gm.getModel().getCloudsView(),null));
+        original = new CurrentGameState(new GameView(gm.getGameMode(), gm.getModel().getPlayersManager().getPreset(), gm.getGameState(), gm.getPhase(), gm.getCurrentPlayer(), gm.getModel().getIslandsManager().getIslandsView(), null, gm.getModel().getMotherNatureIndex(), gm.getReserve(), gm.getCharacterCardsView(dest.getNickname()), gm.getPlayerCoins(), gm.getModel().getCloudsView(), null));
         m = toAndFromJson(original);
         assertFalse(m.isValid());
     }

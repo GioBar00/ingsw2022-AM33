@@ -32,7 +32,7 @@ public interface LobbyController extends GUIController {
      */
     @Override
     default void loadScene(Stage stage) {
-        stage.setScene(new Scene(getParent()));
+        stage.setScene(new Scene(getRootPane()));
         stage.setResizable(true);
         stage.setMinHeight(500.0);
         stage.setMinWidth(680.0);

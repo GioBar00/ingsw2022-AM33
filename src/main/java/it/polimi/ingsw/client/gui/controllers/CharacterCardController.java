@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 
 import java.util.EnumMap;
 
@@ -18,7 +19,7 @@ import java.util.EnumMap;
 public class CharacterCardController implements GUIController {
 
     private GUI gui;
-    private Parent root;
+    private Pane root;
     private EnumMap<StudentColor, LabelButton> buttons;
 
     @FXML
@@ -134,16 +135,19 @@ public class CharacterCardController implements GUIController {
         buttons.put(StudentColor.BLUE, new LabelButton(blueLbl, blueBtn));
         buttons.put(StudentColor.MAGENTA, new LabelButton(pinkLbl, pinkBtn));
         buttons.put(StudentColor.YELLOW, new LabelButton(yellowLbl, yellowBtn));
+
+        GUIUtils.bindSize(root, characterImg);
+        GUIUtils.bindSize(root, characterBtn);
     }
 
     /**
      * This method is used to set the parent of the controller.
      *
-     * @param parent the parent of the controller.
+     * @param root the parent of the controller.
      */
     @Override
-    public void setParent(Parent parent) {
-        root = parent;
+    public void setRootPane(Pane root) {
+        this.root = root;
     }
 
     /**
@@ -152,7 +156,7 @@ public class CharacterCardController implements GUIController {
      * @return the node of the controller.
      */
     @Override
-    public Parent getParent() {
+    public Pane getRootPane() {
         return root;
     }
 

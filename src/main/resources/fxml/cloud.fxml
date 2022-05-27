@@ -8,14 +8,11 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="512.0" prefWidth="512.0"
-            xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="it.polimi.ingsw.client.gui.controllers.CloudController">
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="512.0" prefWidth="512.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.CloudController">
    <children>
-      <Button fx:id="cloudBtn" onAction="#sendChosenCloud" layoutX="14.0" layoutY="6.0" mnemonicParsing="false" prefHeight="375.0" prefWidth="434.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="6.0">
+      <Button fx:id="cloudBtn" layoutX="14.0" layoutY="6.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#sendChosenCloud" prefHeight="375.0" prefWidth="434.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <graphic>
-            <ImageView fitHeight="500.0" fitWidth="520.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="imgViewCloud" fitHeight="500.0" fitWidth="520.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@/images/cloud.png" />
                </image>
@@ -50,22 +47,22 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <AnchorPane prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <AnchorPane fx:id="anchorPanePawn" minHeight="0.0" minWidth="0.0" prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
                         <ImageView fx:id="pawn0Img" fitHeight="101.0" fitWidth="105.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>
                   </AnchorPane>
-                  <AnchorPane prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                      <children>
                         <ImageView fx:id="pawn1Img" fitHeight="101.0" fitWidth="105.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>
                   </AnchorPane>
-                  <AnchorPane prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <children>
                         <ImageView fx:id="pawn2Img" fitHeight="101.0" fitWidth="105.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>
                   </AnchorPane>
-                  <AnchorPane prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
                      <children>
                         <ImageView fx:id="pawn3Img" fitHeight="101.0" fitWidth="105.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>

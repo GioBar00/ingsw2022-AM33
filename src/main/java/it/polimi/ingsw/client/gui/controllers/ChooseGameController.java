@@ -4,7 +4,6 @@ import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.network.messages.client.ChosenGame;
 import it.polimi.ingsw.server.model.enums.GameMode;
 import it.polimi.ingsw.server.model.enums.GamePreset;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -12,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class ChooseGameController implements GUIController {
@@ -27,7 +27,7 @@ public class ChooseGameController implements GUIController {
     public Button btnCreateGame;
 
     private GUI gui;
-    private Parent root;
+    private Pane root;
 
 
     /**
@@ -54,11 +54,11 @@ public class ChooseGameController implements GUIController {
     /**
      * This method is used to set the parent of the controller.
      *
-     * @param parent the parent of the controller.
+     * @param root the parent of the controller.
      */
     @Override
-    public void setParent(Parent parent) {
-        root = parent;
+    public void setRootPane(Pane root) {
+        this.root = root;
     }
 
     /**
@@ -67,7 +67,7 @@ public class ChooseGameController implements GUIController {
      * @return the node of the controller.
      */
     @Override
-    public Parent getParent() {
+    public Pane getRootPane() {
         return root;
     }
 
@@ -78,9 +78,9 @@ public class ChooseGameController implements GUIController {
      */
     @Override
     public void loadScene(Stage stage) {
-        stage.setScene(new Scene(getParent()));
-        stage.setMinHeight(400.0);
-        stage.setMinWidth(600.0);
+        stage.setScene(new Scene(getRootPane()));
+        stage.setMinHeight(200.0);
+        stage.setMinWidth(300.0);
         stage.setResizable(false);
     }
 

@@ -9,12 +9,13 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 
 public class TeamLobbyController implements LobbyController {
 
     private GUI gui;
 
-    private Parent root;
+    private Pane root;
 
     @FXML
     public Button startButton;
@@ -94,11 +95,11 @@ public class TeamLobbyController implements LobbyController {
     /**
      * This method is used to set the parent of the controller.
      *
-     * @param parent the parent of the controller.
+     * @param root the parent of the controller.
      */
     @Override
-    public void setParent(Parent parent) {
-        root = parent;
+    public void setRootPane(Pane root) {
+        this.root = root;
     }
 
     /**
@@ -107,7 +108,7 @@ public class TeamLobbyController implements LobbyController {
      * @return the node of the controller.
      */
     @Override
-    public Parent getParent() {
+    public Pane getRootPane() {
         return root;
     }
 

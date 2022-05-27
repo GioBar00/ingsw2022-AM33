@@ -1,17 +1,15 @@
 package it.polimi.ingsw.client.gui.controllers;
 
-import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
-import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.actions.PlayedAssistantCard;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -32,7 +30,7 @@ public class AssistantCardController implements GUIController {
     public Text lblTitle;
 
     private GUI gui;
-    private Parent root;
+    private Pane root;
     private boolean choseAnAssistant = false;
 
     @FXML
@@ -79,6 +77,8 @@ public class AssistantCardController implements GUIController {
 
     private EnumMap<AssistantCard, AssistantView> assistantViews;
 
+    private EnumSet<AssistantCard> availableCards = EnumSet.noneOf(AssistantCard.class);
+
     /**
      * This method is used to set the GUI of the controller.
      *
@@ -96,10 +96,19 @@ public class AssistantCardController implements GUIController {
      */
     @Override
     public void loadScene(Stage stage) {
-        stage.setScene(new Scene(getParent()));
+        stage.setScene(new Scene(getRootPane()));
         stage.setMinHeight(540.0);
         stage.setMinWidth(870.0);
         stage.setResizable(false);
+    }
+
+    /**
+     * This method is used to set the assistant cards available to the player.
+     *
+     * @param availableCards the available cards
+     */
+    public void setAvailableCards(EnumSet<AssistantCard> availableCards) {
+        this.availableCards = availableCards;
     }
 
     /**
@@ -125,12 +134,10 @@ public class AssistantCardController implements GUIController {
 
     /**
      * This method shows the image of the cards
-     *
-     * @param assistantCards the cards to show
      */
-    public void showAssistantCards(EnumSet<AssistantCard> assistantCards) {
+    public void showAssistantCards() {
         lblTitle.setText("Your assistant cards");
-        for (AssistantCard card : assistantCards) {
+        for (AssistantCard card : availableCards) {
             showAssistantCard(card);
         }
     }
@@ -187,11 +194,11 @@ public class AssistantCardController implements GUIController {
     /**
      * This method is used to set the parent of the controller.
      *
-     * @param parent the parent of the controller.
+     * @param root the parent of the controller.
      */
     @Override
-    public void setParent(Parent parent) {
-        root = parent;
+    public void setRootPane(Pane root) {
+        this.root = root;
     }
 
     /**
@@ -200,7 +207,7 @@ public class AssistantCardController implements GUIController {
      * @return the node of the controller.
      */
     @Override
-    public Parent getParent() {
+    public Pane getRootPane() {
         return root;
     }
 

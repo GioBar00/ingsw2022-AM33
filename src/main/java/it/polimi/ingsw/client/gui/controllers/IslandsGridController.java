@@ -6,11 +6,10 @@ import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.views.IslandGroupView;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class IslandsGridController implements GUIController {
 
     List<AnchorPane> anchors = new LinkedList<>();
 
-    LinkedList<IslandController> islandsControllers = new LinkedList();
+    List<IslandController> islandsControllers = new LinkedList<>();
 
     @FXML
     AnchorPane root;
@@ -35,38 +34,38 @@ public class IslandsGridController implements GUIController {
 
     @Override
     public void init() {
-        for (int i = 0; i < 12; i++){
+        for (int i = 0; i < 12; i++) {
             anchors.add((AnchorPane) islandsGrid.getChildren().get(i));
         }
 
-        for (int i = 0; i < 12; i++){
+        for (int i = 0; i < 12; i++) {
             GUIController islandGui;
             islandGui = ResourceLoader.loadFXML(FXMLPath.ISLAND, gui);
             islandsControllers.add((IslandController) islandGui);
-            GUIUtils.addToAnchorPane(anchors.get(i), islandsGrid.getParent());
+            GUIUtils.addToAnchorPane(anchors.get(i), islandGui.getRootPane());
             islandGui.init();
         }
     }
 
-    public void setIslandsView(ArrayList<IslandGroupView> islandsView, int motherNatureIndex){
-        for (int i = 0; i < islandsView.size(); i ++){
+    public void setIslandsView(List<IslandGroupView> islandsView, int motherNatureIndex) {
+        for (int i = 0; i < islandsView.size(); i++) {
             boolean motherNatureIsThere = motherNatureIndex == i;
             islandsControllers.get(i).setIsland(islandsView.get(i), motherNatureIsThere);
         }
-        if (islandsView.size() < 12){
-            for (int j = 0; j < 12 - islandsView.size(); j++){
+        if (islandsView.size() < 12) {
+            for (int j = 0; j < 12 - islandsView.size(); j++) {
                 anchors.get(j).getChildren().removeAll();
             }
         }
     }
 
     @Override
-    public void setParent(Parent parent) {
-        this.root = (AnchorPane) parent;
+    public void setRootPane(Pane root) {
+        // already set
     }
 
     @Override
-    public Parent getParent() {
+    public Pane getRootPane() {
         return root;
     }
 }

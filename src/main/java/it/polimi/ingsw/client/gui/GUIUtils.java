@@ -7,7 +7,10 @@ import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 
 /**
  * This class contains methods for getting the proper image path from an enumeration
@@ -57,13 +60,11 @@ public abstract class GUIUtils {
      * @return the image.
      */
     public static Image getTowerImage(Tower t) {
-        Image tower = null;
-        switch (t) {
-            case WHITE -> tower = ResourceLoader.loadImage(ImagePath.WHITE_TOWER);
-            case GREY -> tower = ResourceLoader.loadImage(ImagePath.GRAY_TOWER);
-            case BLACK -> tower = ResourceLoader.loadImage(ImagePath.BLACK_TOWER);
-        }
-        return tower;
+        return switch (t) {
+            case WHITE -> ResourceLoader.loadImage(ImagePath.WHITE_TOWER);
+            case GREY -> ResourceLoader.loadImage(ImagePath.GRAY_TOWER);
+            case BLACK -> ResourceLoader.loadImage(ImagePath.BLACK_TOWER);
+        };
     }
 
     /**
@@ -95,14 +96,16 @@ public abstract class GUIUtils {
      * Adds node to anchor pane and sets the anchors.
      *
      * @param anchorPane to add the node to
-     * @param node       to add
+     * @param root       to add
      */
-    public static void addToAnchorPane(AnchorPane anchorPane, Node node) {
-        anchorPane.getChildren().add(node);
-        AnchorPane.setTopAnchor(node, 0.0);
-        AnchorPane.setBottomAnchor(node, 0.0);
-        AnchorPane.setRightAnchor(node, 0.0);
-        AnchorPane.setLeftAnchor(node, 0.0);
+    public static void addToAnchorPane(AnchorPane anchorPane, Pane root) {
+        anchorPane.setMinHeight(0.0);
+        anchorPane.setMinWidth(0.0);
+        AnchorPane.setTopAnchor(root, 0.0);
+        AnchorPane.setBottomAnchor(root, 0.0);
+        AnchorPane.setRightAnchor(root, 0.0);
+        AnchorPane.setLeftAnchor(root, 0.0);
+        anchorPane.getChildren().add(root);
     }
 
     /**
@@ -124,5 +127,27 @@ public abstract class GUIUtils {
             case EAGLE -> ResourceLoader.loadImage(ImagePath.EAGLE);
             case OSTRICH -> ResourceLoader.loadImage(ImagePath.OSTRICH);
         };
+    }
+
+    /**
+     * This method binds the width and height of a node to the width and height of its container.
+     *
+     * @param container the container
+     * @param child     the child
+     */
+    public static void bindSize(Region container, Region child) {
+        container.widthProperty().addListener((observable, oldValue, newValue) -> child.setPrefWidth(newValue.doubleValue()));
+        container.heightProperty().addListener((observable, oldValue, newValue) -> child.setPrefHeight(newValue.doubleValue()));
+    }
+
+    /**
+     * This method binds the width and height of an ImageView to the width and height of its container.
+     *
+     * @param container the container
+     * @param child     the child
+     */
+    public static void bindSize(Region container, ImageView child) {
+        container.widthProperty().addListener((observable, oldValue, newValue) -> child.setFitWidth(newValue.doubleValue()));
+        container.heightProperty().addListener((observable, oldValue, newValue) -> child.setFitHeight(newValue.doubleValue()));
     }
 }

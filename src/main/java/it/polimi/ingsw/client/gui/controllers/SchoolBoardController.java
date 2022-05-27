@@ -15,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 
 import java.util.*;
 
@@ -30,7 +31,7 @@ public class SchoolBoardController implements GUIController {
 
     private final EnumMap<StudentColor, Coordinates> profsMap = new EnumMap<>(StudentColor.class);
 
-    private Parent root;
+    private Pane root;
 
     @FXML
     private Button blueHallButton;
@@ -171,11 +172,11 @@ public class SchoolBoardController implements GUIController {
     /**
      * This method is used to set the parent of the controller.
      *
-     * @param parent the parent of the controller.
+     * @param root the parent of the controller.
      */
     @Override
-    public void setParent(Parent parent) {
-        root = parent;
+    public void setRootPane(Pane root) {
+        this.root = root;
     }
 
     /**
@@ -184,7 +185,7 @@ public class SchoolBoardController implements GUIController {
      * @return the node of the controller.
      */
     @Override
-    public Parent getParent() {
+    public Pane getRootPane() {
         return root;
     }
 
@@ -197,8 +198,8 @@ public class SchoolBoardController implements GUIController {
         setTowers(schoolBoardView.getNumTowers(), schoolBoardView.getTower());
     }
 
-    public void setEntrance(ArrayList<StudentColor> entrance) {
-        for (int i = 0; i < 9; i++) {
+    public void setEntrance(List<StudentColor> entrance) {
+        for (int i = 0; i < entrance.size(); i++) {
             if (entrance.get(i) != null) {
                 Image studentImage = GUIUtils.getStudentImage(entrance.get(i));
                 ImageView imageView = new ImageView(studentImage);

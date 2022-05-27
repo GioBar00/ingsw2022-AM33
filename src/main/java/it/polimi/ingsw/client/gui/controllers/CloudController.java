@@ -6,14 +6,17 @@ import it.polimi.ingsw.network.messages.actions.ChosenCloud;
 import it.polimi.ingsw.network.messages.views.CloudView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 
 public class CloudController implements GUIController {
 
+    @FXML
+    public AnchorPane root;
     @FXML
     public Button cloudBtn;
 
@@ -28,12 +31,14 @@ public class CloudController implements GUIController {
 
     @FXML
     public ImageView pawn3Img;
+    @FXML
+    public ImageView imgViewCloud;
+    @FXML
+    public AnchorPane anchorPanePawn;
 
     private ArrayList<ImageView> imageViews;
 
     private GUI gui;
-
-    private Parent root;
 
     private int cloudIndex;
 
@@ -95,16 +100,22 @@ public class CloudController implements GUIController {
         imageViews.add(pawn1Img);
         imageViews.add(pawn2Img);
         imageViews.add(pawn3Img);
+
+        GUIUtils.bindSize(root, cloudBtn);
+        GUIUtils.bindSize(root, imgViewCloud);
+        for (ImageView iv : imageViews)
+            GUIUtils.bindSize(anchorPanePawn, iv);
+
     }
 
     /**
      * This method is used to set the parent of the controller.
      *
-     * @param parent the parent of the controller.
+     * @param root the parent of the controller.
      */
     @Override
-    public void setParent(Parent parent) {
-        root = parent;
+    public void setRootPane(Pane root) {
+        // already set in the FXML
     }
 
     /**
@@ -113,7 +124,7 @@ public class CloudController implements GUIController {
      * @return the node of the controller.
      */
     @Override
-    public Parent getParent() {
+    public Pane getRootPane() {
         return root;
     }
 }

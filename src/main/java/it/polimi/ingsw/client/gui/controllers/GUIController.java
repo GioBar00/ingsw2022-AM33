@@ -1,8 +1,7 @@
 package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.gui.GUI;
-import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 /**
@@ -25,16 +24,16 @@ public interface GUIController {
     /**
      * This method is used to set the parent of the controller.
      *
-     * @param parent the parent of the controller.
+     * @param root the parent of the controller.
      */
-    void setParent(Parent parent);
+    void setRootPane(Pane root);
 
     /**
      * This method returns the node of the controller.
      *
      * @return the node of the controller.
      */
-    Parent getParent();
+    Pane getRootPane();
 
     /**
      * This method is used to load the scene of the controller on the stage.
@@ -43,5 +42,16 @@ public interface GUIController {
      */
     default void loadScene(Stage stage) {
 
+    }
+
+    /**
+     * This method is used to show a new stage that disables the current one until it is closed.
+     *
+     * @param stage the stage to show.
+     */
+    default void showNewDisablingStage(Stage stage) {
+        getRootPane().setDisable(true);
+        stage.setOnHiding(event -> getRootPane().setDisable(false));
+        stage.show();
     }
 }

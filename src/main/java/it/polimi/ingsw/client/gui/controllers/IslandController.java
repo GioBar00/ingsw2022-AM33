@@ -9,19 +9,36 @@ import it.polimi.ingsw.network.messages.views.IslandView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 
 import java.util.*;
 
 public class IslandController implements GUIController{
 
-    GUI gui;
+    @FXML
+    public AnchorPane anchorPaneStudent;
+    @FXML
+    public AnchorPane anchorPaneMotherNature;
+    @FXML
+    public AnchorPane anchorPaneTower;
+    @FXML
+    public AnchorPane anchorPaneBlock;
+    @FXML
+    public ImageView imgStudent0;
+    @FXML
+    public ImageView imgStudent1;
+    @FXML
+    public ImageView imgStudent2;
+    @FXML
+    public ImageView imgStudent3;
+    @FXML
+    public ImageView imgStudent4;
+    private GUI gui;
 
     Map<StudentColor, Label> studentNumbersMap = new HashMap<>();
 
@@ -80,6 +97,17 @@ public class IslandController implements GUIController{
         studentNumbersMap.put(StudentColor.MAGENTA, numMagenta);
         studentNumbersMap.put(StudentColor.BLUE, numBlue);
 
+        GUIUtils.bindSize(root, islandImage);
+        GUIUtils.bindSize(anchorPaneMotherNature, motherNatureImage);
+        GUIUtils.bindSize(anchorPaneBlock, blockImage);
+        GUIUtils.bindSize(anchorPaneTower, towerImage);
+        GUIUtils.bindSize(anchorPaneStudent, imgStudent0);
+        GUIUtils.bindSize(anchorPaneStudent, imgStudent1);
+        GUIUtils.bindSize(anchorPaneStudent, imgStudent2);
+        GUIUtils.bindSize(anchorPaneStudent, imgStudent3);
+        GUIUtils.bindSize(anchorPaneStudent, imgStudent4);
+
+
         islandButton.setDisable(true);
         islandButton.setVisible(false);
 
@@ -93,12 +121,12 @@ public class IslandController implements GUIController{
     }
 
     @Override
-    public void setParent(Parent parent) {
-        this.root = (AnchorPane) parent;
+    public void setRootPane(Pane root) {
+        this.root = (AnchorPane) root;
     }
 
     @Override
-    public Parent getParent() {
+    public Pane getRootPane() {
         return root;
     }
 
@@ -115,18 +143,9 @@ public class IslandController implements GUIController{
         int value = rand.nextInt(100);
         value = value % 3;
         switch (value){
-            case 0 -> {
-                Image i = new Image(ResourceLoader.loadImage(ImagePath.ISLAND1).toString());
-                islandImage.setImage(i);
-            }
-            case 1 -> {
-                Image i = new Image(ResourceLoader.loadImage(ImagePath.ISLAND2).toString());
-                islandImage.setImage(i);
-            }
-            case 2 -> {
-                Image i = new Image(ResourceLoader.loadImage(ImagePath.ISLAND3).toString());
-                islandImage.setImage(i);
-            }
+            case 0 -> islandImage.setImage(ResourceLoader.loadImage(ImagePath.ISLAND1));
+            case 1 -> islandImage.setImage(ResourceLoader.loadImage(ImagePath.ISLAND2));
+            case 2 -> islandImage.setImage(ResourceLoader.loadImage(ImagePath.ISLAND3));
         }
     }
 
@@ -158,9 +177,8 @@ public class IslandController implements GUIController{
     }
 
     public void setTowerImage(Tower tower){
-        Image t = GUIUtils.getTowerImage(tower);
-        if (t!=null)
-            towerImage.setImage(t);
+        if (tower != null)
+            towerImage.setImage(GUIUtils.getTowerImage(tower));
         else
             towerImage.imageProperty().set(null);
     }

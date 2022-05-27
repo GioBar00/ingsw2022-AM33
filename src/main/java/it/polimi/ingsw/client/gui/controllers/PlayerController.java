@@ -5,12 +5,14 @@ import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.views.PlayerView;
+import it.polimi.ingsw.util.Function;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 
 public class PlayerController implements GUIController {
 
@@ -37,7 +39,7 @@ public class PlayerController implements GUIController {
 
     private GUI gui;
 
-    private Parent root;
+    private Pane root;
 
     /**
      * This method is used to set the GUI of the controller.
@@ -66,41 +68,40 @@ public class PlayerController implements GUIController {
         nameLbl.setText(playerView.getNickname());
         towerImg.setImage(GUIUtils.getTowerImage(playerView.getSchoolBoardView().getTower()));
 
-        if(coin != null){
+        if (coin != null) {
             coinLbl.setVisible(true);
             coinLbl.setVisible(true);
             coinLbl.setText(String.valueOf(coin));
         }
-        if(playerView.getAssistantCards()!= null) {
+        if (playerView.getPlayedCard() != null) {
             playedImg.setImage(GUIUtils.getAssistantCard(playerView.getPlayedCard()));
             playedImg.setVisible(true);
-        }
-        else  playedImg.setVisible(false);
+        } else playedImg.setVisible(false);
 
-        if(playerView.getNickname().equals(gui.getNickname())) {
+        if (playerView.getNickname().equals(gui.getNickname())) {
             handBtn.setVisible(true);
             handBtn.setDisable(false);
         }
 
         SchoolBoardController schoolBoardController = (SchoolBoardController) ResourceLoader.loadFXML(FXMLPath.SCHOOL_BOARD, gui);
         schoolBoardController.init();
-        GUIUtils.addToAnchorPane(schoolBoardAnc, schoolBoardController.getParent());
+        GUIUtils.addToAnchorPane(schoolBoardAnc, schoolBoardController.getRootPane());
 
         schoolBoardController.setSchoolBoardView(playerView.getSchoolBoardView());
     }
 
-    public void showHand() {
-
+    public void setShowHand(Function function) {
+        handBtn.setOnAction(event -> function.apply());
     }
 
     /**
      * This method is used to set the parent of the controller.
      *
-     * @param parent the parent of the controller.
+     * @param root the parent of the controller.
      */
     @Override
-    public void setParent(Parent parent) {
-        this.root = parent;
+    public void setRootPane(Pane root) {
+        this.root = root;
     }
 
 
@@ -110,7 +111,7 @@ public class PlayerController implements GUIController {
      * @return the node of the controller.
      */
     @Override
-    public Parent getParent() {
+    public Pane getRootPane() {
         return root;
     }
 }

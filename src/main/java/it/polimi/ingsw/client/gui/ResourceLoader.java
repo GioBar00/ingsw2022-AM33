@@ -4,13 +4,12 @@ import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.controllers.GUIController;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.util.EnumMap;
-import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Objects;
 
@@ -62,9 +61,9 @@ public abstract class ResourceLoader {
     public static GUIController loadFXML(FXMLPath path, GUI gui) {
         try {
             FXMLLoader loader = new FXMLLoader(ResourceLoader.class.getResource(path.getPath()));
-            Parent parent = loader.load();
+            Pane parent = loader.load();
             GUIController controller = loader.getController();
-            controller.setParent(parent);
+            controller.setRootPane(parent);
             controller.setGUI(gui);
             return controller;
         } catch (IOException | NullPointerException e) {

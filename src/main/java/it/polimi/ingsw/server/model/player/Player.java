@@ -7,6 +7,7 @@ import it.polimi.ingsw.server.model.enums.Wizard;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * A Class that holds all the information of a player
@@ -126,18 +127,12 @@ public class Player {
      */
     public PlayerView getPlayerView(boolean isDestPlayer) {
         SchoolBoardView sbView = getSchoolBoard().getSchoolBoardView();
-        ArrayList<AssistantCard> assistantCardsView = null;
-        int numAssistantCards = 10;
+        List<AssistantCard> assistantCardsView = null;
 
         if (isDestPlayer) {
             assistantCardsView = assistantCards;
         }
-        for (AssistantCard as : AssistantCard.values()) {
-            if (!assistantCards.contains(as)) {
-                numAssistantCards--;
-            }
-        }
 
-        return new PlayerView(nickname, wizard, assistantCardsView, playedCard, numAssistantCards, sbView);
+        return new PlayerView(nickname, wizard, assistantCardsView, playedCard, assistantCards.size(), sbView);
     }
 }

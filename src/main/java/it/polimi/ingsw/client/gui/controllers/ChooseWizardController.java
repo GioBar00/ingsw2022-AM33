@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
@@ -31,7 +32,7 @@ public class ChooseWizardController implements GUIController {
     private final Map<Button, Wizard> wizardByButton = new HashMap<>(4);
 
     private GUI gui;
-    private Parent root;
+    private Pane root;
 
     private boolean choseWizard = false;
 
@@ -59,11 +60,11 @@ public class ChooseWizardController implements GUIController {
     /**
      * This method is used to set the parent of the controller.
      *
-     * @param parent the parent of the controller.
+     * @param root the parent of the controller.
      */
     @Override
-    public void setParent(Parent parent) {
-        root = parent;
+    public void setRootPane(Pane root) {
+        this.root = root;
     }
 
     /**
@@ -72,7 +73,7 @@ public class ChooseWizardController implements GUIController {
      * @return the node of the controller.
      */
     @Override
-    public Parent getParent() {
+    public Pane getRootPane() {
         return root;
     }
 
@@ -83,7 +84,7 @@ public class ChooseWizardController implements GUIController {
      */
     @Override
     public void loadScene(Stage stage) {
-        stage.setScene(new Scene(getParent()));
+        stage.setScene(new Scene(getRootPane()));
         stage.setMinHeight(150.0);
         stage.setMinWidth(300.0);
         stage.setResizable(false);
