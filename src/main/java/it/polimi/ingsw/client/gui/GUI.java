@@ -292,6 +292,10 @@ public class GUI extends Application implements UI {
         this.nickname = nickname;
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
     private void processLastRequest(Message message) {
         /*
         switch (MessageType.retrieveByMessage(message)){
