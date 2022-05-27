@@ -10,7 +10,9 @@ public enum FXMLPath {
     CHARACTER_CARD("/fxml/character-card.fxml"),
     GAME_SCREEN("/fxml/game-screen.fxml"),
     SCHOOL_BOARD("/fxml/school-board.fxml"),
-    ISLAND("/fxml/island.fxml");
+    ISLAND("/fxml/island.fxml"),
+
+    PLAYER_VIEW("/fxml/player.fxml");
     private final String path;
 
     FXMLPath(String path) {
