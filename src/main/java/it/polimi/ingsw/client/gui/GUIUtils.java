@@ -3,7 +3,9 @@ package it.polimi.ingsw.client.gui;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 
 /**
  * This class contains methods for getting the proper image path from an enumeration
@@ -60,5 +62,19 @@ public abstract class GUIUtils {
             case BLACK -> tower = ResourceLoader.loadImage(ImagePath.BLACK_TOWER);
         }
         return tower;
+    }
+
+    /**
+     * Adds node to anchor pane and sets the anchors.
+     *
+     * @param anchorPane to add the node to
+     * @param node       to add
+     */
+    public static void addToAnchorPane(AnchorPane anchorPane, Node node) {
+        anchorPane.getChildren().add(node);
+        AnchorPane.setTopAnchor(node, 0.0);
+        AnchorPane.setBottomAnchor(node, 0.0);
+        AnchorPane.setRightAnchor(node, 0.0);
+        AnchorPane.setLeftAnchor(node, 0.0);
     }
 }

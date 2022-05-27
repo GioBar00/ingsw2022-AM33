@@ -8,7 +8,8 @@ public enum FXMLPath {
     LOBBY("/fxml/lobby-screen.fxml"),
     CHOOSE_ASSISTANT("/fxml/team-lobby-screen.fxml"),
     CHARACTER_CARD("/fxml/character-card.fxml"),
-    GAME_SCREEN("/fxml/game-screen.fxml");
+    GAME_SCREEN("/fxml/game-screen.fxml"),
+    SCHOOL_BOARD("/fxml/school-board.fxml");
     private final String path;
 
     FXMLPath(String path) {
