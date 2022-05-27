@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
+import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.views.CharacterCardView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
@@ -70,6 +71,9 @@ public class CharacterCardController implements GUIController {
      * @param view {@link CharacterCardView} of the card.
      */
     public void setCharacterView(CharacterCardView view) {
+
+        characterImg.setImage(GUIUtils.getCharacterImage(view.getType()));
+
         int cost = view.getAdditionalCost() + view.getOriginalCost();
         coinLbl.setText(String.valueOf(cost));
 

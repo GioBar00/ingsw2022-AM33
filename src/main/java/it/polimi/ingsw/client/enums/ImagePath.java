@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.enums;
 
+import it.polimi.ingsw.server.model.cards.Harvester;
+import it.polimi.ingsw.server.model.cards.Herbalist;
+
 public enum ImagePath {
     ICON("/images/icon.jpg"),
     START("/images/icons/start.png"),
@@ -31,7 +34,33 @@ public enum ImagePath {
     OSTRICH("/images/cards/assistant/ostrich.png"),
     SNAKE("/images/cards/assistant/snake.png"),
     TURTLE("/images/cards/assistant/turtle.png"),
-    BACK_CARD("/images/cards/back.jpg");
+    BACK_CARD("/images/cards/back.jpg"),
+
+    CENTAUR("/images/cards/character/centaur.jpg"),
+
+    FARMER("/images/cards/character/farmer.jpg"),
+
+    FRIAR("/images/cards/character/friar.jpg"),
+
+    HARVESTER("/images/cards/character/harvester.jpg"),
+
+    HERALD("/images/cards/character/herald.jpg"),
+
+    HERBALIST("/images/cards/character/herbalist.jpg"),
+
+    JESTER("/images/cards/character/jester.jpg"),
+
+    KNIGHT("/images/cards/character/knight.jpg"),
+
+    MAILMAN("/images/cards/character/mailman.jpg"),
+
+    MINSTREL("/images/cards/character/minstrel.jpg"),
+
+    PRINCESS("/images/cards/character/princess.jpg"),
+
+    THIEF("/images/cards/character/thief.jpg"),
+
+    CLOUD("/images/cloud.png");
 
 
     private final String path;
