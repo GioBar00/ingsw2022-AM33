@@ -8,7 +8,6 @@ import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.views.*;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -66,7 +65,7 @@ public class GameController implements GUIController {
 
     private final List<CharacterCardController> characterCardControllers = new ArrayList<>();
     private final List<CloudController> cloudControllers = new ArrayList<>();
-    private IslandsGridController islandController;
+    private IslandsFlowController islandController;
     private final Map<String, PlayerController> playerControllersByNickname = new HashMap<>();
     private final Map<String, AnchorPane> playerPanesByNickname = new HashMap<>();
     private AssistantCardController assistantCardController;
@@ -292,7 +291,7 @@ public class GameController implements GUIController {
      */
     private void updateIslandsController(List<IslandGroupView> islandGroupViews, int motherNatureIndex) {
         if (islandController == null) {
-            islandController = (IslandsGridController) ResourceLoader.loadFXML(FXMLPath.ISLANDS, gui);
+            islandController = (IslandsFlowController) ResourceLoader.loadFXML(FXMLPath.ISLANDS, gui);
             islandController.init();
             GUIUtils.addToAnchorPane(anchorPaneIslands, islandController.getRootPane());
         }

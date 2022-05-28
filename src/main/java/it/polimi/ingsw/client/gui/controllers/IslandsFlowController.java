@@ -7,13 +7,13 @@ import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.views.IslandGroupView;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class IslandsGridController implements GUIController {
+public class IslandsFlowController implements GUIController {
 
     GUI gui;
 
@@ -22,10 +22,10 @@ public class IslandsGridController implements GUIController {
     List<IslandController> islandsControllers = new LinkedList<>();
 
     @FXML
-    AnchorPane root;
+    private FlowPane flowPane;
 
     @FXML
-    GridPane islandsGrid;
+    private AnchorPane root;
 
     @Override
     public void setGUI(GUI gui) {
@@ -35,7 +35,7 @@ public class IslandsGridController implements GUIController {
     @Override
     public void init() {
         for (int i = 0; i < 12; i++) {
-            anchors.add((AnchorPane) islandsGrid.getChildren().get(i));
+            anchors.add((AnchorPane) flowPane.getChildren().get(i));
         }
 
         for (int i = 0; i < 12; i++) {
