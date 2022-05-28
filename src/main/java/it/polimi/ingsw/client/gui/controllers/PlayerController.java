@@ -37,6 +37,12 @@ public class PlayerController implements GUIController {
     @FXML
     public ImageView coinImg;
 
+    @FXML
+    public AnchorPane anchorPaneCard;
+
+    @FXML
+    public AnchorPane anchorPaneIcon;
+
     private GUI gui;
 
     private Pane root;
@@ -61,6 +67,18 @@ public class PlayerController implements GUIController {
         playedImg.setVisible(true);
         handBtn.setVisible(false);
         handBtn.setDisable(true);
+
+        GUIUtils.bindSize(anchorPaneIcon, coinImg);
+        GUIUtils.bindSize(anchorPaneIcon, towerImg);
+        GUIUtils.bindSize(anchorPaneCard, playedImg);
+        GUIUtils.bindSize(anchorPaneCard, handBtn);
+        anchorPaneIcon.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneIcon.setPrefWidth(newValue.doubleValue()));
+        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneIcon.setPrefHeight(newValue.doubleValue()));
+
+        anchorPaneCard.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCard.setPrefWidth(newValue.doubleValue()));
+        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCard.setPrefHeight(newValue.doubleValue()));
+
+
     }
 
     public void updatePlayerView(PlayerView playerView, Integer coin) {
@@ -72,6 +90,7 @@ public class PlayerController implements GUIController {
             coinLbl.setVisible(true);
             coinLbl.setVisible(true);
             coinLbl.setText(String.valueOf(coin));
+            coinImg.setVisible(true);
         }
         if (playerView.getPlayedCard() != null) {
             playedImg.setImage(GUIUtils.getAssistantCard(playerView.getPlayedCard()));
