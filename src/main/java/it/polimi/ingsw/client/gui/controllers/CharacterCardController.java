@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 import java.util.EnumMap;
@@ -22,6 +23,10 @@ public class CharacterCardController implements GUIController {
     private Pane root;
     private EnumMap<StudentColor, LabelButton> buttons;
 
+    @FXML
+    public AnchorPane anchorPaneCharacter;
+    @FXML
+    public AnchorPane anchorPanePawn;
     @FXML
     public ImageView characterImg;
     @FXML
@@ -54,7 +59,13 @@ public class CharacterCardController implements GUIController {
     @FXML
     public Label yellowLbl;
 
+    @FXML
     public Button yellowBtn;
+
+    @FXML
+    public AnchorPane anchorPaneCoin;
+    @FXML
+    public ImageView coinImg;
 
     /**
      * This method is used to set the GUI of the controller.
@@ -136,8 +147,34 @@ public class CharacterCardController implements GUIController {
         buttons.put(StudentColor.MAGENTA, new LabelButton(pinkLbl, pinkBtn));
         buttons.put(StudentColor.YELLOW, new LabelButton(yellowLbl, yellowBtn));
 
+
+
         GUIUtils.bindSize(root, characterImg);
         GUIUtils.bindSize(root, characterBtn);
+
+        GUIUtils.bindSize(anchorPaneCharacter,characterBtn);
+        GUIUtils.bindSize(anchorPaneCharacter,characterImg);
+
+
+
+        GUIUtils.bindSize(anchorPanePawn,blueBtn);
+        GUIUtils.bindSize(blueBtn,blueLbl);
+        GUIUtils.bindSize(anchorPanePawn,redBtn);
+        GUIUtils.bindSize(redBtn,redLbl);
+        GUIUtils.bindSize(anchorPanePawn,greenBtn);
+        GUIUtils.bindSize(greenBtn,greenLbl);
+        GUIUtils.bindSize(anchorPanePawn,pinkBtn);
+        GUIUtils.bindSize(pinkBtn,pinkLbl);
+        GUIUtils.bindSize(anchorPanePawn,yellowBtn);
+        GUIUtils.bindSize(yellowBtn,yellowLbl);
+
+        GUIUtils.bindSize(anchorPanePawn,anchorPaneCoin);
+        GUIUtils.bindSize(anchorPanePawn,coinImg);
+
+        anchorPaneCharacter.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCharacter.setPrefWidth(newValue.doubleValue() / 1039 * 685));
+        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCharacter.setPrefHeight(newValue.doubleValue()));
+
+
     }
 
     /**
