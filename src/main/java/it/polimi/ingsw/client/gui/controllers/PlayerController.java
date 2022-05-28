@@ -7,7 +7,6 @@ import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.util.Function;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -38,10 +37,10 @@ public class PlayerController implements GUIController {
     public ImageView coinImg;
 
     @FXML
-    public AnchorPane anchorPaneCard;
+    public AnchorPane anchorPaneHand;
 
     @FXML
-    public AnchorPane anchorPaneIcon;
+    public AnchorPane anchorPaneCoin;
 
     private GUI gui;
 
@@ -68,15 +67,15 @@ public class PlayerController implements GUIController {
         handBtn.setVisible(false);
         handBtn.setDisable(true);
 
-        GUIUtils.bindSize(anchorPaneIcon, coinImg);
-        GUIUtils.bindSize(anchorPaneIcon, towerImg);
-        GUIUtils.bindSize(anchorPaneCard, playedImg);
-        GUIUtils.bindSize(anchorPaneCard, handBtn);
-        anchorPaneIcon.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneIcon.setPrefWidth(newValue.doubleValue()));
-        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneIcon.setPrefHeight(newValue.doubleValue()));
+        GUIUtils.bindSize(anchorPaneCoin, coinImg);
+        GUIUtils.bindSize(anchorPaneCoin, towerImg);
+        GUIUtils.bindSize(anchorPaneHand, playedImg);
+        GUIUtils.bindSize(anchorPaneHand, handBtn);
+        anchorPaneCoin.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCoin.setPrefWidth(newValue.doubleValue()));
+        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCoin.setPrefHeight(newValue.doubleValue()));
 
-        anchorPaneCard.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCard.setPrefWidth(newValue.doubleValue()));
-        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCard.setPrefHeight(newValue.doubleValue()));
+        anchorPaneHand.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneHand.setPrefWidth(newValue.doubleValue()));
+        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneHand.setPrefHeight(newValue.doubleValue()));
 
 
     }

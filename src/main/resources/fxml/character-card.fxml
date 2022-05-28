@@ -11,13 +11,13 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane minHeight="0.0" minWidth="0.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.CharacterCardController">
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1039.0" prefWidth="685.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.CharacterCardController">
    <children>
       <HBox minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <AnchorPane fx:id="anchorPaneCharacter" minHeight="0.0" minWidth="0.0">
                <children>
-                  <ImageView fx:id="characterImg" fitHeight="200.0" fitWidth="115.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="characterImg" fitHeight="1039.0" fitWidth="685.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <image>
                         <Image url="@../images/cards/character/centaur.jpg" />
                      </image>
@@ -25,39 +25,39 @@
                   <Button fx:id="characterBtn" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                   <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="500.0" minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="500.0" minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <AnchorPane minHeight="0.0" minWidth="0.0" GridPane.rowIndex="1">
                            <children>
                               <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="500.0" minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="500.0" minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
                                     <GridPane minHeight="0.0" minWidth="0.0">
                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" prefWidth="100.0" />
                                       </columnConstraints>
                                       <rowConstraints>
-                                        <RowConstraints maxHeight="37.99999847412109" minHeight="10.0" prefHeight="35.200006103515626" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="500.0" minHeight="10.0" percentHeight="100.0" prefHeight="35.200006103515626" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
                                           <AnchorPane fx:id="anchorPanePawn" minHeight="0.0" minWidth="0.0">
                                              <children>
                                                 <Button fx:id="greenBtn" layoutX="2.0" layoutY="3.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <graphic>
-                                                      <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fx:id="imgViewGreen" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
                                                             <Image url="@../images/pawns/students/green.png" />
                                                          </image>
@@ -75,7 +75,7 @@
                                              <children>
                                                 <Button fx:id="redBtn" layoutX="2.0" layoutY="3.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <graphic>
-                                                      <ImageView fx:id="redImg" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fx:id="imgViewRed" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
                                                             <Image url="@../images/pawns/students/red.png" />
                                                          </image>
@@ -93,7 +93,7 @@
                                              <children>
                                                 <Button fx:id="pinkBtn" layoutX="2.0" layoutY="3.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <graphic>
-                                                      <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fx:id="imgViewMagenta" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
                                                             <Image url="@../images/pawns/students/magenta.png" />
                                                          </image>
@@ -111,20 +111,20 @@
                                     </GridPane>
                                     <GridPane minHeight="0.0" minWidth="0.0" GridPane.rowIndex="1">
                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="31.600006103515625" minWidth="10.0" prefWidth="11.800018310546875" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="59.4" minWidth="10.0" prefWidth="48.599981689453124" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="74.0" minWidth="0.0" prefWidth="46.59998168945313" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="79.5999755859375" minWidth="10.0" prefWidth="22.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" percentWidth="10.0" prefWidth="11.800018310546875" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" percentWidth="40.0" prefWidth="48.599981689453124" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="0.0" percentWidth="40.0" prefWidth="46.59998168945313" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" percentWidth="10.0" prefWidth="22.0" />
                                       </columnConstraints>
                                       <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="500.0" minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" GridPane.columnIndex="1">
                                              <children>
                                                 <Button fx:id="blueBtn" layoutX="2.0" layoutY="3.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <graphic>
-                                                      <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fx:id="imgViewBlue" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
                                                             <Image url="@../images/pawns/students/blue.png" />
                                                          </image>
@@ -142,7 +142,7 @@
                                              <children>
                                                 <Button fx:id="yellowBtn" layoutX="2.0" layoutY="3.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <graphic>
-                                                      <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fx:id="imgViewYellow" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
                                                             <Image url="@../images/pawns/students/yellow.png" />
                                                          </image>
@@ -166,28 +166,62 @@
                            <children>
                               <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="78.0" minWidth="10.0" prefWidth="33.4000244140625" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="81.3999755859375" minWidth="10.0" prefWidth="81.3999755859375" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="35.0" prefWidth="33.4000244140625" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="70.0" prefWidth="81.3999755859375" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                  <RowConstraints maxHeight="46.40000610351562" minHeight="10.0" prefHeight="40.39998168945313" vgrow="SOMETIMES" />
-                                  <RowConstraints maxHeight="47.60001831054687" minHeight="10.0" prefHeight="47.60001831054687" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" percentHeight="40.0" prefHeight="40.39998168945313" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" percentHeight="60.0" prefHeight="47.60001831054687" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <AnchorPane fx:id="anchorPaneCoin" minHeight="0.0" minWidth="0.0" prefHeight="35.0" prefWidth="42.0">
+                                    <GridPane minHeight="0.0" minWidth="0.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" percentHeight="75.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
                                        <children>
-                                          <ImageView fx:id="coinImg" fitHeight="41.0" fitWidth="34.0" layoutX="7.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <image>
-                                                <Image url="@../images/pawns/coin.png" />
-                                             </image>
-                                          </ImageView>
-                                          <Label fx:id="coinLbl" layoutX="1.0" minHeight="0.0" minWidth="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="46.8" AnchorPane.topAnchor="10.0">
-                                             <font>
-                                                <Font name="System Bold Italic" size="15.0" />
-                                             </font>
-                                          </Label>
+                                          <AnchorPane fx:id="anchorPaneCoin" minHeight="0.0" minWidth="0.0" prefHeight="35.0" prefWidth="42.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <children>
+                                                <HBox alignment="CENTER" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <ImageView fx:id="imgViewCoin" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../images/pawns/coin.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </children>
+                                                </HBox>
+                                                <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <columnConstraints>
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <HBox alignment="CENTER" minHeight="0.0" minWidth="0.0" GridPane.rowIndex="1">
+                                                         <children>
+                                                            <Label fx:id="coinLbl" alignment="CENTER" minHeight="0.0" minWidth="0.0" text="1">
+                                                               <font>
+                                                                  <Font name="Trattatello" size="36.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </GridPane>
+                                             </children>
+                                          </AnchorPane>
                                        </children>
-                                    </AnchorPane>
+                                    </GridPane>
                                  </children>
                               </GridPane>
                            </children>

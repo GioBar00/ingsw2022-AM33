@@ -19,6 +19,18 @@ import java.util.EnumMap;
 
 public class CharacterCardController implements GUIController {
 
+    @FXML
+    public ImageView imgViewGreen;
+    @FXML
+    public ImageView imgViewRed;
+    @FXML
+    public ImageView imgViewMagenta;
+    @FXML
+    public ImageView imgViewBlue;
+    @FXML
+    public ImageView imgViewYellow;
+    @FXML
+    public ImageView imgViewCoin;
     private GUI gui;
     private Pane root;
     private EnumMap<StudentColor, LabelButton> buttons;
@@ -42,8 +54,6 @@ public class CharacterCardController implements GUIController {
     @FXML
     public Button redBtn;
     @FXML
-    public ImageView redImg;
-    @FXML
     public Label redLbl;
 
     @FXML
@@ -64,8 +74,6 @@ public class CharacterCardController implements GUIController {
 
     @FXML
     public AnchorPane anchorPaneCoin;
-    @FXML
-    public ImageView coinImg;
 
     /**
      * This method is used to set the GUI of the controller.
@@ -93,7 +101,7 @@ public class CharacterCardController implements GUIController {
             characterBtn.setDisable(false);
 
         if (view.getNumBlocks() > 0) {
-            redImg.setImage(ResourceLoader.loadImage(ImagePath.PROHIBITION));
+            imgViewRed.setImage(ResourceLoader.loadImage(ImagePath.PROHIBITION));
             redLbl.setText(String.valueOf(view.getNumBlocks()));
             return;
         }
@@ -148,28 +156,27 @@ public class CharacterCardController implements GUIController {
         buttons.put(StudentColor.YELLOW, new LabelButton(yellowLbl, yellowBtn));
 
 
-
-        GUIUtils.bindSize(root, characterImg);
-        GUIUtils.bindSize(root, characterBtn);
-
-        GUIUtils.bindSize(anchorPaneCharacter,characterBtn);
-        GUIUtils.bindSize(anchorPaneCharacter,characterImg);
+        GUIUtils.bindSize(anchorPaneCharacter, characterBtn);
+        GUIUtils.bindSize(anchorPaneCharacter, characterImg);
 
 
+        GUIUtils.bindSize(anchorPanePawn, blueBtn);
+        GUIUtils.bindSize(anchorPanePawn, blueLbl);
+        GUIUtils.bindSize(anchorPanePawn, imgViewBlue);
+        GUIUtils.bindSize(anchorPanePawn, redBtn);
+        GUIUtils.bindSize(anchorPanePawn, redLbl);
+        GUIUtils.bindSize(anchorPanePawn, imgViewRed);
+        GUIUtils.bindSize(anchorPanePawn, greenBtn);
+        GUIUtils.bindSize(anchorPanePawn, greenLbl);
+        GUIUtils.bindSize(anchorPanePawn, imgViewGreen);
+        GUIUtils.bindSize(anchorPanePawn, pinkBtn);
+        GUIUtils.bindSize(anchorPanePawn, pinkLbl);
+        GUIUtils.bindSize(anchorPanePawn, imgViewMagenta);
+        GUIUtils.bindSize(anchorPanePawn, yellowBtn);
+        GUIUtils.bindSize(anchorPanePawn, yellowLbl);
+        GUIUtils.bindSize(anchorPanePawn, imgViewYellow);
 
-        GUIUtils.bindSize(anchorPanePawn,blueBtn);
-        GUIUtils.bindSize(blueBtn,blueLbl);
-        GUIUtils.bindSize(anchorPanePawn,redBtn);
-        GUIUtils.bindSize(redBtn,redLbl);
-        GUIUtils.bindSize(anchorPanePawn,greenBtn);
-        GUIUtils.bindSize(greenBtn,greenLbl);
-        GUIUtils.bindSize(anchorPanePawn,pinkBtn);
-        GUIUtils.bindSize(pinkBtn,pinkLbl);
-        GUIUtils.bindSize(anchorPanePawn,yellowBtn);
-        GUIUtils.bindSize(yellowBtn,yellowLbl);
-
-        GUIUtils.bindSize(anchorPanePawn,anchorPaneCoin);
-        GUIUtils.bindSize(anchorPanePawn,coinImg);
+        GUIUtils.bindSize(anchorPaneCoin, imgViewCoin);
 
         anchorPaneCharacter.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCharacter.setPrefWidth(newValue.doubleValue() / 1039 * 685));
         root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCharacter.setPrefHeight(newValue.doubleValue()));

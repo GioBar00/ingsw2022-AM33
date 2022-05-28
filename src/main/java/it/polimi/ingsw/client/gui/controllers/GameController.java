@@ -311,13 +311,21 @@ public class GameController implements GUIController {
             playerController.setShowHand(this::showAssistantCards);
             GUIUtils.addToAnchorPane(anchorPaneBoard0, playerController.getRootPane());
             playerPanesByNickname.put(nickname, anchorPaneBoard0);
-            remainingPlayerPanes.remove(anchorPaneBoard0);
         } else {
-            double rotate = 90 * (4 - remainingPlayerPanes.size());
+            /*
+            double rotate = remainingPlayerPanes.size() % 2 == 0 ? 0.0 : 90 + (3 - remainingPlayerPanes.size()) * 90;
             playerController.getRootPane().setRotate(rotate);
-            GUIUtils.addToAnchorPane(remainingPlayerPanes.get(0), playerController.getRootPane());
+            if (rotate % 90 == 0)
+                GUIUtils.bindSize(remainingPlayerPanes.get(0), playerController.getRootPane());
+            else
+                GUIUtils.bindSizeReverse(remainingPlayerPanes.get(0), playerController.getRootPane());
+            remainingPlayerPanes.get(0).getChildren().add(playerController.getRootPane());
             playerPanesByNickname.put(nickname, remainingPlayerPanes.get(0));
             remainingPlayerPanes.remove(0);
+            */
+            GUIUtils.addToAnchorPane(anchorPaneBoard2, playerController.getRootPane());
+            playerPanesByNickname.put(nickname, anchorPaneBoard2);
+            remainingPlayerPanes.remove(anchorPaneBoard2);
         }
     }
 
@@ -328,7 +336,7 @@ public class GameController implements GUIController {
      * @param coins the coins of the player.
      */
     private void updatePlayerControllers(List<PlayerView> playerViews, Integer coins) {
-        /*
+
         for (PlayerView playerView : playerViews) {
             if (!playerControllersByNickname.containsKey(playerView.getNickname())) {
                 PlayerController playerController = (PlayerController) ResourceLoader.loadFXML(FXMLPath.PLAYER, gui);
@@ -338,7 +346,7 @@ public class GameController implements GUIController {
             playerControllersByNickname.get(playerView.getNickname()).updatePlayerView(playerView, coins);
         }
 
-         */
+        /*
         PlayerView playerView = playerViews.stream().filter(p -> p.getNickname().equals(gui.getNickname())).findFirst().orElse(null);
         if (playerView != null) {
             PlayerController playerController = (PlayerController) ResourceLoader.loadFXML(FXMLPath.PLAYER, gui);
@@ -346,6 +354,8 @@ public class GameController implements GUIController {
             addPlayerController(playerController, playerView.getNickname());
             playerControllersByNickname.get(playerView.getNickname()).updatePlayerView(playerView, coins);
         }
+
+        */
 
     }
 
