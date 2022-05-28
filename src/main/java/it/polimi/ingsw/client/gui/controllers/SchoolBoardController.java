@@ -10,10 +10,10 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
@@ -21,47 +21,27 @@ import java.util.*;
 
 public class SchoolBoardController implements GUIController {
 
+    @FXML
+    public ImageView imgBoard;
+    @FXML
+    public AnchorPane anchorPaneBoard;
     private GUI gui;
 
-    private final Map<Integer, Coordinates> entranceMap = new HashMap<>();
+    private final List<Button> entranceButtons = new ArrayList<>(9);
 
-    private final Map<Integer, Coordinates> towersMap = new HashMap<>();
+    private final Map<Button, ImageView> entranceImageViewByButton = new HashMap<>();
 
-    private final EnumMap<StudentColor, Map<Integer, Coordinates>> hallMap = new EnumMap<>(StudentColor.class);
+    private final List<ImageView> towerImageViews = new ArrayList<>(8);
 
-    private final EnumMap<StudentColor, Coordinates> profsMap = new EnumMap<>(StudentColor.class);
+    private final EnumMap<StudentColor, ImageView> professorsImageViewByColor = new EnumMap<>(StudentColor.class);
+
+    private final EnumMap<StudentColor, List<ImageView>> hallImageViewsByColor = new EnumMap<>(StudentColor.class);
+    
 
     private Pane root;
 
     @FXML
     private Button blueHallButton;
-
-    @FXML
-    private Button entrance0;
-
-    @FXML
-    private Button entrance1;
-
-    @FXML
-    private Button entrance2;
-
-    @FXML
-    private Button entrance3;
-
-    @FXML
-    private Button entrance4;
-
-    @FXML
-    private Button entrance5;
-
-    @FXML
-    private Button entrance6;
-
-    @FXML
-    private Button entrance7;
-
-    @FXML
-    private Button entrance8;
 
     @FXML
     private GridPane entranceGrid;
@@ -102,70 +82,96 @@ public class SchoolBoardController implements GUIController {
 
     @Override
     public void init() {
-        // initialize components & their listeners
-        towersGrid.setGridLinesVisible(false);
-        towersGrid.setDisable(true);
+        initEntrance();
+        initTowers();
+        initProfessors();
+        initHall();
 
-        entranceGrid.setGridLinesVisible(false);
-        entranceGrid.setDisable(true);
+        GUIUtils.bindSize(anchorPaneBoard, imgBoard);
+        anchorPaneBoard.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneBoard.setPrefWidth(newValue.doubleValue() / 488 * 1125));
+        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneBoard.setPrefHeight(newValue.doubleValue()));
+    }
 
-        hallGrid.setGridLinesVisible(false);
-        hallGrid.setDisable(true);
-
-        profsGrid.setGridLinesVisible(false);
-        profsGrid.setDisable(true);
-
-        greenHallButton.setDisable(true);
-
-        redHallButton.setDisable(true);
-
-        yellowHallButton.setDisable(true);
-
-        magentaHallButton.setDisable(true);
-
-        blueHallButton.setDisable(true);
-
-        hallButton.setDisable(true);
-
-        // set all the maps
-        // entranceMap
-        int row = 0;
-        int column = 3;
+    private void initEntrance() {
         for (int i = 0; i < 9; i++) {
-            entranceMap.put(i, new Coordinates(row, column));
-            if (column == 3) {
-                row++;
-                column = 1;
-            } else
-                column = 3;
+            Button btn = new Button();
+            btn.setMinHeight(0.0);
+            btn.setMinWidth(0.0);
+            btn.setBackground(null);
+            btn.setText("");
+            entranceButtons.add(btn);
+            ImageView imageView = new ImageView();
+            imageView.setPreserveRatio(true);
+            GUIUtils.bindSize(btn, imageView);
+            entranceImageViewByButton.put(btn, imageView);
+            btn.setGraphic(imageView);
+            entranceGrid.add(btn, ((i + 1) % 2) * 2 + 1, ((i + 1) / 2) * 2 + 1);
         }
+        /*
+        entranceButtons.addAll(Arrays.asList(entrance0, entrance1, entrance2, entrance3, entrance4, entrance5, entrance6, entrance7, entrance8));
+        for (Button btn : entranceButtons) {
+            ImageView imageView = new ImageView();
+            GUIUtils.bindSize(btn, imageView);
+            btn.setGraphic(imageView);
+            entranceImageViewByButton.put(btn, imageView);
+        }
+        
+         */
+    }
 
-        //towerMap
-        row = 0;
-        column = 0;
+    private void initTowers() {
         for (int i = 0; i < 8; i++) {
-            towersMap.put(i, new Coordinates(row, column));
-            if (column == 1)
-                row++;
-            column = (column + 1) % 2;
+            AnchorPane anchorPane = new AnchorPane();
+            anchorPane.setMinHeight(0.0);
+            anchorPane.setMinWidth(0.0);
+            ImageView imageView = new ImageView();
+            imageView.setPreserveRatio(true);
+            GUIUtils.bindSize(anchorPane, imageView);
+            towerImageViews.add(imageView);
+            anchorPane.getChildren().add(imageView);
+            towersGrid.add(anchorPane, i % 2, i / 2);
+        }
+        /*
+        towerAnchorPanes.addAll(Arrays.asList(anchorPaneTower0, anchorPaneTower1, anchorPaneTower2, anchorPaneTower3, anchorPaneTower4, anchorPaneTower5, anchorPaneTower6, anchorPaneTower7));
+        for (AnchorPane ap : towerAnchorPanes) {
+            ImageView imageView = new ImageView();
+            GUIUtils.bindSize(ap, imageView);
+            ap.getChildren().add(imageView);
+            towerImageViewByAnchorPane.put(ap, imageView);
         }
 
-        //profsMap
-        profsMap.put(StudentColor.GREEN, new Coordinates(0, 1));
-        profsMap.put(StudentColor.RED, new Coordinates(2, 1));
-        profsMap.put(StudentColor.YELLOW, new Coordinates(4, 1));
-        profsMap.put(StudentColor.MAGENTA, new Coordinates(6, 1));
-        profsMap.put(StudentColor.BLUE, new Coordinates(8, 1));
+         */
+    }
 
-        //hallMap
-        row = 0;
+    private void initProfessors() {
         for (StudentColor sc : StudentColor.values()) {
-            Map<Integer, Coordinates> table = new HashMap<>();
+            AnchorPane anchorPane = new AnchorPane();
+            anchorPane.setMinHeight(0.0);
+            anchorPane.setMinWidth(0.0);
+            ImageView imageView = new ImageView();
+            imageView.setPreserveRatio(true);
+            imageView.setRotate(90.0);
+            GUIUtils.bindSize(anchorPane, imageView);
+            professorsImageViewByColor.put(sc, imageView);
+            anchorPane.getChildren().add(imageView);
+            profsGrid.add(anchorPane, 1, sc.ordinal() * 2);
+        }
+    }
+    
+    private void initHall() {
+        for (StudentColor sc : StudentColor.values()) {
+            hallImageViewsByColor.put(sc, new ArrayList<>(10));
             for (int i = 0; i < 10; i++) {
-                table.put(i, new Coordinates(row, i));
+                AnchorPane anchorPane = new AnchorPane();
+                anchorPane.setMinHeight(0.0);
+                anchorPane.setMinWidth(0.0);
+                ImageView imageView = new ImageView();
+                imageView.setPreserveRatio(true);
+                hallImageViewsByColor.get(sc).add(imageView);
+                GUIUtils.bindSize(anchorPane, imageView);
+                anchorPane.getChildren().add(imageView);
+                hallGrid.add(anchorPane, i, sc.ordinal());
             }
-            hallMap.put(sc, table);
-            row++;
         }
     }
 
@@ -202,77 +208,38 @@ public class SchoolBoardController implements GUIController {
         for (int i = 0; i < entrance.size(); i++) {
             if (entrance.get(i) != null) {
                 Image studentImage = GUIUtils.getStudentImage(entrance.get(i));
-                ImageView imageView = new ImageView(studentImage);
-                imageView.setFitWidth(57);
-                imageView.setFitHeight(57);
-                entranceGrid.add(imageView, entranceMap.get(i).getColumn(), entranceMap.get(i).getRow());
-                GridPane.setHalignment(imageView, HPos.CENTER);
-                GridPane.setValignment(imageView, VPos.CENTER);
+                entranceImageViewByButton.get(entranceButtons.get(i)).setImage(studentImage);
             } else
-                removeImagesFromCell(entranceGrid, entranceMap.get(i).getRow(), entranceMap.get(i).getColumn());
+                entranceImageViewByButton.get(entranceButtons.get(i)).setImage(null);
         }
     }
 
     public void setHall(EnumMap<StudentColor, Integer> hall) {
-        for (StudentColor sc : StudentColor.values()) {
-            for (int i = 0; i < 10; i++) {
-                if (i < hall.get(sc)) {
-                    Image studentImage = GUIUtils.getStudentImage(sc);
-                    ImageView imageView = new ImageView(studentImage);
-                    hallGrid.add(imageView, hallMap.get(sc).get(i).getColumn(), hallMap.get(sc).get(i).getRow());
-                    GridPane.setHalignment(imageView, HPos.CENTER);
-                    GridPane.setValignment(imageView, VPos.CENTER);
-                } else
-                    removeImagesFromCell(hallGrid, hallMap.get(sc).get(i).getRow(), hallMap.get(sc).get(i).getColumn());
-            }
+        for (StudentColor sc : hallImageViewsByColor.keySet()) {
+            int num = 0;
+            for (; num < hall.get(sc); num++)
+                hallImageViewsByColor.get(sc).get(num).setImage(GUIUtils.getStudentImage(sc));
+            for (; num < hallImageViewsByColor.get(sc).size(); num++)
+                hallImageViewsByColor.get(sc).get(num).setImage(null);
         }
     }
 
     public void setProfs(EnumSet<StudentColor> professors) {
         for (StudentColor sc : StudentColor.values()) {
             if (professors.contains(sc)) {
-                Image profImage = GUIUtils.getProfImage(sc);
-                ImageView imageView = new ImageView(profImage);
-                profsGrid.add(imageView, profsMap.get(sc).getColumn(), profsMap.get(sc).getRow());
-                GridPane.setHalignment(imageView, HPos.CENTER);
-                GridPane.setValignment(imageView, VPos.CENTER);
+                professorsImageViewByColor.get(sc).setImage(GUIUtils.getProfImage(sc));
             } else
-                removeImagesFromCell(profsGrid, profsMap.get(sc).getRow(), profsMap.get(sc).getColumn());
+                professorsImageViewByColor.get(sc).setImage(null);
         }
     }
 
     public void setTowers(int numTowers, Tower tower) {
-        for (int i = 0; i < 8; i++) {
-            if (i < numTowers) {
-                Image towerImage = GUIUtils.getTowerImage(tower);
-                ImageView imageView = new ImageView(towerImage);
-                towersGrid.add(imageView, towersMap.get(i).getColumn(), towersMap.get(i).getRow());
-                GridPane.setHalignment(imageView, HPos.CENTER);
-                GridPane.setValignment(imageView, VPos.CENTER);
-            } else
-                removeImagesFromCell(towersGrid, towersMap.get(i).getRow(), towersMap.get(i).getColumn());
-        }
-    }
-
-    public List<Node> getNodesFromGrid(GridPane gridPane, int row, int column) {
-        List<Node> nodes = new ArrayList<>();
-        for (Node node : gridPane.getChildren()) {
-            if (GridPane.getColumnIndex(node) == column && GridPane.getRowIndex(node) == row)
-                nodes.add(node);
-        }
-        return nodes;
-    }
-
-    public void removeImagesFromCell(GridPane gridPane, int row, int column) {
-        int num = getNodesFromGrid(gridPane, row, column).size();
-        if (num > 0) {
-            List<Node> nodes = getNodesFromGrid(gridPane, row, column);
-            for (int j = 0; j < num; j++) {
-                Node toBeRemoved = nodes.get(j);
-                if (toBeRemoved instanceof ImageView)
-                    entranceGrid.getChildren().remove(toBeRemoved);
-            }
-        }
+        Image towerImage = GUIUtils.getTowerImage(tower);
+        int num = 0;
+        for (; num < numTowers; num++)
+            towerImageViews.get(num).setImage(towerImage);
+        for (; num < towerImageViews.size(); num++)
+            towerImageViews.get(num).setImage(null);
     }
 
 }

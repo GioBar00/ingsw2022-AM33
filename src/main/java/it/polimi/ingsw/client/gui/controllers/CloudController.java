@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class CloudController implements GUIController {
 
     @FXML
-    public AnchorPane root;
+    public Pane root;
     @FXML
     public Button cloudBtn;
 
@@ -35,6 +35,8 @@ public class CloudController implements GUIController {
     public ImageView imgViewCloud;
     @FXML
     public AnchorPane anchorPanePawn;
+    @FXML
+    public AnchorPane anchorPaneCloud;
 
     private ArrayList<ImageView> imageViews;
 
@@ -101,10 +103,12 @@ public class CloudController implements GUIController {
         imageViews.add(pawn2Img);
         imageViews.add(pawn3Img);
 
-        GUIUtils.bindSize(root, cloudBtn);
-        GUIUtils.bindSize(root, imgViewCloud);
+        GUIUtils.bindSize(anchorPaneCloud, cloudBtn);
+        GUIUtils.bindSize(anchorPaneCloud, imgViewCloud);
         for (ImageView iv : imageViews)
             GUIUtils.bindSize(anchorPanePawn, iv);
+        anchorPaneCloud.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCloud.setPrefWidth(newValue.doubleValue()));
+        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCloud.setPrefHeight(newValue.doubleValue()));
 
     }
 
@@ -115,7 +119,7 @@ public class CloudController implements GUIController {
      */
     @Override
     public void setRootPane(Pane root) {
-        // already set in the FXML
+        this.root = root;
     }
 
     /**

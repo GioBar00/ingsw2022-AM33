@@ -328,12 +328,22 @@ public class GameController implements GUIController {
      * @param coins the coins of the player.
      */
     private void updatePlayerControllers(List<PlayerView> playerViews, Integer coins) {
+        /*
         for (PlayerView playerView : playerViews) {
             if (!playerControllersByNickname.containsKey(playerView.getNickname())) {
                 PlayerController playerController = (PlayerController) ResourceLoader.loadFXML(FXMLPath.PLAYER, gui);
                 playerController.init();
                 addPlayerController(playerController, playerView.getNickname());
             }
+            playerControllersByNickname.get(playerView.getNickname()).updatePlayerView(playerView, coins);
+        }
+
+         */
+        PlayerView playerView = playerViews.stream().filter(p -> p.getNickname().equals(gui.getNickname())).findFirst().orElse(null);
+        if (playerView != null) {
+            PlayerController playerController = (PlayerController) ResourceLoader.loadFXML(FXMLPath.PLAYER, gui);
+            playerController.init();
+            addPlayerController(playerController, playerView.getNickname());
             playerControllersByNickname.get(playerView.getNickname()).updatePlayerView(playerView, coins);
         }
 

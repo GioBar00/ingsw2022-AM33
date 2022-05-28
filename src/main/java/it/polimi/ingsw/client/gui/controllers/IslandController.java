@@ -38,6 +38,8 @@ public class IslandController implements GUIController{
     public ImageView imgStudent3;
     @FXML
     public ImageView imgStudent4;
+    @FXML
+    public AnchorPane anchorPaneIsland;
     private GUI gui;
 
     Map<StudentColor, Label> studentNumbersMap = new HashMap<>();
@@ -79,7 +81,7 @@ public class IslandController implements GUIController{
     private Label numberLabel;
 
     @FXML
-    private AnchorPane root;
+    private Pane root;
 
     @FXML
     private ImageView towerImage;
@@ -97,7 +99,7 @@ public class IslandController implements GUIController{
         studentNumbersMap.put(StudentColor.MAGENTA, numMagenta);
         studentNumbersMap.put(StudentColor.BLUE, numBlue);
 
-        GUIUtils.bindSize(root, islandImage);
+        GUIUtils.bindSize(anchorPaneIsland, islandImage);
         GUIUtils.bindSize(anchorPaneMotherNature, motherNatureImage);
         GUIUtils.bindSize(anchorPaneBlock, blockImage);
         GUIUtils.bindSize(anchorPaneTower, towerImage);
@@ -107,6 +109,8 @@ public class IslandController implements GUIController{
         GUIUtils.bindSize(anchorPaneStudent, imgStudent3);
         GUIUtils.bindSize(anchorPaneStudent, imgStudent4);
 
+        anchorPaneIsland.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneIsland.setPrefWidth(newValue.doubleValue()));
+        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneIsland.setPrefHeight(newValue.doubleValue()));
 
         islandButton.setDisable(true);
         islandButton.setVisible(false);
@@ -122,7 +126,7 @@ public class IslandController implements GUIController{
 
     @Override
     public void setRootPane(Pane root) {
-        this.root = (AnchorPane) root;
+        this.root = root;
     }
 
     @Override
