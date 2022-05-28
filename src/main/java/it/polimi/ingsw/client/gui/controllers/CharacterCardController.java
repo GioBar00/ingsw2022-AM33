@@ -155,7 +155,9 @@ public class CharacterCardController implements GUIController {
         buttons.put(StudentColor.MAGENTA, new LabelButton(pinkLbl, pinkBtn));
         buttons.put(StudentColor.YELLOW, new LabelButton(yellowLbl, yellowBtn));
 
-
+        for(LabelButton lb : buttons.values()){
+            setNotUsable(lb);
+        }
         GUIUtils.bindSize(anchorPaneCharacter, characterBtn);
         GUIUtils.bindSize(anchorPaneCharacter, characterImg);
 

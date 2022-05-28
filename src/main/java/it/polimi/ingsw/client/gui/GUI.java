@@ -9,7 +9,12 @@ import it.polimi.ingsw.client.gui.controllers.*;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
+import it.polimi.ingsw.network.messages.actions.ChosenIsland;
+import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
+import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
+import it.polimi.ingsw.network.messages.actions.requests.MoveMotherNature;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
+import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.network.messages.views.TeamsView;
@@ -297,14 +302,22 @@ public class GUI extends Application implements UI {
     }
 
     private void processLastRequest(Message message) {
-        /*
         switch (MessageType.retrieveByMessage(message)){
             case PLAY_ASSISTANT_CARD -> {
+                /*
                 ((AssistantCardController)sceneByPath.get(FXMLPath.CHOOSE_ASSISTANT).getUserData()).setPlayable(((PlayAssistantCard)message).getPlayableAssistantCards());
+                 */
+            }
+            case CHOOSE_CLOUD -> {
+                gameController.processChooseCloud((ChooseCloud) message);
+            }
+            case CHOOSE_ISLAND -> { gameController.processChooseIsland((ChooseIsland) message);}
+            case CHOOSE_STUDENT_COLOR -> {
+            }
+            case MOVE_MOTHER_NATURE -> {
+                gameController.processMoveMotherNature((MoveMotherNature) message);
             }
         }
-
-         */
     }
     @Override
     public void serverUnavailable() {

@@ -5,10 +5,18 @@ import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
+import it.polimi.ingsw.network.messages.actions.ChosenCloud;
+import it.polimi.ingsw.network.messages.actions.ChosenIsland;
+import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
+import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
+import it.polimi.ingsw.network.messages.actions.requests.MoveMotherNature;
 import it.polimi.ingsw.network.messages.views.*;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -286,7 +294,7 @@ public class GameController implements GUIController {
     /**
      * This method is used to update the islands.
      *
-     * @param islandGroupViews the islands to update.
+     * @param islandGroupViews  the islands to update.
      * @param motherNatureIndex the index of the mother nature.
      */
     private void updateIslandsController(List<IslandGroupView> islandGroupViews, int motherNatureIndex) {
@@ -302,7 +310,7 @@ public class GameController implements GUIController {
      * This method is used to create the player view and add it to the grid.
      *
      * @param playerController the player controller to add.
-     * @param nickname the nickname of the player.
+     * @param nickname         the nickname of the player.
      */
     private void addPlayerController(PlayerController playerController, String nickname) {
         playerControllersByNickname.put(nickname, playerController);
@@ -332,7 +340,7 @@ public class GameController implements GUIController {
      * This method is used to update the player controllers.
      *
      * @param playerViews the player views to update.
-     * @param coins the coins of the player.
+     * @param coins       the coins of the player.
      */
     private void updatePlayerControllers(List<PlayerView> playerViews, Integer coins) {
 
@@ -371,5 +379,46 @@ public class GameController implements GUIController {
         updateIslandsController(gameView.getIslandsView(), gameView.getMotherNatureIndex());
         Integer coins = gameView.getPlayerCoins() != null ? gameView.getPlayerCoins().get(gui.getNickname()) : null;
         updatePlayerControllers(gameView.getPlayersView(), coins);
+    }
+
+    /**
+     * This methods set the action on the cloud button.
+     *
+     * @param message {@link ChosenCloud} message that contains a list of available clouds.
+     */
+    public void processChooseCloud(ChooseCloud message) {
+        for (int i : message.getAvailableCloudIndexes()) {
+            Button cloudBtn = cloudControllers.get(i).cloudBtn;
+            GUIUtils.setButton(cloudBtn, new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    gui.notifyViewListener(new ChosenCloud(i));
+                    cloudBtn.setDisable(true);
+                }
+            });
+        }
+    }
+
+    /**
+     * Disable all the cloud buttons.
+     */
+    public void resetCloudsButtons() {
+        for (CloudController c : cloudControllers) {
+            GUIUtils.resetButton(c.cloudBtn);
+        }
+    }
+
+    public void processChooseIsland(ChooseIsland message) {
+        /*
+        islandsController.chooseIsland(message.getAvailableIslandIndexes());
+
+         */
+    }
+
+    public void processMoveMotherNature(MoveMotherNature message) {
+        /*
+        islandsController.moveMotherNature(message.getMaxNumMoves(), gameView.getMotherNatureIndex());
+
+         */
     }
 }

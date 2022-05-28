@@ -48,7 +48,7 @@ public class IslandController implements GUIController{
     private ImageView blockImage;
 
     @FXML
-    private Button islandButton;
+    public Button islandButton;
 
     @FXML
     private GridPane islandGrid;

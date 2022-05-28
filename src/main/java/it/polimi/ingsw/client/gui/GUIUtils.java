@@ -5,7 +5,10 @@ import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.CharacterType;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -149,5 +152,30 @@ public abstract class GUIUtils {
     public static void bindSize(Region container, ImageView child) {
         container.widthProperty().addListener((observable, oldValue, newValue) -> child.setFitWidth(newValue.doubleValue()));
         container.heightProperty().addListener((observable, oldValue, newValue) -> child.setFitHeight(newValue.doubleValue()));
+    }
+
+    /**
+     * This method activates a button and set the on action event.
+     *
+     * @param button the button we want to activate.
+     * @param event  the action the button has to make when it's pressed.
+     */
+    public static void setButton(Button button, EventHandler<ActionEvent> event) {
+        button.setDisable(false);
+        button.setStyle("-fx-border-color: green");
+        button.setOnAction(event);
+
+    }
+
+
+    /**
+     * This method reset a specified button.
+     *
+     * @param button the button we want to reset.
+     */
+    public static void resetButton(Button button) {
+        button.setDisable(true);
+        button.setStyle("-fx-border-color: transparent");
+        button.setOnAction(null);
     }
 }
