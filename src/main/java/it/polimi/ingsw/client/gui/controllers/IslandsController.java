@@ -21,9 +21,9 @@ public class IslandsController implements GUIController {
 
     GUI gui;
 
-    List<AnchorPane> anchors = new LinkedList<>();
+    private final List<AnchorPane> anchors = new LinkedList<>();
 
-    List<IslandController> islandControllers = new LinkedList<>();
+    public final List<IslandController> islandControllers = new LinkedList<>();
 
     @FXML
     private FlowPane flowPane;

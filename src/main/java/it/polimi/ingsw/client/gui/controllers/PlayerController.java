@@ -121,6 +121,13 @@ public class PlayerController implements GUIController {
     }
 
     /**
+     * @return the SchoolBoardController
+     */
+    public SchoolBoardController getSchoolBoardController() {
+        return schoolBoardController;
+    }
+
+    /**
      * This method updates the controller with the new player view.
      *
      * @param playerView the new player view.

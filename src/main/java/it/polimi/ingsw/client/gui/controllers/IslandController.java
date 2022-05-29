@@ -191,4 +191,8 @@ public class IslandController implements GUIController{
     public void setNumberLabel(Integer number){
         numberLabel.setText(number.toString());
     }
+
+    public Button getIslandButton() {
+        return islandButton;
+    }
 }

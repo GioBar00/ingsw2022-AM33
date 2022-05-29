@@ -4,11 +4,13 @@ import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
+import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.ChosenCloud;
-import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
-import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
-import it.polimi.ingsw.network.messages.actions.requests.MoveMotherNature;
+import it.polimi.ingsw.network.messages.actions.MovedStudent;
+import it.polimi.ingsw.network.messages.actions.requests.*;
+import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.views.*;
+import it.polimi.ingsw.server.model.enums.StudentColor;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -17,10 +19,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameController implements GUIController {
     @FXML
@@ -215,6 +215,7 @@ public class GameController implements GUIController {
                 characterCardControllers.add(characterCardController);
             }
             characterCardControllers.get(i).setCharacterView(characterCardViews.get(i));
+
         }
     }
 
@@ -316,5 +317,36 @@ public class GameController implements GUIController {
 
     public void processMoveMotherNature(MoveMotherNature message) {
         islandsController.moveMotherNature(message.getMaxNumMoves(), gameView.getMotherNatureIndex());
+    }
+
+    public void processMultiplePossibleMoves(Set<Integer> entranceIndexes, Set<Integer> islandIndexes, Set<Integer> entranceToHallIndexes) {
+        PlayerController me = playerControllersByNickname.get(gui.getNickname());
+        List<Button> entranceButtons = me.getSchoolBoardController().entranceButtons;
+        for (Integer i : entranceIndexes) {
+            GUIUtils.setButton(entranceButtons.get(i), event -> {
+                // clear entrance buttons
+                for (Button b : entranceButtons) {
+                    GUIUtils.resetButton(b);
+                }
+                // activate islands
+                for (Integer j : islandIndexes) {
+                    GUIUtils.setButton(islandsController.islandControllers.get(j).islandButton, e -> {
+                        // clear islands
+                        for (Button b : islandsController.islandControllers.stream().map(IslandController::getIslandButton).toList()) {
+                            GUIUtils.resetButton(b);
+                        }
+                        gui.notifyViewListener(new MovedStudent(MoveLocation.ENTRANCE, i, MoveLocation.ISLAND, j));
+                    });
+                }
+                // activate hall
+                if (entranceToHallIndexes.contains(i)) {
+                    GUIUtils.setButton(me.getSchoolBoardController().hallButton, e -> {
+                        // clear entrance to hall
+                        GUIUtils.resetButton(me.getSchoolBoardController().hallButton);
+                        gui.notifyViewListener(new MovedStudent(MoveLocation.ENTRANCE, i, MoveLocation.HALL, null));
+                    });
+                }
+            });
+        }
     }
 }
