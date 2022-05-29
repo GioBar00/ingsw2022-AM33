@@ -357,16 +357,15 @@ public class GameController implements GUIController {
     }
 
     public void processMoveCardIsland(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
-        int i = 0;
-        for (CharacterCardView characterCardView : gameView.getCharacterCardView()) {
-            if (characterCardView.isActivating())
-                break;
-            i++;
-        }
+
+        Integer cardIndex = findActivatedCard();
+        if (cardIndex == null)
+            return;
+
         for (Integer fromIndex : fromIndexes) {
-            GUIUtils.setButton(characterCardControllers.get(i).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)), e -> {
+            GUIUtils.setButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)), e -> {
                 for (Integer resInd : fromIndexes) {
-                    GUIUtils.resetButton(characterCardControllers.get(resInd).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)));
+                    GUIUtils.resetButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(resInd)));
                 }
                 for (Integer toIndex : toIndexes) {
                     GUIUtils.setButton(islandsController.islandControllers.get(toIndex).islandButton, action -> {
@@ -378,6 +377,72 @@ public class GameController implements GUIController {
                 }
             });
         }
+    }
+
+    public void processMoveCardHall(Set<Integer> fromIndexes) {
+
+        Integer cardIndex = findActivatedCard();
+        if (cardIndex == null)
+            return;
+
+        for (Integer fromIndex : fromIndexes) {
+            GUIUtils.setButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)), e -> {
+                for (Integer resInd : fromIndexes) {
+                    GUIUtils.resetButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(resInd)));
+                    gui.notifyViewListener(new MovedStudent(MoveLocation.CARD, fromIndex, MoveLocation.HALL, null));
+                }
+            });
+        }
+    }
+
+    private void processSwapCardEntrance(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
+
+        Integer cardIndex = findActivatedCard();
+        if (cardIndex == null)
+            return;
+
+        SchoolBoardController schoolBoardController = playerControllersByNickname.get(gui.getNickname()).getSchoolBoardController();
+        for (Integer fromIndex : fromIndexes) {
+            GUIUtils.setButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)), e -> {
+                for (Integer resInd : fromIndexes) {
+                    GUIUtils.resetButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(resInd)));
+                }
+                for (Integer toIndex : toIndexes) {
+                    GUIUtils.setButton(schoolBoardController.entranceButtons.get(toIndex), action -> {
+                        for (Integer resToInd : fromIndexes) {
+                            GUIUtils.resetButton(schoolBoardController.entranceButtons.get(resToInd));
+                        }
+                        gui.notifyViewListener(new SwappedStudents(MoveLocation.CARD, fromIndex, MoveLocation.ENTRANCE, toIndex));
+                    });
+                }
+            });
+        }
+    }
+
+    public void processSwapEntranceHall(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
+
+        Integer cardIndex = findActivatedCard();
+        if (cardIndex == null)
+            return;
+
+        SchoolBoardController schoolBoardController = playerControllersByNickname.get(gui.getNickname()).getSchoolBoardController();
+        for(Integer fromIndex : fromIndexes){
+            for (Integer resInd : fromIndexes) {
+                GUIUtils.resetButton(schoolBoardController.entranceButtons.get(resInd));
+            }
+            GUIUtils.setButton(schoolBoardController.entranceButtons.get(fromIndex), e -> {
+                for (Integer toIndex : toIndexes){
+                    GUIUtils.setButton(schoolBoardController.hallButtonsByColor.get(StudentColor.retrieveStudentColorByOrdinal(toIndex)), action -> {
+                        for (Integer resToInd : toIndexes) {
+                            GUIUtils.resetButton(schoolBoardController.hallButtonsByColor.get(StudentColor.retrieveStudentColorByOrdinal(resToInd)));
+                        }
+                        gui.notifyViewListener(new SwappedStudents(MoveLocation.ENTRANCE,fromIndex, MoveLocation.HALL, toIndex));
+                    });
+                }
+            });
+        }
+
+
     }
 
     public void processMultiplePossibleMoves(Set<Integer> entranceIndexes, Set<Integer> islandIndexes, Set<Integer> entranceToHallIndexes) {
@@ -409,5 +474,19 @@ public class GameController implements GUIController {
                 }
             });
         }
+    }
+
+    private Integer findActivatedCard() {
+        if (characterCardControllers.isEmpty())
+            return null;
+
+        Integer cardIndex = 0;
+        for (CharacterCardView characterCardView : gameView.getCharacterCardView()) {
+            if (characterCardView.isActivating())
+                break;
+            cardIndex++;
+        }
+
+        return cardIndex;
     }
 }
