@@ -9,12 +9,15 @@ import it.polimi.ingsw.client.gui.controllers.*;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
+import it.polimi.ingsw.network.messages.MoveActionRequest;
+import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseStudentColor;
 import it.polimi.ingsw.network.messages.actions.requests.MoveMotherNature;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
+import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.network.messages.views.TeamsView;
@@ -24,7 +27,9 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
+import java.util.HashSet;
 import java.util.MissingResourceException;
+import java.util.Set;
 
 public class GUI extends Application implements UI {
     private Stage stage;
@@ -316,9 +321,43 @@ public class GUI extends Application implements UI {
                 chooseColor.setAlwaysOnTop(true);
                 chooseColor.show();
             });
+            case MOVE_MOTHER_NATURE -> Platform.runLater(() -> gameController.processMoveMotherNature((MoveMotherNature) message));
+            case MOVE_STUDENT -> handleMoveStudent((MoveStudent)message);
+            case MULTIPLE_POSSIBLE_MOVES -> handlePossibleMoves((MultiplePossibleMoves)message);
+            case SWAP_STUDENTS -> handleSwap((SwapStudents)message);
+        }
+    }
 
-            case MOVE_MOTHER_NATURE ->
-                    Platform.runLater(() -> gameController.processMoveMotherNature((MoveMotherNature) message));
+    private  void handleMoveStudent(MoveStudent moveStudent) {
+        switch (moveStudent.getTo()){
+            case ISLAND -> gameController.processMoveCardIsland(moveStudent.getFromIndexesSet(), moveStudent.getToIndexesSet());
+            case HALL -> gameController.processMoveCardHall(moveStudent.getFromIndexesSet());
+        }
+    }
+    private void handlePossibleMoves(MultiplePossibleMoves multiplePossibleMoves){
+            Set<Integer> entrance = new HashSet<>();
+            Set<Integer> islands = new HashSet<>();
+            Set<Integer> entranceToHallIndexes = new HashSet<>();
+            for(MoveActionRequest moveActionRequest : multiplePossibleMoves.getPossibleMoves()){
+                if(moveActionRequest.getTo().equals(MoveLocation.ISLAND)){
+                    islands.addAll(moveActionRequest.getToIndexesSet());
+                    entrance.addAll(moveActionRequest.getFromIndexesSet());
+                }
+                else { if(moveActionRequest.getTo().equals(MoveLocation.ISLAND)){
+                    entranceToHallIndexes.addAll(moveActionRequest.getFromIndexesSet());
+                }
+                }
+            }
+            gameController.processMultiplePossibleMoves(entrance, islands, entranceToHallIndexes);
+    }
+
+    private void handleSwap(SwapStudents swapStudents) {
+        if(swapStudents.getFrom().equals(MoveLocation.CARD)){
+            gameController.processSwapCardEntrance(swapStudents.getFromIndexesSet(),swapStudents.getToIndexesSet());
+        }
+
+        if(swapStudents.getFrom().equals(MoveLocation.ENTRANCE)){
+            gameController.processSwapEntranceHall(swapStudents.getFromIndexesSet(), swapStudents.getToIndexesSet());
         }
     }
 

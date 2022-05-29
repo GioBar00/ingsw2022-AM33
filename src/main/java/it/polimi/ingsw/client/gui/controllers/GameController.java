@@ -395,7 +395,7 @@ public class GameController implements GUIController {
         }
     }
 
-    private void processSwapCardEntrance(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
+    public void processSwapCardEntrance(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
 
         Integer cardIndex = findActivatedCard();
         if (cardIndex == null)
