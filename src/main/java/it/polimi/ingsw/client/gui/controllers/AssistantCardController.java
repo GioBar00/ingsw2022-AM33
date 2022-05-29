@@ -277,9 +277,8 @@ public class AssistantCardController implements GUIController {
      * @param ac assistant that will be shown in the image
      */
     public void setAssistantImage (AnchorPane anchorPane, AssistantCard ac){
-        Image image = new Image(GUIUtils.getAssistantCard(ac).toString());
         ImageView imageView = new ImageView();
-        imageView.setImage(image);
+        imageView.setImage(GUIUtils.getAssistantCard(ac));
         anchorPane.getChildren().add(imageView);
         GUIUtils.bindSize(anchorPane, imageView);
     }
