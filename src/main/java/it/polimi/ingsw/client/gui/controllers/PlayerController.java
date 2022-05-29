@@ -197,6 +197,12 @@ public class PlayerController implements GUIController {
         GUIUtils.addToAnchorPane(newContainer, gridPane);
     }
 
+    public void playAssistantCard(EnumSet<AssistantCard> availableCards) {
+        if (assistantCardController != null)
+            assistantCardController.forceClose();
+        showAssistantCards(availableCards, true);
+    }
+
     /**
      * This method enables the player to view his hand.
      *
@@ -204,20 +210,23 @@ public class PlayerController implements GUIController {
      */
     public void enableHand(GUIController handStageHandler) {
         this.handStageHandler = handStageHandler;
-        btnHand.setOnAction(event -> showAssistantCards(false));
+        btnHand.setOnAction(event -> {
+            if (assistantCardController != null)
+                return;
+            EnumSet<AssistantCard> cards = EnumSet.noneOf(AssistantCard.class);
+            cards.addAll(playerView.getAssistantCards());
+            showAssistantCards(cards, false);
+        });
     }
 
-    public void showAssistantCards(boolean isPlayable){
+    private void showAssistantCards(EnumSet<AssistantCard> cards, boolean isPlayable) {
         if (playerView == null)
             return;
-        EnumSet<AssistantCard> cards = EnumSet.noneOf(AssistantCard.class);
-        cards.addAll(playerView.getAssistantCards());
         AssistantCardController controller = (AssistantCardController) ResourceLoader.loadFXML(FXMLPath.CHOOSE_ASSISTANT, gui);
         assistantCardController = controller;
         controller.init();
         if (isPlayable)
             controller.setPlayable(cards);
-
         else {
             controller.setAvailableCards(cards);
             controller.showAssistantCards();
@@ -230,6 +239,11 @@ public class PlayerController implements GUIController {
         stage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
         controller.loadScene(stage);
         stage.setAlwaysOnTop(true);
+        stage.setOnHidden(event -> {
+            assistantCardController = null;
+            if (isPlayable && !controller.hasChosenAnAssistant())
+                showAssistantCards(cards, true);
+        });
         handStageHandler.showNewDisablingStage(stage);
     }
 }

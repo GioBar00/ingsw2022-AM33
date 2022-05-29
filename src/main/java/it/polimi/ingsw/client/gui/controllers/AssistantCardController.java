@@ -176,8 +176,8 @@ public class AssistantCardController implements GUIController {
      */
     @FXML
     public void playAssistantCard(AssistantCard card) {
-        choseAnAssistant = true;
         gui.notifyViewListener(new PlayedAssistantCard(card));
+        forceClose();
     }
 
     /**
@@ -250,10 +250,8 @@ public class AssistantCardController implements GUIController {
         for (AssistantCard ac : AssistantCard.values()) {
             if (availableCards.contains(ac)) {
                 setAssistantImage(assistantViewMaps.get(assistantGridMap.get(ac)).anchorPaneImageView(), ac);
-                if (setButtons) {
-                    Button button = setAssistantButton(assistantViewMaps.get(assistantGridMap.get(ac)).anchorPaneButton(), ac);
-                    button.setOnAction(e -> playAssistantCard(ac));
-                }
+                if (setButtons)
+                    setAssistantButton(assistantViewMaps.get(assistantGridMap.get(ac)).anchorPaneButton(), ac);
             } else {
                 flowpane.getChildren().remove(assistantGridMap.get(ac));
             }
@@ -265,20 +263,14 @@ public class AssistantCardController implements GUIController {
      *
      * @param anchorPane inside the cell of the grid, where the anchorPaneButton will be placed
      * @param ac         that will be shown in the grid
-     * @return the anchorPaneButton just created
      */
-    public Button setAssistantButton(AnchorPane anchorPane, AssistantCard ac) {
+    public void setAssistantButton(AnchorPane anchorPane, AssistantCard ac) {
         Button button = new Button();
         button.setText(ac.name());
         button.setTextAlignment(TextAlignment.CENTER);
         button.setAlignment(Pos.CENTER);
-        button.setPrefWidth(101);
-        button.setPrefHeight(26);
-        AnchorPane.setLeftAnchor(anchorPane, 36.0);
-        AnchorPane.setRightAnchor(anchorPane, 36.0);
-        AnchorPane.setTopAnchor(anchorPane, 0.0);
-        anchorPane.getChildren().add(new Button());
-        return button;
+        button.setOnAction(e -> playAssistantCard(ac));
+        GUIUtils.addToAnchorPane(anchorPane, button);
     }
 
     /**
@@ -303,5 +295,13 @@ public class AssistantCardController implements GUIController {
             assistantViewMaps.get(assistantGridMap.get(ac)).anchorPaneImageView().getChildren().removeAll();
             assistantViewMaps.get(assistantGridMap.get(ac)).anchorPaneButton().getChildren().removeAll();
         }
+    }
+
+    /**
+     * This method closes the window and prevents its reopening.
+     */
+    public void forceClose() {
+        choseAnAssistant = true;
+        ((Stage) root.getScene().getWindow()).close();
     }
 }

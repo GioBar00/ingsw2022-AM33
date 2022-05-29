@@ -10,6 +10,7 @@ import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
 import it.polimi.ingsw.network.messages.actions.requests.MoveMotherNature;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.views.*;
+import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -357,7 +358,6 @@ public class GameController implements GUIController {
     }
 
     public void processMoveCardIsland(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
-
         Integer cardIndex = findActivatedCard();
         if (cardIndex == null)
             return;
@@ -380,7 +380,6 @@ public class GameController implements GUIController {
     }
 
     public void processMoveCardHall(Set<Integer> fromIndexes) {
-
         Integer cardIndex = findActivatedCard();
         if (cardIndex == null)
             return;
@@ -396,7 +395,6 @@ public class GameController implements GUIController {
     }
 
     public void processSwapCardEntrance(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
-
         Integer cardIndex = findActivatedCard();
         if (cardIndex == null)
             return;
@@ -420,23 +418,22 @@ public class GameController implements GUIController {
     }
 
     public void processSwapEntranceHall(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
-
         Integer cardIndex = findActivatedCard();
         if (cardIndex == null)
             return;
 
         SchoolBoardController schoolBoardController = playerControllersByNickname.get(gui.getNickname()).getSchoolBoardController();
-        for(Integer fromIndex : fromIndexes){
+        for (Integer fromIndex : fromIndexes) {
             for (Integer resInd : fromIndexes) {
                 GUIUtils.resetButton(schoolBoardController.entranceButtons.get(resInd));
             }
             GUIUtils.setButton(schoolBoardController.entranceButtons.get(fromIndex), e -> {
-                for (Integer toIndex : toIndexes){
+                for (Integer toIndex : toIndexes) {
                     GUIUtils.setButton(schoolBoardController.hallButtonsByColor.get(StudentColor.retrieveStudentColorByOrdinal(toIndex)), action -> {
                         for (Integer resToInd : toIndexes) {
                             GUIUtils.resetButton(schoolBoardController.hallButtonsByColor.get(StudentColor.retrieveStudentColorByOrdinal(resToInd)));
                         }
-                        gui.notifyViewListener(new SwappedStudents(MoveLocation.ENTRANCE,fromIndex, MoveLocation.HALL, toIndex));
+                        gui.notifyViewListener(new SwappedStudents(MoveLocation.ENTRANCE, fromIndex, MoveLocation.HALL, toIndex));
                     });
                 }
             });
@@ -490,8 +487,8 @@ public class GameController implements GUIController {
         return cardIndex;
     }
 
-    public void processPlayAssistantCard(){
+    public void processPlayAssistantCard(EnumSet<AssistantCard> availableCards) {
         PlayerController me = playerControllersByNickname.get(gui.getNickname());
-        me.showAssistantCards(true);
+        me.playAssistantCard(availableCards);
     }
 }
