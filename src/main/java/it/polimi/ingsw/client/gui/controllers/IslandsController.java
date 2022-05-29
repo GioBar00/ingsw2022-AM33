@@ -86,8 +86,8 @@ public class IslandsController implements GUIController {
      */
     void chooseIsland(Set<Integer> availableIslandIndexes) {
         for (Integer i : availableIslandIndexes) {
-            if (i < islandsControllers.size()) {
-                Button islandBtn = islandsControllers.get(i).islandButton;
+            if (i < islandControllers.size()) {
+                Button islandBtn = islandControllers.get(i).islandButton;
                 GUIUtils.setButton(islandBtn, actionEvent -> gui.notifyViewListener(new ChosenIsland(i)));
             }
         }
@@ -104,13 +104,13 @@ public class IslandsController implements GUIController {
         Map<Integer, Integer> availableIslandIndexes = new HashMap<>();
 
         for (int i = 1; i <= maxNumMoves; i++) {
-            Integer index = (motherNatureIndex + i) % islandsControllers.size();
+            Integer index = (motherNatureIndex + i) % islandControllers.size();
             availableIslandIndexes.put(index, i);
         }
 
         for (Integer i : availableIslandIndexes.keySet()) {
-            if (i < islandsControllers.size()) {
-                Button islandBtn = islandsControllers.get(i).islandButton;
+            if (i < islandControllers.size()) {
+                Button islandBtn = islandControllers.get(i).islandButton;
                 GUIUtils.setButton(islandBtn, actionEvent -> gui.notifyViewListener(new MovedMotherNature(availableIslandIndexes.get(i))));
             }
         }
