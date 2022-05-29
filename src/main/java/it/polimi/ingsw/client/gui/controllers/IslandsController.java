@@ -13,13 +13,13 @@ import javafx.scene.layout.Pane;
 import java.util.LinkedList;
 import java.util.List;
 
-public class IslandsFlowController implements GUIController {
+public class IslandsController implements GUIController {
 
     GUI gui;
 
     List<AnchorPane> anchors = new LinkedList<>();
 
-    List<IslandController> islandsControllers = new LinkedList<>();
+    List<IslandController> islandControllers = new LinkedList<>();
 
     @FXML
     private FlowPane flowPane;
@@ -35,14 +35,19 @@ public class IslandsFlowController implements GUIController {
     @Override
     public void init() {
         for (int i = 0; i < 12; i++) {
-            anchors.add((AnchorPane) flowPane.getChildren().get(i));
+            AnchorPane anchorPane = (AnchorPane) flowPane.getChildren().get(i);
+            anchors.add(anchorPane);
         }
 
-        for (int i = 0; i < 12; i++) {
-            GUIController islandGui;
-            islandGui = ResourceLoader.loadFXML(FXMLPath.ISLAND, gui);
-            islandsControllers.add((IslandController) islandGui);
-            GUIUtils.addToAnchorPane(anchors.get(i), islandGui.getRootPane());
+        for (AnchorPane anchor : anchors) {
+            flowPane.heightProperty().addListener((observable, oldValue, newValue) -> {
+                anchor.setPrefHeight(newValue.doubleValue() / 3);
+                anchor.setPrefWidth(newValue.doubleValue() / 2.5);
+            });
+            IslandController islandGui;
+            islandGui = (IslandController) ResourceLoader.loadFXML(FXMLPath.ISLAND, gui);
+            islandControllers.add(islandGui);
+            GUIUtils.addToAnchorPane(anchor, islandGui.getRootPane());
             islandGui.init();
         }
     }
@@ -50,7 +55,7 @@ public class IslandsFlowController implements GUIController {
     public void setIslandsView(List<IslandGroupView> islandsView, int motherNatureIndex) {
         for (int i = 0; i < islandsView.size(); i++) {
             boolean motherNatureIsThere = motherNatureIndex == i;
-            islandsControllers.get(i).setIsland(islandsView.get(i), motherNatureIsThere);
+            islandControllers.get(i).setIsland(islandsView.get(i), motherNatureIsThere);
         }
         if (islandsView.size() < 12) {
             for (int j = 0; j < 12 - islandsView.size(); j++) {

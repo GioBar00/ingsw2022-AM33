@@ -84,7 +84,7 @@ public class GameController implements GUIController {
     private final List<CloudController> cloudControllers = new ArrayList<>(2);
     private final List<AnchorPane> characterCardPanes = new ArrayList<>(3);
     private final List<CharacterCardController> characterCardControllers = new ArrayList<>();
-    private IslandsFlowController islandsController;
+    private IslandsController islandsController;
     private final List<AnchorPane> remainingPlayerPanes = new ArrayList<>(3);
     private final Map<String, PlayerController> playerControllersByNickname = new HashMap<>();
 
@@ -245,7 +245,7 @@ public class GameController implements GUIController {
      */
     private void updateIslandsController(List<IslandGroupView> islandGroupViews, int motherNatureIndex) {
         if (islandsController == null) {
-            islandsController = (IslandsFlowController) ResourceLoader.loadFXML(FXMLPath.ISLANDS, gui);
+            islandsController = (IslandsController) ResourceLoader.loadFXML(FXMLPath.ISLANDS, gui);
             islandsController.init();
             GUIUtils.addToAnchorPane(anchorPaneIslands, islandsController.getRootPane());
         }

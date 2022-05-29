@@ -11,7 +11,7 @@ public enum FXMLPath {
     GAME_SCREEN("/fxml/game-screen.fxml"),
     SCHOOL_BOARD("/fxml/school-board.fxml"),
     ISLAND("/fxml/island.fxml"),
-    ISLANDS("/fxml/islandsFlow.fxml"),
+    ISLANDS("/fxml/islands.fxml"),
     CLOUD("/fxml/cloud.fxml"),
     PLAYER("/fxml/player.fxml");
 

@@ -166,21 +166,6 @@ public abstract class GUIUtils {
         container.heightProperty().addListener((observable, oldValue, newValue) -> child.setFitHeight(newValue.doubleValue()));
     }
 
-    /*
-    public static void bindSizeKeepRatio(Region container, Region child, double ratio) {
-        child.heightProperty().addListener((observable, oldValue, newValue) -> child.setPrefWidth(newValue.doubleValue() * ratio));
-        container.heightProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.doubleValue() * ratio < container.getWidth())
-                child.setPrefHeight(newValue.doubleValue());
-        });
-        container.widthProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.doubleValue() < container.getHeight() * ratio)
-                child.setPrefHeight(newValue.doubleValue() * ratio);
-        });
-    }
-
-     */
-
     /**
      * This method adds a child to a pane container filling the height and width of the container and keeping the aspect ratio.
      * @param pane the container

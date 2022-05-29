@@ -99,6 +99,8 @@ public class IslandController implements GUIController{
         studentNumbersMap.put(StudentColor.MAGENTA, numMagenta);
         studentNumbersMap.put(StudentColor.BLUE, numBlue);
 
+        root.getChildren().clear();
+
         GUIUtils.bindSize(anchorPaneIsland, islandImage);
         GUIUtils.bindSize(anchorPaneMotherNature, motherNatureImage);
         GUIUtils.bindSize(anchorPaneBlock, blockImage);
@@ -109,8 +111,7 @@ public class IslandController implements GUIController{
         GUIUtils.bindSize(anchorPaneStudent, imgStudent3);
         GUIUtils.bindSize(anchorPaneStudent, imgStudent4);
 
-        anchorPaneIsland.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneIsland.setPrefWidth(newValue.doubleValue()));
-        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneIsland.setPrefHeight(newValue.doubleValue()));
+        GUIUtils.addToPaneCenterKeepRatio(root, anchorPaneIsland, 1.0);
 
         islandButton.setDisable(true);
         islandButton.setVisible(false);
