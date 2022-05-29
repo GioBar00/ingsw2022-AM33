@@ -364,9 +364,9 @@ public class GameController implements GUIController {
             i++;
         }
         for (Integer fromIndex : fromIndexes) {
-            GUIUtils.setButton(characterCardControllers.get(i).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)).button, e -> {
+            GUIUtils.setButton(characterCardControllers.get(i).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)), e -> {
                 for (Integer resInd : fromIndexes) {
-                    GUIUtils.resetButton(characterCardControllers.get(resInd).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)).button);
+                    GUIUtils.resetButton(characterCardControllers.get(resInd).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)));
                 }
                 for (Integer toIndex : toIndexes) {
                     GUIUtils.setButton(islandsController.islandControllers.get(toIndex).islandButton, action -> {

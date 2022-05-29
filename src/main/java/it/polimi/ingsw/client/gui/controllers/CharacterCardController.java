@@ -32,7 +32,8 @@ public class CharacterCardController implements GUIController {
     public ImageView imgViewCoin;
     private GUI gui;
     private Pane root;
-    EnumMap<StudentColor, LabelButton> buttons;
+    EnumMap<StudentColor, Button> buttons;
+    EnumMap<StudentColor, Label> labels;
 
     @FXML
     public AnchorPane anchorPaneCharacter;
@@ -113,9 +114,9 @@ public class CharacterCardController implements GUIController {
             for (StudentColor s : StudentColor.values()) {
                 num = view.getStudent().get(s);
                 if (num == null || num == 0) {
-                    setNotUsable(buttons.get(s));
-                    buttons.get(s).button.setOpacity(1);
-                } else setUsable(buttons.get(s), num);
+                    setNotUsable(buttons.get(s), labels.get(s));
+                    buttons.get(s).setOpacity(1);
+                } else setUsable(buttons.get(s), labels.get(s), num);
             }
         }
 
@@ -124,26 +125,28 @@ public class CharacterCardController implements GUIController {
     /**
      * Private method that sets if a button is not usable.
      *
-     * @param in {@link LabelButton}.
+     * @param in    {@link Button} the button we want to enable.
+     * @param inLbl {@link Label} the label we want to enable.
      */
-    private void setNotUsable(LabelButton in) {
-        in.button.setVisible(false);
-        in.button.setDisable(true);
-        in.label.setVisible(false);
+    private void setNotUsable(Button in, Label inLbl) {
+        in.setVisible(false);
+        in.setDisable(true);
+        inLbl.setVisible(false);
 
     }
 
     /**
      * Private method that sets if a button is usable.
      *
-     * @param in  {@link LabelButton}.
-     * @param num the quantity related to the button.
+     * @param in    {@link Button} the button we want to enable.
+     * @param inLbl {@link Label} the label we want to enable.
+     * @param num   the quantity related to the button.
      */
-    private void setUsable(LabelButton in, int num) {
-        in.button.setVisible(true);
-        in.button.setDisable(true);
-        in.label.setVisible(true);
-        in.label.setText(String.valueOf(num));
+    private void setUsable(Button in, Label inLbl, int num) {
+        in.setVisible(true);
+        in.setDisable(true);
+        inLbl.setVisible(true);
+        inLbl.setText(String.valueOf(num));
     }
 
     /**
@@ -152,14 +155,21 @@ public class CharacterCardController implements GUIController {
     @Override
     public void init() {
         buttons = new EnumMap<>(StudentColor.class);
-        buttons.put(StudentColor.GREEN, new LabelButton(greenLbl, greenBtn));
-        buttons.put(StudentColor.RED, new LabelButton(redLbl, redBtn));
-        buttons.put(StudentColor.BLUE, new LabelButton(blueLbl, blueBtn));
-        buttons.put(StudentColor.MAGENTA, new LabelButton(pinkLbl, pinkBtn));
-        buttons.put(StudentColor.YELLOW, new LabelButton(yellowLbl, yellowBtn));
+        labels = new EnumMap<>(StudentColor.class);
+        buttons.put(StudentColor.GREEN, greenBtn);
+        labels.put(StudentColor.GREEN, greenLbl);
+        buttons.put(StudentColor.RED, redBtn);
+        labels.put(StudentColor.RED, redLbl);
+        buttons.put(StudentColor.BLUE, blueBtn);
+        labels.put(StudentColor.BLUE, blueLbl);
+        buttons.put(StudentColor.MAGENTA, pinkBtn);
+        labels.put(StudentColor.MAGENTA, pinkLbl);
+        buttons.put(StudentColor.YELLOW, yellowBtn);
+        labels.put(StudentColor.YELLOW, yellowLbl);
 
-        for (LabelButton lb : buttons.values()) {
-            setNotUsable(lb);
+
+        for (StudentColor s : StudentColor.values()) {
+            setNotUsable(buttons.get(s), labels.get(s));
         }
         GUIUtils.bindSize(anchorPaneCharacter, characterBtn);
         GUIUtils.bindSize(anchorPaneCharacter, characterImg);
@@ -226,16 +236,4 @@ public class CharacterCardController implements GUIController {
         return index;
     }
 
-    /**
-     * Private class for group label and button related to the same color
-     */
-    static class LabelButton {
-        Label label;
-        Button button;
-
-        LabelButton(Label label, Button button) {
-            this.label = label;
-            this.button = button;
-        }
-    }
 }
