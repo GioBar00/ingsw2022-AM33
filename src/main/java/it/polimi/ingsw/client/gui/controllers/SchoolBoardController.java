@@ -23,7 +23,7 @@ public class SchoolBoardController implements GUIController {
     public AnchorPane anchorPaneBoard;
     private GUI gui;
 
-    private final List<Button> entranceButtons = new ArrayList<>(9);
+    public final List<Button> entranceButtons = new ArrayList<>(9);
 
     private final Map<Button, ImageView> entranceImageViewByButton = new HashMap<>();
 
@@ -32,6 +32,8 @@ public class SchoolBoardController implements GUIController {
     private final EnumMap<StudentColor, ImageView> professorsImageViewByColor = new EnumMap<>(StudentColor.class);
 
     private final EnumMap<StudentColor, List<ImageView>> hallImageViewsByColor = new EnumMap<>(StudentColor.class);
+
+    public final EnumMap<StudentColor, Button> hallButtonsByColor = new EnumMap<>(StudentColor.class);
     
 
     private Pane root;
@@ -46,7 +48,7 @@ public class SchoolBoardController implements GUIController {
     private Button greenHallButton;
 
     @FXML
-    private Button hallButton;
+    public Button hallButton;
 
     @FXML
     private GridPane hallGrid;
@@ -104,16 +106,6 @@ public class SchoolBoardController implements GUIController {
             btn.setGraphic(imageView);
             entranceGrid.add(btn, ((i + 1) % 2) * 2 + 1, ((i + 1) / 2) * 2 + 1);
         }
-        /*
-        entranceButtons.addAll(Arrays.asList(entrance0, entrance1, entrance2, entrance3, entrance4, entrance5, entrance6, entrance7, entrance8));
-        for (Button btn : entranceButtons) {
-            ImageView imageView = new ImageView();
-            GUIUtils.bindSize(btn, imageView);
-            btn.setGraphic(imageView);
-            entranceImageViewByButton.put(btn, imageView);
-        }
-        
-         */
     }
 
     private void initTowers() {
@@ -128,16 +120,11 @@ public class SchoolBoardController implements GUIController {
             anchorPane.getChildren().add(imageView);
             towersGrid.add(anchorPane, i % 2, i / 2);
         }
-        /*
-        towerAnchorPanes.addAll(Arrays.asList(anchorPaneTower0, anchorPaneTower1, anchorPaneTower2, anchorPaneTower3, anchorPaneTower4, anchorPaneTower5, anchorPaneTower6, anchorPaneTower7));
-        for (AnchorPane ap : towerAnchorPanes) {
-            ImageView imageView = new ImageView();
-            GUIUtils.bindSize(ap, imageView);
-            ap.getChildren().add(imageView);
-            towerImageViewByAnchorPane.put(ap, imageView);
-        }
-
-         */
+        hallButtonsByColor.put(StudentColor.BLUE, blueHallButton);
+        hallButtonsByColor.put(StudentColor.GREEN, greenHallButton);
+        hallButtonsByColor.put(StudentColor.MAGENTA, magentaHallButton);
+        hallButtonsByColor.put(StudentColor.RED, redHallButton);
+        hallButtonsByColor.put(StudentColor.YELLOW, yellowHallButton);
     }
 
     private void initProfessors() {

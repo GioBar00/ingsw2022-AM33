@@ -311,8 +311,7 @@ public class GUI extends Application implements UI {
             }
             case CHOOSE_CLOUD -> Platform.runLater(() -> gameController.processChooseCloud((ChooseCloud) message));
             case CHOOSE_ISLAND -> Platform.runLater(() -> gameController.processChooseIsland((ChooseIsland) message));
-            case CHOOSE_STUDENT_COLOR -> Platform.runLater(() ->
-            {
+            case CHOOSE_STUDENT_COLOR -> Platform.runLater(() -> {
                 Stage chooseColor = new Stage();
                 ChooseColorController controller = (ChooseColorController) ResourceLoader.loadFXML(FXMLPath.CHOOSE_GAME, this);
                 controller.setAvailableButtons(((ChooseStudentColor) message).getAvailableStudentColors());
@@ -321,7 +320,6 @@ public class GUI extends Application implements UI {
                 controller.loadScene(chooseColor);
                 chooseColor.setAlwaysOnTop(true);
                 chooseColor.show();
-
             });
 
             case MOVE_MOTHER_NATURE ->
