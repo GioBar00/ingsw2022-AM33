@@ -7,37 +7,30 @@
 
 <AnchorPane fx:id="root" prefHeight="1600.0" prefWidth="2000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
 
-    <GridPane fx:id="islandsGrid" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+    <GridPane fx:id="islandsGrid" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <rowConstraints>
-            <RowConstraints minHeight="10.0" percentHeight="33.0" prefHeight="30.0"/>
-            <RowConstraints minHeight="10.0" percentHeight="33.0" prefHeight="30.0"/>
-            <RowConstraints minHeight="10.0" percentHeight="34.0" prefHeight="30.0"/>
+            <RowConstraints minHeight="10.0" percentHeight="33.0" prefHeight="30.0" />
+            <RowConstraints minHeight="10.0" percentHeight="33.0" prefHeight="30.0" />
+            <RowConstraints minHeight="10.0" percentHeight="34.0" prefHeight="30.0" />
         </rowConstraints>
         <columnConstraints>
-            <ColumnConstraints minWidth="10.0" percentWidth="25.0" prefWidth="100.0"/>
-            <ColumnConstraints minWidth="10.0" percentWidth="25.0" prefWidth="100.0"/>
-            <ColumnConstraints minWidth="10.0" percentWidth="25.0" prefWidth="100.0"/>
-            <ColumnConstraints minWidth="10.0" percentWidth="25.0" prefWidth="100.0"/>
+            <ColumnConstraints minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
+            <ColumnConstraints minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
+            <ColumnConstraints minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
+            <ColumnConstraints minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
         </columnConstraints>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0"/>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"/>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2"/>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3"/>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"
-                    GridPane.rowIndex="1"/>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2"
-                    GridPane.rowIndex="1"/>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3"
-                    GridPane.rowIndex="1"/>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2"/>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"
-                    GridPane.rowIndex="2"/>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2"
-                    GridPane.rowIndex="2"/>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3"
-                    GridPane.rowIndex="2"/>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
     </GridPane>
 
 </AnchorPane>

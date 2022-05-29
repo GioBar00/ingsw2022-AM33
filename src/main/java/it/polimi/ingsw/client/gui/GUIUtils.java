@@ -1,19 +1,16 @@
 package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.enums.ImagePath;
-import it.polimi.ingsw.server.model.enums.AssistantCard;
-import it.polimi.ingsw.server.model.enums.CharacterType;
-import it.polimi.ingsw.server.model.enums.StudentColor;
-import it.polimi.ingsw.server.model.enums.Tower;
+import it.polimi.ingsw.server.model.enums.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
+
+import java.util.List;
 
 /**
  * This class contains methods for getting the proper image path from an enumeration
@@ -101,7 +98,7 @@ public abstract class GUIUtils {
      * @param anchorPane to add the node to
      * @param root       to add
      */
-    public static void addToAnchorPane(AnchorPane anchorPane, Pane root) {
+    public static void addToAnchorPane(AnchorPane anchorPane, Region root) {
         anchorPane.setMinHeight(0.0);
         anchorPane.setMinWidth(0.0);
         AnchorPane.setTopAnchor(root, 0.0);
@@ -112,10 +109,10 @@ public abstract class GUIUtils {
     }
 
     /**
-     * This method returns the path of the image related to a specified Assistant CArd
+     * This method returns image related to a specified Assistant Card
      *
      * @param card the card
-     * @return the ImagePath of the card
+     * @return the Image
      */
     public static Image getAssistantCard(AssistantCard card) {
         return switch (card) {
@@ -129,6 +126,21 @@ public abstract class GUIUtils {
             case TURTLE -> ResourceLoader.loadImage(ImagePath.TURTLE);
             case EAGLE -> ResourceLoader.loadImage(ImagePath.EAGLE);
             case OSTRICH -> ResourceLoader.loadImage(ImagePath.OSTRICH);
+        };
+    }
+
+    /**
+     * This method returns the back related to a specified Assistant Card
+     *
+     * @param wizard the wizard
+     * @return the Image
+     */
+    public static Image getWizardImage(Wizard wizard) {
+        return switch (wizard) {
+            case SENSEI -> ResourceLoader.loadImage(ImagePath.SENSEI);
+            case WITCH -> ResourceLoader.loadImage(ImagePath.WITCH);
+            case MERLIN -> ResourceLoader.loadImage(ImagePath.MERLIN);
+            case KING -> ResourceLoader.loadImage(ImagePath.KING);
         };
     }
 
@@ -152,6 +164,57 @@ public abstract class GUIUtils {
     public static void bindSize(Region container, ImageView child) {
         container.widthProperty().addListener((observable, oldValue, newValue) -> child.setFitWidth(newValue.doubleValue()));
         container.heightProperty().addListener((observable, oldValue, newValue) -> child.setFitHeight(newValue.doubleValue()));
+    }
+
+    /*
+    public static void bindSizeKeepRatio(Region container, Region child, double ratio) {
+        child.heightProperty().addListener((observable, oldValue, newValue) -> child.setPrefWidth(newValue.doubleValue() * ratio));
+        container.heightProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.doubleValue() * ratio < container.getWidth())
+                child.setPrefHeight(newValue.doubleValue());
+        });
+        container.widthProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.doubleValue() < container.getHeight() * ratio)
+                child.setPrefHeight(newValue.doubleValue() * ratio);
+        });
+    }
+
+     */
+
+    /**
+     * This method adds a child to a pane container filling the height and width of the container and keeping the aspect ratio.
+     * @param pane the container
+     * @param child to add to the container
+     * @param ratio the aspect ratio
+     */
+    public static void addToPaneCenterKeepRatio(Pane pane, Region child, double ratio) {
+        GridPane gridPane = new GridPane();
+        gridPane.setAlignment(Pos.CENTER);
+        List<ColumnConstraints> columnConstraints = List.of(new ColumnConstraints(), new ColumnConstraints(), new ColumnConstraints());
+        List<RowConstraints> rowConstraints = List.of(new RowConstraints(), new RowConstraints(), new RowConstraints());
+        for (int i = 0; i < 3; i++) {
+            columnConstraints.get(i).setMinWidth(0.0);
+            rowConstraints.get(i).setMinHeight(0.0);
+        }
+        gridPane.getColumnConstraints().addAll(columnConstraints);
+        gridPane.getRowConstraints().addAll(rowConstraints);
+        gridPane.add(child, 1, 1);
+        bindSize(pane, gridPane);
+        pane.getChildren().add(gridPane);
+        ColumnConstraints centerColumn = columnConstraints.get(1);
+        RowConstraints centerRow = rowConstraints.get(1);
+        pane.heightProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.doubleValue() * ratio < pane.getWidth()) {
+                centerRow.setPercentHeight(100.0);
+                centerColumn.setPercentWidth(100.0 * newValue.doubleValue() * ratio / pane.getWidth());
+            }
+        });
+        pane.widthProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.doubleValue() < pane.getHeight() * ratio) {
+                centerColumn.setPercentWidth(100.0);
+                centerRow.setPercentHeight(newValue.doubleValue() / ratio / pane.getHeight() * 100.0);
+            }
+        });
     }
 
     /**

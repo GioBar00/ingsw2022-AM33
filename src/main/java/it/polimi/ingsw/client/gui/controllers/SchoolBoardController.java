@@ -1,15 +1,11 @@
 package it.polimi.ingsw.client.gui.controllers;
 
-import it.polimi.ingsw.client.Coordinates;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.network.messages.views.SchoolBoardView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
 import javafx.fxml.FXML;
-import javafx.geometry.HPos;
-import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -87,9 +83,10 @@ public class SchoolBoardController implements GUIController {
         initProfessors();
         initHall();
 
+        root.getChildren().clear();
+
         GUIUtils.bindSize(anchorPaneBoard, imgBoard);
-        anchorPaneBoard.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneBoard.setPrefWidth(newValue.doubleValue() / 488 * 1125));
-        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneBoard.setPrefHeight(newValue.doubleValue()));
+        GUIUtils.addToPaneCenterKeepRatio(root, anchorPaneBoard, 1125.0 / 488);
     }
 
     private void initEntrance() {

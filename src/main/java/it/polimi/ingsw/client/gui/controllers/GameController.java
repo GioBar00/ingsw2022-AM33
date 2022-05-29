@@ -1,17 +1,14 @@
 package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.enums.FXMLPath;
-import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.actions.ChosenCloud;
-import it.polimi.ingsw.network.messages.actions.ChosenIsland;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
 import it.polimi.ingsw.network.messages.actions.requests.MoveMotherNature;
 import it.polimi.ingsw.network.messages.views.*;
-import it.polimi.ingsw.server.model.enums.AssistantCard;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -19,23 +16,43 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GameController implements GUIController {
-
     @FXML
-    public AnchorPane anchorPaneBoard0;
+    public AnchorPane anchorPaneCharacterCard0;
     @FXML
-    public AnchorPane anchorPaneBoard1;
+    public AnchorPane anchorPaneCharacterCard1;
     @FXML
-    public AnchorPane anchorPaneBoard2;
+    public AnchorPane anchorPaneCharacterCard2;
     @FXML
-    public AnchorPane anchorPaneBoard3;
+    public VBox vBoxReserve;
+    @FXML
+    public ImageView imgViewReserveCoin;
+    @FXML
+    public Label lblReserveCoins;
+    @FXML
+    public HBox hBoxTitle;
+    @FXML
+    public ImageView imgViewTitle;
+    @FXML
+    public Label lblTurn;
+    @FXML
+    public Label lblRound;
+    @FXML
+    public Label lblGamePhase;
+    @FXML
+    public Label lblAction;
+    @FXML
+    public AnchorPane anchorPanePlayerInfo;
+    @FXML
+    public AnchorPane anchorPaneBoard;
     @FXML
     public AnchorPane anchorPaneIslands;
     @FXML
@@ -47,36 +64,31 @@ public class GameController implements GUIController {
     @FXML
     public AnchorPane anchorPaneCloud3;
     @FXML
-    public AnchorPane anchorPaneCharacterCard0;
+    public AnchorPane anchorPanePlayer0;
     @FXML
-    public AnchorPane anchorPaneCharacterCard1;
+    public AnchorPane anchorPanePlayer1;
     @FXML
-    public AnchorPane anchorPaneCharacterCard2;
+    public AnchorPane anchorPanePlayer2;
     @FXML
     public GridPane gridRoot;
     @FXML
-    public AnchorPane anchorPaneReserve;
+    public Button btnMute;
     @FXML
-    public ImageView imgReserve;
-    @FXML
-    public Label lblCoins;
-
-    private GUI gui;
+    public ImageView imgViewMute;
 
     private Pane root;
 
-    private GameView gameView;
+    private GUI gui;
 
-    private final List<AnchorPane> cloudPanes = new ArrayList<>(3);
-    private final List<AnchorPane> characterCardPanes = new ArrayList<>();
-    private final List<AnchorPane> remainingPlayerPanes = new ArrayList<>(2);
-
+    private final List<AnchorPane> cloudPanes = new ArrayList<>(4);
+    private final List<CloudController> cloudControllers = new ArrayList<>(2);
+    private final List<AnchorPane> characterCardPanes = new ArrayList<>(3);
     private final List<CharacterCardController> characterCardControllers = new ArrayList<>();
-    private final List<CloudController> cloudControllers = new ArrayList<>();
-    private IslandsFlowController islandController;
+    private IslandsFlowController islandsController;
+    private final List<AnchorPane> remainingPlayerPanes = new ArrayList<>(3);
     private final Map<String, PlayerController> playerControllersByNickname = new HashMap<>();
-    private final Map<String, AnchorPane> playerPanesByNickname = new HashMap<>();
-    private AssistantCardController assistantCardController;
+
+    private GameView gameView;
 
     /**
      * This method is used to set the GUI of the controller.
@@ -97,16 +109,17 @@ public class GameController implements GUIController {
         cloudPanes.add(anchorPaneCloud1);
         cloudPanes.add(anchorPaneCloud2);
         cloudPanes.add(anchorPaneCloud3);
+
         characterCardPanes.add(anchorPaneCharacterCard0);
         characterCardPanes.add(anchorPaneCharacterCard1);
         characterCardPanes.add(anchorPaneCharacterCard2);
 
-        remainingPlayerPanes.add(anchorPaneBoard1);
-        remainingPlayerPanes.add(anchorPaneBoard2);
-        remainingPlayerPanes.add(anchorPaneBoard3);
+        remainingPlayerPanes.add(anchorPanePlayer0);
+        remainingPlayerPanes.add(anchorPanePlayer1);
+        remainingPlayerPanes.add(anchorPanePlayer2);
 
-        anchorPaneReserve.setVisible(false);
-        anchorPaneReserve.heightProperty().addListener((observable, oldValue, newValue) -> imgReserve.setFitHeight(newValue.doubleValue()));
+        vBoxReserve.setVisible(false);
+        GUIUtils.bindSize(hBoxTitle, imgViewTitle);
     }
 
     /**
@@ -145,7 +158,7 @@ public class GameController implements GUIController {
     }
 
     /**
-     * This method is used to show a new stage.
+     * This method is used to show a new stage that disables the current one until it is closed.
      *
      * @param stage the stage to show.
      */
@@ -162,84 +175,30 @@ public class GameController implements GUIController {
     }
 
     /**
-     * This method returns the player view of the player with a given nickname.
+     * This method is used to update the game with the new game view.
      *
-     * @param nickname of the player.
-     * @return the player view of the player with a given nickname.
+     * @param gameView the new game view.
      */
-    private PlayerView getPlayerView(String nickname) {
-        for (PlayerView playerView : gameView.getPlayersView()) {
-            if (playerView.getNickname().equals(nickname)) {
-                return playerView;
-            }
-        }
-        return null;
+    public void updateGameView(GameView gameView) {
+        this.gameView = gameView;
+        updateReserve(gameView.getReserve());
+        updateCharacterCardControllers(gameView.getCharacterCardView());
+        updateCloudControllers(gameView.getCloudViews());
+        updateIslandsController(gameView.getIslandsView(), gameView.getMotherNatureIndex());
+        Integer coins = gameView.getPlayerCoins() != null ? gameView.getPlayerCoins().get(gui.getNickname()) : null;
+        updatePlayerControllers(gameView.getPlayersView(), coins);
     }
 
     /**
-     * @param nickname of the player.
-     * @return the playable assistant card of the player with a given nickname.
-     */
-    private EnumSet<AssistantCard> getPlayerAssistantCards(String nickname) {
-        PlayerView playerView = getPlayerView(nickname);
-        if (playerView != null) {
-            EnumSet<AssistantCard> cards = EnumSet.noneOf(AssistantCard.class);
-            cards.addAll(playerView.getAssistantCards());
-            return cards;
-        }
-        return null;
-    }
-
-    /**
-     * This method creates a new stage to let the player choose an assistant card.
-     */
-    public void playAssistantCard(EnumSet<AssistantCard> playableCards) {
-        if (assistantCardController != null) {
-            ((Stage) assistantCardController.getRootPane().getScene().getWindow()).close();
-        }
-
-        if (playableCards != null) {
-            showAssistantCards("Choose an assistant card to play", playableCards, true);
-            if (!assistantCardController.hasChosenAnAssistant())
-                playAssistantCard(playableCards);
-            else
-                assistantCardController = null;
-        }
-
-    }
-
-    /**
-     * This method shows the assistant cards of the player.
-     */
-    private void showAssistantCards() {
-        EnumSet<AssistantCard> cards = getPlayerAssistantCards(gui.getNickname());
-        if (cards != null) {
-            showAssistantCards("Your assistant cards", cards, false);
-            assistantCardController = null;
-        }
-    }
-
-    /**
-     * This method shows the assistant cards of the player.
+     * This method is used to update the reserve.
      *
-     * @param title of the window
+     * @param reserve the reserve to update.
      */
-    private void showAssistantCards(String title, EnumSet<AssistantCard> cards, boolean playable) {
-        gridRoot.setDisable(true);
-        AssistantCardController controller = (AssistantCardController) ResourceLoader.loadFXML(FXMLPath.CHOOSE_ASSISTANT, gui);
-        assistantCardController = controller;
-        controller.init();
-        controller.setAvailableCards(cards);
-        controller.showAssistantCards();
-        if (playable)
-            controller.setPlayable(cards);
-        Stage stage = new Stage();
-        stage.setTitle(title);
-        stage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
-        controller.loadScene(stage);
-        stage.setAlwaysOnTop(true);
-        stage.setOnHiding(event -> gridRoot.setDisable(false));
-        stage.show();
+    private void updateReserve(Integer reserve) {
+        if (reserve == null)
+            return;
+        vBoxReserve.setVisible(true);
+        lblReserveCoins.setText(reserve.toString());
     }
 
     /**
@@ -279,71 +238,27 @@ public class GameController implements GUIController {
     }
 
     /**
-     * This method is used to update the reserve.
-     *
-     * @param reserve the reserve to update.
-     */
-    private void updateReserve(Integer reserve) {
-        if (reserve == null)
-            return;
-        else
-            anchorPaneReserve.setVisible(true);
-        lblCoins.setText(reserve.toString());
-    }
-
-    /**
      * This method is used to update the islands.
      *
-     * @param islandGroupViews  the islands to update.
+     * @param islandGroupViews the islands to update.
      * @param motherNatureIndex the index of the mother nature.
      */
     private void updateIslandsController(List<IslandGroupView> islandGroupViews, int motherNatureIndex) {
-        if (islandController == null) {
-            islandController = (IslandsFlowController) ResourceLoader.loadFXML(FXMLPath.ISLANDS, gui);
-            islandController.init();
-            GUIUtils.addToAnchorPane(anchorPaneIslands, islandController.getRootPane());
+        if (islandsController == null) {
+            islandsController = (IslandsFlowController) ResourceLoader.loadFXML(FXMLPath.ISLANDS, gui);
+            islandsController.init();
+            GUIUtils.addToAnchorPane(anchorPaneIslands, islandsController.getRootPane());
         }
-        islandController.setIslandsView(islandGroupViews, motherNatureIndex);
-    }
-
-    /**
-     * This method is used to create the player view and add it to the grid.
-     *
-     * @param playerController the player controller to add.
-     * @param nickname         the nickname of the player.
-     */
-    private void addPlayerController(PlayerController playerController, String nickname) {
-        playerControllersByNickname.put(nickname, playerController);
-        if (nickname.equals(gui.getNickname())) {
-            playerController.setShowHand(this::showAssistantCards);
-            GUIUtils.addToAnchorPane(anchorPaneBoard0, playerController.getRootPane());
-            playerPanesByNickname.put(nickname, anchorPaneBoard0);
-        } else {
-            /*
-            double rotate = remainingPlayerPanes.size() % 2 == 0 ? 0.0 : 90 + (3 - remainingPlayerPanes.size()) * 90;
-            playerController.getRootPane().setRotate(rotate);
-            if (rotate % 90 == 0)
-                GUIUtils.bindSize(remainingPlayerPanes.get(0), playerController.getRootPane());
-            else
-                GUIUtils.bindSizeReverse(remainingPlayerPanes.get(0), playerController.getRootPane());
-            remainingPlayerPanes.get(0).getChildren().add(playerController.getRootPane());
-            playerPanesByNickname.put(nickname, remainingPlayerPanes.get(0));
-            remainingPlayerPanes.remove(0);
-            */
-            GUIUtils.addToAnchorPane(anchorPaneBoard2, playerController.getRootPane());
-            playerPanesByNickname.put(nickname, anchorPaneBoard2);
-            remainingPlayerPanes.remove(anchorPaneBoard2);
-        }
+        islandsController.setIslandsView(islandGroupViews, motherNatureIndex);
     }
 
     /**
      * This method is used to update the player controllers.
      *
      * @param playerViews the player views to update.
-     * @param coins       the coins of the player.
+     * @param coins the coins of the player.
      */
     private void updatePlayerControllers(List<PlayerView> playerViews, Integer coins) {
-
         for (PlayerView playerView : playerViews) {
             if (!playerControllersByNickname.containsKey(playerView.getNickname())) {
                 PlayerController playerController = (PlayerController) ResourceLoader.loadFXML(FXMLPath.PLAYER, gui);
@@ -353,32 +268,24 @@ public class GameController implements GUIController {
             playerControllersByNickname.get(playerView.getNickname()).updatePlayerView(playerView, coins);
         }
 
-        /*
-        PlayerView playerView = playerViews.stream().filter(p -> p.getNickname().equals(gui.getNickname())).findFirst().orElse(null);
-        if (playerView != null) {
-            PlayerController playerController = (PlayerController) ResourceLoader.loadFXML(FXMLPath.PLAYER, gui);
-            playerController.init();
-            addPlayerController(playerController, playerView.getNickname());
-            playerControllersByNickname.get(playerView.getNickname()).updatePlayerView(playerView, coins);
-        }
-
-        */
-
     }
 
     /**
-     * This method is used to update the game with the new game view.
+     * This method is used to create the player view and add it to the grid.
      *
-     * @param gameView the new game view.
+     * @param playerController the player controller to add.
+     * @param nickname the nickname of the player.
      */
-    public void updateGameView(GameView gameView) {
-        this.gameView = gameView;
-        updateReserve(gameView.getReserve());
-        updateCharacterCardControllers(gameView.getCharacterCardView());
-        updateCloudControllers(gameView.getCloudViews());
-        updateIslandsController(gameView.getIslandsView(), gameView.getMotherNatureIndex());
-        Integer coins = gameView.getPlayerCoins() != null ? gameView.getPlayerCoins().get(gui.getNickname()) : null;
-        updatePlayerControllers(gameView.getPlayersView(), coins);
+    private void addPlayerController(PlayerController playerController, String nickname) {
+        playerControllersByNickname.put(nickname, playerController);
+        if (nickname.equals(gui.getNickname())) {
+            playerController.enableHand(this);
+            playerController.moveSchoolBoard(anchorPaneBoard);
+            playerController.movePlayerInfo(anchorPanePlayerInfo);
+        } else {
+            GUIUtils.addToAnchorPane(remainingPlayerPanes.get(0), playerController.getRootPane());
+            remainingPlayerPanes.remove(0);
+        }
     }
 
     /**

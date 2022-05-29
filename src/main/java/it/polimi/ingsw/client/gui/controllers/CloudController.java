@@ -103,12 +103,14 @@ public class CloudController implements GUIController {
         imageViews.add(pawn2Img);
         imageViews.add(pawn3Img);
 
+        root.getChildren().clear();
+
         GUIUtils.bindSize(anchorPaneCloud, cloudBtn);
-        GUIUtils.bindSize(anchorPaneCloud, imgViewCloud);
+        GUIUtils.bindSize(cloudBtn, imgViewCloud);
         for (ImageView iv : imageViews)
             GUIUtils.bindSize(anchorPanePawn, iv);
-        anchorPaneCloud.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCloud.setPrefWidth(newValue.doubleValue()));
-        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCloud.setPrefHeight(newValue.doubleValue()));
+
+        GUIUtils.addToPaneCenterKeepRatio(root, anchorPaneCloud, 1.0);
 
     }
 

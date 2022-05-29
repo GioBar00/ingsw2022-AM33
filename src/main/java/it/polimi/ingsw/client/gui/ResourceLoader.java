@@ -67,6 +67,7 @@ public abstract class ResourceLoader {
             controller.setGUI(gui);
             return controller;
         } catch (IOException | NullPointerException e) {
+            e.printStackTrace();
             System.err.println("Error loading fxml: " + path.getPath());
             throw new MissingResourceException("FXML file not found: " + path.getPath(), ResourceLoader.class.getName(), path.getPath());
         }

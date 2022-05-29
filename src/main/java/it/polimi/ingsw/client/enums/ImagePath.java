@@ -48,8 +48,12 @@ public enum ImagePath {
     ISLAND1("/images/island1.png"),
     ISLAND2("/images/island2.png"),
     ISLAND3("/images/island3.png"),
-    MOTHERNATURE("/images/mother_nature.png"),
-    BLOCK("/images/deny_island_icon.png");
+    MOTHER_NATURE("/images/mother_nature.png"),
+    BLOCK("/images/deny_island_icon.png"),
+    SENSEI("/images/wizards/sensei.jpg"),
+    WITCH("/images/wizards/witch.jpg"),
+    MERLIN("/images/wizards/merlin.jpg"),
+    KING("/images/wizards/king.jpg");
 
 
     private final String path;

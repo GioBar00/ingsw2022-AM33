@@ -161,7 +161,6 @@ public class CharacterCardController implements GUIController {
         GUIUtils.bindSize(anchorPaneCharacter, characterBtn);
         GUIUtils.bindSize(anchorPaneCharacter, characterImg);
 
-
         GUIUtils.bindSize(anchorPanePawn, blueBtn);
         GUIUtils.bindSize(anchorPanePawn, blueLbl);
         GUIUtils.bindSize(anchorPanePawn, imgViewBlue);
@@ -180,8 +179,8 @@ public class CharacterCardController implements GUIController {
 
         GUIUtils.bindSize(anchorPaneCoin, imgViewCoin);
 
-        anchorPaneCharacter.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCharacter.setPrefWidth(newValue.doubleValue() / 1039 * 685));
-        root.heightProperty().addListener((observable, oldValue, newValue) -> anchorPaneCharacter.setPrefHeight(newValue.doubleValue()));
+        root.getChildren().clear();
+        GUIUtils.addToPaneCenterKeepRatio(root, anchorPaneCharacter, 685.0 /1039);
 
 
     }

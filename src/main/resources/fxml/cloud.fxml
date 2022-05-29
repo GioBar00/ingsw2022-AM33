@@ -6,79 +6,74 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane minHeight="0.0" minWidth="0.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.CloudController">
+<AnchorPane minHeight="0.0" minWidth="0.0" style="-fx-background-color: red;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.CloudController">
    <children>
-      <HBox alignment="CENTER" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="anchorPaneCloud" minHeight="0.0" minWidth="0.0" prefHeight="512.0" prefWidth="512.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane fx:id="anchorPaneCloud" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="512.0" prefWidth="512.0">
+            <Button fx:id="cloudBtn" layoutX="14.0" layoutY="6.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#sendChosenCloud" prefHeight="375.0" prefWidth="434.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <graphic>
+                  <ImageView fx:id="imgViewCloud" fitHeight="500.0" fitWidth="520.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/cloud.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="79.99999237060547" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="80.0" prefWidth="418.0000122070313" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="83.5999877929687" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="0.0" percentHeight="15.0" prefHeight="84.39999389648438" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" percentHeight="70.0" prefHeight="305.59998779296876" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="93.60001220703123" vgrow="SOMETIMES" />
+              </rowConstraints>
                <children>
-                  <Button fx:id="cloudBtn" layoutX="14.0" layoutY="6.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#sendChosenCloud" prefHeight="375.0" prefWidth="434.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <graphic>
-                        <ImageView fx:id="imgViewCloud" fitHeight="500.0" fitWidth="520.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/cloud.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <GridPane minHeight="0.0" minWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="251.20001220703125" minWidth="10.0" percentWidth="10.0" prefWidth="79.99999237060547" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="433.6000442504883" minWidth="10.0" percentWidth="80.0" prefWidth="418.0000122070313" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="433.6000442504883" minWidth="10.0" percentWidth="10.0" prefWidth="83.5999877929687" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="61.20003662109375" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="105.1999755859375" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="74.8000244140625" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="106.39997558593748" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="51.60002441406249" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints maxHeight="159.19998779296876" minHeight="0.0" percentHeight="15.0" prefHeight="84.39999389648438" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="340.8" minHeight="10.0" percentHeight="70.0" prefHeight="305.59998779296876" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="93.60001220703123" minHeight="10.0" percentHeight="15.0" prefHeight="93.60001220703123" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="0.0" percentHeight="10.0" prefHeight="34.400016403198244" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="0.0" prefHeight="101.1999954223633" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="0.0" prefHeight="54.199993896484386" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="0.0" percentHeight="35.0" prefHeight="103.80000610351561" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <GridPane minHeight="0.0" minWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="188.4000244140625" minWidth="10.0" percentWidth="10.0" prefWidth="61.20003662109375" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="364.40002822875977" minWidth="10.0" prefWidth="105.1999755859375" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="364.40002822875977" minWidth="10.0" prefWidth="74.8000244140625" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="364.40002822875977" minWidth="10.0" prefWidth="106.39997558593748" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="364.40002822875977" minWidth="10.0" prefWidth="51.60002441406249" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints maxHeight="103.00000610351563" minHeight="9.400001907348638" percentHeight="10.0" prefHeight="34.400016403198244" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="217.39999809265137" minHeight="10.0" prefHeight="101.1999954223633" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="184.39999542236325" minHeight="10.0" prefHeight="54.199993896484386" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="113.39998168945311" minHeight="10.0" percentHeight="35.0" prefHeight="103.80000610351561" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        <AnchorPane fx:id="anchorPanePawn" minHeight="0.0" minWidth="0.0" prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <AnchorPane fx:id="anchorPanePawn" minHeight="0.0" minWidth="0.0" prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <children>
-                                    <ImageView fx:id="pawn0Img" fitHeight="101.0" fitWidth="105.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
-                                 <children>
-                                    <ImageView fx:id="pawn1Img" fitHeight="101.0" fitWidth="105.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                 <children>
-                                    <ImageView fx:id="pawn2Img" fitHeight="101.0" fitWidth="105.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
-                                 <children>
-                                    <ImageView fx:id="pawn3Img" fitHeight="101.0" fitWidth="105.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                 </children>
-                              </AnchorPane>
+                              <ImageView fx:id="pawn0Img" fitHeight="101.0" fitWidth="105.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
-                        </GridPane>
+                        </AnchorPane>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                           <children>
+                              <ImageView fx:id="pawn1Img" fitHeight="101.0" fitWidth="105.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <ImageView fx:id="pawn2Img" fitHeight="101.0" fitWidth="105.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="93.0" prefWidth="92.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                           <children>
+                              <ImageView fx:id="pawn3Img" fitHeight="101.0" fitWidth="105.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
                      </children>
                   </GridPane>
                </children>
-            </AnchorPane>
+            </GridPane>
          </children>
-      </HBox>
+      </AnchorPane>
    </children>
 </AnchorPane>
