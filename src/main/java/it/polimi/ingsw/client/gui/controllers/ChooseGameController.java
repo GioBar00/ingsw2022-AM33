@@ -6,7 +6,6 @@ import it.polimi.ingsw.server.model.enums.GameMode;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;

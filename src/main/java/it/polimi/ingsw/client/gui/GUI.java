@@ -12,6 +12,7 @@ import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.actions.ChosenIsland;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
+import it.polimi.ingsw.network.messages.actions.requests.ChooseStudentColor;
 import it.polimi.ingsw.network.messages.actions.requests.MoveMotherNature;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
@@ -70,7 +71,7 @@ public class GUI extends Application implements UI {
 
     @Override
     public void stop() {
-       System.exit(0);
+        System.exit(0);
     }
 
     public Client getClient() {
@@ -113,7 +114,7 @@ public class GUI extends Application implements UI {
      * This method checks if the lobby controller is already loaded.
      */
     private void checkLobbyController() {
-        if(lobbyController == null) {
+        if (lobbyController == null) {
             lobbyController = (NormalLobbyController) ResourceLoader.loadFXML(FXMLPath.LOBBY, this);
             Platform.runLater(lobbyController::init);
         }
@@ -164,7 +165,7 @@ public class GUI extends Application implements UI {
     @Override
     public void setTeamsView(TeamsView teamsView) {
         boolean show = viewState == ViewState.CHOOSE_TEAM && checkTeamLobbyController();
-        Platform.runLater(() -> ((TeamLobbyController)lobbyController).updateTeams(teamsView));
+        Platform.runLater(() -> ((TeamLobbyController) lobbyController).updateTeams(teamsView));
         if (show)
             showLobbyScreen();
     }
@@ -260,7 +261,7 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void hostCanStart() {
-        if(lobbyController != null) {
+        if (lobbyController != null) {
             Platform.runLater(() -> lobbyController.setCanStart());
         }
     }
@@ -270,7 +271,7 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void hostCantStart() {
-        if(lobbyController != null) {
+        if (lobbyController != null) {
             Platform.runLater(() -> lobbyController.setCantStart());
         }
     }
@@ -302,23 +303,32 @@ public class GUI extends Application implements UI {
     }
 
     private void processLastRequest(Message message) {
-        switch (MessageType.retrieveByMessage(message)){
+        switch (MessageType.retrieveByMessage(message)) {
             case PLAY_ASSISTANT_CARD -> {
                 /*
                 ((AssistantCardController)sceneByPath.get(FXMLPath.CHOOSE_ASSISTANT).getUserData()).setPlayable(((PlayAssistantCard)message).getPlayableAssistantCards());
                  */
             }
-            case CHOOSE_CLOUD -> {
-                gameController.processChooseCloud((ChooseCloud) message);
-            }
-            case CHOOSE_ISLAND -> { gameController.processChooseIsland((ChooseIsland) message);}
-            case CHOOSE_STUDENT_COLOR -> {
-            }
-            case MOVE_MOTHER_NATURE -> {
-                gameController.processMoveMotherNature((MoveMotherNature) message);
-            }
+            case CHOOSE_CLOUD -> Platform.runLater(() -> gameController.processChooseCloud((ChooseCloud) message));
+            case CHOOSE_ISLAND -> Platform.runLater(() -> gameController.processChooseIsland((ChooseIsland) message));
+            case CHOOSE_STUDENT_COLOR -> Platform.runLater(() ->
+            {
+                Stage chooseColor = new Stage();
+                ChooseColorController controller = (ChooseColorController) ResourceLoader.loadFXML(FXMLPath.CHOOSE_GAME, this);
+                controller.setAvailableButtons(((ChooseStudentColor) message).getAvailableStudentColors());
+                chooseColor.setTitle("Choose a color");
+                chooseColor.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
+                controller.loadScene(chooseColor);
+                chooseColor.setAlwaysOnTop(true);
+                chooseColor.show();
+
+            });
+
+            case MOVE_MOTHER_NATURE ->
+                    Platform.runLater(() -> gameController.processMoveMotherNature((MoveMotherNature) message));
         }
     }
+
     @Override
     public void serverUnavailable() {
         System.out.println("Server unavailable");
@@ -342,7 +352,7 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showCommMessage(CommMessage message) {
-        if(message.getType().equals(CommMsgType.OK))
+        if (message.getType().equals(CommMsgType.OK))
             return;
 
         Platform.runLater(() -> {

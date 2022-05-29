@@ -13,7 +13,9 @@ public enum FXMLPath {
     ISLAND("/fxml/island.fxml"),
     ISLANDS("/fxml/islands.fxml"),
     CLOUD("/fxml/cloud.fxml"),
-    PLAYER("/fxml/player.fxml");
+    PLAYER("/fxml/player.fxml"),
+
+    CHOOSE_COLOR("/fxml/choose-color.fxml");
 
     private final String path;
 
