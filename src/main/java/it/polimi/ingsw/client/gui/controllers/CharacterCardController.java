@@ -32,7 +32,7 @@ public class CharacterCardController implements GUIController {
     public ImageView imgViewCoin;
     private GUI gui;
     private Pane root;
-    private EnumMap<StudentColor, LabelButton> buttons;
+    EnumMap<StudentColor, LabelButton> buttons;
 
     @FXML
     public AnchorPane anchorPaneCharacter;
@@ -74,6 +74,8 @@ public class CharacterCardController implements GUIController {
     @FXML
     public AnchorPane anchorPaneCoin;
 
+    private Integer index;
+
     /**
      * This method is used to set the GUI of the controller.
      *
@@ -113,8 +115,7 @@ public class CharacterCardController implements GUIController {
                 if (num == null || num == 0) {
                     setNotUsable(buttons.get(s));
                     buttons.get(s).button.setOpacity(1);
-                }
-                else setUsable(buttons.get(s), num);
+                } else setUsable(buttons.get(s), num);
             }
         }
 
@@ -157,7 +158,7 @@ public class CharacterCardController implements GUIController {
         buttons.put(StudentColor.MAGENTA, new LabelButton(pinkLbl, pinkBtn));
         buttons.put(StudentColor.YELLOW, new LabelButton(yellowLbl, yellowBtn));
 
-        for(LabelButton lb : buttons.values()){
+        for (LabelButton lb : buttons.values()) {
             setNotUsable(lb);
         }
         GUIUtils.bindSize(anchorPaneCharacter, characterBtn);
@@ -182,7 +183,7 @@ public class CharacterCardController implements GUIController {
         GUIUtils.bindSize(anchorPaneCoin, imgViewCoin);
 
         root.getChildren().clear();
-        GUIUtils.addToPaneCenterKeepRatio(root, anchorPaneCharacter, 685.0 /1039);
+        GUIUtils.addToPaneCenterKeepRatio(root, anchorPaneCharacter, 685.0 / 1039);
 
 
     }
@@ -208,9 +209,27 @@ public class CharacterCardController implements GUIController {
     }
 
     /**
+     * This method sets the index of the card.
+     *
+     * @param index the index.
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    /**
+     * This method returns the index of the card.
+     *
+     * @return the index of the card.
+     */
+    public Integer getIndex() {
+        return index;
+    }
+
+    /**
      * Private class for group label and button related to the same color
      */
-    private class LabelButton {
+    static class LabelButton {
         Label label;
         Button button;
 

@@ -4,11 +4,13 @@ import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
-import it.polimi.ingsw.network.messages.actions.ChosenCloud;
+import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
 import it.polimi.ingsw.network.messages.actions.requests.MoveMotherNature;
+import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.views.*;
+import it.polimi.ingsw.server.model.enums.StudentColor;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -17,10 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameController implements GUIController {
     @FXML
@@ -213,8 +212,18 @@ public class GameController implements GUIController {
                 characterCardController.init();
                 GUIUtils.addToAnchorPane(characterCardPanes.get(i), characterCardController.getRootPane());
                 characterCardControllers.add(characterCardController);
+                characterCardController.setIndex(i);
             }
             characterCardControllers.get(i).setCharacterView(characterCardViews.get(i));
+            if (characterCardViews.get(i).canBeUsed()) {
+                CharacterCardController characterCardController = characterCardControllers.get(i);
+                GUIUtils.setButton(characterCardController.characterBtn, e -> {
+                    for (CharacterCardController c : characterCardControllers) {
+                        GUIUtils.resetButton(c.characterBtn);
+                    }
+                    gui.notifyViewListener(new ActivatedCharacterCard(characterCardController.getIndex()));
+                });
+            }
         }
     }
 
@@ -238,7 +247,7 @@ public class GameController implements GUIController {
     /**
      * This method is used to update the islands.
      *
-     * @param islandGroupViews the islands to update.
+     * @param islandGroupViews  the islands to update.
      * @param motherNatureIndex the index of the mother nature.
      */
     private void updateIslandsController(List<IslandGroupView> islandGroupViews, int motherNatureIndex) {
@@ -254,7 +263,7 @@ public class GameController implements GUIController {
      * This method is used to update the player controllers.
      *
      * @param playerViews the player views to update.
-     * @param coins the coins of the player.
+     * @param coins       the coins of the player.
      */
     private void updatePlayerControllers(List<PlayerView> playerViews, Integer coins) {
         for (PlayerView playerView : playerViews) {
@@ -272,7 +281,7 @@ public class GameController implements GUIController {
      * This method is used to create the player view and add it to the grid.
      *
      * @param playerController the player controller to add.
-     * @param nickname the nickname of the player.
+     * @param nickname         the nickname of the player.
      */
     private void addPlayerController(PlayerController playerController, String nickname) {
         playerControllersByNickname.put(nickname, playerController);
@@ -301,20 +310,74 @@ public class GameController implements GUIController {
         }
     }
 
+
     /**
-     * Disable all the cloud buttons.
+     * This method sets the action on island buttons when the player could select an island.
+     *
+     * @param message the {@link ChooseIsland} message that contains a set of available islands .
      */
-    public void resetCloudsButtons() {
-        for (CloudController c : cloudControllers) {
-            GUIUtils.resetButton(c.cloudBtn);
+    public void processChooseIsland(ChooseIsland message) {
+
+        for (Integer i : message.getAvailableIslandIndexes()) {
+            if (i < islandsController.islandControllers.size()) {
+                Button islandBtn = islandsController.islandControllers.get(i).islandButton;
+                GUIUtils.setButton(islandBtn, actionEvent -> {
+                    for (IslandController ic : islandsController.islandControllers)
+                        GUIUtils.resetButton(ic.islandButton);
+                    gui.notifyViewListener(new ChosenIsland(i));
+                });
+            }
+        }
+
+    }
+
+    /**
+     * This method sets the islands the player could choose during the moving mother nature phase.
+     *
+     * @param message the {@link MoveMotherNature} message that contains the max steps mother nature could take.
+     */
+    public void processMoveMotherNature(MoveMotherNature message) {
+
+        Map<Integer, Integer> availableIslandIndexes = new HashMap<>();
+
+        for (int i = 1; i <= message.getMaxNumMoves(); i++) {
+            Integer index = (gameView.getMotherNatureIndex() + i) % islandsController.islandControllers.size();
+            availableIslandIndexes.put(index, i);
+        }
+
+        for (Integer i : availableIslandIndexes.keySet()) {
+            if (i < islandsController.islandControllers.size()) {
+                Button islandBtn = islandsController.islandControllers.get(i).islandButton;
+                GUIUtils.setButton(islandBtn, actionEvent -> {
+                    for (IslandController ic : islandsController.islandControllers)
+                        GUIUtils.resetButton(ic.islandButton);
+                    gui.notifyViewListener(new MovedMotherNature(availableIslandIndexes.get(i)));
+                });
+            }
         }
     }
 
-    public void processChooseIsland(ChooseIsland message) {
-        islandsController.chooseIsland(message.getAvailableIslandIndexes());
-    }
-
-    public void processMoveMotherNature(MoveMotherNature message) {
-        islandsController.moveMotherNature(message.getMaxNumMoves(), gameView.getMotherNatureIndex());
+    public void processMoveCardIsland(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
+        int i = 0;
+        for (CharacterCardView characterCardView : gameView.getCharacterCardView()) {
+            if (characterCardView.isActivating())
+                break;
+            i++;
+        }
+        for (Integer fromIndex : fromIndexes) {
+            GUIUtils.setButton(characterCardControllers.get(i).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)).button, e -> {
+                for (Integer resInd : fromIndexes) {
+                    GUIUtils.resetButton(characterCardControllers.get(resInd).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)).button);
+                }
+                for (Integer toIndex : toIndexes) {
+                    GUIUtils.setButton(islandsController.islandControllers.get(toIndex).islandButton, action -> {
+                        for (Integer resToInd : fromIndexes) {
+                            GUIUtils.resetButton(islandsController.islandControllers.get(resToInd).islandButton);
+                        }
+                        gui.notifyViewListener(new MovedStudent(MoveLocation.CARD, fromIndex, MoveLocation.ISLAND, toIndex));
+                    });
+                }
+            });
+        }
     }
 }

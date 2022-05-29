@@ -79,41 +79,4 @@ public class IslandsController implements GUIController {
     }
 
 
-    /**
-     * This method sets the action on island buttons when the player could select an island.
-     *
-     * @param availableIslandIndexes the {@link Set} of clickable islands.
-     */
-    void chooseIsland(Set<Integer> availableIslandIndexes) {
-        for (Integer i : availableIslandIndexes) {
-            if (i < islandControllers.size()) {
-                Button islandBtn = islandControllers.get(i).islandButton;
-                GUIUtils.setButton(islandBtn, actionEvent -> gui.notifyViewListener(new ChosenIsland(i)));
-            }
-        }
-    }
-
-
-    /**
-     * This method sets the islands the player could choose during the moving mother nature phase.
-     *
-     * @param maxNumMoves       the max steps mother nature could take.
-     * @param motherNatureIndex the current index of mother nature.
-     */
-    void moveMotherNature(Integer maxNumMoves, Integer motherNatureIndex) {
-        Map<Integer, Integer> availableIslandIndexes = new HashMap<>();
-
-        for (int i = 1; i <= maxNumMoves; i++) {
-            Integer index = (motherNatureIndex + i) % islandControllers.size();
-            availableIslandIndexes.put(index, i);
-        }
-
-        for (Integer i : availableIslandIndexes.keySet()) {
-            if (i < islandControllers.size()) {
-                Button islandBtn = islandControllers.get(i).islandButton;
-                GUIUtils.setButton(islandBtn, actionEvent -> gui.notifyViewListener(new MovedMotherNature(availableIslandIndexes.get(i))));
-            }
-        }
-    }
-
 }
