@@ -10,143 +10,136 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0"
-            prefWidth="870.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="it.polimi.ingsw.client.gui.controllers.AssistantCardController">
-    <ImageView fitHeight="893.0" fitWidth="1021.0" layoutX="-151.0" pickOnBounds="true" preserveRatio="true"
-               AnchorPane.bottomAnchor="-48.11785888671875" AnchorPane.leftAnchor="-151.0" AnchorPane.rightAnchor="0.0"
-               AnchorPane.topAnchor="0.0">
-        <Image url="@../images/background-2.png"/>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="540.0" prefWidth="870.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.AssistantCardController">
+    <ImageView fitHeight="540.0" fitWidth="1021.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Image url="@../images/background-2.png" />
     </ImageView>
-    <GridPane layoutX="347.0" layoutY="294.0" prefHeight="540.0" prefWidth="870.0" AnchorPane.bottomAnchor="0.0"
-              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <GridPane layoutX="347.0" layoutY="294.0" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="5.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="5.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints maxHeight="264.0" minHeight="10.0" percentHeight="10.0" prefHeight="72.0"
-                            vgrow="SOMETIMES"/>
-            <RowConstraints maxHeight="468.0" minHeight="10.0" percentHeight="85.0" prefHeight="468.0"
-                            vgrow="SOMETIMES"/>
-            <RowConstraints maxHeight="468.0" minHeight="10.0" percentHeight="5.0" prefHeight="468.0"
-                            vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="72.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" percentHeight="85.0" prefHeight="468.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="468.0" minHeight="10.0" percentHeight="5.0" prefHeight="468.0" vgrow="SOMETIMES" />
         </rowConstraints>
-        <Text fx:id="lblTitle" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose an Assistant Card"
-              GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+        <Text fx:id="lblTitle" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose an Assistant Card" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
             <font>
-                <Font name="System Bold" size="24.0"/>
+                <Font name="System Bold" size="24.0" />
             </font>
         </Text>
-        <FlowPane fx:id="flowpane" prefHeight="420.0" prefWidth="787.0" GridPane.rowIndex="1">
-            <GridPane fx:id="cheetah" prefHeight="230.0" prefWidth="174.0">
+        <FlowPane fx:id="flowpane" hgap="20.0" minHeight="0.0" minWidth="0.0" vgap="20.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <GridPane fx:id="cheetah" minHeight="0.0" minWidth="0.0">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
-                <AnchorPane fx:id="cheetahImg" prefHeight="200.0" prefWidth="200.0"/>
-                <AnchorPane fx:id="cheetahBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+                <AnchorPane fx:id="cheetahImg" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                <AnchorPane fx:id="cheetahBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
             </GridPane>
-            <GridPane fx:id="ostrich" prefHeight="230.0" prefWidth="174.0">
+            <GridPane fx:id="ostrich" minHeight="0.0" minWidth="0.0">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
-                <AnchorPane fx:id="ostrichImg" prefHeight="200.0" prefWidth="200.0"/>
-                <AnchorPane fx:id="ostrichBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+                <AnchorPane fx:id="ostrichImg" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                <AnchorPane fx:id="ostrichBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
             </GridPane>
-            <GridPane fx:id="cat" prefHeight="230.0" prefWidth="174.0">
+            <GridPane fx:id="cat" minHeight="0.0" minWidth="0.0">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
-                <AnchorPane fx:id="catImg" prefHeight="200.0" prefWidth="200.0"/>
-                <AnchorPane fx:id="catBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+                <AnchorPane fx:id="catImg" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                <AnchorPane fx:id="catBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
             </GridPane>
-            <GridPane fx:id="eagle" prefHeight="230.0" prefWidth="174.0">
+            <GridPane fx:id="eagle" minHeight="0.0" minWidth="0.0">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
-                <AnchorPane fx:id="eagleImg" prefHeight="200.0" prefWidth="200.0"/>
-                <AnchorPane fx:id="eagleBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+                <AnchorPane fx:id="eagleImg" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                <AnchorPane fx:id="eagleBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
             </GridPane>
-            <GridPane fx:id="fox" prefHeight="230.0" prefWidth="174.0">
+            <GridPane fx:id="fox" minHeight="0.0" minWidth="0.0">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
-                <AnchorPane fx:id="foxImg" prefHeight="200.0" prefWidth="200.0"/>
-                <AnchorPane fx:id="foxBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+                <AnchorPane fx:id="foxImg" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                <AnchorPane fx:id="foxBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
             </GridPane>
-            <GridPane fx:id="snake" prefHeight="230.0" prefWidth="174.0">
+            <GridPane fx:id="snake" minHeight="0.0" minWidth="0.0">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
-                <AnchorPane fx:id="snakeImg" prefHeight="200.0" prefWidth="200.0"/>
-                <AnchorPane fx:id="snakeBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+                <AnchorPane fx:id="snakeImg" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                <AnchorPane fx:id="snakeBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
             </GridPane>
-            <GridPane fx:id="octopus" prefHeight="230.0" prefWidth="174.0">
+            <GridPane fx:id="octopus" minHeight="0.0" minWidth="0.0">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
-                <AnchorPane fx:id="octopusImg" prefHeight="200.0" prefWidth="200.0"/>
-                <AnchorPane fx:id="octopusBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+                <AnchorPane fx:id="octopusImg" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                <AnchorPane fx:id="octopusBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
             </GridPane>
-            <GridPane fx:id="dog" prefHeight="230.0" prefWidth="174.0">
+            <GridPane fx:id="dog" minHeight="0.0" minWidth="0.0">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
-                <AnchorPane fx:id="dogImg" prefHeight="200.0" prefWidth="200.0"/>
-                <AnchorPane fx:id="dogBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+                <AnchorPane fx:id="dogImg" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                <AnchorPane fx:id="dogBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
             </GridPane>
-            <GridPane fx:id="elephant" prefHeight="230.0" prefWidth="174.0">
+            <GridPane fx:id="elephant" minHeight="0.0" minWidth="0.0">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
-                <AnchorPane fx:id="elephantImg" prefHeight="200.0" prefWidth="200.0"/>
-                <AnchorPane fx:id="elephantBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+                <AnchorPane fx:id="elephantImg" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                <AnchorPane fx:id="elephantBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
             </GridPane>
-            <GridPane fx:id="turtle" prefHeight="230.0" prefWidth="174.0">
+            <GridPane fx:id="turtle" minHeight="0.0" minWidth="0.0">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
-                <AnchorPane fx:id="turtleImg" prefHeight="200.0" prefWidth="200.0"/>
-                <AnchorPane fx:id="turtleBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+                <AnchorPane fx:id="turtleImg" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                <AnchorPane fx:id="turtleBtn" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
             </GridPane>
         </FlowPane>
     </GridPane>

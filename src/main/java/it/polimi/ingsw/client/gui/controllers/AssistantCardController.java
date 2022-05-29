@@ -29,9 +29,9 @@ import java.util.Map;
 public class AssistantCardController implements GUIController {
 
     /**
-     * Private record that contains the button and imageView related to an Assistant card
-    */
-    private record AssistantView(AnchorPane button, AnchorPane imageView) {
+     * Private record that contains the anchorPaneButton and imageView related to an Assistant card
+     */
+    private record AssistantView(AnchorPane anchorPaneButton, AnchorPane anchorPaneImageView) {
     }
 
     @FXML
@@ -209,6 +209,15 @@ public class AssistantCardController implements GUIController {
         assistantViewMaps.put(dog, new AssistantView(dogBtn, dogImg));
         assistantViewMaps.put(elephant, new AssistantView(elephantBtn, elephantImg));
         assistantViewMaps.put(turtle, new AssistantView(turtleBtn, turtleImg));
+
+        for (AssistantCard card : AssistantCard.values()) {
+            flowpane.heightProperty().addListener((observable, oldValue, newValue) -> {
+                double value = (newValue.doubleValue() - 20) / 2;
+                assistantGridMap.get(card).setPrefHeight(value);
+                assistantGridMap.get(card).setPrefWidth(value * 6 / 10);
+            });
+        }
+
     }
 
     /**
@@ -233,17 +242,18 @@ public class AssistantCardController implements GUIController {
 
     /**
      * this method is used to set the grids inside the FlowPane
+     *
      * @param availableCards the card that will be displayed
-     * @param setButtons true if the buttons need to be shown
+     * @param setButtons     true if the buttons need to be shown
      */
-    public void setCards(EnumSet<AssistantCard> availableCards, boolean setButtons){
+    public void setCards(EnumSet<AssistantCard> availableCards, boolean setButtons) {
         clearAllGrids();
         for (AssistantCard ac : AssistantCard.values()) {
-            if (availableCards.contains(ac)){
-                setAssistantImage(assistantViewMaps.get(assistantGridMap.get(ac)).imageView(), ac);
+            if (availableCards.contains(ac)) {
+                setAssistantImage(assistantViewMaps.get(assistantGridMap.get(ac)).anchorPaneImageView(), ac);
                 if (setButtons) {
-                    Button button = setAssistantButton(assistantViewMaps.get(assistantGridMap.get(ac)).button(), ac);
-                    button.setOnAction(e->playAssistantCard(ac));
+                    Button button = setAssistantButton(assistantViewMaps.get(assistantGridMap.get(ac)).anchorPaneButton(), ac);
+                    button.setOnAction(e -> playAssistantCard(ac));
                 }
             } else {
                 flowpane.getChildren().remove(assistantGridMap.get(ac));
@@ -252,12 +262,13 @@ public class AssistantCardController implements GUIController {
     }
 
     /**
-     * this method sets the button of a specific gridPane
-     * @param anchorPane inside the cell of the grid, where the button will be placed
-     * @param ac that will be shown in the grid
-     * @return the button just created
+     * this method sets the anchorPaneButton of a specific gridPane
+     *
+     * @param anchorPane inside the cell of the grid, where the anchorPaneButton will be placed
+     * @param ac         that will be shown in the grid
+     * @return the anchorPaneButton just created
      */
-    public Button setAssistantButton(AnchorPane anchorPane, AssistantCard ac){
+    public Button setAssistantButton(AnchorPane anchorPane, AssistantCard ac) {
         Button button = new Button();
         button.setText(ac.name());
         button.setTextAlignment(TextAlignment.CENTER);
@@ -273,10 +284,11 @@ public class AssistantCardController implements GUIController {
 
     /**
      * this method sets the image of an Assistant of a specific gridPane
+     *
      * @param anchorPane inside the cell of the grid, where the image will be placed
-     * @param ac assistant that will be shown in the image
+     * @param ac         assistant that will be shown in the image
      */
-    public void setAssistantImage (AnchorPane anchorPane, AssistantCard ac){
+    public void setAssistantImage(AnchorPane anchorPane, AssistantCard ac) {
         ImageView imageView = new ImageView();
         imageView.setImage(GUIUtils.getAssistantCard(ac));
         anchorPane.getChildren().add(imageView);
@@ -287,10 +299,10 @@ public class AssistantCardController implements GUIController {
      * This method clears all the grids. Il will be called before setting new content in the cells
      * of the grid so that there are no duplicates
      */
-    public void clearAllGrids(){
+    public void clearAllGrids() {
         for (AssistantCard ac : AssistantCard.values()) {
-            assistantViewMaps.get(assistantGridMap.get(ac)).imageView().getChildren().removeAll();
-            assistantViewMaps.get(assistantGridMap.get(ac)).button().getChildren().removeAll();
+            assistantViewMaps.get(assistantGridMap.get(ac)).anchorPaneImageView().getChildren().removeAll();
+            assistantViewMaps.get(assistantGridMap.get(ac)).anchorPaneButton().getChildren().removeAll();
         }
     }
 }
