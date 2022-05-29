@@ -4,14 +4,18 @@ import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
+import it.polimi.ingsw.network.messages.actions.ChosenIsland;
+import it.polimi.ingsw.network.messages.actions.MovedMotherNature;
 import it.polimi.ingsw.network.messages.views.IslandGroupView;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class IslandsFlowController implements GUIController {
 
@@ -68,4 +72,43 @@ public class IslandsFlowController implements GUIController {
     public Pane getRootPane() {
         return root;
     }
+
+
+    /**
+     * This method sets the action on island buttons when the player could select an island.
+     *
+     * @param availableIslandIndexes the {@link Set} of clickable islands.
+     */
+    void chooseIsland(Set<Integer> availableIslandIndexes) {
+        for (Integer i : availableIslandIndexes) {
+            if (i < islandsControllers.size()) {
+                Button islandBtn = islandsControllers.get(i).islandButton;
+                GUIUtils.setButton(islandBtn, actionEvent -> gui.notifyViewListener(new ChosenIsland(i)));
+            }
+        }
+    }
+
+
+    /**
+     * This method sets the islands the player could choose during the moving mother nature phase.
+     *
+     * @param maxNumMoves       the max steps mother nature could take.
+     * @param motherNatureIndex the current index of mother nature.
+     */
+    void moveMotherNature(Integer maxNumMoves, Integer motherNatureIndex) {
+        Map<Integer, Integer> availableIslandIndexes = new HashMap<>();
+
+        for (int i = 1; i <= maxNumMoves; i++) {
+            Integer index = (motherNatureIndex + i) % islandsControllers.size();
+            availableIslandIndexes.put(index, i);
+        }
+
+        for (Integer i : availableIslandIndexes.keySet()) {
+            if (i < islandsControllers.size()) {
+                Button islandBtn = islandsControllers.get(i).islandButton;
+                GUIUtils.setButton(islandBtn, actionEvent -> gui.notifyViewListener(new MovedMotherNature(availableIslandIndexes.get(i))));
+            }
+        }
+    }
+
 }

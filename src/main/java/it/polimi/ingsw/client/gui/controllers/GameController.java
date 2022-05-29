@@ -9,8 +9,6 @@ import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
 import it.polimi.ingsw.network.messages.actions.requests.MoveMotherNature;
 import it.polimi.ingsw.network.messages.views.*;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -296,12 +294,9 @@ public class GameController implements GUIController {
     public void processChooseCloud(ChooseCloud message) {
         for (int i : message.getAvailableCloudIndexes()) {
             Button cloudBtn = cloudControllers.get(i).cloudBtn;
-            GUIUtils.setButton(cloudBtn, new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    gui.notifyViewListener(new ChosenCloud(i));
-                    cloudBtn.setDisable(true);
-                }
+            GUIUtils.setButton(cloudBtn, actionEvent -> {
+                gui.notifyViewListener(new ChosenCloud(i));
+                cloudBtn.setDisable(true);
             });
         }
     }
@@ -316,16 +311,10 @@ public class GameController implements GUIController {
     }
 
     public void processChooseIsland(ChooseIsland message) {
-        /*
         islandsController.chooseIsland(message.getAvailableIslandIndexes());
-
-         */
     }
 
     public void processMoveMotherNature(MoveMotherNature message) {
-        /*
         islandsController.moveMotherNature(message.getMaxNumMoves(), gameView.getMotherNatureIndex());
-
-         */
     }
 }
