@@ -4,11 +4,6 @@ import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
-import it.polimi.ingsw.network.messages.MoveActionRequest;
-import it.polimi.ingsw.network.messages.actions.ChosenCloud;
-import it.polimi.ingsw.network.messages.actions.MovedStudent;
-import it.polimi.ingsw.network.messages.actions.requests.*;
-import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
@@ -25,7 +20,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class GameController implements GUIController {
     @FXML
