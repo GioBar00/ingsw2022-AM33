@@ -61,11 +61,8 @@ public class IslandsController implements GUIController {
             boolean motherNatureIsThere = motherNatureIndex == i;
             islandControllers.get(i).setIsland(islandsView.get(i), motherNatureIsThere);
         }
-        if (islandsView.size() < 12) {
-            for (int j = 0; j < 12 - islandsView.size(); j++) {
-                anchors.get(j).getChildren().removeAll();
-            }
-        }
+        for (int i = islandsView.size(); i < anchors.size(); i++)
+            flowPane.getChildren().remove(anchors.get(i));
     }
 
     @Override

@@ -11,7 +11,9 @@ import it.polimi.ingsw.network.messages.actions.requests.MoveMotherNature;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.views.*;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
+import it.polimi.ingsw.server.model.enums.GamePhase;
 import it.polimi.ingsw.server.model.enums.StudentColor;
+import it.polimi.ingsw.util.Function;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -85,6 +87,13 @@ public class GameController implements GUIController {
     private IslandsController islandsController;
     private final List<AnchorPane> remainingPlayerPanes = new ArrayList<>(3);
     private final Map<String, PlayerController> playerControllersByNickname = new HashMap<>();
+
+    private final EnumMap<GamePhase, String> gamePhaseMessageMap = new EnumMap<>(Map.of(
+            GamePhase.PLANNING, "Planning",
+            GamePhase.MOVE_STUDENTS, "Move 3 Students",
+            GamePhase.MOVE_MOTHER_NATURE, "Move Mother Nature",
+            GamePhase.CHOOSE_CLOUD, "Choose a Cloud"
+    ));
 
     private GameView gameView;
 
@@ -179,6 +188,13 @@ public class GameController implements GUIController {
      */
     public void updateGameView(GameView gameView) {
         this.gameView = gameView;
+        lblRound.setText("Round: 1");
+        lblGamePhase.setText("Game Phase: " + gamePhaseMessageMap.get(gameView.getPhase()));
+        if (gameView.getCurrentPlayer().equals(gui.getNickname()))
+            lblTurn.setText("Your turn");
+        else
+            lblTurn.setText("Waiting for " + gameView.getCurrentPlayer());
+        lblAction.setText("");
         updateReserve(gameView.getReserve());
         updateCharacterCardControllers(gameView.getCharacterCardView());
         updateCloudControllers(gameView.getCloudViews());
@@ -302,11 +318,15 @@ public class GameController implements GUIController {
      * @param message {@link ChosenCloud} message that contains a list of available clouds.
      */
     public void processChooseCloud(ChooseCloud message) {
+        lblAction.setText("Select an highlighted cloud");
+        List<Button> cloudButtons = new LinkedList<>();
         for (int i : message.getAvailableCloudIndexes()) {
             Button cloudBtn = cloudControllers.get(i).cloudBtn;
+            cloudButtons.add(cloudBtn);
             GUIUtils.setButton(cloudBtn, actionEvent -> {
+                for (Button btn : cloudButtons)
+                    GUIUtils.resetButton(btn);
                 gui.notifyViewListener(new ChosenCloud(i));
-                cloudBtn.setDisable(true);
             });
         }
     }
@@ -317,7 +337,7 @@ public class GameController implements GUIController {
      * @param message the {@link ChooseIsland} message that contains a set of available islands .
      */
     public void processChooseIsland(ChooseIsland message) {
-
+        lblAction.setText("Select an highlighted island");
         for (Integer i : message.getAvailableIslandIndexes()) {
             if (i < islandsController.islandControllers.size()) {
                 Button islandBtn = islandsController.islandControllers.get(i).islandButton;
@@ -337,14 +357,12 @@ public class GameController implements GUIController {
      * @param message the {@link MoveMotherNature} message that contains the max steps mother nature could take.
      */
     public void processMoveMotherNature(MoveMotherNature message) {
-
+        lblAction.setText("Select an island to move mother nature to");
         Map<Integer, Integer> availableIslandIndexes = new HashMap<>();
-
         for (int i = 1; i <= message.getMaxNumMoves(); i++) {
             Integer index = (gameView.getMotherNatureIndex() + i) % islandsController.islandControllers.size();
             availableIslandIndexes.put(index, i);
         }
-
         for (Integer i : availableIslandIndexes.keySet()) {
             if (i < islandsController.islandControllers.size()) {
                 Button islandBtn = islandsController.islandControllers.get(i).islandButton;
@@ -358,12 +376,13 @@ public class GameController implements GUIController {
     }
 
     public void processMoveCardIsland(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
+        lblAction.setText("Select a student from the character card");
         Integer cardIndex = findActivatedCard();
         if (cardIndex == null)
             return;
-
         for (Integer fromIndex : fromIndexes) {
             GUIUtils.setButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)), e -> {
+                lblAction.setText("Select an highlighted island");
                 for (Integer resInd : fromIndexes) {
                     GUIUtils.resetButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(resInd)));
                 }
@@ -380,6 +399,7 @@ public class GameController implements GUIController {
     }
 
     public void processMoveCardHall(Set<Integer> fromIndexes) {
+        lblAction.setText("Select a student from the character card to move to the hall");
         Integer cardIndex = findActivatedCard();
         if (cardIndex == null)
             return;
@@ -395,6 +415,7 @@ public class GameController implements GUIController {
     }
 
     public void processSwapCardEntrance(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
+        lblAction.setText("Select a student from the character card");
         Integer cardIndex = findActivatedCard();
         if (cardIndex == null)
             return;
@@ -402,6 +423,7 @@ public class GameController implements GUIController {
         SchoolBoardController schoolBoardController = playerControllersByNickname.get(gui.getNickname()).getSchoolBoardController();
         for (Integer fromIndex : fromIndexes) {
             GUIUtils.setButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)), e -> {
+                lblAction.setText("Select an highlighted student in the entrance");
                 for (Integer resInd : fromIndexes) {
                     GUIUtils.resetButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(resInd)));
                 }
@@ -418,6 +440,7 @@ public class GameController implements GUIController {
     }
 
     public void processSwapEntranceHall(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
+        lblAction.setText("Select an highlighted student in the entrance");
         Integer cardIndex = findActivatedCard();
         if (cardIndex == null)
             return;
@@ -428,6 +451,7 @@ public class GameController implements GUIController {
                 GUIUtils.resetButton(schoolBoardController.entranceButtons.get(resInd));
             }
             GUIUtils.setButton(schoolBoardController.entranceButtons.get(fromIndex), e -> {
+                lblAction.setText("Select an highlighted student color in the hall");
                 for (Integer toIndex : toIndexes) {
                     GUIUtils.setButton(schoolBoardController.hallButtonsByColor.get(StudentColor.retrieveStudentColorByOrdinal(toIndex)), action -> {
                         for (Integer resToInd : toIndexes) {
@@ -438,36 +462,43 @@ public class GameController implements GUIController {
                 }
             });
         }
-
-
     }
 
     public void processMultiplePossibleMoves(Set<Integer> entranceIndexes, Set<Integer> islandIndexes, Set<Integer> entranceToHallIndexes) {
+        lblAction.setText("Select an highlighted student in the entrance");
         PlayerController me = playerControllersByNickname.get(gui.getNickname());
         List<Button> entranceButtons = me.getSchoolBoardController().entranceButtons;
+        Function clearHallAndIslandButtons = () -> {
+            // clear island buttons
+            for (Button b : islandsController.islandControllers.stream().map(IslandController::getIslandButton).toList()) {
+                GUIUtils.resetButton(b);
+            }
+            // clear entrance to hall
+            GUIUtils.resetButton(me.getSchoolBoardController().hallButton);
+        };
         for (Integer i : entranceIndexes) {
             GUIUtils.setButton(entranceButtons.get(i), event -> {
-                // clear entrance buttons
-                for (Button b : entranceButtons) {
-                    GUIUtils.resetButton(b);
-                }
+                lblAction.setText("Select an highlighted island or hall to move the student to");
+                System.out.println("Entrance button pressed: " + i);
                 // activate islands
                 for (Integer j : islandIndexes) {
                     GUIUtils.setButton(islandsController.islandControllers.get(j).islandButton, e -> {
-                        // clear islands
-                        for (Button b : islandsController.islandControllers.stream().map(IslandController::getIslandButton).toList()) {
-                            GUIUtils.resetButton(b);
-                        }
+                        System.out.println("Island button pressed: " + j);
                         gui.notifyViewListener(new MovedStudent(MoveLocation.ENTRANCE, i, MoveLocation.ISLAND, j));
+                        clearHallAndIslandButtons.apply();
                     });
                 }
                 // activate hall
                 if (entranceToHallIndexes.contains(i)) {
                     GUIUtils.setButton(me.getSchoolBoardController().hallButton, e -> {
-                        // clear entrance to hall
-                        GUIUtils.resetButton(me.getSchoolBoardController().hallButton);
+                        System.out.println("Hall button pressed");
                         gui.notifyViewListener(new MovedStudent(MoveLocation.ENTRANCE, i, MoveLocation.HALL, null));
+                        clearHallAndIslandButtons.apply();
                     });
+                }
+                // clear entrance buttons
+                for (Button b : entranceButtons) {
+                    GUIUtils.resetButton(b);
                 }
             });
         }

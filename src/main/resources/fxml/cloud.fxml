@@ -12,15 +12,11 @@
    <children>
       <AnchorPane fx:id="anchorPaneCloud" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Button fx:id="cloudBtn" layoutX="14.0" layoutY="6.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#sendChosenCloud" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <graphic>
-                  <ImageView fx:id="imgViewCloud" fitHeight="512.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/cloud.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+            <ImageView fx:id="imgViewCloud" fitHeight="512.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <image>
+                  <Image url="@../images/cloud.png" />
+               </image>
+            </ImageView>
             <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" />
@@ -73,6 +69,7 @@
                   </GridPane>
                </children>
             </GridPane>
+            <Button fx:id="cloudBtn" layoutX="14.0" layoutY="6.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#sendChosenCloud" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children>
       </AnchorPane>
    </children>

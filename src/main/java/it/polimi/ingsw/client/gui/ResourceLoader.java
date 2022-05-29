@@ -4,7 +4,6 @@ import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.controllers.GUIController;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
@@ -25,6 +24,7 @@ public abstract class ResourceLoader {
     public static void checkResources() throws MissingResourceException {
         checkFXML();
         checkImages();
+        //TODO: check fonts
         //TODO: check audio
     }
 
@@ -58,12 +58,12 @@ public abstract class ResourceLoader {
      * @param path the path of the FXML file
      * @return the controller of the FXML.
      */
-    public static GUIController loadFXML(FXMLPath path, GUI gui) {
+    public static <T extends GUIController> T loadFXML(FXMLPath path, GUI gui) {
         try {
             FXMLLoader loader = new FXMLLoader(ResourceLoader.class.getResource(path.getPath()));
-            Pane parent = loader.load();
-            GUIController controller = loader.getController();
-            controller.setRootPane(parent);
+            Pane root = loader.load();
+            T controller = loader.getController();
+            controller.setRootPane(root);
             controller.setGUI(gui);
             return controller;
         } catch (IOException | NullPointerException e) {

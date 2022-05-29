@@ -320,9 +320,9 @@ public class GUI extends Application implements UI {
                 chooseColor.show();
             });
             case MOVE_MOTHER_NATURE -> Platform.runLater(() -> gameController.processMoveMotherNature((MoveMotherNature) message));
-            case MOVE_STUDENT -> handleMoveStudent((MoveStudent)message);
-            case MULTIPLE_POSSIBLE_MOVES -> handlePossibleMoves((MultiplePossibleMoves)message);
-            case SWAP_STUDENTS -> handleSwap((SwapStudents)message);
+            case MOVE_STUDENT -> Platform.runLater(() -> handleMoveStudent((MoveStudent)message));
+            case MULTIPLE_POSSIBLE_MOVES -> Platform.runLater(() -> handlePossibleMoves((MultiplePossibleMoves)message));
+            case SWAP_STUDENTS -> Platform.runLater(() -> handleSwap((SwapStudents)message));
         }
     }
 

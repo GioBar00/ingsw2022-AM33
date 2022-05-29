@@ -209,7 +209,8 @@ public abstract class GUIUtils {
      * @param event  the action the button has to make when it's pressed.
      */
     public static void setButton(Button button, EventHandler<ActionEvent> event) {
-        button.setStyle("-fx-border-color: green");
+        button.toFront();
+        button.setStyle("-fx-border-color: green; -fx-border-width: 3px; -fx-background-color: transparent;");
         button.setOnAction(event);
     }
 
@@ -220,7 +221,7 @@ public abstract class GUIUtils {
      * @param button the button we want to reset.
      */
     public static void resetButton(Button button) {
-        button.setStyle("-fx-border-color: transparent");
+        button.setStyle("-fx-background-color: transparent;");
         button.setOnAction(e -> {});
     }
 }

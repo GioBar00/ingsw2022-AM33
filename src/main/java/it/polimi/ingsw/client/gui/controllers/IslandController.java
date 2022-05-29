@@ -113,9 +113,6 @@ public class IslandController implements GUIController{
 
         GUIUtils.addToPaneCenterKeepRatio(root, anchorPaneIsland, 1.0);
 
-        islandButton.setDisable(true);
-        islandButton.setVisible(false);
-
         islandGrid.setGridLinesVisible(false);
         margins.setGridLinesVisible(false);
 

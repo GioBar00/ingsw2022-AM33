@@ -28,9 +28,6 @@
                   <RowConstraints minHeight="10.0" percentHeight="70.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
-              <AnchorPane minHeight="0.0" minWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                  <Button fx:id="islandButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefHeight="340.0" prefWidth="350.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-              </AnchorPane>
               <GridPane fx:id="islandGrid" minHeight="0.0" minWidth="0.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
                   <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="5.0" prefWidth="100.0" />
@@ -121,6 +118,9 @@
                       </font>
                   </Label>
               </GridPane>
+              <AnchorPane minHeight="0.0" minWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Button fx:id="islandButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefHeight="340.0" prefWidth="350.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+              </AnchorPane>
           </GridPane>
       </AnchorPane>
    </children>

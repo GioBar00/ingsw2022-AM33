@@ -70,8 +70,10 @@ public class CloudController implements GUIController {
         int i = 0;
 
         for (StudentColor c : cloudView.getStudents()) {
-            imageViews.get(i).setImage(GUIUtils.getStudentImage(c));
-            i++;
+            if (c != null) {
+                imageViews.get(i).setImage(GUIUtils.getStudentImage(c));
+                i++;
+            }
         }
 
     }
@@ -106,7 +108,7 @@ public class CloudController implements GUIController {
         root.getChildren().clear();
 
         GUIUtils.bindSize(anchorPaneCloud, cloudBtn);
-        GUIUtils.bindSize(cloudBtn, imgViewCloud);
+        GUIUtils.bindSize(anchorPaneCloud, imgViewCloud);
         for (ImageView iv : imageViews)
             GUIUtils.bindSize(anchorPanePawn, iv);
 
