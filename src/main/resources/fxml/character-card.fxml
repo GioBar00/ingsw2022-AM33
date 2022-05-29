@@ -62,7 +62,7 @@
                                                 </ImageView>
                                              </graphic>
                                           </Button>
-                                          <Label fx:id="greenLbl" layoutX="22.0" layoutY="32.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="30.0">
+                                          <Label fx:id="greenLbl" layoutX="22.0" layoutY="32.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
@@ -80,7 +80,7 @@
                                                 </ImageView>
                                              </graphic>
                                           </Button>
-                                          <Label fx:id="redLbl" layoutX="21.0" layoutY="28.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="30.0">
+                                          <Label fx:id="redLbl" layoutX="21.0" layoutY="28.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
@@ -98,7 +98,7 @@
                                                 </ImageView>
                                              </graphic>
                                           </Button>
-                                          <Label fx:id="pinkLbl" layoutX="21.0" layoutY="28.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="30.0">
+                                          <Label fx:id="pinkLbl" layoutX="21.0" layoutY="28.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
@@ -129,7 +129,7 @@
                                                 </ImageView>
                                              </graphic>
                                           </Button>
-                                          <Label fx:id="blueLbl" layoutX="22.0" layoutY="32.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="30.0">
+                                          <Label fx:id="blueLbl" layoutX="22.0" layoutY="32.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
@@ -147,7 +147,7 @@
                                                 </ImageView>
                                              </graphic>
                                           </Button>
-                                          <Label fx:id="yellowLbl" layoutX="22.0" layoutY="32.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="30.0">
+                                          <Label fx:id="yellowLbl" layoutX="22.0" layoutY="32.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
@@ -201,15 +201,16 @@
                                                 <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
-                                                <HBox alignment="CENTER" minHeight="0.0" minWidth="0.0" GridPane.rowIndex="1">
+                                                <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                                                    <children>
-                                                      <Label fx:id="coinLbl" alignment="CENTER" minHeight="0.0" minWidth="0.0" text="1">
+                                                      <Label fx:id="coinLbl" alignment="CENTER" minHeight="0.0" minWidth="0.0" text="1" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <font>
-                                                            <Font name="Trattatello" size="36.0" />
+                                                            <Font name="System Bold Italic" size="15.0" />
                                                          </font>
                                                       </Label>
                                                    </children>
-                                                </HBox>
+                                                </AnchorPane>
+                                                <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2" />
                                              </children>
                                           </GridPane>
                                        </children>

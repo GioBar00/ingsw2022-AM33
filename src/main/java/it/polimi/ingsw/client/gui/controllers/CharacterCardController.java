@@ -7,7 +7,6 @@ import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.views.CharacterCardView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -96,6 +95,7 @@ public class CharacterCardController implements GUIController {
 
         int cost = view.getAdditionalCost() + view.getOriginalCost();
         coinLbl.setText(String.valueOf(cost));
+        coinLbl.setVisible(true);
 
         if (view.canBeUsed())
             characterBtn.setDisable(false);
@@ -110,8 +110,10 @@ public class CharacterCardController implements GUIController {
             Integer num;
             for (StudentColor s : StudentColor.values()) {
                 num = view.getStudent().get(s);
-                if (num == null)
+                if (num == null || num == 0) {
                     setNotUsable(buttons.get(s));
+                    buttons.get(s).button.setOpacity(1);
+                }
                 else setUsable(buttons.get(s), num);
             }
         }
