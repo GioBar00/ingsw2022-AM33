@@ -9,12 +9,10 @@ import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.util.Function;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 import java.util.EnumSet;
@@ -206,13 +204,10 @@ public class PlayerController implements GUIController {
      */
     public void enableHand(GUIController handStageHandler) {
         this.handStageHandler = handStageHandler;
-        btnHand.setOnAction(event -> showAssistantCards());
+        btnHand.setOnAction(event -> showAssistantCards(false));
     }
 
-    /**
-     * This method shows the assistant cards of the player.
-     */
-    private void showAssistantCards() {
+    public void showAssistantCards(boolean isPlayable){
         if (playerView == null)
             return;
         EnumSet<AssistantCard> cards = EnumSet.noneOf(AssistantCard.class);
@@ -220,10 +215,18 @@ public class PlayerController implements GUIController {
         AssistantCardController controller = (AssistantCardController) ResourceLoader.loadFXML(FXMLPath.CHOOSE_ASSISTANT, gui);
         assistantCardController = controller;
         controller.init();
-        controller.setAvailableCards(cards);
-        controller.showAssistantCards();
+        if (isPlayable)
+            controller.setPlayable(cards);
+
+        else {
+            controller.setAvailableCards(cards);
+            controller.showAssistantCards();
+        }
         Stage stage = new Stage();
-        stage.setTitle("Your hand");
+        if (isPlayable)
+            stage.setTitle("Choose an Assistant Card");
+        else
+            stage.setTitle("Your hand");
         stage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
         controller.loadScene(stage);
         stage.setAlwaysOnTop(true);

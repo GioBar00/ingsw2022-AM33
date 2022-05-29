@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
@@ -171,9 +170,9 @@ public class AssistantCardController implements GUIController {
     }
 
     /**
-     * Send a {@link PlayedAssistantCard} reqest to the server.
+     * Send a {@link PlayedAssistantCard} request to the server.
      *
-     * @param card the card the player wants to play.@
+     * @param card the card the player wants to play.
      */
     @FXML
     public void playAssistantCard(AssistantCard card) {

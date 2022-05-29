@@ -9,7 +9,6 @@ import it.polimi.ingsw.client.gui.controllers.*;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
-import it.polimi.ingsw.network.messages.actions.ChosenIsland;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseStudentColor;
@@ -304,11 +303,7 @@ public class GUI extends Application implements UI {
 
     private void processLastRequest(Message message) {
         switch (MessageType.retrieveByMessage(message)) {
-            case PLAY_ASSISTANT_CARD -> {
-                /*
-                ((AssistantCardController)sceneByPath.get(FXMLPath.CHOOSE_ASSISTANT).getUserData()).setPlayable(((PlayAssistantCard)message).getPlayableAssistantCards());
-                 */
-            }
+            case PLAY_ASSISTANT_CARD -> Platform.runLater(() -> gameController.processPlayAssistantCard());
             case CHOOSE_CLOUD -> Platform.runLater(() -> gameController.processChooseCloud((ChooseCloud) message));
             case CHOOSE_ISLAND -> Platform.runLater(() -> gameController.processChooseIsland((ChooseIsland) message));
             case CHOOSE_STUDENT_COLOR -> Platform.runLater(() -> {

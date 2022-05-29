@@ -489,4 +489,9 @@ public class GameController implements GUIController {
 
         return cardIndex;
     }
+
+    public void processPlayAssistantCard(){
+        PlayerController me = playerControllersByNickname.get(gui.getNickname());
+        me.showAssistantCards(true);
+    }
 }
