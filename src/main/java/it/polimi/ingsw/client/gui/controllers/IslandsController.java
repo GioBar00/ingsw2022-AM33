@@ -4,18 +4,14 @@ import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
-import it.polimi.ingsw.network.messages.actions.ChosenIsland;
-import it.polimi.ingsw.network.messages.actions.MovedMotherNature;
 import it.polimi.ingsw.network.messages.views.IslandGroupView;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class IslandsController implements GUIController {
 

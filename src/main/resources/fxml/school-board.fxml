@@ -7,160 +7,173 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="488.0" prefWidth="1125.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.SchoolBoardController">
    <children>
-      <AnchorPane fx:id="anchorPaneBoard" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="CENTER" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-             <ImageView fx:id="imgBoard" fitWidth="1125.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                 <Image url="@../images/board.png" />
-             </ImageView>
-             <GridPane layoutX="1125.0" minHeight="0.0" minWidth="0.0" prefHeight="397.0" prefWidth="837.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                 <columnConstraints>
-                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="3.0" prefWidth="100.0" />
-                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
-                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="4.0" prefWidth="100.0" />
-                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" prefWidth="100.0" />
-                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="4.0" prefWidth="100.0" />
-                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
-                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="4.0" prefWidth="100.0" />
-                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
-                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="4.0" prefWidth="100.0" />
-                 </columnConstraints>
-                 <rowConstraints>
-                     <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     <RowConstraints minHeight="10.0" percentHeight="80.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                 </rowConstraints>
-                 <GridPane fx:id="hallGrid" alignment="CENTER" minHeight="0.0" minWidth="0.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
-                     <columnConstraints>
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="11.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.5" prefWidth="100.0" />
-                     </columnConstraints>
-                     <rowConstraints>
-                         <RowConstraints minHeight="10.0" percentHeight="18.5" prefHeight="78.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="8.0" percentHeight="22.0" prefHeight="78.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" percentHeight="19.0" prefHeight="78.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" percentHeight="22.0" prefHeight="78.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" percentHeight="18.5" prefHeight="78.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="10" GridPane.rowIndex="4">
-                         <Button fx:id="blueHallButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefHeight="78.0" prefWidth="544.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </AnchorPane>
-                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="10">
-                         <Button fx:id="greenHallButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefHeight="78.0" prefWidth="544.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </AnchorPane>
-                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="10" GridPane.rowIndex="1">
-                     <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <columnConstraints>
-                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                        </columnConstraints>
-                        <rowConstraints>
+            <AnchorPane fx:id="anchorPaneBoard" minHeight="0.0" minWidth="0.0">
+               <children>
+                   <ImageView fx:id="imgBoard" fitWidth="1125.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                       <Image url="@../images/board.png" />
+                   </ImageView>
+                   <GridPane layoutX="1125.0" minHeight="0.0" minWidth="0.0" prefHeight="397.0" prefWidth="837.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                       <columnConstraints>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="3.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="4.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="4.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="4.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="4.0" prefWidth="100.0" />
+                       </columnConstraints>
+                       <rowConstraints>
                            <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           <RowConstraints minHeight="10.0" percentHeight="80.0" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="10.0" percentHeight="80.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        </rowConstraints>
-                        <children>
-                               <Button fx:id="redHallButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefHeight="78.0" prefWidth="544.0" style="-fx-background-color: transparent;" GridPane.rowIndex="1" />
-                        </children>
-                     </GridPane>
-                     </AnchorPane>
-                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="10" GridPane.rowIndex="2">
-                         <Button fx:id="yellowHallButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefHeight="78.0" prefWidth="544.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </AnchorPane>
-                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="10" GridPane.rowIndex="3">
-                     <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <columnConstraints>
-                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                        </columnConstraints>
-                        <rowConstraints>
-                           <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           <RowConstraints minHeight="10.0" percentHeight="80.0" vgrow="SOMETIMES" />
-                           <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        </rowConstraints>
-                        <children>
-                               <Button fx:id="magentaHallButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefHeight="78.0" prefWidth="544.0" style="-fx-background-color: transparent;" GridPane.rowIndex="1" />
-                        </children>
-                     </GridPane>
-                     </AnchorPane>
-                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="10" GridPane.rowSpan="5">
-                         <Button fx:id="hallButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefHeight="390.0" prefWidth="544.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </AnchorPane>
-                 </GridPane>
-                 <GridPane fx:id="profsGrid" minHeight="0.0" minWidth="0.0" GridPane.columnIndex="5" GridPane.rowIndex="1">
-                     <columnConstraints>
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="17.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="57.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                     </columnConstraints>
-                     <rowConstraints>
-                         <RowConstraints minHeight="10.0" percentHeight="17.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" percentHeight="17.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" percentHeight="17.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" percentHeight="17.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" percentHeight="17.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                 </GridPane>
-               <GridPane minHeight="0.0" minWidth="0.0" GridPane.columnIndex="7" GridPane.rowIndex="1">
-                  <columnConstraints>
-                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                  </columnConstraints>
-                  <rowConstraints>
-                     <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     <RowConstraints minHeight="10.0" percentHeight="70.0" vgrow="SOMETIMES" />
-                     <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  </rowConstraints>
-                  <children>
-                       <GridPane fx:id="towersGrid" alignment="CENTER" minHeight="0.0" minWidth="0.0" GridPane.rowIndex="1">
+                       </rowConstraints>
+                       <GridPane fx:id="hallGrid" alignment="CENTER" minHeight="0.0" minWidth="0.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                            <columnConstraints>
-                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="1.3" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="9.8" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="9.8" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="9.8" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="9.8" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="9.8" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="9.8" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="9.8" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="9.8" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="9.8" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="9.8" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="0.7" />
+                           </columnConstraints>
+                           <rowConstraints>
+                           <RowConstraints minHeight="0.0" percentHeight="2.9" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="0.0" percentHeight="12.3" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="0.0" percentHeight="7.9" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="0.0" percentHeight="12.3" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="0.0" percentHeight="7.9" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="0.0" percentHeight="12.3" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="7.9" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="12.3" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="8.9" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="12.3" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="3.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        <children>
+                           <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="9">
+                              <children>
+                                 <Button fx:id="blueHallButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="533.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              </children>
+                           </AnchorPane>
+                           <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="5">
+                              <children>
+                                 <Button fx:id="yellowHallButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="533.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              </children>
+                           </AnchorPane>
+                           <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="1">
+                              <children>
+                                 <Button fx:id="greenHallButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="533.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              </children>
+                           </AnchorPane>
+                           <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="3">
+                              <children>
+                                 <Button fx:id="redHallButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="533.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              </children>
+                           </AnchorPane>
+                           <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="7">
+                              <children>
+                                 <Button fx:id="magentaHallButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="533.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              </children>
+                           </AnchorPane>
+                           <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="12" GridPane.rowSpan="11">
+                              <children>
+                                 <Button fx:id="hallButton" mnemonicParsing="false" prefHeight="390.0" prefWidth="544.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              </children>
+                           </AnchorPane>
+                        </children>
+                       </GridPane>
+                       <GridPane fx:id="profsGrid" minHeight="0.0" minWidth="0.0" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                           <columnConstraints>
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="17.0" prefWidth="100.0" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="57.0" prefWidth="100.0" />
                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                            </columnConstraints>
                            <rowConstraints>
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="0.0" percentHeight="1.0" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="6.2" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="6.2" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="6.2" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="6.1" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="0.0" percentHeight="2.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                        </GridPane>
-                  </children>
-               </GridPane>
-                 <GridPane fx:id="entranceGrid" minHeight="0.0" minWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <columnConstraints>
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="8.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="35.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="13.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="35.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="9.0" prefWidth="100.0" />
-                     </columnConstraints>
-                     <rowConstraints>
-                     <RowConstraints minHeight="0.0" percentHeight="2.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     <RowConstraints minHeight="10.0" percentHeight="8.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     <RowConstraints minHeight="10.0" percentHeight="7.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     <RowConstraints minHeight="10.0" percentHeight="7.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     <RowConstraints minHeight="10.0" percentHeight="7.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     <RowConstraints minHeight="10.0" percentHeight="3.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                 </GridPane>
-             </GridPane>
+                     <GridPane minHeight="0.0" minWidth="0.0" GridPane.columnIndex="7" GridPane.rowIndex="1">
+                        <columnConstraints>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                           <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="10.0" percentHeight="70.0" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <children>
+                             <GridPane fx:id="towersGrid" alignment="CENTER" minHeight="0.0" minWidth="0.0" GridPane.rowIndex="1">
+                                 <columnConstraints>
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="12.1" />
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" />
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="12.1" />
+                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" />
+                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="12.1" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                 <RowConstraints minHeight="0.0" percentHeight="3.6" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                                     <RowConstraints minHeight="0.0" percentHeight="3.6" vgrow="SOMETIMES" />
+                                     <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                                     <RowConstraints minHeight="0.0" percentHeight="3.6" vgrow="SOMETIMES" />
+                                     <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="0.0" percentHeight="3.6" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="0.0" percentHeight="3.6" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                             </GridPane>
+                        </children>
+                     </GridPane>
+                       <GridPane fx:id="entranceGrid" minHeight="0.0" minWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <columnConstraints>
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="8.0" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="35.0" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="13.0" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="35.0" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="9.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                           <RowConstraints minHeight="0.0" percentHeight="2.9" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="12.3" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="0.0" percentHeight="7.9" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="12.3" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="0.0" percentHeight="7.9" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="12.3" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="0.0" percentHeight="7.9" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="12.3" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="0.0" percentHeight="8.9" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="0.0" percentHeight="12.3" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="0.0" percentHeight="3.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                       </GridPane>
+                   </GridPane>
+               </children>
+            </AnchorPane>
          </children>
-      </AnchorPane>
+      </VBox>
    </children>
 </AnchorPane>
