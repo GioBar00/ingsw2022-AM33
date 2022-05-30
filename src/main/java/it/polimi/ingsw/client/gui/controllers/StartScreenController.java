@@ -1,10 +1,13 @@
 package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.enums.AudioPath;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
+import it.polimi.ingsw.client.gui.audio.AudioManager;
+import it.polimi.ingsw.client.gui.audio.MuteToggle;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -17,7 +20,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
-public class StartScreenController implements GUIController {
+public class StartScreenController implements GUIController, MuteToggle {
 
     static String hostname = "";
     static String port = "";
@@ -28,6 +31,8 @@ public class StartScreenController implements GUIController {
     public AnchorPane root;
     @FXML
     public ImageView imgBackground;
+    @FXML
+    public ImageView imgViewMute;
     @FXML
     public ImageView imgTitle;
     @FXML
@@ -113,10 +118,13 @@ public class StartScreenController implements GUIController {
      */
     @Override
     public void loadScene(Stage stage) {
+        if (stage.getScene() != null)
+            stage.getScene().setRoot(new Region());
         stage.setScene(new Scene(root));
-        //stage.getScene().setRoot(new Region());
         stage.setMinHeight(800.0);
         stage.setMinWidth(1200.0);
+        stage.setHeight(800.0);
+        stage.setWidth(1200.0);
         stage.setResizable(true);
     }
 
@@ -175,8 +183,12 @@ public class StartScreenController implements GUIController {
         }
     }
 
+    /**
+     * handles the mute toggle.
+     */
     @FXML
+    @Override
     public void handleMuteButton() {
-        System.out.println("Mute");
+        toggleMute(imgViewMute);
     }
 }

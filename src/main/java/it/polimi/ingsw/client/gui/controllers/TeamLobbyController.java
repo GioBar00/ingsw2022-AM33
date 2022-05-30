@@ -17,7 +17,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 public class TeamLobbyController implements LobbyController {
-
     private GUI gui;
 
     private Pane root;
@@ -101,7 +100,6 @@ public class TeamLobbyController implements LobbyController {
      */
     @Override
     public void init() {
-        GUIUtils.changeImageHoverButton(startButton, startImg, ResourceLoader.loadImage(ImagePath.START), ResourceLoader.loadImage(ImagePath.START_HIGHLIGHTED));
         startButton.setVisible(false);
         startButton.setDisable(true);
         fillLabels();
@@ -248,4 +246,13 @@ public class TeamLobbyController implements LobbyController {
         lobbyLabels[3] = fourthLName;
     }
 
+    /**
+     * handles the mute toggle.
+     */
+    @FXML
+    @Override
+    public void handleMuteButton() {
+        //FIXME: add mute btn
+        toggleMute(new ImageView());
+    }
 }

@@ -253,17 +253,14 @@ public abstract class GUIUtils {
 
     /**
      * This method changes the image of a button when the mouse is over it.
-     * @param btn the button
-     * @param graphic the image view of the button
+     *
+     * @param btn      the button
+     * @param graphic  the image view of the button
      * @param notHover the image when the mouse is not over it
-     * @param hover the image when the mouse is over it
+     * @param hover    the image when the mouse is over it
      */
     public static void changeImageHoverButton(Button btn, ImageView graphic, Image notHover, Image hover) {
-        btn.setOnMouseEntered(e -> {
-            graphic.setImage(hover);
-        });
-        btn.setOnMouseExited(e -> {
-            graphic.setImage(notHover);
-        });
+        btn.setOnMouseEntered(e -> graphic.setImage(hover));
+        btn.setOnMouseExited(e -> graphic.setImage(notHover));
     }
 }

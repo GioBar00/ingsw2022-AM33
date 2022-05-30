@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
+import it.polimi.ingsw.client.gui.audio.MuteToggle;
 import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.server.model.enums.Tower;
@@ -19,7 +20,7 @@ import javafx.stage.Stage;
 import java.util.EnumSet;
 import java.util.List;
 
-public class WinnerScreenController implements GUIController {
+public class WinnerScreenController implements GUIController, MuteToggle {
     @FXML
     public Label lblResult;
     @FXML
@@ -86,10 +87,13 @@ public class WinnerScreenController implements GUIController {
      */
     @Override
     public void loadScene(Stage stage) {
-        stage.getScene().setRoot(new Region());
+        if (stage.getScene() != null)
+            stage.getScene().setRoot(new Region());
         stage.setScene(new Scene(root));
         stage.setMinHeight(800.0);
         stage.setMinWidth(1200.0);
+        stage.setHeight(800.0);
+        stage.setWidth(1200.0);
         stage.setResizable(false);
     }
 
@@ -117,16 +121,20 @@ public class WinnerScreenController implements GUIController {
         }
     }
 
-    @FXML
-    public void handleMuteButton() {
-        System.out.println("Mute");
-    }
-
     /**
      * This method is used to restart the game.
      */
     @FXML
     public void handleReloadButton() {
         gui.showStartScreen();
+    }
+
+    /**
+     * handles the mute toggle.
+     */
+    @FXML
+    @Override
+    public void handleMuteButton() {
+        toggleMute(imgViewMute);
     }
 }

@@ -2,9 +2,11 @@ package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.UI;
+import it.polimi.ingsw.client.enums.AudioPath;
 import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.enums.ViewState;
+import it.polimi.ingsw.client.gui.audio.AudioManager;
 import it.polimi.ingsw.client.gui.controllers.*;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
@@ -219,6 +221,7 @@ public class GUI extends Application implements UI {
             startScreenController.loadScene(stage);
             if (!stage.isShowing())
                 stage.show();
+            AudioManager.playAudio(AudioPath.START);
         });
 
     }
@@ -259,13 +262,19 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showLobbyScreen() {
-        Platform.runLater(() -> lobbyController.loadScene(stage));
+        Platform.runLater(() -> {
+            lobbyController.loadScene(stage);
+            AudioManager.playAudio(AudioPath.LOBBY);
+        });
         startScreenController = null;
     }
 
     @Override
     public void showGameScreen() {
-        Platform.runLater(() -> gameController.loadScene(stage));
+        Platform.runLater(() -> {
+            gameController.loadScene(stage);
+            AudioManager.playAudio(AudioPath.GAME);
+        });
         lobbyController = null;
     }
 

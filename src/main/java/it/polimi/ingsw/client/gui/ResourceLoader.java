@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.gui;
 
+import it.polimi.ingsw.client.enums.AudioPath;
 import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.enums.FontPath;
 import it.polimi.ingsw.client.enums.ImagePath;
@@ -7,6 +8,8 @@ import it.polimi.ingsw.client.gui.controllers.GUIController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 
 import java.io.IOException;
@@ -17,6 +20,7 @@ import java.util.Objects;
 public abstract class ResourceLoader {
 
     private static final EnumMap<ImagePath, Image> images = new EnumMap<>(ImagePath.class);
+    private static final EnumMap<AudioPath, MediaPlayer> audios = new EnumMap<>(AudioPath.class);
 
     /**
      * Checks if all the resources can be loaded.
@@ -27,7 +31,7 @@ public abstract class ResourceLoader {
         checkFXML();
         checkImages();
         checkFonts();
-        //TODO: check audio
+        checkAudio();
     }
 
     /**
@@ -69,6 +73,18 @@ public abstract class ResourceLoader {
     }
 
     /**
+     * Checks if all audio files can be loaded.
+     *
+     * @throws MissingResourceException if a resource is missing
+     */
+    private static void checkAudio() throws MissingResourceException {
+        for (AudioPath path : AudioPath.values()) {
+            if (ResourceLoader.class.getResource(path.getPath()) == null)
+                throw new MissingResourceException("Audio file not found: " + path.getPath(), ResourceLoader.class.getName(), path.getPath());
+        }
+    }
+
+    /**
      * Loads a FXML file.
      *
      * @param path the path of the FXML file
@@ -105,6 +121,28 @@ public abstract class ResourceLoader {
         } catch (NullPointerException e) {
             System.err.println("Error loading image: " + path.getPath());
             throw new MissingResourceException("Image file not found: " + path.getPath(), ResourceLoader.class.getName(), path.getPath());
+        }
+    }
+
+    /**
+     * Loads an audio file if it is not already loaded.
+     *
+     * @param path the path of the audio file
+     * @return the media player
+     */
+    public static MediaPlayer loadAudio(AudioPath path) {
+        try {
+            MediaPlayer player;
+            if (!audios.containsKey(path)) {
+                player = new MediaPlayer(new Media(Objects.requireNonNull(ResourceLoader.class.getResource(path.getPath())).toExternalForm()));
+                audios.put(path, player);
+            } else
+                player = audios.get(path);
+            player.seek(player.getStartTime());
+            return player;
+        } catch (NullPointerException e) {
+            System.err.println("Error loading audio: " + path.getPath());
+            throw new MissingResourceException("Audio file not found: " + path.getPath(), ResourceLoader.class.getName(), path.getPath());
         }
     }
 }

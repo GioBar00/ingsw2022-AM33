@@ -86,4 +86,14 @@ public class NormalLobbyController implements LobbyController {
         gui.notifyViewListener(new StartGame());
         GUIUtils.hideButton(startBtn);
     }
+
+    /**
+     * handles the mute toggle.
+     */
+    @FXML
+    @Override
+    public void handleMuteButton() {
+        //FIXME: add mute btn
+        toggleMute(new ImageView());
+    }
 }

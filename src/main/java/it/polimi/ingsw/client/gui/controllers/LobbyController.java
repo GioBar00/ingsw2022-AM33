@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.gui.controllers;
 
+import it.polimi.ingsw.client.gui.audio.MuteToggle;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -7,7 +8,7 @@ import javafx.stage.Stage;
 /**
  * This class is the controller of the lobby view
  */
-public interface LobbyController extends GUIController {
+public interface LobbyController extends GUIController, MuteToggle {
 
     /**
      * Activates the start button

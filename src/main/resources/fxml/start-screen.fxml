@@ -159,7 +159,7 @@
                <children>
                   <Button fx:id="btnMute" mnemonicParsing="false" onAction="#handleMuteButton" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: transparent;">
                      <graphic>
-                        <ImageView fitHeight="60.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="imgViewMute" fitHeight="60.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/icons/volume.png" />
                            </image>

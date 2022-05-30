@@ -1,9 +1,12 @@
 package it.polimi.ingsw.client.gui.controllers;
 
+import it.polimi.ingsw.client.enums.AudioPath;
 import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
+import it.polimi.ingsw.client.gui.audio.AudioManager;
+import it.polimi.ingsw.client.gui.audio.MuteToggle;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseIsland;
@@ -24,7 +27,7 @@ import javafx.stage.Stage;
 
 import java.util.*;
 
-public class GameController implements GUIController {
+public class GameController implements GUIController, MuteToggle {
     @FXML
     public AnchorPane anchorPaneCharacterCard0;
     @FXML
@@ -159,7 +162,8 @@ public class GameController implements GUIController {
      */
     @Override
     public void loadScene(Stage stage) {
-        stage.getScene().setRoot(new Region());
+        if (stage.getScene() != null)
+            stage.getScene().setRoot(new Region());
         stage.setScene(new Scene(root));
         stage.setResizable(true);
         stage.setMinHeight(0.0);
@@ -178,11 +182,6 @@ public class GameController implements GUIController {
         gridRoot.setDisable(true);
         stage.setOnHiding(event -> gridRoot.setDisable(false));
         stage.show();
-    }
-
-    @FXML
-    public void handleMuteButton() {
-        System.out.println("Mute");
     }
 
     /**
@@ -557,5 +556,14 @@ public class GameController implements GUIController {
         for (CharacterCardController characterCardController : characterCardControllers) {
             characterCardController.resetCharacterButton();
         }
+    }
+
+    /**
+     * handles the mute toggle.
+     */
+    @FXML
+    @Override
+    public void handleMuteButton() {
+        toggleMute(imgViewMute);
     }
 }
