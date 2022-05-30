@@ -225,7 +225,7 @@ public class GameController implements GUIController {
             return;
         for (int i = 0; i < characterCardViews.size(); i++) {
             if (characterCardControllers.size() <= i) {
-                CharacterCardController characterCardController = (CharacterCardController) ResourceLoader.loadFXML(FXMLPath.CHARACTER_CARD, gui);
+                CharacterCardController characterCardController = ResourceLoader.loadFXML(FXMLPath.CHARACTER_CARD, gui);
                 characterCardController.init();
                 GUIUtils.addToAnchorPane(characterCardPanes.get(i), characterCardController.getRootPane());
                 characterCardControllers.add(characterCardController);
@@ -493,6 +493,7 @@ public class GameController implements GUIController {
         for (Integer i : entranceIndexes) {
             GUIUtils.setButton(entranceButtons.get(i), event -> {
                 lblAction.setText("Select an highlighted island or hall to move the student to");
+                clearCharacterButtons();
                 System.out.println("Entrance button pressed: " + i);
                 // activate islands
                 for (Integer j : islandIndexes) {
@@ -536,5 +537,14 @@ public class GameController implements GUIController {
     public void processPlayAssistantCard(EnumSet<AssistantCard> availableCards) {
         PlayerController me = playerControllersByNickname.get(gui.getNickname());
         me.playAssistantCard(availableCards);
+    }
+
+    /**
+     * Disables all the character card buttons.
+     */
+    private void clearCharacterButtons() {
+        for (CharacterCardController characterCardController : characterCardControllers) {
+            characterCardController.resetCharacterButton();
+        }
     }
 }

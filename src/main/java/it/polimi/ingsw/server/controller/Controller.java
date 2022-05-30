@@ -339,7 +339,7 @@ public class Controller implements Runnable, MessageListener, DisconnectListener
                     }
                     case CARD -> {
                         if (movedStudent.getTo() == MoveLocation.ENTRANCE) {
-                            parameters = CharacterChoiceAdapter.convert((MovedStudent) movedStudent);
+                            parameters = new CharacterParameters(StudentColor.retrieveStudentColorByOrdinal(movedStudent.getFromIndex()), movedStudent.getToIndex());
                             if (!model.applyEffect(parameters))
                                 vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                         }

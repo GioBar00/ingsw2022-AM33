@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
+import it.polimi.ingsw.network.messages.actions.ActivatedCharacterCard;
 import it.polimi.ingsw.network.messages.views.CharacterCardView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import javafx.fxml.FXML;
@@ -100,8 +101,6 @@ public class CharacterCardController implements GUIController {
         coinLbl.setText(String.valueOf(cost));
         coinLbl.setVisible(true);
 
-        if (view.canBeUsed())
-            characterBtn.setDisable(false);
 
         if (view.getNumBlocks() > 0) {
             imgViewRed.setImage(ResourceLoader.loadImage(ImagePath.PROHIBITION));
@@ -120,6 +119,13 @@ public class CharacterCardController implements GUIController {
             }
         }
 
+    }
+
+    /**
+     * This method is used to set the character card as not usable.
+     */
+    public void resetCharacterButton() {
+        GUIUtils.resetButton(characterBtn);
     }
 
     /**

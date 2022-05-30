@@ -93,9 +93,6 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
             types.remove(sel);
         }
 
-        //todo remove this part
-        //characterCards.set(0, new Jester());
-
         reserve = 20;
 
     }
@@ -147,7 +144,6 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
      */
     void initializeGame() {
         for (Player p : model.playersManager.getPlayers()) {
-            //Todo reset coins at 1
             playerCoins.put(p.getNickname(), 1);
             reserve--;
         }
