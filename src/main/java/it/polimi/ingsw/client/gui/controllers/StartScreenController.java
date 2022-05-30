@@ -17,6 +17,10 @@ import javafx.stage.Stage;
 
 public class StartScreenController implements GUIController {
 
+    static String hostname = "";
+    static String port = "";
+    static String nickname = "";
+
     private GUI gui;
     @FXML
     public AnchorPane root;
@@ -52,6 +56,10 @@ public class StartScreenController implements GUIController {
     }
 
     public void init() {
+
+        txtFieldServer.setText(hostname);
+        txtFieldPort.setText(port);
+        txtFieldNickname.setText(nickname);
 
         root.heightProperty().addListener((obs, oldVal, newVal) -> {
             imgBackground.setFitHeight(newVal.doubleValue());
@@ -151,6 +159,9 @@ public class StartScreenController implements GUIController {
             int port = txtFieldPort.getText().isEmpty() ? 1234 : Integer.parseInt(txtFieldPort.getText());
             String nickname = txtFieldNickname.getText();
             if (gui.getClient().setServerAddress(server, port)) {
+                StartScreenController.hostname = txtFieldServer.getText();
+                StartScreenController.port = txtFieldPort.getText();
+                StartScreenController.nickname = nickname;
                 new Thread(() -> {
                     gui.setNickname(nickname);
                     gui.getClient().setNickname(nickname);

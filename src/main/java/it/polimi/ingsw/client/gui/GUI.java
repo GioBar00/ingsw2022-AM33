@@ -90,7 +90,7 @@ public class GUI extends Application implements UI {
      */
     private boolean checkChooseWizardController() {
         if (chooseWizardController == null) {
-            chooseWizardController = (ChooseWizardController) ResourceLoader.loadFXML(FXMLPath.CHOOSE_WIZARD, this);
+            chooseWizardController = ResourceLoader.loadFXML(FXMLPath.CHOOSE_WIZARD, this);
             Platform.runLater(chooseWizardController::init);
             return true;
         }
@@ -104,7 +104,7 @@ public class GUI extends Application implements UI {
      */
     private boolean checkTeamLobbyController() {
         if (lobbyController == null || !lobbyController.canHandleTeams()) {
-            lobbyController = (TeamLobbyController) ResourceLoader.loadFXML(FXMLPath.TEAM_LOBBY, this);
+            lobbyController = ResourceLoader.loadFXML(FXMLPath.TEAM_LOBBY, this);
             Platform.runLater(lobbyController::init);
             return true;
         }
@@ -116,7 +116,7 @@ public class GUI extends Application implements UI {
      */
     private void checkLobbyController() {
         if (lobbyController == null) {
-            lobbyController = (NormalLobbyController) ResourceLoader.loadFXML(FXMLPath.LOBBY, this);
+            lobbyController = ResourceLoader.loadFXML(FXMLPath.LOBBY, this);
             Platform.runLater(lobbyController::init);
         }
     }
@@ -128,7 +128,7 @@ public class GUI extends Application implements UI {
      */
     private boolean checkGameController() {
         if (gameController == null) {
-            gameController = (GameController) ResourceLoader.loadFXML(FXMLPath.GAME_SCREEN, this);
+            gameController = ResourceLoader.loadFXML(FXMLPath.GAME_SCREEN, this);
             Platform.runLater(gameController::init);
             return true;
         }
@@ -137,16 +137,12 @@ public class GUI extends Application implements UI {
 
     /**
      * This method checks if the start screen controller is already loaded.
-     *
-     * @return true if the controller was loaded, false otherwise.
      */
-    private boolean checkStartScreenController() {
+    private void checkStartScreenController() {
         if (startScreenController == null) {
-            startScreenController = (StartScreenController) ResourceLoader.loadFXML(FXMLPath.START_SCREEN, this);
+            startScreenController = ResourceLoader.loadFXML(FXMLPath.START_SCREEN, this);
             Platform.runLater(startScreenController::init);
-            return true;
         }
-        return false;
     }
 
     /**
@@ -182,6 +178,12 @@ public class GUI extends Application implements UI {
             viewState = ViewState.PLAYING;
             showGameScreen();
         }
+        if (!gameView.getWinners().isEmpty()) {
+            //TODO: show winners and return to start screen
+            viewState = ViewState.END_GAME;
+            gameController = null;
+            showAlert("The game is over. The winners are: " + gameView.getWinners().toString());
+        }
     }
 
     /**
@@ -210,6 +212,9 @@ public class GUI extends Application implements UI {
         System.out.println("Showing start screen");
         checkStartScreenController();
         Platform.runLater(() -> {
+            chooseWizardController = null;
+            lobbyController = null;
+            gameController = null;
             startScreenController.loadScene(stage);
             if (!stage.isShowing())
                 stage.show();
@@ -311,7 +316,7 @@ public class GUI extends Application implements UI {
             case CHOOSE_ISLAND -> Platform.runLater(() -> gameController.processChooseIsland((ChooseIsland) message));
             case CHOOSE_STUDENT_COLOR -> Platform.runLater(() -> {
                 Stage chooseColor = new Stage();
-                ChooseColorController controller = (ChooseColorController) ResourceLoader.loadFXML(FXMLPath.CHOOSE_GAME, this);
+                ChooseColorController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_GAME, this);
                 controller.setAvailableButtons(((ChooseStudentColor) message).getAvailableStudentColors());
                 chooseColor.setTitle("Choose a color");
                 chooseColor.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
@@ -319,42 +324,46 @@ public class GUI extends Application implements UI {
                 chooseColor.setAlwaysOnTop(true);
                 chooseColor.show();
             });
-            case MOVE_MOTHER_NATURE -> Platform.runLater(() -> gameController.processMoveMotherNature((MoveMotherNature) message));
-            case MOVE_STUDENT -> Platform.runLater(() -> handleMoveStudent((MoveStudent)message));
-            case MULTIPLE_POSSIBLE_MOVES -> Platform.runLater(() -> handlePossibleMoves((MultiplePossibleMoves)message));
-            case SWAP_STUDENTS -> Platform.runLater(() -> handleSwap((SwapStudents)message));
+            case MOVE_MOTHER_NATURE ->
+                    Platform.runLater(() -> gameController.processMoveMotherNature((MoveMotherNature) message));
+            case MOVE_STUDENT -> Platform.runLater(() -> handleMoveStudent((MoveStudent) message));
+            case MULTIPLE_POSSIBLE_MOVES ->
+                    Platform.runLater(() -> handlePossibleMoves((MultiplePossibleMoves) message));
+            case SWAP_STUDENTS -> Platform.runLater(() -> handleSwap((SwapStudents) message));
         }
     }
 
-    private  void handleMoveStudent(MoveStudent moveStudent) {
-        switch (moveStudent.getTo()){
-            case ISLAND -> gameController.processMoveCardIsland(moveStudent.getFromIndexesSet(), moveStudent.getToIndexesSet());
+    private void handleMoveStudent(MoveStudent moveStudent) {
+        switch (moveStudent.getTo()) {
+            case ISLAND ->
+                    gameController.processMoveCardIsland(moveStudent.getFromIndexesSet(), moveStudent.getToIndexesSet());
             case HALL -> gameController.processMoveCardHall(moveStudent.getFromIndexesSet());
         }
     }
-    private void handlePossibleMoves(MultiplePossibleMoves multiplePossibleMoves){
-            Set<Integer> entrance = new HashSet<>();
-            Set<Integer> islands = new HashSet<>();
-            Set<Integer> entranceToHallIndexes = new HashSet<>();
-            for(MoveActionRequest moveActionRequest : multiplePossibleMoves.getPossibleMoves()){
-                if(moveActionRequest.getTo().equals(MoveLocation.ISLAND)){
-                    islands.addAll(moveActionRequest.getToIndexesSet());
-                    entrance.addAll(moveActionRequest.getFromIndexesSet());
-                }
-                else { if(moveActionRequest.getTo().equals(MoveLocation.ISLAND)){
+
+    private void handlePossibleMoves(MultiplePossibleMoves multiplePossibleMoves) {
+        Set<Integer> entrance = new HashSet<>();
+        Set<Integer> islands = new HashSet<>();
+        Set<Integer> entranceToHallIndexes = new HashSet<>();
+        for (MoveActionRequest moveActionRequest : multiplePossibleMoves.getPossibleMoves()) {
+            if (moveActionRequest.getTo().equals(MoveLocation.ISLAND)) {
+                islands.addAll(moveActionRequest.getToIndexesSet());
+                entrance.addAll(moveActionRequest.getFromIndexesSet());
+            } else {
+                if (moveActionRequest.getTo().equals(MoveLocation.ISLAND)) {
                     entranceToHallIndexes.addAll(moveActionRequest.getFromIndexesSet());
                 }
-                }
             }
-            gameController.processMultiplePossibleMoves(entrance, islands, entranceToHallIndexes);
+        }
+        gameController.processMultiplePossibleMoves(entrance, islands, entranceToHallIndexes);
     }
 
     private void handleSwap(SwapStudents swapStudents) {
-        if(swapStudents.getFrom().equals(MoveLocation.CARD)){
-            gameController.processSwapCardEntrance(swapStudents.getFromIndexesSet(),swapStudents.getToIndexesSet());
+        if (swapStudents.getFrom().equals(MoveLocation.CARD)) {
+            gameController.processSwapCardEntrance(swapStudents.getFromIndexesSet(), swapStudents.getToIndexesSet());
         }
 
-        if(swapStudents.getFrom().equals(MoveLocation.ENTRANCE)){
+        if (swapStudents.getFrom().equals(MoveLocation.ENTRANCE)) {
             gameController.processSwapEntranceHall(swapStudents.getFromIndexesSet(), swapStudents.getToIndexesSet());
         }
     }
@@ -362,10 +371,14 @@ public class GUI extends Application implements UI {
     @Override
     public void serverUnavailable() {
         System.out.println("Server unavailable");
+        showAlert("Lost connection with the server or server unavailable.\n" +
+                "Please try again later.");
         if (viewState == ViewState.SETUP) {
             if (startScreenController != null) {
-                startScreenController.disableCenter(false);
+                Platform.runLater(() -> startScreenController.disableCenter(false));
             }
+        } else {
+            showStartScreen();
         }
     }
 
@@ -378,6 +391,19 @@ public class GUI extends Application implements UI {
     }
 
     /**
+     * This method shows an alert to the user.
+     *
+     * @param message The message to be shown.
+     */
+    private void showAlert(String message) {
+        Platform.runLater(() -> {
+            Alert messageAlert = new Alert(Alert.AlertType.ERROR);
+            messageAlert.setContentText(message);
+            messageAlert.show();
+        });
+    }
+
+    /**
      * @param message
      */
     @Override
@@ -385,11 +411,7 @@ public class GUI extends Application implements UI {
         if (message.getType().equals(CommMsgType.OK))
             return;
 
-        Platform.runLater(() -> {
-            Alert messageAlert = new Alert(Alert.AlertType.ERROR);
-            messageAlert.setContentText(message.getType().getMessage());
-            messageAlert.show();
-        });
+        showAlert(message.getType().getMessage());
 
         System.out.println("Showing comm message");
         System.out.println(MessageBuilder.toJson(message));
