@@ -1,11 +1,13 @@
 package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.enums.FXMLPath;
+import it.polimi.ingsw.client.enums.FontPath;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.controllers.GUIController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 
 import java.io.IOException;
 import java.util.EnumMap;
@@ -24,7 +26,7 @@ public abstract class ResourceLoader {
     public static void checkResources() throws MissingResourceException {
         checkFXML();
         checkImages();
-        //TODO: check fonts
+        checkFonts();
         //TODO: check audio
     }
 
@@ -49,6 +51,20 @@ public abstract class ResourceLoader {
         for (ImagePath path : ImagePath.values()) {
             if (ResourceLoader.class.getResource(path.getPath()) == null)
                 throw new MissingResourceException("Image file not found: " + path.getPath(), ResourceLoader.class.getName(), path.getPath());
+        }
+    }
+
+    /**
+     * Checks if all the fonts can be loaded and loads them.
+     *
+     * @throws MissingResourceException if a resource is missing
+     */
+    private static void checkFonts() throws MissingResourceException {
+        for (FontPath path : FontPath.values()) {
+            if (ResourceLoader.class.getResource(path.getPath()) == null)
+                throw new MissingResourceException("Font file not found: " + path.getPath(), ResourceLoader.class.getName(), path.getPath());
+            else
+                Font.loadFont(Objects.requireNonNull(ResourceLoader.class.getResource(path.getPath())).toExternalForm(), 10);
         }
     }
 

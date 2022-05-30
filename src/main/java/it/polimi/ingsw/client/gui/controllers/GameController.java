@@ -75,6 +75,8 @@ public class GameController implements GUIController {
     public Button btnMute;
     @FXML
     public ImageView imgViewMute;
+    @FXML
+    public ImageView imgViewBackground;
 
     private Pane root;
 
@@ -127,6 +129,7 @@ public class GameController implements GUIController {
 
         vBoxReserve.setVisible(false);
         GUIUtils.bindSize(hBoxTitle, imgViewTitle);
+        GUIUtils.bindSize(root, imgViewBackground);
     }
 
     /**
@@ -199,8 +202,7 @@ public class GameController implements GUIController {
         updateCharacterCardControllers(gameView.getCharacterCardView());
         updateCloudControllers(gameView.getCloudViews());
         updateIslandsController(gameView.getIslandsView(), gameView.getMotherNatureIndex());
-        Integer coins = gameView.getPlayerCoins() != null ? gameView.getPlayerCoins().get(gui.getNickname()) : null;
-        updatePlayerControllers(gameView.getPlayersView(), coins);
+        updatePlayerControllers(gameView.getPlayersView(), gameView.getPlayerCoins());
     }
 
     /**
@@ -252,7 +254,7 @@ public class GameController implements GUIController {
     private void updateCloudControllers(List<CloudView> cloudViews) {
         for (int i = 0; i < cloudViews.size(); i++) {
             if (cloudControllers.size() <= i) {
-                CloudController cloudController = (CloudController) ResourceLoader.loadFXML(FXMLPath.CLOUD, gui);
+                CloudController cloudController = ResourceLoader.loadFXML(FXMLPath.CLOUD, gui);
                 cloudController.init();
                 GUIUtils.addToAnchorPane(cloudPanes.get(i), cloudController.getRootPane());
                 cloudControllers.add(cloudController);
@@ -269,7 +271,7 @@ public class GameController implements GUIController {
      */
     private void updateIslandsController(List<IslandGroupView> islandGroupViews, int motherNatureIndex) {
         if (islandsController == null) {
-            islandsController = (IslandsController) ResourceLoader.loadFXML(FXMLPath.ISLANDS, gui);
+            islandsController = ResourceLoader.loadFXML(FXMLPath.ISLANDS, gui);
             islandsController.init();
             GUIUtils.addToAnchorPane(anchorPaneIslands, islandsController.getRootPane());
         }
@@ -280,15 +282,16 @@ public class GameController implements GUIController {
      * This method is used to update the player controllers.
      *
      * @param playerViews the player views to update.
-     * @param coins       the coins of the player.
+     * @param playerCoins the coins of the players.
      */
-    private void updatePlayerControllers(List<PlayerView> playerViews, Integer coins) {
+    private void updatePlayerControllers(List<PlayerView> playerViews, Map<String, Integer> playerCoins) {
         for (PlayerView playerView : playerViews) {
             if (!playerControllersByNickname.containsKey(playerView.getNickname())) {
-                PlayerController playerController = (PlayerController) ResourceLoader.loadFXML(FXMLPath.PLAYER, gui);
+                PlayerController playerController = ResourceLoader.loadFXML(FXMLPath.PLAYER, gui);
                 playerController.init();
                 addPlayerController(playerController, playerView.getNickname());
             }
+            Integer coins = playerCoins != null ? playerCoins.get(playerView.getNickname()) : null;
             playerControllersByNickname.get(playerView.getNickname()).updatePlayerView(playerView, coins);
         }
 
@@ -313,7 +316,7 @@ public class GameController implements GUIController {
     }
 
     /**
-     * This methods set the action on the cloud button.
+     * This method set the action on the cloud button.
      *
      * @param message {@link ChosenCloud} message that contains a list of available clouds.
      */

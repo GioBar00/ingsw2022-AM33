@@ -213,7 +213,6 @@ public abstract class GUIUtils {
     public static void setButton(Button button, EventHandler<ActionEvent> event) {
         button.toFront();
         button.setStyle("-fx-border-color: green; -fx-border-width: 3px; -fx-background-color: transparent;");
-        //button.setStyle("-fx-background-color: black;");
         button.setOnAction(event);
         button.setMouseTransparent(false);
     }
@@ -226,7 +225,6 @@ public abstract class GUIUtils {
      */
     public static void resetButton(Button button) {
         button.setStyle("-fx-background-color: transparent;");
-        //button.setStyle("");
         button.setOnAction(e -> {
         });
         button.toBack();
