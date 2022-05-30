@@ -118,6 +118,7 @@ public class SchoolBoardController implements GUIController {
             entranceImageViewByButton.put(btn, imageView);
             btn.setGraphic(imageView);
             entranceGrid.add(btn, ((i + 1) % 2) * 2 + 1, ((i + 1) / 2) * 2 + 1);
+            GUIUtils.resetButton(btn);
         }
     }
 
@@ -151,12 +152,14 @@ public class SchoolBoardController implements GUIController {
             GUIUtils.bindSize(anchorPane, imageView);
             professorsImageViewByColor.put(sc, imageView);
             anchorPane.getChildren().add(imageView);
-            profsGrid.add(anchorPane, 1, sc.ordinal() * 2);
+            profsGrid.add(anchorPane, 1, (sc.ordinal() * 2) + 1);
         }
     }
     
     private void initHall() {
+        GUIUtils.resetButton(hallButton);
         for (StudentColor sc : StudentColor.values()) {
+            GUIUtils.resetButton(hallButtonsByColor.get(sc));
             hallImageViewsByColor.put(sc, new ArrayList<>(10));
             for (int i = 0; i < 10; i++) {
                 AnchorPane anchorPane = new AnchorPane();
@@ -167,7 +170,14 @@ public class SchoolBoardController implements GUIController {
                 hallImageViewsByColor.get(sc).add(imageView);
                 GUIUtils.bindSize(anchorPane, imageView);
                 anchorPane.getChildren().add(imageView);
-                hallGrid.add(anchorPane, i, sc.ordinal());
+
+                AnchorPane father = new AnchorPane();
+                father.setMinHeight(0.0);
+                father.setMinWidth(0.0);
+                GUIUtils.addToPaneCenterKeepRatio(father, anchorPane, 1.0);
+                father.setMouseTransparent(true);
+
+                hallGrid.add(father, i + 1, sc.ordinal() * 2 + 1);
             }
         }
     }
