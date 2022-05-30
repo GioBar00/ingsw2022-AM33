@@ -93,6 +93,9 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
             types.remove(sel);
         }
 
+        characterCards.set(0, new Jester());
+        characterCards.set(1, new Thief());
+
         reserve = 20;
 
     }
@@ -144,7 +147,7 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
      */
     void initializeGame() {
         for (Player p : model.playersManager.getPlayers()) {
-            playerCoins.put(p.getNickname(), 1);
+            playerCoins.put(p.getNickname(), 10);
             reserve--;
         }
         for (CharacterCard c : characterCards)
@@ -401,7 +404,7 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
     @Override
     public void skipCurrentPlayerTurn() {
         if (model.executeSkipTurn()) {
-            if(characterCardActivating != null) {
+            if (characterCardActivating != null) {
                 characterCardActivating.forceEndEffect();
                 characterCardActivating = null;
             }
@@ -740,8 +743,7 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
                 canUse = true;
 
             boolean isActivating = characterCardActivating != null && characterCardActivating.equals(cc);
-
-            CharacterCardView ccv = new CharacterCardView(cc.getType(), canUse, ogCost, addCost, numBlocks, students, isActivating);
+            CharacterCardView ccv = new CharacterCardView(cc.getType(), canUse, ogCost, addCost, numBlocks, students, isActivating, cc.canEndEffect());
 
             characterCardsView.add(ccv);
         }

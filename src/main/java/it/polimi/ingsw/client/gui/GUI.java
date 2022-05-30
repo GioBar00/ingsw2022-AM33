@@ -178,7 +178,7 @@ public class GUI extends Application implements UI {
             gameController = null;
             showWinnerScreen(gameView);
         } else
-            Platform.runLater(() -> gameController.updateGameView(gameView));
+            Platform.runLater(() -> gameController.updateGameView(gameView, nickname));
         if (show) {
             viewState = ViewState.PLAYING;
             showGameScreen();
@@ -323,9 +323,13 @@ public class GUI extends Application implements UI {
             case CHOOSE_ISLAND -> Platform.runLater(() -> gameController.processChooseIsland((ChooseIsland) message));
             case CHOOSE_STUDENT_COLOR -> Platform.runLater(() -> {
                 Stage chooseColor = new Stage();
-                ChooseColorController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_GAME, this);
+                ChooseColorController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_COLOR, this);
+                controller.init();
                 controller.setAvailableButtons(((ChooseStudentColor) message).getAvailableStudentColors());
                 chooseColor.setTitle("Choose a color");
+                chooseColor.setHeight(250);
+                chooseColor.setWidth(500);
+                chooseColor.setResizable(false);
                 chooseColor.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
                 controller.loadScene(chooseColor);
                 chooseColor.setAlwaysOnTop(true);

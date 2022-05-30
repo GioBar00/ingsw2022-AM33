@@ -134,12 +134,22 @@ public abstract class CharacterCard {
     }
 
     /**
+     * Returns if the effect could be ended.
+     *
+     * @return true if the effect could be ended.
+     */
+    public boolean canEndEffect() {
+        return currentChoicesNumber >= requiredChoicesNumber;
+    }
+
+    /**
      * Resets the effect of the card.
      */
     public void forceEndEffect() {
         additionalCost++;
         appliedEffect = true;
     }
+
     /**
      * Reverts the effect of the character card if the effect is not permanent.
      *
@@ -245,7 +255,7 @@ public abstract class CharacterCard {
     /**
      * @return if the card can store a history of swapped professors.
      */
-    public boolean canHandleHistory(){
+    public boolean canHandleHistory() {
         return false;
     }
 }

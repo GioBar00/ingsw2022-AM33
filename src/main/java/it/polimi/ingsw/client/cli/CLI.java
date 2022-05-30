@@ -138,10 +138,11 @@ public class CLI implements UI {
         printRequests();
     }
 
-    private void printRequests(){
+    private void printRequests() {
         requestServerAddress();
         chooseNickname();
     }
+
     private void printGameName() {
         clearTerminal();
         System.out.println(colors.get("yellow") + "███████╗██████╗ ██╗ █████╗ ███╗   ██╗████████╗██╗   ██╗███████╗");
@@ -175,7 +176,7 @@ public class CLI implements UI {
             nickname = input.nextLine();
             if (nickname.length() > 25)
                 System.out.println("Nickname has to be shorter than 25 characters");
-            if(nickname.equals(""))
+            if (nickname.equals(""))
                 System.out.println("Nickname cannot be null");
         } while (nickname.length() > 25 || nickname.equals(""));
         client.setNickname(nickname);
@@ -372,7 +373,7 @@ public class CLI implements UI {
 
         if (gameView.getState().equals(GameState.ENDED)) {
             if (gameView.getWinners() != null)
-                System.out.println(colors.get("yellow") + gameView.getWinners().toString() + " has won" + colors.get("reset") );
+                System.out.println(colors.get("yellow") + gameView.getWinners().toString() + " has won" + colors.get("reset"));
             else System.out.println(colors.get("yellow") + "The game ended with a draw" + colors.get("reset"));
             System.exit(0);
         }
@@ -384,9 +385,14 @@ public class CLI implements UI {
     public void showPossibleMoves() {
         if (nickname.equals(gameView.getCurrentPlayer()))
             inputParser.canWrite();
+
         if (lastRequest == null)
             return;
+
         Map<String, Integer> characterCard = playableCharacterCards();
+
+        boolean canEndEffect = checkCanEndEffect();
+
         if (!characterCard.isEmpty()) {
             System.out.println(colors.get("green") + "Choose next action : ");
             System.out.println("Activate a CharacterCard by typing ACTIVATE <name>" + colors.get("reset"));
@@ -444,7 +450,9 @@ public class CLI implements UI {
                 }
                 printSwap((SwapStudents) lastRequest);
                 System.out.println(colors.get("green") + "Type SWAP <INDEX/COLOR> <INDEX/COLOR>" + colors.get("reset"));
-                System.out.println(colors.get("green") + "Type CONCLUDE to end the effect" + colors.get("reset"));
+
+                if (canEndEffect)
+                    System.out.println(colors.get("green") + "Type CONCLUDE to end the effect" + colors.get("reset"));
             }
             case PLAY_ASSISTANT_CARD -> {
                 System.out.println(colors.get("green") + "Choose an AssistantCard");
@@ -457,6 +465,22 @@ public class CLI implements UI {
             default -> {
             }
         }
+    }
+
+    private boolean checkCanEndEffect() {
+        boolean canEnd = false;
+
+        if (gameView != null)
+            if (gameView.getMode() == GameMode.EXPERT)
+                for (CharacterCardView c : gameView.getCharacterCardView())
+                    if (c.canEndEffect()) {
+                        canEnd = true;
+                        break;
+                    }
+
+
+        inputParser.setCanEndEffect(canEnd);
+        return canEnd;
     }
 
     @Override

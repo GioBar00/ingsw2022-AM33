@@ -190,7 +190,7 @@ public class GameController implements GUIController {
      *
      * @param gameView the new game view.
      */
-    public void updateGameView(GameView gameView) {
+    public void updateGameView(GameView gameView, String nickname) {
         this.gameView = gameView;
         lblRound.setText("Round: 1");
         lblGamePhase.setText("Game Phase: " + gamePhaseMessageMap.get(gameView.getPhase()));
@@ -200,7 +200,7 @@ public class GameController implements GUIController {
             lblTurn.setText("Waiting for " + gameView.getCurrentPlayer());
         lblAction.setText("");
         updateReserve(gameView.getReserve());
-        updateCharacterCardControllers(gameView.getCharacterCardView());
+        updateCharacterCardControllers(gameView.getCharacterCardView(), nickname);
         updateCloudControllers(gameView.getCloudViews());
         updateIslandsController(gameView.getIslandsView(), gameView.getMotherNatureIndex());
         updatePlayerControllers(gameView.getPlayersView(), gameView.getPlayerCoins());
@@ -223,9 +223,10 @@ public class GameController implements GUIController {
      *
      * @param characterCardViews the character cards to load.
      */
-    private void updateCharacterCardControllers(List<CharacterCardView> characterCardViews) {
+    private void updateCharacterCardControllers(List<CharacterCardView> characterCardViews, String nickname) {
         if (characterCardViews == null)
             return;
+
         for (int i = 0; i < characterCardViews.size(); i++) {
             if (characterCardControllers.size() <= i) {
                 CharacterCardController characterCardController = ResourceLoader.loadFXML(FXMLPath.CHARACTER_CARD, gui);
@@ -235,7 +236,7 @@ public class GameController implements GUIController {
                 characterCardController.setIndex(i);
             }
             characterCardControllers.get(i).setCharacterView(characterCardViews.get(i));
-            if (characterCardViews.get(i).canBeUsed()) {
+            if (characterCardViews.get(i).canBeUsed() && gameView.getCurrentPlayer().equals(nickname)) {
                 CharacterCardController characterCardController = characterCardControllers.get(i);
                 GUIUtils.setButton(characterCardController.characterBtn, e -> {
                     for (CharacterCardController c : characterCardControllers) {
@@ -438,10 +439,13 @@ public class GameController implements GUIController {
         if (cardIndex == null)
             return;
 
+        characterCardControllers.get(cardIndex).activateEndButton();
+
         SchoolBoardController schoolBoardController = playerControllersByNickname.get(gui.getNickname()).getSchoolBoardController();
         for (Integer fromIndex : cardIndexes) {
             GUIUtils.setButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)), e -> {
                 lblAction.setText("Select an highlighted student in the entrance");
+                characterCardControllers.get(cardIndex).hideEndButton();
                 for (Integer resInd : cardIndexes) {
                     GUIUtils.resetButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(resInd)));
                 }
@@ -463,6 +467,8 @@ public class GameController implements GUIController {
         if (cardIndex == null)
             return;
 
+        characterCardControllers.get(cardIndex).activateEndButton();
+
         SchoolBoardController schoolBoardController = playerControllersByNickname.get(gui.getNickname()).getSchoolBoardController();
         for (Integer fromIndex : fromIndexes) {
             for (Integer resInd : fromIndexes) {
@@ -470,6 +476,7 @@ public class GameController implements GUIController {
             }
             GUIUtils.setButton(schoolBoardController.entranceButtons.get(fromIndex), e -> {
                 lblAction.setText("Select an highlighted student color in the hall");
+                characterCardControllers.get(cardIndex).hideEndButton();
                 for (Integer toIndex : toIndexes) {
                     GUIUtils.setButton(schoolBoardController.hallButtonsByColor.get(StudentColor.retrieveStudentColorByOrdinal(toIndex)), action -> {
                         for (Integer resToInd : toIndexes) {
