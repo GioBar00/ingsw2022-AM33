@@ -159,7 +159,8 @@ public class GameController implements GUIController {
      */
     @Override
     public void loadScene(Stage stage) {
-        stage.setScene(new Scene(getRootPane()));
+        stage.getScene().setRoot(new Region());
+        stage.setScene(new Scene(root));
         stage.setResizable(true);
         stage.setMinHeight(0.0);
         stage.setMinWidth(0.0);

@@ -34,7 +34,6 @@ public class GUI extends Application implements UI {
     private Client client;
 
     private ViewListener listener;
-    private Message lastRequest;
 
     private String nickname;
 
@@ -175,10 +174,9 @@ public class GUI extends Application implements UI {
         boolean show = checkGameController();
         if (gameView.getWinners() != null && !gameView.getWinners().isEmpty()) {
             show = false;
-            //TODO: show winners and return to start screen
             viewState = ViewState.END_GAME;
             gameController = null;
-            showAlert("The game is over. The winners are: " + gameView.getWinners().toString());
+            showWinnerScreen(gameView);
         } else
             Platform.runLater(() -> gameController.updateGameView(gameView));
         if (show) {
@@ -213,6 +211,7 @@ public class GUI extends Application implements UI {
     public void showStartScreen() {
         System.out.println("Showing start screen");
         checkStartScreenController();
+        viewState = ViewState.SETUP;
         Platform.runLater(() -> {
             chooseWizardController = null;
             lobbyController = null;
@@ -264,6 +263,20 @@ public class GUI extends Application implements UI {
         startScreenController = null;
     }
 
+    @Override
+    public void showGameScreen() {
+        Platform.runLater(() -> gameController.loadScene(stage));
+        lobbyController = null;
+    }
+
+    private void showWinnerScreen(GameView gameView) {
+        WinnerScreenController controller = ResourceLoader.loadFXML(FXMLPath.WINNER_SCREEN, this);
+        Platform.runLater(() -> {
+            controller.loadScene(stage);
+            controller.updateGameView(gameView);
+        });
+    }
+
     /**
      *
      */
@@ -285,21 +298,11 @@ public class GUI extends Application implements UI {
     }
 
     /**
-     *
-     */
-    @Override
-    public void showGameScreen() {
-        Platform.runLater(() -> gameController.loadScene(stage));
-        lobbyController = null;
-    }
-
-    /**
      * @param message
      */
     @Override
     public void setPossibleActions(Message message) {
-        lastRequest = message;
-        processLastRequest(lastRequest);
+        processLastRequest(message);
     }
 
     public void setNickname(String nickname) {

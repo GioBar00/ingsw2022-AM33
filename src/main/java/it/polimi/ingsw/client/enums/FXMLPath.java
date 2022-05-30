@@ -15,7 +15,8 @@ public enum FXMLPath {
     CLOUD("/fxml/cloud.fxml"),
     PLAYER("/fxml/player.fxml"),
 
-    CHOOSE_COLOR("/fxml/choose-color.fxml");
+    CHOOSE_COLOR("/fxml/choose-color.fxml"),
+    WINNER_SCREEN("/fxml/winner-screen.fxml");
 
     private final String path;
 

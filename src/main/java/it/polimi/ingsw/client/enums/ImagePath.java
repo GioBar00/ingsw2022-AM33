@@ -53,7 +53,9 @@ public enum ImagePath {
     SENSEI("/images/wizards/sensei.jpg"),
     WITCH("/images/wizards/witch.jpg"),
     MERLIN("/images/wizards/merlin.jpg"),
-    KING("/images/wizards/king.jpg");
+    KING("/images/wizards/king.jpg"),
+    RELOAD("/images/icons/reload.png"),
+    RELOAD_HIGHLIGHTED("/images/icons/reload-highlighted.png");
 
 
     private final String path;

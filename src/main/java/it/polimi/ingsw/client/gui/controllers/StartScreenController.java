@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.gui.controllers;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
+import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -13,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 public class StartScreenController implements GUIController {
@@ -79,8 +81,7 @@ public class StartScreenController implements GUIController {
                 txtFieldNickname.setText(oldValue);
         });
 
-        btnStart.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> imgStart.setImage(ResourceLoader.loadImage(ImagePath.START_HIGHLIGHTED)));
-        btnStart.addEventHandler(MouseEvent.MOUSE_EXITED, e -> imgStart.setImage(ResourceLoader.loadImage(ImagePath.START)));
+        GUIUtils.changeImageHoverButton(btnStart, imgStart, ResourceLoader.loadImage(ImagePath.START), ResourceLoader.loadImage(ImagePath.START_HIGHLIGHTED));
 
         hideCenter(true);
     }
@@ -112,7 +113,8 @@ public class StartScreenController implements GUIController {
      */
     @Override
     public void loadScene(Stage stage) {
-        stage.setScene(new Scene(getRootPane()));
+        stage.getScene().setRoot(new Region());
+        stage.setScene(new Scene(root));
         stage.setMinHeight(800.0);
         stage.setMinWidth(1200.0);
         stage.setResizable(true);
