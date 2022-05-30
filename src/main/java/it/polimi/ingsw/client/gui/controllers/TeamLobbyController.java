@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.gui.GUI;
+import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
 import it.polimi.ingsw.network.messages.client.StartGame;
 import it.polimi.ingsw.network.messages.views.TeamsView;
@@ -13,9 +14,16 @@ import javafx.scene.layout.Pane;
 
 public class TeamLobbyController implements LobbyController {
 
+
     private GUI gui;
 
     private Pane root;
+
+    @FXML
+    public Button blackBtn;
+
+    @FXML
+    public Button whiteBtn;
 
     @FXML
     public Button startButton;
@@ -118,6 +126,7 @@ public class TeamLobbyController implements LobbyController {
     @FXML
     public void sendWhiteTeam() {
         gui.notifyViewListener(new ChosenTeam(Tower.WHITE));
+        GUIUtils.hideButton(whiteBtn);
     }
 
     /**
@@ -126,6 +135,7 @@ public class TeamLobbyController implements LobbyController {
     @FXML
     public void sendBlackTeam() {
         gui.notifyViewListener(new ChosenTeam(Tower.BLACK));
+        GUIUtils.hideButton(blackBtn);
     }
 
     /**
@@ -134,6 +144,7 @@ public class TeamLobbyController implements LobbyController {
     @FXML
     public void sendStart() {
         gui.notifyViewListener(new StartGame());
+        GUIUtils.hideButton(whiteBtn);
     }
 
     /**
@@ -167,7 +178,7 @@ public class TeamLobbyController implements LobbyController {
      *
      * @param view a TeamView
      */
-    public void updateTeams(TeamsView view) {
+    public void updateTeams(TeamsView view, String nickname) {
 
 
         int i = 0;
@@ -175,7 +186,7 @@ public class TeamLobbyController implements LobbyController {
             blackLabels[i].setText(s);
             i++;
         }
-        for(;i < 4; i++){
+        for (; i < 4; i++) {
             blackLabels[i].setText("");
         }
 
@@ -185,7 +196,7 @@ public class TeamLobbyController implements LobbyController {
             i++;
         }
 
-        for(;i < 4; i++){
+        for (; i < 4; i++) {
             whiteLabels[i].setText("");
         }
 
@@ -194,8 +205,18 @@ public class TeamLobbyController implements LobbyController {
             lobbyLabels[i].setText(s);
             i++;
         }
-        for(;i < 4; i++){
+        for (; i < 4; i++) {
             lobbyLabels[i].setText("");
+        }
+
+        if(view.getTeams().get(Tower.BLACK).contains(nickname)) {
+            GUIUtils.showButton(whiteBtn);
+        }else if(view.getTeams().get(Tower.WHITE).contains(nickname)) {
+            GUIUtils.showButton(blackBtn);
+        }
+        else {
+            GUIUtils.showButton(blackBtn);
+            GUIUtils.showButton(whiteBtn);
         }
     }
 
@@ -219,4 +240,5 @@ public class TeamLobbyController implements LobbyController {
         lobbyLabels[2] = thirdLName;
         lobbyLabels[3] = fourthLName;
     }
+
 }

@@ -62,4 +62,12 @@ public class Farmer extends CharacterCard {
             appliedEffect = false;
         }
     }
+
+    /**
+     * @return if the card can store a history of swapped professors.
+     */
+    @Override
+    public boolean canHandleHistory() {
+        return true;
+    }
 }

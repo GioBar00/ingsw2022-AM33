@@ -130,7 +130,6 @@ public class CharacterCardController implements GUIController {
      */
     private void setNotUsable(Button in, Label inLbl) {
         in.setVisible(false);
-        in.setDisable(true);
         inLbl.setVisible(false);
 
     }

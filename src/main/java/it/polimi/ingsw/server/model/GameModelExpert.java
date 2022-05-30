@@ -880,8 +880,7 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
                         if (compSch.getProfessors().contains(s)) {
                             CharacterCard farmer = null;
                             for (CharacterCard c : characterCards) {
-                                //TODO fix this
-                                if (c instanceof Farmer) {
+                                if (c.canHandleHistory()) {
                                     farmer = c;
                                     break;
                                 }

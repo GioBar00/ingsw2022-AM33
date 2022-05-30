@@ -300,6 +300,9 @@ public class PlayersManager {
             Player p = players.get(playerOrderIndexes[i]);
             possibleCards.remove(p.getAssistantCard());
         }
+        if(possibleCards.size() <= 0){
+            possibleCards = EnumSet.copyOf(getCurrentPlayer().getHand());
+        }
         return new PlayAssistantCard(possibleCards);
     }
 

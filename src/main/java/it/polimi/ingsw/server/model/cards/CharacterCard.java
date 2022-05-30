@@ -235,4 +235,11 @@ public abstract class CharacterCard {
     public int getNumBlocks() {
         return 0;
     }
+
+    /**
+     * @return if the card can store a history of swapped professors.
+     */
+    public boolean canHandleHistory(){
+        return false;
+    }
 }

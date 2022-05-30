@@ -162,7 +162,7 @@ public class GUI extends Application implements UI {
     @Override
     public void setTeamsView(TeamsView teamsView) {
         boolean show = viewState == ViewState.CHOOSE_TEAM && checkTeamLobbyController();
-        Platform.runLater(() -> ((TeamLobbyController) lobbyController).updateTeams(teamsView));
+        Platform.runLater(() -> ((TeamLobbyController) lobbyController).updateTeams(teamsView, nickname));
         if (show)
             showLobbyScreen();
     }
