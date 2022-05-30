@@ -1,10 +1,13 @@
 package it.polimi.ingsw.client.gui.controllers;
 
+import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
+import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.client.StartGame;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 
@@ -16,6 +19,9 @@ public class NormalLobbyController implements LobbyController {
 
     @FXML
     private Button startBtn;
+
+    @FXML
+    public ImageView startImg;
 
 
     /**
@@ -33,7 +39,8 @@ public class NormalLobbyController implements LobbyController {
      */
     @Override
     public void init() {
-       GUIUtils.hideButton(startBtn);
+        GUIUtils.changeImageHoverButton(startBtn, startImg, ResourceLoader.loadImage(ImagePath.START), ResourceLoader.loadImage(ImagePath.START_HIGHLIGHTED));
+        GUIUtils.hideButton(startBtn);
     }
 
     /**

@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="680.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.TeamLobbyController">
+<AnchorPane maxHeight="500.0" maxWidth="680.0" minHeight="500.0" minWidth="680.0" prefHeight="500.0" prefWidth="680.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.TeamLobbyController">
    <children>
       <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -25,276 +25,319 @@
             </ImageView>
          </children>
       </HBox>
-      <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="20.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" prefWidth="200.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="20.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="200.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="20.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" prefWidth="200.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="20.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints maxHeight="159.9999755859375" minHeight="4.7999910354614315" prefHeight="90.00002212524414" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="328.00000896453855" minHeight="10.0" prefHeight="272.80000000000007" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="181.00003662109373" minHeight="10.0" prefHeight="137.60000000000002" vgrow="SOMETIMES" />
-        </rowConstraints>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="90.0" minHeight="90.0" prefHeight="90.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="275.0" minHeight="275.0" prefHeight="275.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="135.0" minHeight="135.0" prefHeight="135.0" vgrow="SOMETIMES" />
+              </rowConstraints>
                <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9d83c778" height="273.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="200.0" />
-                  <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.4000244140625" minWidth="0.0" prefWidth="0.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints maxHeight="80.0" minHeight="80.0" prefHeight="80.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+                  <AnchorPane maxHeight="273.0" maxWidth="200.0" minHeight="273.0" minWidth="200.0" prefHeight="273.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <Label fx:id="firstBName" prefHeight="38.0" prefWidth="198.0" GridPane.rowIndex="1">
-                           <GridPane.margin>
-                              <Insets />
-                           </GridPane.margin>
-                           <padding>
-                              <Insets left="6.0" />
-                           </padding>
-                           <font>
-                              <Font name="System Italic" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="secondBName" prefHeight="45.0" prefWidth="198.0" GridPane.rowIndex="2">
-                           <padding>
-                              <Insets left="6.0" />
-                           </padding>
-                           <font>
-                              <Font name="System Italic" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="thirdBName" prefHeight="45.0" prefWidth="198.0" GridPane.rowIndex="3">
-                           <padding>
-                              <Insets left="6.0" />
-                           </padding>
-                           <font>
-                              <Font name="System Italic" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="fourthBName" prefHeight="45.0" prefWidth="198.0" GridPane.rowIndex="4">
-                           <padding>
-                              <Insets left="6.0" />
-                           </padding>
-                           <font>
-                              <Font name="System Italic" size="14.0" />
-                           </font>
-                        </Label>
-                        <AnchorPane prefHeight="80.0" prefWidth="90.0">
-                           <GridPane.margin>
-                              <Insets right="150.0" />
-                           </GridPane.margin>
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9d83c778" height="273.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.4000244140625" minWidth="0.0" prefWidth="0.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                              <RowConstraints maxHeight="80.0" minHeight="80.0" prefHeight="80.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
                            <children>
-                              <ImageView fitHeight="59.0" fitWidth="74.0" layoutX="2.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+                              <AnchorPane prefHeight="80.0" prefWidth="90.0">
+                                 <GridPane.margin>
+                                    <Insets right="150.0" />
+                                 </GridPane.margin>
+                                 <children>
+                                    <Text layoutX="57.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Black Team" textAlignment="RIGHT" AnchorPane.bottomAnchor="23.474609375" AnchorPane.leftAnchor="57.0" AnchorPane.rightAnchor="-56.762109374999994" AnchorPane.topAnchor="21.943359375">
+                                       <font>
+                                          <Font name="System Bold Italic" size="26.0" />
+                                       </font>
+                                    </Text>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" GridPane.rowIndex="1">
+                                 <children>
+                                    <Label fx:id="firstBName" alignment="CENTER" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <padding>
+                                          <Insets left="6.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="System Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" GridPane.rowIndex="2">
+                                 <children>
+                                    <Label fx:id="secondBName" alignment="CENTER" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <padding>
+                                          <Insets left="6.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="System Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" GridPane.rowIndex="3">
+                                 <children>
+                                    <Label fx:id="thirdBName" alignment="CENTER" prefHeight="45.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <padding>
+                                          <Insets left="6.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="System Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" GridPane.rowIndex="4">
+                                 <children>
+                                    <Label fx:id="fourthBName" alignment="CENTER" prefHeight="45.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <padding>
+                                          <Insets left="6.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="System Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                              <ImageView fitHeight="59.0" fitWidth="74.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/pawns/towers/black-tower.png" />
                                  </image>
                               </ImageView>
-                              <Text layoutX="54.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Black Team" textAlignment="RIGHT">
-                                 <font>
-                                    <Font name="System Bold Italic" size="26.0" />
-                                 </font>
-                              </Text>
                            </children>
-                        </AnchorPane>
+                        </GridPane>
                      </children>
-                  </GridPane>
-               </children>
-            </AnchorPane>
-            <AnchorPane minHeight="0.0" minWidth="0.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
-               <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9c83c778" height="274.0" stroke="#ffc60a" strokeType="INSIDE" strokeWidth="2.0" width="200.0" />
-                  <GridPane prefHeight="273.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.4000244140625" minWidth="0.0" prefWidth="0.0" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints maxHeight="80.0" minHeight="80.0" prefHeight="80.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="88.79997558593749" minHeight="10.0" prefHeight="0.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
+                  </AnchorPane>
+                  <AnchorPane maxHeight="273.0" maxWidth="200.0" minHeight="273.0" minWidth="200.0" prefHeight="273.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                      <children>
-                        <Label fx:id="firstLName" prefHeight="38.0" prefWidth="198.0" GridPane.rowIndex="1">
-                           <GridPane.margin>
-                              <Insets />
-                           </GridPane.margin>
-                           <padding>
-                              <Insets left="6.0" />
-                           </padding>
-                           <font>
-                              <Font name="System Italic" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="secondLName" prefHeight="45.0" prefWidth="198.0" GridPane.rowIndex="2">
-                           <padding>
-                              <Insets left="6.0" />
-                           </padding>
-                           <font>
-                              <Font name="System Italic" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="thirdLName" prefHeight="45.0" prefWidth="198.0" GridPane.rowIndex="3">
-                           <padding>
-                              <Insets left="6.0" />
-                           </padding>
-                           <font>
-                              <Font name="System Italic" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="fourthLName" prefHeight="45.0" prefWidth="198.0" GridPane.rowIndex="4">
-                           <padding>
-                              <Insets left="6.0" />
-                           </padding>
-                           <font>
-                              <Font name="System Italic" size="14.0" />
-                           </font>
-                        </Label>
-                        <AnchorPane prefHeight="80.0" prefWidth="206.0">
-                           <GridPane.margin>
-                              <Insets right="150.0" />
-                           </GridPane.margin>
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9c83c778" height="274.0" stroke="#ffc60a" strokeType="INSIDE" strokeWidth="2.0" width="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <GridPane prefHeight="273.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.4000244140625" minWidth="0.0" prefWidth="0.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints maxHeight="80.0" minHeight="80.0" prefHeight="80.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="88.79997558593749" minHeight="10.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
                            <children>
-                              <Text fill="#ffb406" layoutX="7.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lobby" textAlignment="CENTER" wrappingWidth="183.20000000000005">
-                                 <font>
-                                    <Font name="System Bold Italic" size="26.0" />
-                                 </font>
-                              </Text>
+                              <AnchorPane prefHeight="80.0" prefWidth="206.0">
+                                 <GridPane.margin>
+                                    <Insets right="150.0" />
+                                 </GridPane.margin>
+                                 <children>
+                                    <Text fill="#ffb406" layoutX="7.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lobby" textAlignment="CENTER" wrappingWidth="183.20000000000005">
+                                       <font>
+                                          <Font name="System Bold Italic" size="26.0" />
+                                       </font>
+                                    </Text>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                                 <children>
+                                    <Label fx:id="firstLName" alignment="CENTER" prefHeight="38.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <padding>
+                                          <Insets left="6.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="System Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
+                                 <children>
+                                    <Label fx:id="secondLName" alignment="CENTER" prefHeight="45.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <padding>
+                                          <Insets left="6.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="System Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3">
+                                 <children>
+                                    <Label fx:id="thirdLName" alignment="CENTER" prefHeight="45.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <padding>
+                                          <Insets left="6.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="System Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="4">
+                                 <children>
+                                    <Label fx:id="fourthLName" alignment="CENTER" prefHeight="45.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <padding>
+                                          <Insets left="6.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="System Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
                            </children>
-                        </AnchorPane>
+                        </GridPane>
                      </children>
-                  </GridPane>
-               </children>
-            </AnchorPane>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="1">
-               <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9c83c778" height="273.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="2.0" width="200.0" />
-                  <GridPane prefHeight="273.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.4000244140625" minWidth="0.0" prefWidth="0.0" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints maxHeight="80.0" minHeight="80.0" prefHeight="80.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="88.79997558593749" minHeight="10.0" prefHeight="0.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
+                  </AnchorPane>
+                  <AnchorPane maxHeight="273.0" maxWidth="200.0" minHeight="273.0" minWidth="200.0" prefHeight="273.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="1">
                      <children>
-                        <Label fx:id="firstWName" minHeight="0.0" minWidth="0.0" GridPane.rowIndex="1">
-                           <GridPane.margin>
-                              <Insets />
-                           </GridPane.margin>
-                           <padding>
-                              <Insets left="6.0" />
-                           </padding>
-                           <font>
-                              <Font name="System Italic" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="secondWName" prefHeight="45.0" prefWidth="198.0" GridPane.rowIndex="2">
-                           <padding>
-                              <Insets left="6.0" />
-                           </padding>
-                           <font>
-                              <Font name="System Italic" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="thirdWName" prefHeight="45.0" prefWidth="198.0" GridPane.rowIndex="3">
-                           <padding>
-                              <Insets left="6.0" />
-                           </padding>
-                           <font>
-                              <Font name="System Italic" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="fourthWName" prefHeight="45.0" prefWidth="198.0" GridPane.rowIndex="4">
-                           <padding>
-                              <Insets left="6.0" />
-                           </padding>
-                           <font>
-                              <Font name="System Italic" size="14.0" />
-                           </font>
-                        </Label>
-                        <AnchorPane prefHeight="80.0" prefWidth="90.0">
-                           <GridPane.margin>
-                              <Insets right="150.0" />
-                           </GridPane.margin>
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9c83c778" height="273.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="2.0" width="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <GridPane prefHeight="273.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.4000244140625" minWidth="0.0" prefWidth="0.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints maxHeight="80.0" minHeight="80.0" prefHeight="80.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="88.79997558593749" minHeight="10.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
                            <children>
-                              <ImageView fitHeight="59.0" fitWidth="74.0" layoutX="2.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+                              <AnchorPane prefHeight="80.0" prefWidth="90.0">
+                                 <GridPane.margin>
+                                    <Insets right="150.0" />
+                                 </GridPane.margin>
+                                 <children>
+                                    <ImageView fitHeight="59.0" fitWidth="74.0" layoutX="2.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../images/pawns/towers/white-tower.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Text fill="WHITE" layoutX="47.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="White Team" textAlignment="RIGHT">
+                                       <font>
+                                          <Font name="System Bold Italic" size="26.0" />
+                                       </font>
+                                    </Text>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                                 <children>
+                                    <Label fx:id="firstWName" alignment="CENTER" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <padding>
+                                          <Insets left="6.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="System Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
+                                 <children>
+                                    <Label fx:id="secondWName" alignment="CENTER" prefHeight="45.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <padding>
+                                          <Insets left="6.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="System Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3">
+                                 <children>
+                                    <Label fx:id="thirdWName" alignment="CENTER" prefHeight="45.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <padding>
+                                          <Insets left="6.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="System Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="4">
+                                 <children>
+                                    <Label fx:id="fourthWName" alignment="CENTER" prefHeight="45.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <padding>
+                                          <Insets left="6.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="System Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </GridPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="138.0" prefWidth="218.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <children>
+                        <Button fx:id="blackBtn" layoutX="8.0" layoutY="7.0" mnemonicParsing="false" onAction="#sendBlackTeam" prefHeight="28.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-border-color: black;" text="Choose Black Team" textAlignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="70.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="2">
+                     <children>
+                        <Button fx:id="whiteBtn" layoutX="8.0" layoutY="7.0" mnemonicParsing="false" onAction="#sendWhiteTeam" prefHeight="26.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-border-color: white;" text="Choose White Team" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="70.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                     <children>
+                        <Button fx:id="startButton" layoutX="8.0" layoutY="14.0" mnemonicParsing="false" onAction="#sendStart" prefHeight="26.0" prefWidth="183.0" style="-fx-background-color: transparent;">
+                           <graphic>
+                              <ImageView fx:id="startImg" fitHeight="51.0" fitWidth="226.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/pawns/towers/white-tower.png" />
+                                    <Image url="@../images/icons/start.png" />
                                  </image>
                               </ImageView>
-                              <Text fill="WHITE" layoutX="47.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="White Team" textAlignment="RIGHT">
-                                 <font>
-                                    <Font name="System Bold Italic" size="26.0" />
-                                 </font>
-                              </Text>
-                           </children>
-                        </AnchorPane>
+                           </graphic>
+                        </Button>
                      </children>
-                  </GridPane>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
+                     <children>
+                        <Text fill="WHITE" layoutX="-14.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select a Team">
+                           <font>
+                              <Font name="System Bold" size="36.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </AnchorPane>
                </children>
-            </AnchorPane>
-            <AnchorPane prefHeight="138.0" prefWidth="218.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-               <children>
-                  <Button fx:id="blackBtn" layoutX="8.0" layoutY="7.0" mnemonicParsing="false" onAction="#sendBlackTeam" prefHeight="28.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-border-color: black;" text="Choose Black Team" textAlignment="CENTER">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                  </Button>
-               </children>
-            </AnchorPane>
-            <AnchorPane prefHeight="70.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="2">
-               <children>
-                  <Button fx:id="whiteBtn" layoutX="8.0" layoutY="7.0" mnemonicParsing="false" onAction="#sendWhiteTeam" prefHeight="26.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-border-color: white;" text="Choose White Team" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                  </Button>
-               </children>
-            </AnchorPane>
-            <AnchorPane prefHeight="70.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
-               <children>
-                  <Button fx:id="startButton" layoutX="8.0" layoutY="55.0" mnemonicParsing="false" onAction="#sendStart" prefHeight="26.0" prefWidth="183.0" style="-fx-background-color: transparent;">
-                     <graphic>
-                        <ImageView fitHeight="51.0" fitWidth="226.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/icons/start.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children>
-            </AnchorPane>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
-               <children>
-                  <Text fill="WHITE" layoutX="-14.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select a Team">
-                     <font>
-                        <Font name="System Bold" size="36.0" />
-                     </font>
-                  </Text>
-               </children>
-            </AnchorPane>
+            </GridPane>
          </children>
-      </GridPane>
+      </AnchorPane>
    </children>
 </AnchorPane>

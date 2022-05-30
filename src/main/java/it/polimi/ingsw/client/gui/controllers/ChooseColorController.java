@@ -1,11 +1,14 @@
 package it.polimi.ingsw.client.gui.controllers;
 
+import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
+import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.actions.ChosenStudentColor;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -123,5 +126,21 @@ public class ChooseColorController implements GUIController {
     @Override
     public Pane getRootPane() {
         return root;
+    }
+
+    /**
+     * This method is used to load the scene of the controller on the stage.
+     *
+     * @param stage the stage to load the scene on.
+     */
+    @Override
+    public void loadScene(Stage stage) {
+        stage.setScene(new Scene(root));
+        stage.setTitle("Choose a color");
+        stage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
+        stage.setHeight(250);
+        stage.setWidth(500);
+        stage.setResizable(false);
+        stage.setAlwaysOnTop(true);
     }
 }

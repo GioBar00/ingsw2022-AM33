@@ -426,8 +426,8 @@ public class GameController implements GUIController {
             GUIUtils.setButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)), e -> {
                 for (Integer resInd : fromIndexes) {
                     GUIUtils.resetButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(resInd)));
-                    gui.notifyViewListener(new MovedStudent(MoveLocation.CARD, fromIndex, MoveLocation.HALL, null));
                 }
+                gui.notifyViewListener(new MovedStudent(MoveLocation.CARD, fromIndex, MoveLocation.HALL, null));
             });
         }
     }

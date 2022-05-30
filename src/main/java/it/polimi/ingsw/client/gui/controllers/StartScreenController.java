@@ -113,8 +113,8 @@ public class StartScreenController implements GUIController {
      */
     @Override
     public void loadScene(Stage stage) {
-        stage.getScene().setRoot(new Region());
         stage.setScene(new Scene(root));
+        //stage.getScene().setRoot(new Region());
         stage.setMinHeight(800.0);
         stage.setMinWidth(1200.0);
         stage.setResizable(true);

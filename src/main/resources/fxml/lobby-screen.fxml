@@ -63,7 +63,7 @@
                      <children>
                         <Button fx:id="startBtn" layoutX="174.0" layoutY="27.0" mnemonicParsing="false" onAction="#sendStart" style="-fx-background-color: transparent;">
                            <graphic>
-                              <ImageView fitHeight="35.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="startImg" fitHeight="35.0" fitWidth="78.0" pickOnBounds="true">
                                  <image>
                                     <Image url="@../images/icons/start-highlighted.png" />
                                  </image>

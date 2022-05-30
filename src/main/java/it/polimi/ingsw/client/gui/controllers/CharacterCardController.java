@@ -119,7 +119,7 @@ public class CharacterCardController implements GUIController {
 
 
         if (view.getNumBlocks() > 0) {
-            imgViewRed.setImage(ResourceLoader.loadImage(ImagePath.PROHIBITION));
+            imgViewRed.setImage(ResourceLoader.loadImage(ImagePath.BLOCK));
             redLbl.setText(String.valueOf(view.getNumBlocks()));
             redBtn.setVisible(true);
             redLbl.setVisible(true);

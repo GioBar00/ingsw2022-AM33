@@ -326,13 +326,7 @@ public class GUI extends Application implements UI {
                 ChooseColorController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_COLOR, this);
                 controller.init();
                 controller.setAvailableButtons(((ChooseStudentColor) message).getAvailableStudentColors());
-                chooseColor.setTitle("Choose a color");
-                chooseColor.setHeight(250);
-                chooseColor.setWidth(500);
-                chooseColor.setResizable(false);
-                chooseColor.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
                 controller.loadScene(chooseColor);
-                chooseColor.setAlwaysOnTop(true);
                 chooseColor.show();
             });
             case MOVE_MOTHER_NATURE ->

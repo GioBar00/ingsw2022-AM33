@@ -35,9 +35,6 @@ public interface LobbyController extends GUIController {
     default void loadScene(Stage stage) {
         stage.getScene().setRoot(new Region());
         stage.setScene(new Scene(getRootPane()));
-        stage.setResizable(true);
-        stage.setMinHeight(500.0);
-        stage.setMinWidth(680.0);
         stage.setHeight(500.0);
         stage.setWidth(680.0);
         stage.setResizable(false);

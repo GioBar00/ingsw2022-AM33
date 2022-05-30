@@ -1,7 +1,9 @@
 package it.polimi.ingsw.client.gui.controllers;
 
+import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
+import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
 import it.polimi.ingsw.network.messages.client.StartGame;
 import it.polimi.ingsw.network.messages.views.TeamsView;
@@ -10,10 +12,11 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 public class TeamLobbyController implements LobbyController {
-
 
     private GUI gui;
 
@@ -64,6 +67,9 @@ public class TeamLobbyController implements LobbyController {
     @FXML
     public Label fourthLName;
 
+    @FXML
+    public ImageView startImg;
+
     private final Label[] blackLabels;
 
     private final Label[] whiteLabels;
@@ -95,6 +101,7 @@ public class TeamLobbyController implements LobbyController {
      */
     @Override
     public void init() {
+        GUIUtils.changeImageHoverButton(startButton, startImg, ResourceLoader.loadImage(ImagePath.START), ResourceLoader.loadImage(ImagePath.START_HIGHLIGHTED));
         startButton.setVisible(false);
         startButton.setDisable(true);
         fillLabels();
