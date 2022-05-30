@@ -375,6 +375,19 @@ public class GameController implements GUIController {
         }
     }
 
+    /**
+     * This method resets all the clickable buttons.
+     *
+     * @param nickname the nickname of the player associated with the view.
+     */
+    public void clearAllButtons(String nickname) {
+        for (IslandController ic : islandsController.islandControllers)
+            GUIUtils.resetButton(ic.islandButton);
+        for (CloudController cc : cloudControllers)
+            GUIUtils.resetButton(cc.cloudBtn);
+        playerControllersByNickname.get(nickname).getSchoolBoardController().clearAllButtons();
+    }
+
     public void processMoveCardIsland(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
         lblAction.setText("Select a student from the character card");
         Integer cardIndex = findActivatedCard();
@@ -414,22 +427,23 @@ public class GameController implements GUIController {
         }
     }
 
-    public void processSwapCardEntrance(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
+    public void processSwapCardEntrance(Set<Integer> cardIndexes, Set<Integer> toIndexes) {
         lblAction.setText("Select a student from the character card");
         Integer cardIndex = findActivatedCard();
+
         if (cardIndex == null)
             return;
 
         SchoolBoardController schoolBoardController = playerControllersByNickname.get(gui.getNickname()).getSchoolBoardController();
-        for (Integer fromIndex : fromIndexes) {
+        for (Integer fromIndex : cardIndexes) {
             GUIUtils.setButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)), e -> {
                 lblAction.setText("Select an highlighted student in the entrance");
-                for (Integer resInd : fromIndexes) {
+                for (Integer resInd : cardIndexes) {
                     GUIUtils.resetButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(resInd)));
                 }
                 for (Integer toIndex : toIndexes) {
                     GUIUtils.setButton(schoolBoardController.entranceButtons.get(toIndex), action -> {
-                        for (Integer resToInd : fromIndexes) {
+                        for (Integer resToInd : cardIndexes) {
                             GUIUtils.resetButton(schoolBoardController.entranceButtons.get(resToInd));
                         }
                         gui.notifyViewListener(new SwappedStudents(MoveLocation.CARD, fromIndex, MoveLocation.ENTRANCE, toIndex));

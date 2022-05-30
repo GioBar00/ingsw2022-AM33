@@ -226,4 +226,14 @@ public class SchoolBoardController implements GUIController {
             towerImageViews.get(num).setImage(null);
     }
 
+    /**
+     * This method is used for clear all the buttons in the school board.
+     */
+    public void clearAllButtons() {
+        for (Button button : entranceButtons)
+            GUIUtils.resetButton(button);
+        for(Button button : hallButtonsByColor.values())
+            GUIUtils.resetButton(button);
+        GUIUtils.resetButton(hallButton);
+    }
 }

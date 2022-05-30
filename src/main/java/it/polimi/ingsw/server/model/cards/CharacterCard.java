@@ -127,13 +127,19 @@ public abstract class CharacterCard {
      */
     public boolean endEffect() {
         if (!appliedEffect && currentChoicesNumber >= requiredChoicesNumber) {
-            additionalCost++;
-            appliedEffect = true;
+            forceEndEffect();
             return true;
         }
         return false;
     }
 
+    /**
+     * Resets the effect of the card.
+     */
+    public void forceEndEffect() {
+        additionalCost++;
+        appliedEffect = true;
+    }
     /**
      * Reverts the effect of the character card if the effect is not permanent.
      *
