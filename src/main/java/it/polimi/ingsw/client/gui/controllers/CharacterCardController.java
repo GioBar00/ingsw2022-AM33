@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.actions.ActivatedCharacterCard;
+import it.polimi.ingsw.network.messages.actions.ConcludeCharacterCardEffect;
 import it.polimi.ingsw.network.messages.views.CharacterCardView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import javafx.fxml.FXML;
@@ -31,10 +32,10 @@ public class CharacterCardController implements GUIController {
     public ImageView imgViewYellow;
     @FXML
     public ImageView imgViewCoin;
-    private GUI gui;
-    private Pane root;
-    EnumMap<StudentColor, Button> buttons;
-    EnumMap<StudentColor, Label> labels;
+    @FXML
+    public Button endEffectBtn;
+    @FXML
+    public ImageView endEffectImg;
 
     @FXML
     public AnchorPane anchorPaneCharacter;
@@ -76,7 +77,14 @@ public class CharacterCardController implements GUIController {
     @FXML
     public AnchorPane anchorPaneCoin;
 
+    private GUI gui;
+    private Pane root;
+    EnumMap<StudentColor, Button> buttons;
+    EnumMap<StudentColor, Label> labels;
+
     private Integer index;
+
+    private boolean canEndEffect;
 
     /**
      * This method is used to set the GUI of the controller.
@@ -95,7 +103,15 @@ public class CharacterCardController implements GUIController {
      */
     public void setCharacterView(CharacterCardView view) {
 
+
+        GUIUtils.resetButton(characterBtn);
+
+        canEndEffect = view.canEndEffect();
+
         characterImg.setImage(GUIUtils.getCharacterImage(view.getType()));
+
+        endEffectBtn.setVisible(false);
+        endEffectImg.setVisible(false);
 
         int cost = view.getAdditionalCost() + view.getOriginalCost();
         coinLbl.setText(String.valueOf(cost));
@@ -105,6 +121,8 @@ public class CharacterCardController implements GUIController {
         if (view.getNumBlocks() > 0) {
             imgViewRed.setImage(ResourceLoader.loadImage(ImagePath.PROHIBITION));
             redLbl.setText(String.valueOf(view.getNumBlocks()));
+            redBtn.setVisible(true);
+            redLbl.setVisible(true);
             return;
         }
 
@@ -154,6 +172,31 @@ public class CharacterCardController implements GUIController {
     }
 
     /**
+     * This method activates the "conclude effect" button which sends a {@link ConcludeCharacterCardEffect}.
+     */
+    void activateEndButton() {
+        if(canEndEffect) {
+            endEffectImg.setVisible(true);
+            endEffectBtn.setVisible(true);
+            GUIUtils.setButton(endEffectBtn, e -> {
+                gui.notifyViewListener(new ConcludeCharacterCardEffect());
+                for (Button button : buttons.values()) {
+                    GUIUtils.resetButton(button);
+                }
+            });
+        }
+    }
+
+    /**
+     * This method disables the "conclude effect" button which sends a {@link ConcludeCharacterCardEffect}.
+     */
+    void hideEndButton() {
+        endEffectImg.setVisible(false);
+        endEffectBtn.setVisible(false);
+        GUIUtils.resetButton(endEffectBtn);
+    }
+
+    /**
      * This method is used to initialize the controller and stage.
      */
     @Override
@@ -195,6 +238,8 @@ public class CharacterCardController implements GUIController {
         GUIUtils.bindSize(anchorPanePawn, imgViewYellow);
 
         GUIUtils.bindSize(anchorPaneCoin, imgViewCoin);
+        GUIUtils.bindSize(anchorPaneCoin, endEffectBtn);
+        GUIUtils.bindSize(anchorPaneCoin, endEffectImg);
 
         root.getChildren().clear();
         GUIUtils.addToPaneCenterKeepRatio(root, anchorPaneCharacter, 685.0 / 1039);

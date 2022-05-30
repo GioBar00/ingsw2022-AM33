@@ -99,7 +99,7 @@ public class ChooseColorController implements GUIController {
 
         for (StudentColor s : stdNotAvailable) {
             btn = buttonsMap.get(s);
-            btn.setVisible(true);
+            btn.setVisible(false);
             btn.setDisable(true);
             btn.setOpacity(0.25);
         }

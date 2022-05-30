@@ -39,7 +39,12 @@ public class CharacterCardView implements Serializable {
      */
     private final boolean isActivating;
 
-    public CharacterCardView(CharacterType type, boolean canBeUsed, int originalCost, int additionalCost, int numBlocks, EnumMap<StudentColor, Integer> students, boolean isActivating) {
+    /**
+     * boolean attribute which is true if the player can end the effect of the card, false otherwise.
+     */
+    private final boolean canEndEffect;
+
+    public CharacterCardView(CharacterType type, boolean canBeUsed, int originalCost, int additionalCost, int numBlocks, EnumMap<StudentColor, Integer> students, boolean isActivating, boolean canEndEffect) {
         this.type = type;
         this.canBeUsed = canBeUsed;
         this.originalCost = originalCost;
@@ -47,6 +52,7 @@ public class CharacterCardView implements Serializable {
         this.numBlocks = numBlocks;
         this.student = students;
         this.isActivating = isActivating;
+        this.canEndEffect = canEndEffect;
     }
 
     /**
@@ -96,5 +102,12 @@ public class CharacterCardView implements Serializable {
      */
     public boolean isActivating() {
         return isActivating;
+    }
+
+    /**
+     * @return the attribute canEndEffect
+     */
+    public boolean canEndEffect() {
+        return canEndEffect;
     }
 }
