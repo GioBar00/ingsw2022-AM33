@@ -309,6 +309,8 @@ public class GUI extends Application implements UI {
     }
 
     private void processLastRequest(Message message) {
+        Platform.runLater(() -> gameController.clearAllButtons(nickname));
+
         switch (MessageType.retrieveByMessage(message)) {
             case PLAY_ASSISTANT_CARD ->
                     Platform.runLater(() -> gameController.processPlayAssistantCard(((PlayAssistantCard) message).getPlayableAssistantCards()));

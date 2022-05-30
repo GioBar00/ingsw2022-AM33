@@ -225,6 +225,7 @@ public abstract class GUIUtils {
         button.setStyle("-fx-background-color: transparent;");
         button.setOnAction(e -> {
         });
+        button.toBack();
     }
 
     /**
