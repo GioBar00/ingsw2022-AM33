@@ -64,32 +64,32 @@
                                <RowConstraints minHeight="0.0" percentHeight="3.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                         <children>
-                           <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="9">
+                           <AnchorPane fx:id="anchorPaneBlue" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="9">
                               <children>
                                  <Button fx:id="blueHallButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="533.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                               </children>
                            </AnchorPane>
-                           <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="5">
+                           <AnchorPane fx:id="anchorPaneYellow" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="5">
                               <children>
                                  <Button fx:id="yellowHallButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="533.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                               </children>
                            </AnchorPane>
-                           <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="1">
+                           <AnchorPane fx:id="anchorPaneGreen" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="1">
                               <children>
                                  <Button fx:id="greenHallButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="533.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                               </children>
                            </AnchorPane>
-                           <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="3">
+                           <AnchorPane fx:id="anchorPaneRed" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="3">
                               <children>
                                  <Button fx:id="redHallButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="533.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                               </children>
                            </AnchorPane>
-                           <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="7">
+                           <AnchorPane fx:id="anchorPaneMagenta" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="7">
                               <children>
                                  <Button fx:id="magentaHallButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="533.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                               </children>
                            </AnchorPane>
-                           <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="12" GridPane.rowSpan="11">
+                           <AnchorPane fx:id="anchorPaneHall" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="12" GridPane.rowSpan="11">
                               <children>
                                  <Button fx:id="hallButton" mnemonicParsing="false" prefHeight="390.0" prefWidth="544.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                               </children>

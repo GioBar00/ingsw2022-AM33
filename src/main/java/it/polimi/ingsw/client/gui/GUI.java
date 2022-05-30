@@ -178,7 +178,7 @@ public class GUI extends Application implements UI {
             viewState = ViewState.PLAYING;
             showGameScreen();
         }
-        if (!gameView.getWinners().isEmpty()) {
+        if (gameView.getWinners() != null && !gameView.getWinners().isEmpty()) {
             //TODO: show winners and return to start screen
             viewState = ViewState.END_GAME;
             gameController = null;

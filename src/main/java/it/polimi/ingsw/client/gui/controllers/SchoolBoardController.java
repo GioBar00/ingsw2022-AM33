@@ -21,6 +21,12 @@ public class SchoolBoardController implements GUIController {
     public ImageView imgBoard;
     @FXML
     public AnchorPane anchorPaneBoard;
+    public AnchorPane anchorPaneBlue;
+    public AnchorPane anchorPaneYellow;
+    public AnchorPane anchorPaneGreen;
+    public AnchorPane anchorPaneRed;
+    public AnchorPane anchorPaneMagenta;
+    public AnchorPane anchorPaneHall;
     private GUI gui;
 
     public final List<Button> entranceButtons = new ArrayList<>(9);
@@ -85,6 +91,13 @@ public class SchoolBoardController implements GUIController {
         initProfessors();
         initHall();
 
+        GUIUtils.bindSize(anchorPaneHall, hallButton);
+        GUIUtils.bindSize(anchorPaneBlue, blueHallButton);
+        GUIUtils.bindSize(anchorPaneGreen, greenHallButton);
+        GUIUtils.bindSize(anchorPaneMagenta, magentaHallButton);
+        GUIUtils.bindSize(anchorPaneRed, redHallButton);
+        GUIUtils.bindSize(anchorPaneYellow, yellowHallButton);
+
         root.getChildren().clear();
 
         GUIUtils.bindSize(anchorPaneBoard, imgBoard);
@@ -118,7 +131,7 @@ public class SchoolBoardController implements GUIController {
             GUIUtils.bindSize(anchorPane, imageView);
             towerImageViews.add(imageView);
             anchorPane.getChildren().add(imageView);
-            towersGrid.add(anchorPane, i % 2, i / 2);
+            towersGrid.add(anchorPane, (i % 2) * 2 + 1, (i / 2) * 2 + 1);
         }
         hallButtonsByColor.put(StudentColor.BLUE, blueHallButton);
         hallButtonsByColor.put(StudentColor.GREEN, greenHallButton);
