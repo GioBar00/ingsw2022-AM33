@@ -1,9 +1,9 @@
 package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.gui.GUI;
+import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.network.messages.client.StartGame;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 
@@ -33,8 +33,7 @@ public class NormalLobbyController implements LobbyController {
      */
     @Override
     public void init() {
-        startBtn.setVisible(false);
-        startBtn.setDisable(true);
+       GUIUtils.hideButton(startBtn);
     }
 
     /**
@@ -62,9 +61,7 @@ public class NormalLobbyController implements LobbyController {
      */
     @Override
     public void setCanStart() {
-        startBtn.setVisible(true);
-        startBtn.setDisable(false);
-
+        GUIUtils.showButton(startBtn);
     }
 
     /**
@@ -72,8 +69,7 @@ public class NormalLobbyController implements LobbyController {
      */
     @Override
     public void setCantStart() {
-        startBtn.setVisible(false);
-        startBtn.setDisable(true);
+        GUIUtils.hideButton(startBtn);
     }
 
     /**
@@ -81,5 +77,6 @@ public class NormalLobbyController implements LobbyController {
      */
     public void sendStart(){
         gui.notifyViewListener(new StartGame());
+        GUIUtils.hideButton(startBtn);
     }
 }

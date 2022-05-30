@@ -168,7 +168,8 @@ public abstract class GUIUtils {
 
     /**
      * This method adds a child to a pane container filling the height and width of the container and keeping the aspect ratio.
-     * @param pane the container
+     *
+     * @param pane  the container
      * @param child to add to the container
      * @param ratio the aspect ratio
      */
@@ -222,6 +223,27 @@ public abstract class GUIUtils {
      */
     public static void resetButton(Button button) {
         button.setStyle("-fx-background-color: transparent;");
-        button.setOnAction(e -> {});
+        button.setOnAction(e -> {
+        });
+    }
+
+    /**
+     * This method hide a button.
+     *
+     * @param button the button we want to hide.
+     */
+    public static void hideButton(Button button) {
+        button.setVisible(false);
+        button.setDisable(true);
+    }
+
+    /**
+     * This method show a button.
+     *
+     * @param button the button we want to show.
+     */
+    public static void showButton(Button button) {
+        button.setDisable(false);
+        button.setVisible(true);
     }
 }
