@@ -503,6 +503,7 @@ public class GameController implements GUIController {
                     });
                 }
                 // activate hall
+                System.out.println(entranceToHallIndexes.toString());
                 if (entranceToHallIndexes.contains(i)) {
                     GUIUtils.setButton(me.getSchoolBoardController().hallButton, e -> {
                         System.out.println("Hall button pressed");

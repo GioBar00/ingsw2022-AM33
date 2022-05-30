@@ -173,17 +173,19 @@ public class GUI extends Application implements UI {
     @Override
     public void setGameView(GameView gameView) {
         boolean show = checkGameController();
-        Platform.runLater(() -> gameController.updateGameView(gameView));
-        if (show) {
-            viewState = ViewState.PLAYING;
-            showGameScreen();
-        }
         if (gameView.getWinners() != null && !gameView.getWinners().isEmpty()) {
+            show = false;
             //TODO: show winners and return to start screen
             viewState = ViewState.END_GAME;
             gameController = null;
             showAlert("The game is over. The winners are: " + gameView.getWinners().toString());
+        } else
+            Platform.runLater(() -> gameController.updateGameView(gameView));
+        if (show) {
+            viewState = ViewState.PLAYING;
+            showGameScreen();
         }
+
     }
 
     /**
@@ -351,10 +353,8 @@ public class GUI extends Application implements UI {
             if (moveActionRequest.getTo().equals(MoveLocation.ISLAND)) {
                 islands.addAll(moveActionRequest.getToIndexesSet());
                 entrance.addAll(moveActionRequest.getFromIndexesSet());
-            } else {
-                if (moveActionRequest.getTo().equals(MoveLocation.ISLAND)) {
-                    entranceToHallIndexes.addAll(moveActionRequest.getFromIndexesSet());
-                }
+            } else if (moveActionRequest.getTo().equals(MoveLocation.HALL)) {
+                entranceToHallIndexes.addAll(moveActionRequest.getFromIndexesSet());
             }
         }
         gameController.processMultiplePossibleMoves(entrance, islands, entranceToHallIndexes);
@@ -373,14 +373,16 @@ public class GUI extends Application implements UI {
     @Override
     public void serverUnavailable() {
         System.out.println("Server unavailable");
-        showAlert("Lost connection with the server or server unavailable.\n" +
-                "Please try again later.");
-        if (viewState == ViewState.SETUP) {
-            if (startScreenController != null) {
-                Platform.runLater(() -> startScreenController.disableCenter(false));
+        if (viewState != ViewState.END_GAME) {
+            showAlert("Lost connection with the server or server unavailable.\n" +
+                    "Please try again later.");
+            if (viewState == ViewState.SETUP) {
+                if (startScreenController != null) {
+                    Platform.runLater(() -> startScreenController.disableCenter(false));
+                }
+            } else {
+                showStartScreen();
             }
-        } else {
-            showStartScreen();
         }
     }
 
