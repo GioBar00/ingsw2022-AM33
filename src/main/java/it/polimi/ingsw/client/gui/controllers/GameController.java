@@ -1,11 +1,9 @@
 package it.polimi.ingsw.client.gui.controllers;
 
-import it.polimi.ingsw.client.enums.AudioPath;
 import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
-import it.polimi.ingsw.client.gui.audio.AudioManager;
 import it.polimi.ingsw.client.gui.audio.MuteToggle;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
@@ -23,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.util.*;
@@ -80,6 +79,16 @@ public class GameController implements GUIController, MuteToggle {
     public ImageView imgViewMute;
     @FXML
     public ImageView imgViewBackground;
+    @FXML
+    public AnchorPane suggestionBox;
+    @FXML
+    public Rectangle suggestionBackground;
+    @FXML
+    public Rectangle playerInfoBackground;
+    @FXML
+    public AnchorPane titleBackAnchor;
+    @FXML
+    public Rectangle titleBackground;
 
     private Pane root;
 
@@ -133,6 +142,9 @@ public class GameController implements GUIController, MuteToggle {
         vBoxReserve.setVisible(false);
         GUIUtils.bindSize(hBoxTitle, imgViewTitle);
         GUIUtils.bindSize(root, imgViewBackground);
+        GUIUtils.bindSize(suggestionBox, suggestionBackground);
+        GUIUtils.bindSize(anchorPanePlayerInfo, playerInfoBackground);
+        GUIUtils.bindSize(titleBackAnchor, titleBackground);
     }
 
     /**
@@ -184,6 +196,7 @@ public class GameController implements GUIController, MuteToggle {
         stage.show();
     }
 
+
     /**
      * This method is used to update the game with the new game view.
      *
@@ -197,7 +210,7 @@ public class GameController implements GUIController, MuteToggle {
             lblTurn.setText("Your turn");
         else
             lblTurn.setText("Waiting for " + gameView.getCurrentPlayer());
-        lblAction.setText("");
+        lblAction.setText("Waiting for your opponent to make their move...");
         updateReserve(gameView.getReserve());
         updateCharacterCardControllers(gameView.getCharacterCardView(), nickname);
         updateCloudControllers(gameView.getCloudViews());

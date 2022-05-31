@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 
 import java.util.List;
 
@@ -165,6 +166,17 @@ public abstract class GUIUtils {
     public static void bindSize(Region container, ImageView child) {
         container.widthProperty().addListener((observable, oldValue, newValue) -> child.setFitWidth(newValue.doubleValue()));
         container.heightProperty().addListener((observable, oldValue, newValue) -> child.setFitHeight(newValue.doubleValue()));
+    }
+
+    /**
+     * This method binds the width and height of a rectangle shape to its container.
+     *
+     * @param container the container
+     * @param child the rectangle
+     */
+    public static void bindSize(Region container, Rectangle child) {
+        container.widthProperty().addListener((observable, oldValue, newValue) -> child.setWidth(newValue.doubleValue()));
+        container.heightProperty().addListener((observable, oldValue, newValue) -> child.setHeight(newValue.doubleValue()));
     }
 
     /**
