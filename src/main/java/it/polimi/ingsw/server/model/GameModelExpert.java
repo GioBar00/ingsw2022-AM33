@@ -738,6 +738,18 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
                     && !activatedACharacterCard
                     && characterCardActivating == null)
                 canUse = true;
+            if (cc.getType().equals(CharacterType.MINSTREL)) {
+                SchoolBoard currentSchoolBoard = model.playersManager.getSchoolBoard();
+                boolean isEmpty = true;
+                for (StudentColor s : StudentColor.values()) {
+                    if (currentSchoolBoard.getStudentsInHall(s) > 0) {
+                        isEmpty = false;
+                        break;
+                    }
+                }
+                if (isEmpty)
+                    canUse = false;
+            }
 
             boolean isActivating = characterCardActivating != null && characterCardActivating.equals(cc);
             CharacterCardView ccv = new CharacterCardView(cc.getType(), canUse, ogCost, addCost, numBlocks, students, isActivating, cc.canEndEffect());
