@@ -14,63 +14,69 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="500.0" maxWidth="680.0" minHeight="500.0" minWidth="680.0" prefHeight="500.0" prefWidth="680.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.TeamLobbyController">
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="680.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.TeamLobbyController">
    <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <HBox alignment="CENTER" maxHeight="1000.0" maxWidth="1000.0" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ImageView fitHeight="629.0" fitWidth="881.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="imgViewBackground" fitHeight="500.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/background-2.png" />
                </image>
             </ImageView>
          </children>
       </HBox>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" prefWidth="20.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="0.0" prefWidth="200.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" prefWidth="20.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="0.0" prefWidth="200.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" prefWidth="20.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="0.0" prefWidth="200.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" prefWidth="20.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints maxHeight="90.0" minHeight="90.0" prefHeight="90.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="275.0" minHeight="275.0" prefHeight="275.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="135.0" minHeight="135.0" prefHeight="135.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="0.0" percentHeight="18.0" prefHeight="90.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="0.0" percentHeight="55.0" prefHeight="275.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="0.0" percentHeight="27.0" prefHeight="135.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <AnchorPane maxHeight="273.0" maxWidth="200.0" minHeight="273.0" minWidth="200.0" prefHeight="273.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <AnchorPane fx:id="anchorPaneBlack" minHeight="0.0" minWidth="0.0" prefHeight="273.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9d83c778" height="273.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <Rectangle fx:id="rectBlack" arcHeight="5.0" arcWidth="5.0" fill="#9d83c778" height="273.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                         <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="200.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.4000244140625" minWidth="0.0" prefWidth="0.0" />
                           </columnConstraints>
                           <rowConstraints>
-                              <RowConstraints maxHeight="80.0" minHeight="80.0" prefHeight="80.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="30.0" prefHeight="80.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="40.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <AnchorPane prefHeight="80.0" prefWidth="90.0">
-                                 <GridPane.margin>
-                                    <Insets right="150.0" />
-                                 </GridPane.margin>
+                              <HBox alignment="CENTER">
                                  <children>
-                                    <Text layoutX="57.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Black Team" textAlignment="RIGHT" AnchorPane.bottomAnchor="23.474609375" AnchorPane.leftAnchor="57.0" AnchorPane.rightAnchor="-56.762109374999994" AnchorPane.topAnchor="21.943359375">
+                                    <ImageView fitHeight="59.0" fitWidth="74.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../images/pawns/towers/black-tower.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Black Team" textAlignment="RIGHT">
                                        <font>
                                           <Font name="System Bold Italic" size="26.0" />
                                        </font>
                                     </Text>
                                  </children>
-                              </AnchorPane>
+                                 <GridPane.margin>
+                                    <Insets right="14.0" />
+                                 </GridPane.margin>
+                              </HBox>
                               <AnchorPane minHeight="0.0" minWidth="0.0" GridPane.rowIndex="1">
                                  <children>
                                     <Label fx:id="firstBName" alignment="CENTER" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -119,44 +125,36 @@
                                     </Label>
                                  </children>
                               </AnchorPane>
-                              <ImageView fitHeight="59.0" fitWidth="74.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/pawns/towers/black-tower.png" />
-                                 </image>
-                              </ImageView>
                            </children>
                         </GridPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane maxHeight="273.0" maxWidth="200.0" minHeight="273.0" minWidth="200.0" prefHeight="273.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                  <AnchorPane fx:id="anchorPaneLobby" minHeight="0.0" minWidth="0.0" prefHeight="273.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                      <children>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9c83c778" height="274.0" stroke="#ffc60a" strokeType="INSIDE" strokeWidth="2.0" width="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                        <GridPane prefHeight="273.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Rectangle fx:id="rectLobby" arcHeight="5.0" arcWidth="5.0" fill="#9c83c778" height="274.0" stroke="#ffc60a" strokeType="INSIDE" strokeWidth="2.0" width="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <GridPane minHeight="0.0" minWidth="0.0" prefHeight="273.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="200.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.4000244140625" minWidth="0.0" prefWidth="0.0" />
                            </columnConstraints>
                            <rowConstraints>
-                              <RowConstraints maxHeight="80.0" minHeight="80.0" prefHeight="80.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="88.79997558593749" minHeight="10.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="30.0" prefHeight="80.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="0.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <AnchorPane prefHeight="80.0" prefWidth="206.0">
-                                 <GridPane.margin>
-                                    <Insets right="150.0" />
-                                 </GridPane.margin>
+                              <HBox alignment="CENTER">
                                  <children>
-                                    <Text fill="#ffb406" layoutX="7.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lobby" textAlignment="CENTER" wrappingWidth="183.20000000000005">
+                                    <Text fill="#ffb406" strokeType="OUTSIDE" strokeWidth="0.0" text="Lobby" textAlignment="CENTER" wrappingWidth="183.20000000000005">
                                        <font>
                                           <Font name="System Bold Italic" size="26.0" />
                                        </font>
                                     </Text>
                                  </children>
-                              </AnchorPane>
+                              </HBox>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                                  <children>
                                     <Label fx:id="firstLName" alignment="CENTER" prefHeight="38.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -209,41 +207,41 @@
                         </GridPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane maxHeight="273.0" maxWidth="200.0" minHeight="273.0" minWidth="200.0" prefHeight="273.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                  <AnchorPane fx:id="anchorPaneWhite" minHeight="0.0" minWidth="0.0" prefHeight="273.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="1">
                      <children>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9c83c778" height="273.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="2.0" width="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                        <GridPane prefHeight="273.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Rectangle fx:id="rectWhite" arcHeight="5.0" arcWidth="5.0" fill="#9c83c778" height="273.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="2.0" width="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <GridPane minHeight="0.0" minWidth="0.0" prefHeight="273.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="200.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.4000244140625" minWidth="0.0" prefWidth="0.0" />
                            </columnConstraints>
                            <rowConstraints>
-                              <RowConstraints maxHeight="80.0" minHeight="80.0" prefHeight="80.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="88.79997558593749" minHeight="10.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="30.0" prefHeight="80.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" percentHeight="14.0" prefHeight="0.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <AnchorPane prefHeight="80.0" prefWidth="90.0">
-                                 <GridPane.margin>
-                                    <Insets right="150.0" />
-                                 </GridPane.margin>
+                              <HBox alignment="CENTER">
                                  <children>
-                                    <ImageView fitHeight="59.0" fitWidth="74.0" layoutX="2.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="59.0" fitWidth="74.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../images/pawns/towers/white-tower.png" />
                                        </image>
                                     </ImageView>
-                                    <Text fill="WHITE" layoutX="47.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="White Team" textAlignment="RIGHT">
+                                    <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="White Team" textAlignment="RIGHT">
                                        <font>
                                           <Font name="System Bold Italic" size="26.0" />
                                        </font>
                                     </Text>
                                  </children>
-                              </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets right="14.0" />
+                                 </GridPane.margin>
+                              </HBox>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                                  <children>
                                     <Label fx:id="firstWName" alignment="CENTER" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <padding>
@@ -255,7 +253,7 @@
                                     </Label>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                                  <children>
                                     <Label fx:id="secondWName" alignment="CENTER" prefHeight="45.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <padding>
@@ -267,7 +265,7 @@
                                     </Label>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3">
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3">
                                  <children>
                                     <Label fx:id="thirdWName" alignment="CENTER" prefHeight="45.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <padding>
@@ -279,7 +277,7 @@
                                     </Label>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="4">
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="4">
                                  <children>
                                     <Label fx:id="fourthWName" alignment="CENTER" prefHeight="45.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <padding>
@@ -295,49 +293,69 @@
                         </GridPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane prefHeight="138.0" prefWidth="218.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="138.0" prefWidth="218.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
-                        <Button fx:id="blackBtn" layoutX="8.0" layoutY="7.0" mnemonicParsing="false" onAction="#sendBlackTeam" prefHeight="28.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-border-color: black;" text="Choose Black Team" textAlignment="CENTER">
+                        <Button fx:id="blackBtn" layoutX="8.0" layoutY="7.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#sendBlackTeam" prefHeight="28.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-border-color: black;" text="Choose Black Team" textAlignment="CENTER" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Button>
                      </children>
                   </AnchorPane>
-                  <AnchorPane prefHeight="70.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="2">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="70.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="2">
                      <children>
-                        <Button fx:id="whiteBtn" layoutX="8.0" layoutY="7.0" mnemonicParsing="false" onAction="#sendWhiteTeam" prefHeight="26.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-border-color: white;" text="Choose White Team" textFill="WHITE">
+                        <Button fx:id="whiteBtn" layoutX="8.0" layoutY="7.0" mnemonicParsing="false" onAction="#sendWhiteTeam" prefHeight="26.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-border-color: white;" text="Choose White Team" textFill="WHITE" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Button>
                      </children>
                   </AnchorPane>
-                  <AnchorPane prefHeight="70.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                  <GridPane GridPane.columnIndex="3" GridPane.rowIndex="2">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="14.0" minHeight="14.0" prefHeight="14.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
                      <children>
-                        <Button fx:id="startButton" layoutX="8.0" layoutY="14.0" mnemonicParsing="false" onAction="#sendStart" prefHeight="26.0" prefWidth="183.0" style="-fx-background-color: transparent;">
-                           <graphic>
-                              <ImageView fx:id="startImg" fitHeight="51.0" fitWidth="226.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/icons/start.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
+                        <HBox alignment="TOP_CENTER" minHeight="0.0" minWidth="0.0" GridPane.rowIndex="1">
+                           <children>
+                              <Button fx:id="startButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#sendStart" prefHeight="50.0" prefWidth="110.0" style="-fx-background-color: transparent;">
+                                 <graphic>
+                                    <ImageView fx:id="startImg" fitHeight="50.0" fitWidth="226.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../images/icons/start.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
                      </children>
-                  </AnchorPane>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
+                  </GridPane>
+                  <HBox alignment="CENTER" minHeight="0.0" minWidth="0.0" GridPane.columnSpan="7">
                      <children>
-                        <Text fill="WHITE" layoutX="-14.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select a Team">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Select a Team">
                            <font>
-                              <Font name="System Bold" size="36.0" />
+                              <Font name="Trattatello" size="48.0" />
                            </font>
                         </Text>
                      </children>
-                  </AnchorPane>
+                  </HBox>
                </children>
             </GridPane>
          </children>
       </AnchorPane>
+      <Button minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#handleMuteButton" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0">
+         <graphic>
+            <ImageView fx:id="imgViewMute" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/icons/volume.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
    </children>
 </AnchorPane>

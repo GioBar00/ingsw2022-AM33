@@ -87,6 +87,7 @@ public class StartScreenController implements GUIController, MuteToggle {
         });
 
         GUIUtils.changeImageHoverButton(btnStart, imgStart, ResourceLoader.loadImage(ImagePath.START), ResourceLoader.loadImage(ImagePath.START_HIGHLIGHTED));
+        updateImageViewMute(imgViewMute);
 
         hideCenter(true);
     }

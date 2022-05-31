@@ -58,6 +58,7 @@ public class WinnerScreenController implements GUIController, MuteToggle {
     public void init() {
         root.heightProperty().addListener((observable, oldValue, newValue) -> imgViewBackground.setFitHeight(newValue.doubleValue()));
         GUIUtils.changeImageHoverButton(btnReload, imgViewReload, ResourceLoader.loadImage(ImagePath.RELOAD), ResourceLoader.loadImage(ImagePath.RELOAD_HIGHLIGHTED));
+        updateImageViewMute(imgViewMute);
     }
 
     /**

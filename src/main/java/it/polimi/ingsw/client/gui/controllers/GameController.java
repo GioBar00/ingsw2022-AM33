@@ -1,9 +1,11 @@
 package it.polimi.ingsw.client.gui.controllers;
 
+import it.polimi.ingsw.client.enums.AudioPath;
 import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
+import it.polimi.ingsw.client.gui.audio.AudioManager;
 import it.polimi.ingsw.client.gui.audio.MuteToggle;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseCloud;
@@ -145,6 +147,7 @@ public class GameController implements GUIController, MuteToggle {
         GUIUtils.bindSize(suggestionBox, suggestionBackground);
         GUIUtils.bindSize(anchorPanePlayerInfo, playerInfoBackground);
         GUIUtils.bindSize(titleBackAnchor, titleBackground);
+        updateImageViewMute(imgViewMute);
     }
 
     /**
@@ -195,7 +198,6 @@ public class GameController implements GUIController, MuteToggle {
         stage.setOnHiding(event -> gridRoot.setDisable(false));
         stage.show();
     }
-
 
     /**
      * This method is used to update the game with the new game view.
@@ -335,7 +337,7 @@ public class GameController implements GUIController, MuteToggle {
      * @param message {@link ChosenCloud} message that contains a list of available clouds.
      */
     public void processChooseCloud(ChooseCloud message) {
-        lblAction.setText("Select an highlighted cloud");
+        lblAction.setText("Select a highlighted cloud");
         List<Button> cloudButtons = new LinkedList<>();
         for (int i : message.getAvailableCloudIndexes()) {
             Button cloudBtn = cloudControllers.get(i).cloudBtn;
@@ -354,7 +356,7 @@ public class GameController implements GUIController, MuteToggle {
      * @param message the {@link ChooseIsland} message that contains a set of available islands .
      */
     public void processChooseIsland(ChooseIsland message) {
-        lblAction.setText("Select an highlighted island");
+        lblAction.setText("Select a highlighted island");
         for (Integer i : message.getAvailableIslandIndexes()) {
             if (i < islandsController.islandControllers.size()) {
                 Button islandBtn = islandsController.islandControllers.get(i).islandButton;
@@ -412,7 +414,7 @@ public class GameController implements GUIController, MuteToggle {
             return;
         for (Integer fromIndex : fromIndexes) {
             GUIUtils.setButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)), e -> {
-                lblAction.setText("Select an highlighted island");
+                lblAction.setText("Select a highlighted island");
                 for (Integer resInd : fromIndexes) {
                     GUIUtils.resetButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(resInd)));
                 }
@@ -456,7 +458,7 @@ public class GameController implements GUIController, MuteToggle {
         SchoolBoardController schoolBoardController = playerControllersByNickname.get(gui.getNickname()).getSchoolBoardController();
         for (Integer fromIndex : cardIndexes) {
             GUIUtils.setButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(fromIndex)), e -> {
-                lblAction.setText("Select an highlighted student in the entrance");
+                lblAction.setText("Select a highlighted student in the entrance");
                 characterCardControllers.get(cardIndex).hideEndButton();
                 for (Integer resInd : cardIndexes) {
                     GUIUtils.resetButton(characterCardControllers.get(cardIndex).buttons.get(StudentColor.retrieveStudentColorByOrdinal(resInd)));
@@ -474,7 +476,7 @@ public class GameController implements GUIController, MuteToggle {
     }
 
     public void processSwapEntranceHall(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
-        lblAction.setText("Select an highlighted student in the entrance");
+        lblAction.setText("Select a highlighted student in the entrance");
         Integer cardIndex = findActivatedCard();
         if (cardIndex == null)
             return;
@@ -487,7 +489,7 @@ public class GameController implements GUIController, MuteToggle {
                 GUIUtils.resetButton(schoolBoardController.entranceButtons.get(resInd));
             }
             GUIUtils.setButton(schoolBoardController.entranceButtons.get(fromIndex), e -> {
-                lblAction.setText("Select an highlighted student color in the hall");
+                lblAction.setText("Select a highlighted student color in the hall");
                 characterCardControllers.get(cardIndex).hideEndButton();
                 for (Integer toIndex : toIndexes) {
                     GUIUtils.setButton(schoolBoardController.hallButtonsByColor.get(StudentColor.retrieveStudentColorByOrdinal(toIndex)), action -> {
@@ -502,7 +504,7 @@ public class GameController implements GUIController, MuteToggle {
     }
 
     public void processMultiplePossibleMoves(Set<Integer> entranceIndexes, Set<Integer> islandIndexes, Set<Integer> entranceToHallIndexes) {
-        lblAction.setText("Select an highlighted student in the entrance");
+        lblAction.setText("Select a highlighted student in the entrance");
         PlayerController me = playerControllersByNickname.get(gui.getNickname());
         List<Button> entranceButtons = me.getSchoolBoardController().entranceButtons;
         Function clearHallAndIslandButtons = () -> {
@@ -515,7 +517,7 @@ public class GameController implements GUIController, MuteToggle {
         };
         for (Integer i : entranceIndexes) {
             GUIUtils.setButton(entranceButtons.get(i), event -> {
-                lblAction.setText("Select an highlighted island or hall to move the student to");
+                lblAction.setText("Select a highlighted island or hall to move the student to");
                 clearCharacterButtons();
                 System.out.println("Entrance button pressed: " + i);
                 // activate islands

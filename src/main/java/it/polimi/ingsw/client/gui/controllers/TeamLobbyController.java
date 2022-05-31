@@ -14,7 +14,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 
 public class TeamLobbyController implements LobbyController {
     private GUI gui;
@@ -69,6 +71,23 @@ public class TeamLobbyController implements LobbyController {
     @FXML
     public ImageView startImg;
 
+    @FXML
+    public ImageView imgViewBackground;
+    @FXML
+    public ImageView imgViewMute;
+    @FXML
+    public Rectangle rectWhite;
+    @FXML
+    public Rectangle rectLobby;
+    @FXML
+    public Rectangle rectBlack;
+    @FXML
+    public AnchorPane anchorPaneBlack;
+    @FXML
+    public AnchorPane anchorPaneLobby;
+    @FXML
+    public AnchorPane anchorPaneWhite;
+
     private final Label[] blackLabels;
 
     private final Label[] whiteLabels;
@@ -100,9 +119,14 @@ public class TeamLobbyController implements LobbyController {
      */
     @Override
     public void init() {
+        updateImageViewMute(imgViewMute);
         startButton.setVisible(false);
         startButton.setDisable(true);
         fillLabels();
+        root.heightProperty().addListener((observable, oldValue, newValue) -> imgViewBackground.setFitHeight(newValue.doubleValue()));
+        GUIUtils.bindSize(anchorPaneLobby, rectLobby);
+        GUIUtils.bindSize(anchorPaneBlack, rectBlack);
+        GUIUtils.bindSize(anchorPaneWhite, rectWhite);
     }
 
     /**
@@ -252,7 +276,6 @@ public class TeamLobbyController implements LobbyController {
     @FXML
     @Override
     public void handleMuteButton() {
-        //FIXME: add mute btn
-        toggleMute(new ImageView());
+        toggleMute(imgViewMute);
     }
 }
