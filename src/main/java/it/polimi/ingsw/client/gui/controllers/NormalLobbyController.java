@@ -12,7 +12,6 @@ import javafx.scene.layout.Pane;
 
 
 public class NormalLobbyController implements LobbyController {
-
     private GUI gui;
 
     private Pane root;
@@ -22,6 +21,11 @@ public class NormalLobbyController implements LobbyController {
 
     @FXML
     public ImageView startImg;
+
+    @FXML
+    public ImageView imageViewBackground;
+    @FXML
+    public ImageView imageViewMute;
 
 
     /**
@@ -41,6 +45,8 @@ public class NormalLobbyController implements LobbyController {
     public void init() {
         GUIUtils.changeImageHoverButton(startBtn, startImg, ResourceLoader.loadImage(ImagePath.START), ResourceLoader.loadImage(ImagePath.START_HIGHLIGHTED));
         GUIUtils.hideButton(startBtn);
+        updateImageViewMute(imageViewMute);
+        root.heightProperty().addListener((observable, oldValue, newValue) -> imageViewBackground.setFitHeight(newValue.doubleValue()));
     }
 
     /**
@@ -93,7 +99,6 @@ public class NormalLobbyController implements LobbyController {
     @FXML
     @Override
     public void handleMuteButton() {
-        //FIXME: add mute btn
-        toggleMute(new ImageView());
+        toggleMute(imageViewMute);
     }
 }
