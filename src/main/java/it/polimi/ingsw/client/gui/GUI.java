@@ -2,124 +2,78 @@ package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.UI;
+import it.polimi.ingsw.client.enums.AudioPath;
+import it.polimi.ingsw.client.enums.FXMLPath;
 import it.polimi.ingsw.client.enums.ImagePath;
-import it.polimi.ingsw.client.enums.SceneFXMLPath;
-import it.polimi.ingsw.client.gui.controllers.AssistantCardController;
-import it.polimi.ingsw.client.gui.controllers.ChooseWizardController;
-import it.polimi.ingsw.client.gui.controllers.GUIController;
-import it.polimi.ingsw.client.gui.controllers.TeamLobbyController;
+import it.polimi.ingsw.client.enums.ViewState;
+import it.polimi.ingsw.client.gui.audio.AudioManager;
+import it.polimi.ingsw.client.gui.controllers.*;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
-import it.polimi.ingsw.network.messages.actions.requests.PlayAssistantCard;
+import it.polimi.ingsw.network.messages.MoveActionRequest;
+import it.polimi.ingsw.network.messages.actions.requests.*;
+import it.polimi.ingsw.network.messages.actions.requests.*;
+import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
+import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.views.GameView;
-import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.layout.Pane;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.HashSet;
+import java.util.MissingResourceException;
+import java.util.Set;
 
 public class GUI extends Application implements UI {
-
-    private static GUI instance;
-    private static final CountDownLatch instantiationLatch = new CountDownLatch(1);
-    private final EnumMap<SceneFXMLPath, Scene> sceneByPath = new EnumMap<>(SceneFXMLPath.class);
-    public final static EnumMap<ImagePath, Image> imagesByPath = new EnumMap<>(ImagePath.class);
-
     private Stage stage;
 
     private Client client;
 
-    private TeamsView teamsView;
     private ViewListener listener;
-    private Message lastRequest;
 
     private String nickname;
 
-    public GUI() {
-        instance = this;
-        instantiationLatch.countDown();
-    }
+    private ChooseWizardController chooseWizardController;
 
-    public static GUI getInstance() {
-        try {
-            if (!instantiationLatch.await(5, TimeUnit.SECONDS))
-                return null;
-        } catch (InterruptedException e) {
-            return null;
-        }
-        return instance;
-    }
+    private LobbyController lobbyController;
 
-    private Scene loadFXML(String path) {
-        try {
-            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(path)));
-            Scene scene = new Scene(loader.load());
-            GUIController controller = loader.getController();
-            scene.setUserData(controller);
-            controller.setGUI(this);
-            controller.init();
-            return scene;
-        } catch (IOException | NullPointerException e) {
-            System.err.println("Error loading fxml: " + path);
-            stop();
-        }
-        return null;
-    }
+    private StartScreenController startScreenController;
+
+    private GameController gameController;
+
+    private ViewState viewState = ViewState.SETUP;
 
     @Override
     public void init() {
-        // load all fxml files
-        for (SceneFXMLPath path : SceneFXMLPath.values())
-            sceneByPath.put(path, loadFXML(path.getPath()));
-        // load all images
-        for (ImagePath path : ImagePath.values()) {
-            try {
-                imagesByPath.put(path, new Image(Objects.requireNonNull(getClass().getResource(path.getPath())).toExternalForm()));
-            } catch (NullPointerException e) {
-                System.err.println("Error loading image: " + path);
-                stop();
-            }
+        try {
+            ResourceLoader.checkResources();
+        } catch (MissingResourceException e) {
+            System.err.println(e.getMessage());
+            stop();
         }
-        //TODO: load all fonts
-        //TODO: load all sounds
-
     }
 
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        showStartScreen();
         stage.setTitle("Eriantys");
-        stage.setMinHeight(800.0);
-        stage.setMinWidth(1200.0);
-        stage.getIcons().add(imagesByPath.get(ImagePath.ICON));
-        stage.setOnHiding(event -> stop());
-        stage.show();
+        stage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
+        stage.setOnCloseRequest(event -> stop());
+
+        client = new Client(this);
+        setViewListener(client);
+        client.startClient();
     }
 
     @Override
     public void stop() {
-       System.exit(0);
-    }
-
-    @Override
-    public void setClient(Client client) {
-        System.out.println("Setting client");
-        this.client = client;
+        System.exit(0);
     }
 
     public Client getClient() {
@@ -131,11 +85,76 @@ public class GUI extends Application implements UI {
     }
 
     /**
+     * This method checks if the wizard controller is already loaded.
+     *
+     * @return true if the controller was loaded, false otherwise.
+     */
+    private boolean checkChooseWizardController() {
+        if (chooseWizardController == null) {
+            chooseWizardController = ResourceLoader.loadFXML(FXMLPath.CHOOSE_WIZARD, this);
+            Platform.runLater(chooseWizardController::init);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * This method checks if the team lobby controller is already loaded.
+     *
+     * @return true if the controller was loaded, false otherwise.
+     */
+    private boolean checkTeamLobbyController() {
+        if (lobbyController == null || !lobbyController.canHandleTeams()) {
+            lobbyController = ResourceLoader.loadFXML(FXMLPath.TEAM_LOBBY, this);
+            Platform.runLater(lobbyController::init);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * This method checks if the lobby controller is already loaded.
+     */
+    private void checkLobbyController() {
+        if (lobbyController == null) {
+            lobbyController = ResourceLoader.loadFXML(FXMLPath.LOBBY, this);
+            Platform.runLater(lobbyController::init);
+        }
+    }
+
+    /**
+     * This method checks if the game controller is already loaded.
+     *
+     * @return true if the controller was loaded, false otherwise.
+     */
+    private boolean checkGameController() {
+        if (gameController == null) {
+            gameController = ResourceLoader.loadFXML(FXMLPath.GAME_SCREEN, this);
+            Platform.runLater(gameController::init);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * This method checks if the start screen controller is already loaded.
+     */
+    private void checkStartScreenController() {
+        if (startScreenController == null) {
+            startScreenController = ResourceLoader.loadFXML(FXMLPath.START_SCREEN, this);
+            Platform.runLater(startScreenController::init);
+        }
+    }
+
+    /**
      * @param wizardsView
      */
     @Override
     public void setWizardView(WizardsView wizardsView) {
-        Platform.runLater(() -> ((ChooseWizardController)sceneByPath.get(SceneFXMLPath.CHOOSE_WIZARD).getUserData()).setClickableButtons(wizardsView));
+        boolean show = checkChooseWizardController();
+        Platform.runLater(() -> chooseWizardController.updateWizards(wizardsView));
+        if (show)
+            showWizardMenu();
     }
 
     /**
@@ -143,8 +162,10 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setTeamsView(TeamsView teamsView) {
-        this.teamsView = teamsView;
-        showLobbyScreen();
+        boolean show = viewState == ViewState.CHOOSE_TEAM && checkTeamLobbyController();
+        Platform.runLater(() -> ((TeamLobbyController) lobbyController).updateTeams(teamsView, nickname));
+        if (show)
+            showLobbyScreen();
     }
 
     /**
@@ -152,14 +173,19 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setGameView(GameView gameView) {
-        for (PlayerView pv : gameView.getPlayersView()) {
-            if (pv.getNickname().equals(nickname)){
-                if(pv.getPlayedCard() != null){
-                    ((AssistantCardController)sceneByPath.get(SceneFXMLPath.CHOOSE_ASSISTANT).getUserData()).setPlayedCard(pv.getPlayedCard());
-                    break;
-                }
-            }
+        boolean show = checkGameController();
+        if (gameView.getWinners() != null && !gameView.getWinners().isEmpty()) {
+            show = false;
+            viewState = ViewState.END_GAME;
+            gameController = null;
+            showWinnerScreen(gameView);
+        } else
+            Platform.runLater(() -> gameController.updateGameView(gameView, nickname));
+        if (show) {
+            viewState = ViewState.PLAYING;
+            showGameScreen();
         }
+
     }
 
     /**
@@ -168,15 +194,15 @@ public class GUI extends Application implements UI {
     @Override
     public void chooseGame() {
         Platform.runLater(() -> {
-            stage.getScene().getRoot().setDisable(true);
+            if (startScreenController != null)
+                startScreenController.disableCenter(true);
             Stage chooseGameStage = new Stage();
+            GUIController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_GAME, this);
             chooseGameStage.setTitle("Create a new game");
-            chooseGameStage.setScene(sceneByPath.get(SceneFXMLPath.CHOOSE_GAME));
-            chooseGameStage.setMinHeight(400.0);
-            chooseGameStage.setMinWidth(600.0);
-            chooseGameStage.getIcons().add(imagesByPath.get(ImagePath.ICON));
-            chooseGameStage.setResizable(false);
-            chooseGameStage.showAndWait();
+            chooseGameStage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
+            controller.loadScene(chooseGameStage);
+            chooseGameStage.setAlwaysOnTop(true);
+            chooseGameStage.show();
         });
     }
 
@@ -186,11 +212,17 @@ public class GUI extends Application implements UI {
     @Override
     public void showStartScreen() {
         System.out.println("Showing start screen");
-        if (stage != null)
-            Platform.runLater(() -> {
-                Scene scene = sceneByPath.get(SceneFXMLPath.START_SCREEN);
-                stage.setScene(scene);
-            });
+        checkStartScreenController();
+        viewState = ViewState.SETUP;
+        Platform.runLater(() -> {
+            chooseWizardController = null;
+            lobbyController = null;
+            gameController = null;
+            startScreenController.loadScene(stage);
+            if (!stage.isShowing())
+                stage.show();
+            AudioManager.playAudio(AudioPath.START);
+        });
 
     }
 
@@ -200,16 +232,28 @@ public class GUI extends Application implements UI {
     @Override
     public void showWizardMenu() {
         System.out.println("Showing wizard menu");
+        checkLobbyController();
         Platform.runLater(() -> {
-            stage.getScene().getRoot().setDisable(true);
+            if (startScreenController != null)
+                startScreenController.disableCenter(true);
             Stage chooseWizardStage = new Stage();
             chooseWizardStage.setTitle("Choose a Wizard");
-            chooseWizardStage.setScene(sceneByPath.get(SceneFXMLPath.CHOOSE_WIZARD));
-            chooseWizardStage.setMinHeight(150.0);
-            chooseWizardStage.setMinWidth(300.0);
-            chooseWizardStage.getIcons().add(imagesByPath.get(ImagePath.ICON));
-            chooseWizardStage.setResizable(false);
-            chooseWizardStage.showAndWait();
+            chooseWizardStage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
+            chooseWizardStage.onHidingProperty().set(event -> {
+                if (chooseWizardController.hasChosenWizard()) {
+                    viewState = ViewState.CHOOSE_TEAM;
+                    if (lobbyController != null)
+                        showLobbyScreen();
+                } else {
+                    viewState = ViewState.SETUP;
+                    client.closeConnection();
+                }
+                chooseWizardController = null;
+            });
+            chooseWizardController.loadScene(chooseWizardStage);
+            chooseWizardStage.setAlwaysOnTop(true);
+            chooseWizardStage.show();
+            viewState = ViewState.CHOOSE_WIZARD;
         });
     }
 
@@ -219,11 +263,26 @@ public class GUI extends Application implements UI {
     @Override
     public void showLobbyScreen() {
         Platform.runLater(() -> {
-            ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).getUserData()).setLabels(teamsView);
-            stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY));
-            stage.setMinHeight(500.0);
-            stage.setMinWidth(680.0);
-            stage.setResizable(false);
+            lobbyController.loadScene(stage);
+            AudioManager.playAudio(AudioPath.LOBBY);
+        });
+        startScreenController = null;
+    }
+
+    @Override
+    public void showGameScreen() {
+        Platform.runLater(() -> {
+            gameController.loadScene(stage);
+            AudioManager.playAudio(AudioPath.GAME);
+        });
+        lobbyController = null;
+    }
+
+    private void showWinnerScreen(GameView gameView) {
+        WinnerScreenController controller = ResourceLoader.loadFXML(FXMLPath.WINNER_SCREEN, this);
+        Platform.runLater(() -> {
+            controller.loadScene(stage);
+            controller.updateGameView(gameView);
         });
     }
 
@@ -232,16 +291,8 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void hostCanStart() {
-        if(teamsView != null){
-            Platform.runLater(() -> {
-                ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).getUserData()).setCanStart();
-                stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY));
-                stage.setResizable(false);
-                stage.setTitle("Eriantys");
-                stage.getIcons().add(imagesByPath.get(ImagePath.ICON));
-                stage.setOnHiding(event -> stop());
-                stage.show();
-            });
+        if (lobbyController != null) {
+            Platform.runLater(() -> lobbyController.setCanStart());
         }
     }
 
@@ -250,49 +301,99 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void hostCantStart() {
-        if(teamsView != null){
-            Platform.runLater(() -> {
-                ((TeamLobbyController)sceneByPath.get(SceneFXMLPath.TEAM_LOBBY).getUserData()).setCantStart();
-                stage.setScene(sceneByPath.get(SceneFXMLPath.TEAM_LOBBY));
-                stage.setResizable(false);
-                stage.getIcons().add(imagesByPath.get(ImagePath.ICON));
-                stage.setOnHiding(event -> stop());
-                stage.show();
-            });
+        if (lobbyController != null) {
+            Platform.runLater(() -> lobbyController.setCantStart());
         }
-    }
-
-    /**
-     *
-     */
-    @Override
-    public void showGameScreen() {
-        System.out.println("Showing game screen");
     }
 
     /**
      * @param message
      */
     @Override
-    public void setPossibleMoves(Message message) {
-        lastRequest = message;
-        processLastRequest(lastRequest);
+    public void setPossibleActions(Message message) {
+        processLastRequest(message);
     }
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
     private void processLastRequest(Message message) {
-        switch (MessageType.retrieveByMessage(message)){
-            case PLAY_ASSISTANT_CARD -> {
-                ((AssistantCardController)sceneByPath.get(SceneFXMLPath.CHOOSE_ASSISTANT).getUserData()).setPlayable(((PlayAssistantCard)message).getPlayableAssistantCards());
-            }
+        Platform.runLater(() -> gameController.clearAllButtons(nickname));
+
+        switch (MessageType.retrieveByMessage(message)) {
+            case PLAY_ASSISTANT_CARD ->
+                    Platform.runLater(() -> gameController.processPlayAssistantCard(((PlayAssistantCard) message).getPlayableAssistantCards()));
+            case CHOOSE_CLOUD -> Platform.runLater(() -> gameController.processChooseCloud((ChooseCloud) message));
+            case CHOOSE_ISLAND -> Platform.runLater(() -> gameController.processChooseIsland((ChooseIsland) message));
+            case CHOOSE_STUDENT_COLOR -> Platform.runLater(() -> {
+                Stage chooseColor = new Stage();
+                ChooseColorController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_COLOR, this);
+                controller.init();
+                controller.setAvailableButtons(((ChooseStudentColor) message).getAvailableStudentColors());
+                controller.loadScene(chooseColor);
+                chooseColor.show();
+            });
+            case MOVE_MOTHER_NATURE ->
+                    Platform.runLater(() -> gameController.processMoveMotherNature((MoveMotherNature) message));
+            case MOVE_STUDENT -> Platform.runLater(() -> handleMoveStudent((MoveStudent) message));
+            case MULTIPLE_POSSIBLE_MOVES ->
+                    Platform.runLater(() -> handlePossibleMoves((MultiplePossibleMoves) message));
+            case SWAP_STUDENTS -> Platform.runLater(() -> handleSwap((SwapStudents) message));
         }
     }
+
+    private void handleMoveStudent(MoveStudent moveStudent) {
+        switch (moveStudent.getTo()) {
+            case ISLAND ->
+                    gameController.processMoveCardIsland(moveStudent.getFromIndexesSet(), moveStudent.getToIndexesSet());
+            case HALL -> gameController.processMoveCardHall(moveStudent.getFromIndexesSet());
+        }
+    }
+
+    private void handlePossibleMoves(MultiplePossibleMoves multiplePossibleMoves) {
+        Set<Integer> entrance = new HashSet<>();
+        Set<Integer> islands = new HashSet<>();
+        Set<Integer> entranceToHallIndexes = new HashSet<>();
+        for (MoveActionRequest moveActionRequest : multiplePossibleMoves.getPossibleMoves()) {
+            if (moveActionRequest.getTo().equals(MoveLocation.ISLAND)) {
+                islands.addAll(moveActionRequest.getToIndexesSet());
+                entrance.addAll(moveActionRequest.getFromIndexesSet());
+            } else if (moveActionRequest.getTo().equals(MoveLocation.HALL)) {
+                entranceToHallIndexes.addAll(moveActionRequest.getFromIndexesSet());
+            }
+        }
+        gameController.processMultiplePossibleMoves(entrance, islands, entranceToHallIndexes);
+    }
+
+    private void handleSwap(SwapStudents swapStudents) {
+        if (swapStudents.getFrom().equals(MoveLocation.CARD)) {
+            gameController.processSwapCardEntrance(swapStudents.getFromIndexesSet(), swapStudents.getToIndexesSet());
+        }
+
+        if (swapStudents.getFrom().equals(MoveLocation.ENTRANCE)) {
+            gameController.processSwapEntranceHall(swapStudents.getFromIndexesSet(), swapStudents.getToIndexesSet());
+        }
+    }
+
     @Override
     public void serverUnavailable() {
         System.out.println("Server unavailable");
+        if (viewState != ViewState.END_GAME) {
+            showAlert("Lost connection with the server or server unavailable.\n" +
+                    "Please try again later.");
+            if (viewState == ViewState.SETUP) {
+                if (startScreenController != null) {
+                    Platform.runLater(() -> startScreenController.disableCenter(false));
+                }
+            } else {
+                showStartScreen();
+            }
+        }
     }
 
     /**
@@ -304,19 +405,16 @@ public class GUI extends Application implements UI {
     }
 
     /**
+     * This method shows an alert to the user.
      *
+     * @param message The message to be shown.
      */
-    @Override
-    public void updateGameView() {
-        System.out.println("Updating game view");
-    }
-
-    /**
-     *
-     */
-    @Override
-    public void updateLobbyView() {
-        System.out.println("Updating lobby view");
+    private void showAlert(String message) {
+        Platform.runLater(() -> {
+            Alert messageAlert = new Alert(Alert.AlertType.ERROR);
+            messageAlert.setContentText(message);
+            messageAlert.show();
+        });
     }
 
     /**
@@ -324,6 +422,11 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showCommMessage(CommMessage message) {
+        if (message.getType().equals(CommMsgType.OK))
+            return;
+
+        showAlert(message.getType().getMessage());
+
         System.out.println("Showing comm message");
         System.out.println(MessageBuilder.toJson(message));
     }

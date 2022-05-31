@@ -1,83 +1,80 @@
 package it.polimi.ingsw.client.gui.controllers;
 
-import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
+import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.network.messages.views.SchoolBoardView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
-import it.polimi.ingsw.util.Function;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class SchoolBoardController implements GUIController {
 
-    private GUI schoolBoardGUI;
+    @FXML
+    public ImageView imgBoard;
+    @FXML
+    public AnchorPane anchorPaneBoard;
+    public AnchorPane anchorPaneBlue;
+    public AnchorPane anchorPaneYellow;
+    public AnchorPane anchorPaneGreen;
+    public AnchorPane anchorPaneRed;
+    public AnchorPane anchorPaneMagenta;
+    public AnchorPane anchorPaneHall;
+    private GUI gui;
 
-    private final Map<Integer, AnchorPane> entranceMap = new HashMap<>();
+    public final List<Button> entranceButtons = new ArrayList<>(9);
 
-    private final Map<Integer, AnchorPane> towersMap = new HashMap<>();
+    private final Map<Button, ImageView> entranceImageViewByButton = new HashMap<>();
 
-    private final EnumMap<StudentColor, Map<Integer, AnchorPane>> hallMap = new EnumMap<>(StudentColor.class);
+    private final List<ImageView> towerImageViews = new ArrayList<>(8);
 
-    private final EnumMap<StudentColor, AnchorPane> profsMap = new EnumMap<>(StudentColor.class);
+    private final EnumMap<StudentColor, ImageView> professorsImageViewByColor = new EnumMap<>(StudentColor.class);
 
-    private final Map<Integer, Button> entranceButtonsMap = new HashMap<>();
+    private final EnumMap<StudentColor, List<ImageView>> hallImageViewsByColor = new EnumMap<>(StudentColor.class);
 
-    private final Map<Button, Function> buttonAction = new HashMap<>();
+    public final EnumMap<StudentColor, Button> hallButtonsByColor = new EnumMap<>(StudentColor.class);
+
+    public final EnumMap<StudentColor, AnchorPane> hallAnchorPaneByColor = new EnumMap<>(StudentColor.class);
+    
+
+    private Pane root;
 
     @FXML
     private Button blueHallButton;
 
     @FXML
-    private AnchorPane blueProf;
-
-    @FXML
-    private GridPane ent_hall_prof_grid;
+    private GridPane entranceGrid;
 
     @FXML
     private Button greenHallButton;
 
     @FXML
-    private AnchorPane greenProf;
+    public Button hallButton;
 
     @FXML
-    private Button hallButton;
+    private GridPane hallGrid;
 
     @FXML
     private Button magentaHallButton;
 
     @FXML
-    private AnchorPane magentaProf;
+    private GridPane profsGrid;
 
     @FXML
     private Button redHallButton;
 
     @FXML
-    private AnchorPane redProf;
-
-    @FXML
-    private AnchorPane root;
-
-    @FXML
-    private GridPane towers_grid;
+    private GridPane towersGrid;
 
     @FXML
     private Button yellowHallButton;
-
-    @FXML
-    private AnchorPane yellowProf;
-
-    @FXML
-    private GridPane buttonEntranceGrid;
-
 
     /**
      * method to set the GUI
@@ -86,289 +83,187 @@ public class SchoolBoardController implements GUIController {
      */
     @Override
     public void setGUI(GUI gui) {
-        this.schoolBoardGUI = gui;
+        this.gui = gui;
     }
 
-
-    /**
-     * method to initialize the controller
-     */
     @Override
     public void init() {
-        // initialize components & their listeners
-        towers_grid.setGridLinesVisible(false);
-        towers_grid.setDisable(true);
+        initEntrance();
+        initTowers();
+        initProfessors();
+        initHall();
 
-        ent_hall_prof_grid.setGridLinesVisible(false);
-        ent_hall_prof_grid.setDisable(true);
+        GUIUtils.bindSize(anchorPaneHall, hallButton);
+        GUIUtils.bindSize(anchorPaneBlue, blueHallButton);
+        GUIUtils.bindSize(anchorPaneGreen, greenHallButton);
+        GUIUtils.bindSize(anchorPaneMagenta, magentaHallButton);
+        GUIUtils.bindSize(anchorPaneRed, redHallButton);
+        GUIUtils.bindSize(anchorPaneYellow, yellowHallButton);
 
-        buttonEntranceGrid.setGridLinesVisible(false);
-        buttonEntranceGrid.setDisable(true);
+        root.getChildren().clear();
 
-        greenHallButton.setDisable(true);
+        GUIUtils.bindSize(anchorPaneBoard, imgBoard);
+        GUIUtils.addToPaneCenterKeepRatio(root, anchorPaneBoard, 1125.0 / 488);
+    }
 
-        redHallButton.setDisable(true);
-
-        yellowHallButton.setDisable(true);
-
-        magentaHallButton.setDisable(true);
-
-        blueHallButton.setDisable(true);
-
-        hallButton.setDisable(true);
-
-        // set all the maps
-        // entranceMap
-        int row = 0;
-        int column = 1;
+    private void initEntrance() {
         for (int i = 0; i < 9; i++) {
-            if (getAnchorFromGrid(ent_hall_prof_grid, row, column) != null)
-                entranceMap.put(i, getAnchorFromGrid(ent_hall_prof_grid, row, column));
-            if (column == 1)
-                row++;
-            column = (column + 1) % 2;
+            Button btn = new Button();
+            btn.setMinHeight(0.0);
+            btn.setMinWidth(0.0);
+            btn.setBackground(null);
+            btn.setText("");
+            entranceButtons.add(btn);
+            ImageView imageView = new ImageView();
+            imageView.setPreserveRatio(true);
+            GUIUtils.bindSize(btn, imageView);
+            entranceImageViewByButton.put(btn, imageView);
+            btn.setGraphic(imageView);
+            entranceGrid.add(btn, ((i + 1) % 2) * 2 + 1, ((i + 1) / 2) * 2 + 1);
+            GUIUtils.resetButton(btn);
         }
+    }
 
-        // entrance buttons map
-        row = 0;
-        column = 1;
-        for (int i = 0; i < 9; i++) {
-            if (getAnchorFromGrid(buttonEntranceGrid, row, column) != null) {
-                Button button = (Button) getAnchorFromGrid(buttonEntranceGrid, row, column).getChildren();
-                entranceButtonsMap.put(i, button);
-                entranceButtonsMap.get(i).setDisable(true);
-                // entranceButtonsMap.get(i).addEventHandler(MouseEvent.MOUSE_CLICKED, ... non abbiamo un event per il click);
-            }
-            if (column == 1)
-                row++;
-            column = (column + 1) % 2;
-        }
-
-        // button action map
-        for (int i = 0; i < 9; i++) {
-            buttonAction.put(entranceButtonsMap.get(i), () -> {
-            });
-        }
-
-        //towerMap
-        row = 0;
-        column = 0;
+    private void initTowers() {
         for (int i = 0; i < 8; i++) {
-            if (getAnchorFromGrid(towers_grid, row, column) != null)
-                towersMap.put(i, getAnchorFromGrid(towers_grid, row, column));
-            if (column == 1)
-                row++;
-            column = (column + 1) % 2;
+            AnchorPane anchorPane = new AnchorPane();
+            anchorPane.setMinHeight(0.0);
+            anchorPane.setMinWidth(0.0);
+            ImageView imageView = new ImageView();
+            imageView.setPreserveRatio(true);
+            GUIUtils.bindSize(anchorPane, imageView);
+            towerImageViews.add(imageView);
+            anchorPane.getChildren().add(imageView);
+            towersGrid.add(anchorPane, (i % 2) * 2 + 1, (i / 2) * 2 + 1);
         }
+        hallButtonsByColor.put(StudentColor.BLUE, blueHallButton);
+        hallButtonsByColor.put(StudentColor.GREEN, greenHallButton);
+        hallButtonsByColor.put(StudentColor.MAGENTA, magentaHallButton);
+        hallButtonsByColor.put(StudentColor.RED, redHallButton);
+        hallButtonsByColor.put(StudentColor.YELLOW, yellowHallButton);
+    }
 
-        //profsMap
-        profsMap.put(StudentColor.GREEN, greenProf);
-        profsMap.put(StudentColor.RED, redProf);
-        profsMap.put(StudentColor.YELLOW, yellowProf);
-        profsMap.put(StudentColor.MAGENTA, magentaProf);
-        profsMap.put(StudentColor.BLUE, blueProf);
-
-        //hallMap
-        row = 0;
+    private void initProfessors() {
         for (StudentColor sc : StudentColor.values()) {
-            Map<Integer, AnchorPane> table = new HashMap<>();
+            AnchorPane anchorPane = new AnchorPane();
+            anchorPane.setMinHeight(0.0);
+            anchorPane.setMinWidth(0.0);
+            ImageView imageView = new ImageView();
+            imageView.setPreserveRatio(true);
+            imageView.setRotate(90.0);
+            GUIUtils.bindSize(anchorPane, imageView);
+            professorsImageViewByColor.put(sc, imageView);
+            anchorPane.getChildren().add(imageView);
+            profsGrid.add(anchorPane, 1, (sc.ordinal() * 2) + 1);
+        }
+    }
+    
+    private void initHall() {
+        GUIUtils.resetButton(hallButton);
+        hallAnchorPaneByColor.put(StudentColor.BLUE, anchorPaneBlue);
+        hallAnchorPaneByColor.put(StudentColor.GREEN, anchorPaneGreen);
+        hallAnchorPaneByColor.put(StudentColor.MAGENTA, anchorPaneMagenta);
+        hallAnchorPaneByColor.put(StudentColor.RED, anchorPaneRed);
+        hallAnchorPaneByColor.put(StudentColor.YELLOW, anchorPaneYellow);
+        for (StudentColor sc : StudentColor.values()) {
+            GUIUtils.resetButton(hallButtonsByColor.get(sc));
+            hallImageViewsByColor.put(sc, new ArrayList<>(10));
             for (int i = 0; i < 10; i++) {
-                table.put(i, getAnchorFromGrid(ent_hall_prof_grid, row, i + 3));
+                AnchorPane anchorPane = new AnchorPane();
+                anchorPane.setMinHeight(0.0);
+                anchorPane.setMinWidth(0.0);
+                ImageView imageView = new ImageView();
+                imageView.setPreserveRatio(true);
+                hallImageViewsByColor.get(sc).add(imageView);
+                GUIUtils.bindSize(anchorPane, imageView);
+                anchorPane.getChildren().add(imageView);
+
+                AnchorPane father = new AnchorPane();
+                father.setMinHeight(0.0);
+                father.setMinWidth(0.0);
+                GUIUtils.addToPaneCenterKeepRatio(father, anchorPane, 1.0);
+                father.setMouseTransparent(true);
+
+                hallGrid.add(father, i + 1, sc.ordinal() * 2 + 1);
             }
-            hallMap.put(sc, table);
-            row++;
         }
     }
-
-    public void setSchoolBoardGUIData(SchoolBoardView schoolBoardView) {
-        // setEntrance
-        for (int i = 0; i < 9; i++) {
-            setEntranceSlot(schoolBoardView.getEntrance().get(i), i, i < schoolBoardView.getEntrance().size());
-        }
-
-        // setHall
-        for (StudentColor studentColor : StudentColor.values()) {
-            for (int i = 0; i < 10; i++) {
-                setHallSlot(studentColor, i, i < schoolBoardView.getStudentsHall().get(studentColor));
-            }
-        }
-
-        // setProfs
-        for (StudentColor prof : StudentColor.values()) {
-            setProfessor(prof, schoolBoardView.getProfessors().contains(prof));
-        }
-
-        // setTowers
-        for (int i = 0; i < 8; i++) {
-            setTower(schoolBoardView.getTower(), i, i < schoolBoardView.getNumTowers());
-        }
-
-    }
-
 
     /**
-     * for each cell in the grid, the method returns the anchor pane inside it
+     * This method is used to set the parent of the controller.
      *
-     * @param gridPane that contains all cells
-     * @param row      of the selected cell
-     * @param column   of the selected cell
-     * @return the anchorPane inside the selected cell
+     * @param root the parent of the controller.
      */
-    public AnchorPane getAnchorFromGrid(GridPane gridPane, int row, int column) {
-        for (Node node : gridPane.getChildren()) {
-            if (GridPane.getColumnIndex(node) == column && GridPane.getRowIndex(node) == row)
-                return (AnchorPane) node;
-        }
-        return null;
+    @Override
+    public void setRootPane(Pane root) {
+        this.root = root;
     }
 
     /**
-     * add the image of a student to the grid
+     * This method returns the node of the controller.
      *
-     * @param sc        color of the student
-     * @param imageView inside the GridAnchor, where the image of the student pawn will be set
-     * @return true if the method was executed correctly
+     * @return the node of the controller.
      */
-    public boolean addStudentToGridAnchor(StudentColor sc, ImageView imageView) {
-        if (sc == null || imageView == null)
-            return false;
+    @Override
+    public Pane getRootPane() {
+        return root;
+    }
 
-        switch (sc) {
-            case GREEN -> imageView.setImage(GUI.imagesByPath.get(ImagePath.GREEN_STUDENT));
-            case RED -> imageView.setImage(GUI.imagesByPath.get(ImagePath.RED_STUDENT));
-            case YELLOW -> imageView.setImage(GUI.imagesByPath.get(ImagePath.YELLOW_STUDENT));
-            case MAGENTA -> imageView.setImage(GUI.imagesByPath.get(ImagePath.MAGENTA_STUDENT));
-            case BLUE -> imageView.setImage(GUI.imagesByPath.get(ImagePath.BLUE_STUDENTS));
+
+
+    public void setSchoolBoardView(SchoolBoardView schoolBoardView) {
+        setEntrance(schoolBoardView.getEntrance());
+        setHall(schoolBoardView.getStudentsHall());
+        setProfs(schoolBoardView.getProfessors());
+        setTowers(schoolBoardView.getNumTowers(), schoolBoardView.getTower());
+    }
+
+    public void setEntrance(List<StudentColor> entrance) {
+        for (int i = 0; i < entrance.size(); i++) {
+            if (entrance.get(i) != null) {
+                Image studentImage = GUIUtils.getStudentImage(entrance.get(i));
+                entranceImageViewByButton.get(entranceButtons.get(i)).setImage(studentImage);
+            } else
+                entranceImageViewByButton.get(entranceButtons.get(i)).setImage(null);
         }
-
-        return true;
     }
 
-    /**
-     * method to set the image of the student pawn inside a cell of the entrance
-     *
-     * @param sc    color of the student
-     * @param index of the entrance slot
-     * @param isSet is true if the student needs to be set, false if it has to be removed
-     * @return true if the method was executed correctly
-     */
-    public boolean setEntranceSlot(StudentColor sc, int index, boolean isSet) {
-        AnchorPane anchorPane = entranceMap.get(index);
-        ImageView imageView = (ImageView) anchorPane.getChildren();
-        if (isSet) {
-            // you want to set the student
-            if (imageView.getImage() != null)
-                return false;
-            addStudentToGridAnchor(sc, imageView);
-        } else {
-            // you want to remove the student
-            if (imageView.getImage() == null)
-                return true;
-            imageView.setImage(null);
+    public void setHall(EnumMap<StudentColor, Integer> hall) {
+        for (StudentColor sc : hallImageViewsByColor.keySet()) {
+            int num = 0;
+            for (; num < hall.get(sc); num++)
+                hallImageViewsByColor.get(sc).get(num).setImage(GUIUtils.getStudentImage(sc));
+            for (; num < hallImageViewsByColor.get(sc).size(); num++)
+                hallImageViewsByColor.get(sc).get(num).setImage(null);
         }
-        return true;
     }
 
-    /**
-     * method to add a student to the hall tables
-     *
-     * @param sc    of the table
-     * @param index position of the student in the table
-     * @param isSet id true if the student needs to be added, false otherwise
-     * @return true if the method was executed correctly
-     */
-    public boolean setHallSlot(StudentColor sc, int index, boolean isSet) {
-        AnchorPane anchorPane = hallMap.get(sc).get(index);
-        ImageView imageView = (ImageView) anchorPane.getChildren();
-        if (isSet) {
-            // you want to set the student
-            AnchorPane anchorPanePrevious = hallMap.get(sc).get(index - 1);
-            ImageView previous = (ImageView) anchorPanePrevious.getChildren();
-            if (imageView.getImage() != null || previous.getImage() == null)
-                return false;
-            addStudentToGridAnchor(sc, imageView);
-        } else {
-            // you want to remove the student
-            AnchorPane anchorPaneNext = hallMap.get(sc).get(index + 1);
-            ImageView next = (ImageView) anchorPaneNext.getChildren();
-            if (next.getImage() == null)
-                return false;
-            imageView.setImage(null);
+    public void setProfs(EnumSet<StudentColor> professors) {
+        for (StudentColor sc : StudentColor.values()) {
+            if (professors.contains(sc)) {
+                professorsImageViewByColor.get(sc).setImage(GUIUtils.getProfImage(sc));
+            } else
+                professorsImageViewByColor.get(sc).setImage(null);
         }
-        return true;
     }
 
-
-    /**
-     * method to set the professor's pawn in the schoolboard on the CLI
-     *
-     * @param sc    of the professor
-     * @param isSet is true if you want the prof to be set, false if you want to remove it
-     * @return true if the method was executed correctly
-     */
-    public boolean setProfessor(StudentColor sc, boolean isSet) {
-        AnchorPane anchorPane = profsMap.get(sc);
-        ImageView imageView = (ImageView) anchorPane.getChildren();
-        if (isSet) {
-            // you want to set the professor
-            if (imageView.getImage() != null)
-                return false;
-            switch (sc) {
-                case GREEN -> imageView.setImage(GUI.imagesByPath.get(ImagePath.GREEN_PROF));
-                case RED -> imageView.setImage(GUI.imagesByPath.get(ImagePath.RED_PROF));
-                case YELLOW -> imageView.setImage(GUI.imagesByPath.get(ImagePath.YELLOW_PROF));
-                case MAGENTA -> imageView.setImage(GUI.imagesByPath.get(ImagePath.MAGENTA_PROF));
-                case BLUE -> imageView.setImage(GUI.imagesByPath.get(ImagePath.BLUE_PROF));
-            }
-        } else {
-            // you want to remove the professor
-            if (imageView.getImage() == null)
-                return true;
-            imageView.setImage(null);
-        }
-        return true;
+    public void setTowers(int numTowers, Tower tower) {
+        Image towerImage = GUIUtils.getTowerImage(tower);
+        int num = 0;
+        for (; num < numTowers; num++)
+            towerImageViews.get(num).setImage(towerImage);
+        for (; num < towerImageViews.size(); num++)
+            towerImageViews.get(num).setImage(null);
     }
 
     /**
-     * method used to set a tower in the tower grid
-     *
-     * @param tower color of the tower
-     * @param index of the tower in the towersMap
-     * @param isSet true if you want to add a tower, false if you want to remove it
-     * @return true if the method was executed correctly
+     * This method is used for clear all the buttons in the school board.
      */
-    public boolean setTower(Tower tower, int index, Boolean isSet) {
-        AnchorPane anchorPane = towersMap.get(index);
-        ImageView imageView = (ImageView) anchorPane.getChildren();
-        if (isSet) {
-            if (imageView.getImage() != null)
-                return false;
-            switch (tower) {
-                case WHITE -> imageView.setImage(GUI.imagesByPath.get(ImagePath.WHITE_TOWER));
-                case GREY -> imageView.setImage(GUI.imagesByPath.get(ImagePath.GRAY_TOWER));
-                case BLACK -> imageView.setImage(GUI.imagesByPath.get(ImagePath.BLACK_TOWER));
-            }
-        } else {
-            if (imageView.getImage() == null)
-                return true;
-            imageView.setImage(null);
-        }
-        return true;
-    }
-
-    /**
-     * method to enable or disable the buttons of the entrance and the hall
-     */
-    public void setEnableEntranceToHall(boolean isSet) {
-        for (int i = 0; i < 9; i++)
-            entranceButtonsMap.get(i).setDisable(!isSet);
-        hallButton.setDisable(!isSet);
-    }
-
-    /**
-     * @return the schoolBoardGUI
-     */
-    public GUI getSchoolBoardGUI() {
-        return schoolBoardGUI;
+    public void clearAllButtons() {
+        for (Button button : entranceButtons)
+            GUIUtils.resetButton(button);
+        for(Button button : hallButtonsByColor.values())
+            GUIUtils.resetButton(button);
+        GUIUtils.resetButton(hallButton);
     }
 }

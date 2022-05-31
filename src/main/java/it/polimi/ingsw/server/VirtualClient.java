@@ -24,7 +24,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     /**
      * The message exchange handler used to send and receive messages to and from the client
      */
-    protected final CommunicationHandler communicationHandler;
+    protected CommunicationHandler communicationHandler;
 
     /**
      * Constructor of VirtualClient
@@ -57,36 +57,30 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     }
 
     /**
-     * Adding a socket to the virtualClient. Used in case of creation or reconnection
+     * Setting the CommunicationHandler to the virtualClient. Used in case of creation or reconnection
      *
-     * @param newSocket the socket of the communication
+     * @param communicationHandler the communication handler of the communication
      */
-    public synchronized void setSocket(Socket newSocket) {
-        communicationHandler.setSocket(newSocket);
-    }
-
-    /**
-     * This method starts the message exchange handler
-     */
-    public synchronized void start() {
-        communicationHandler.start();
+    public synchronized void setCommunicationHandler(CommunicationHandler communicationHandler) {
+        this.communicationHandler = communicationHandler;
     }
 
     /**
      * Reconnects the virtual client.
      *
-     * @param socket the socket of the communication
+     * @param ch the communication handler of the communication
      */
-    public void reconnect(Socket socket) {
-        setSocket(socket);
-        start();
+    public void reconnect(CommunicationHandler ch) {
+        setCommunicationHandler(ch);
+        ch.setDisconnectListener(this);
+        ch.setMessageHandler(this);
         notifyMessageListeners(new MessageEvent(this, new GameStateRequest()));
     }
 
     /**
      * This method stops the message exchange handler
      */
-    public synchronized void stop() {
+    public void stop() {
         communicationHandler.stop();
     }
 

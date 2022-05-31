@@ -93,7 +93,6 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
             types.remove(sel);
         }
 
-
         reserve = 20;
 
     }
@@ -402,6 +401,11 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
     @Override
     public void skipCurrentPlayerTurn() {
         if (model.executeSkipTurn()) {
+            if (characterCardActivating != null) {
+                characterCardActivating.forceEndEffect();
+                characterCardActivating = null;
+            }
+            activatedACharacterCard = false;
             notifyPersonalizedGameState();
             notifyPossibleActions();
         }
@@ -641,7 +645,11 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
     @Override
     public boolean addStudentToHall(StudentColor s) {
         SchoolBoard sb = model.playersManager.getSchoolBoard();
-        return sb.addToHall(s);
+        if (sb.addToHall(s)) {
+            checkProfessor(s);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -734,10 +742,21 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
                     && !activatedACharacterCard
                     && characterCardActivating == null)
                 canUse = true;
+            if (cc.getType().equals(CharacterType.MINSTREL)) {
+                SchoolBoard currentSchoolBoard = model.playersManager.getSchoolBoard();
+                boolean isEmpty = true;
+                for (StudentColor s : StudentColor.values()) {
+                    if (currentSchoolBoard.getStudentsInHall(s) > 0) {
+                        isEmpty = false;
+                        break;
+                    }
+                }
+                if (isEmpty)
+                    canUse = false;
+            }
 
             boolean isActivating = characterCardActivating != null && characterCardActivating.equals(cc);
-
-            CharacterCardView ccv = new CharacterCardView(cc.getType(), canUse, ogCost, addCost, numBlocks, students, isActivating);
+            CharacterCardView ccv = new CharacterCardView(cc.getType(), canUse, ogCost, addCost, numBlocks, students, isActivating, cc.canEndEffect());
 
             characterCardsView.add(ccv);
         }
@@ -855,6 +874,49 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
     }
 
     /**
+     * This method is used for checking the professors when a pawn is removed from the schoolboard.
+     *
+     * @param s the StudentColor that has been removed.
+     */
+    @Override
+    public void checkProfessorOnRemove(StudentColor s) {
+        SchoolBoard schoolBoard;
+        for (Player p : model.playersManager.getPlayers()) {
+            schoolBoard = model.playersManager.getSchoolBoard(p);
+            if (schoolBoard.getProfessors().contains(s))
+                if (schoolBoard.getStudentsInHall(s) <= 0)
+                    schoolBoard.removeProfessor(s);
+        }
+        Player max = null;
+        Player oldOwner = null;
+        int maxStudents;
+        for (Player p : model.playersManager.getPlayers()) {
+            schoolBoard = model.playersManager.getSchoolBoard(p);
+            if (schoolBoard.getProfessors().contains(s)) {
+                oldOwner = p;
+                break;
+            }
+        }
+        if (oldOwner != null) {
+            maxStudents = model.playersManager.getSchoolBoard(oldOwner).getStudentsInHall(s);
+        } else maxStudents = 0;
+
+        for (Player p : model.playersManager.getPlayers()) {
+            schoolBoard = model.playersManager.getSchoolBoard(p);
+            if (schoolBoard.getStudentsInHall(s) > maxStudents) {
+                maxStudents = schoolBoard.getStudentsInHall(s);
+                max = p;
+            }
+        }
+
+        if (max != null) {
+            model.playersManager.getSchoolBoard(max).addProfessor(s);
+            if (oldOwner != null)
+                model.playersManager.getSchoolBoard(oldOwner).removeProfessor(s);
+        }
+    }
+
+    /**
      * the method checks that che professor of type s is assigned to the correct SchoolBoard and changes its position
      * in case that the current assignment is incorrect
      *
@@ -880,7 +942,7 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
                         if (compSch.getProfessors().contains(s)) {
                             CharacterCard farmer = null;
                             for (CharacterCard c : characterCards) {
-                                if (c instanceof Farmer) {
+                                if (c.canHandleHistory()) {
                                     farmer = c;
                                     break;
                                 }

@@ -75,7 +75,7 @@
                            <children>
                               <Label text="Server IP/domain:">
                                  <font>
-                                    <Font size="24.0" />
+                                    <Font name="Trattatello" size="24.0" />
                                  </font>
                               </Label>
                            </children>
@@ -84,7 +84,7 @@
                            <children>
                               <TextField fx:id="txtFieldServer" promptText="127.0.0.1" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
-                                    <Font size="18.0" />
+                                    <Font name="Trattatello" size="18.0" />
                                  </font>
                               </TextField>
                            </children>
@@ -93,7 +93,7 @@
                            <children>
                               <Label text="Port:">
                                  <font>
-                                    <Font size="24.0" />
+                                    <Font name="Trattatello" size="24.0" />
                                  </font>
                               </Label>
                            </children>
@@ -102,7 +102,7 @@
                            <children>
                               <Label text="Nickname:">
                                  <font>
-                                    <Font size="24.0" />
+                                    <Font name="Trattatello" size="24.0" />
                                  </font>
                               </Label>
                            </children>
@@ -111,7 +111,7 @@
                            <children>
                               <TextField fx:id="txtFieldPort" promptText="1234" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
-                                    <Font size="18.0" />
+                                    <Font name="Trattatello" size="18.0" />
                                  </font>
                               </TextField>
                            </children>
@@ -120,7 +120,7 @@
                            <children>
                               <TextField fx:id="txtFieldNickname" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
-                                    <Font size="18.0" />
+                                    <Font name="Trattatello" size="18.0" />
                                  </font>
                               </TextField>
                            </children>
@@ -157,9 +157,9 @@
             </AnchorPane>
             <VBox alignment="BOTTOM_LEFT" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="2">
                <children>
-                  <Button fx:id="btnMute" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: transparent;">
+                  <Button fx:id="btnMute" mnemonicParsing="false" onAction="#handleMuteButton" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: transparent;">
                      <graphic>
-                        <ImageView fitHeight="60.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="imgViewMute" fitHeight="60.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/icons/volume.png" />
                            </image>

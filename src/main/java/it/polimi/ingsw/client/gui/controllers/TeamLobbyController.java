@@ -1,17 +1,33 @@
 package it.polimi.ingsw.client.gui.controllers;
 
+import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
+import it.polimi.ingsw.client.gui.GUIUtils;
+import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
 import it.polimi.ingsw.network.messages.client.StartGame;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.server.model.enums.Tower;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 
-public class TeamLobbyController implements GUIController {
-
+public class TeamLobbyController implements LobbyController {
     private GUI gui;
+
+    private Pane root;
+
+    @FXML
+    public Button blackBtn;
+
+    @FXML
+    public Button whiteBtn;
 
     @FXML
     public Button startButton;
@@ -52,6 +68,26 @@ public class TeamLobbyController implements GUIController {
     @FXML
     public Label fourthLName;
 
+    @FXML
+    public ImageView startImg;
+
+    @FXML
+    public ImageView imgViewBackground;
+    @FXML
+    public ImageView imgViewMute;
+    @FXML
+    public Rectangle rectWhite;
+    @FXML
+    public Rectangle rectLobby;
+    @FXML
+    public Rectangle rectBlack;
+    @FXML
+    public AnchorPane anchorPaneBlack;
+    @FXML
+    public AnchorPane anchorPaneLobby;
+    @FXML
+    public AnchorPane anchorPaneWhite;
+
     private final Label[] blackLabels;
 
     private final Label[] whiteLabels;
@@ -83,9 +119,34 @@ public class TeamLobbyController implements GUIController {
      */
     @Override
     public void init() {
+        updateImageViewMute(imgViewMute);
         startButton.setVisible(false);
         startButton.setDisable(true);
         fillLabels();
+        root.heightProperty().addListener((observable, oldValue, newValue) -> imgViewBackground.setFitHeight(newValue.doubleValue()));
+        GUIUtils.bindSize(anchorPaneLobby, rectLobby);
+        GUIUtils.bindSize(anchorPaneBlack, rectBlack);
+        GUIUtils.bindSize(anchorPaneWhite, rectWhite);
+    }
+
+    /**
+     * This method is used to set the parent of the controller.
+     *
+     * @param root the parent of the controller.
+     */
+    @Override
+    public void setRootPane(Pane root) {
+        this.root = root;
+    }
+
+    /**
+     * This method returns the node of the controller.
+     *
+     * @return the node of the controller.
+     */
+    @Override
+    public Pane getRootPane() {
+        return root;
     }
 
     /**
@@ -94,6 +155,7 @@ public class TeamLobbyController implements GUIController {
     @FXML
     public void sendWhiteTeam() {
         gui.notifyViewListener(new ChosenTeam(Tower.WHITE));
+        GUIUtils.hideButton(whiteBtn);
     }
 
     /**
@@ -102,6 +164,7 @@ public class TeamLobbyController implements GUIController {
     @FXML
     public void sendBlackTeam() {
         gui.notifyViewListener(new ChosenTeam(Tower.BLACK));
+        GUIUtils.hideButton(blackBtn);
     }
 
     /**
@@ -110,11 +173,13 @@ public class TeamLobbyController implements GUIController {
     @FXML
     public void sendStart() {
         gui.notifyViewListener(new StartGame());
+        GUIUtils.hideButton(whiteBtn);
     }
 
     /**
      * Activates the start button
      */
+    @Override
     public void setCanStart() {
         startButton.setVisible(true);
         startButton.setDisable(false);
@@ -123,9 +188,18 @@ public class TeamLobbyController implements GUIController {
     /**
      * Deactivates the start button
      */
+    @Override
     public void setCantStart() {
         startButton.setVisible(false);
         startButton.setDisable(true);
+    }
+
+    /**
+     * @return if the lobby can handle teams.
+     */
+    @Override
+    public boolean canHandleTeams() {
+        return true;
     }
 
     /**
@@ -133,7 +207,7 @@ public class TeamLobbyController implements GUIController {
      *
      * @param view a TeamView
      */
-    public void setLabels(TeamsView view) {
+    public void updateTeams(TeamsView view, String nickname) {
 
 
         int i = 0;
@@ -141,7 +215,7 @@ public class TeamLobbyController implements GUIController {
             blackLabels[i].setText(s);
             i++;
         }
-        for(;i < 4; i++){
+        for (; i < 4; i++) {
             blackLabels[i].setText("");
         }
 
@@ -151,7 +225,7 @@ public class TeamLobbyController implements GUIController {
             i++;
         }
 
-        for(;i < 4; i++){
+        for (; i < 4; i++) {
             whiteLabels[i].setText("");
         }
 
@@ -160,8 +234,18 @@ public class TeamLobbyController implements GUIController {
             lobbyLabels[i].setText(s);
             i++;
         }
-        for(;i < 4; i++){
+        for (; i < 4; i++) {
             lobbyLabels[i].setText("");
+        }
+
+        if(view.getTeams().get(Tower.BLACK).contains(nickname)) {
+            GUIUtils.showButton(whiteBtn);
+        }else if(view.getTeams().get(Tower.WHITE).contains(nickname)) {
+            GUIUtils.showButton(blackBtn);
+        }
+        else {
+            GUIUtils.showButton(blackBtn);
+            GUIUtils.showButton(whiteBtn);
         }
     }
 
@@ -184,5 +268,14 @@ public class TeamLobbyController implements GUIController {
         lobbyLabels[1] = secondLName;
         lobbyLabels[2] = thirdLName;
         lobbyLabels[3] = fourthLName;
+    }
+
+    /**
+     * handles the mute toggle.
+     */
+    @FXML
+    @Override
+    public void handleMuteButton() {
+        toggleMute(imgViewMute);
     }
 }

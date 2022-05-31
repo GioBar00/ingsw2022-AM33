@@ -1,7 +1,10 @@
 package it.polimi.ingsw;
 
 import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.cli.CLI;
+import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.server.Server;
+import javafx.application.Application;
 import org.apache.commons.cli.*;
 
 /**
@@ -39,15 +42,13 @@ public class Eriantys {
                 }
                 server.handleRequests();
             } else {
-                Client client;
                 if (cmd.hasOption("c")) {
                     System.out.println("Starting game in CLI mode");
-                    client = new Client(false);
+                    new CLI().showStartScreen();
                 } else {
                     System.out.println("Starting game in GUI mode");
-                    client = new Client(true);
+                    Application.launch(GUI.class);
                 }
-                client.startClient();
             }
 
         } catch (ParseException e) {

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class is used to handle the message exchange between the server and the client and vice versa.
@@ -69,6 +68,8 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
 
     private volatile boolean stopped = true;
 
+    private boolean notifiedDisconnect = false;
+
     /**
      * Constructor.
      *
@@ -119,15 +120,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     }
 
     /**
-     * Getter
-     *
-     * @return the socket
-     */
-    public Socket getSocket() {
-        return socket;
-    }
-
-    /**
      * This method is used to set the message handler.
      *
      * @param messageHandler the message handler to set
@@ -175,6 +167,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                 MessageExchange.sendMessage(m, writer);
             }
             System.out.println("CH: Stop handle output");
+            notifyDisconnectIfNotAlreadyDone();
         } catch (IOException e) {
             System.out.println("CH : handleOutput IOException");
         }
@@ -188,7 +181,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
             System.out.println("CH: Start handle input");
             while (!stopped) {
                 Message message = MessageExchange.receiveMessage(reader, (event) -> {
-                    notifyDisconnectListener(new DisconnectEvent(this));
                     System.out.println("CH : handleInput stop");
                     stop();
                 });
@@ -203,6 +195,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                 }
             }
             System.out.println("CH: Stopped handle input");
+            notifyDisconnectIfNotAlreadyDone();
         } catch (IOException e) {
             System.out.println("CH : handleInput IOException");
         }
@@ -253,8 +246,8 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                     if (isMaster) sendMessage(new CommMessage(CommMsgType.PING));
                     if (!latch.await(seconds, TimeUnit.SECONDS)) {
                         System.out.println("CH : timer Stop");
+                        notifyDisconnectIfNotAlreadyDone();
                         stop();
-                        notifyDisconnectListener(new DisconnectEvent(this));
                     }
 
                 } catch (InterruptedException ignored) {
@@ -271,6 +264,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
         if (socket == null) return;
         if (socket.isClosed()) System.out.println("MessageExchangeHandler: Socket is closed");
         if (stopped) {
+            notifiedDisconnect = false;
             stopped = false;
             queue.clear();
             new Thread(this::handleInput).start();
@@ -284,29 +278,18 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      * This method stops the message exchange handler closing the socket.
      */
     public synchronized void stop() {
-        stop(true);
-    }
-
-    /**
-     * This method stops the message exchange handler.
-     *
-     * @param closeSocket if the socket should be closed
-     */
-    public synchronized void stop(boolean closeSocket) {
         if (!stopped) {
             stopped = true;
             System.out.println("CH : stop");
             timer.cancel();
             queue.add(new InvalidMessage());
         }
-        if (closeSocket) {
-            try {
-                if (reader != null) reader.close();
-                if (writer != null) writer.close();
-                if (socket != null) socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            if (socket != null) socket.close();
+            if (reader != null) reader.close();
+            if (writer != null) writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -319,6 +302,16 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
         queue.add(message);
         if (!(MessageType.retrieveByMessage(message) == MessageType.COMM_MESSAGE && (((CommMessage) message).getType() == CommMsgType.PONG || ((CommMessage) message).getType() == CommMsgType.PING)))
             System.out.println("CH: Added to queue - " + MessageBuilder.toJson(message));
+    }
+
+    /**
+     * This method notifies the disconnect listener if it was not already notified.
+     */
+    private synchronized void notifyDisconnectIfNotAlreadyDone() {
+        if (!notifiedDisconnect) {
+            notifiedDisconnect = true;
+            notifyDisconnectListener(new DisconnectEvent(this));
+        }
     }
 
     /**
@@ -338,7 +331,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      */
     @Override
     public void notifyDisconnectListener(DisconnectEvent event) {
-        queue.clear();
         if (disconnectListener != null) {
             System.out.println("CH : notifyDisconnectListener");
             disconnectListener.onDisconnect(event);

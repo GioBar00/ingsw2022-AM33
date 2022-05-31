@@ -1,7 +1,5 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.client.cli.CLI;
-import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.network.CommunicationHandler;
 import it.polimi.ingsw.network.MessageHandler;
 import it.polimi.ingsw.network.listeners.DisconnectEvent;
@@ -15,10 +13,9 @@ import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.server.CurrentGameState;
 import it.polimi.ingsw.network.messages.server.CurrentTeams;
-import javafx.application.Application;
 
 import java.io.IOException;
-import java.net.Socket;
+import java.net.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -27,14 +24,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Client implements MessageHandler, ViewListener, Runnable, DisconnectListener {
 
     /**
-     * the hostname for the connection
+     * Address of the server to connect to
      */
-    private String hostname;
-
-    /**
-     * the port for the connection
-     */
-    private int port;
+    private SocketAddress serverAddress;
 
     private String nickname;
 
@@ -58,41 +50,23 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
     /**
      * Constructor of Virtual Server
      */
-    public Client(boolean gui) {
+    public Client(UI ui) {
         queue = new LinkedBlockingQueue<>();
         this.communicationHandler = new CommunicationHandler(this);
-        if (gui) {
-            new Thread(() -> Application.launch(GUI.class)).start();
-            userInterface = GUI.getInstance();
-            if (userInterface == null) {
-                System.out.println("FATAL ERROR: unable to instantiate GUI");
-                System.exit(1);
-            }
-        } else
-            userInterface = new CLI();
-        userInterface.setClient(this);
-        userInterface.setViewListener(this);
+        userInterface = ui;
     }
 
     public void startClient() {
         userInterface.showStartScreen();
     }
 
-    public boolean setServerAddress(String hostname) {
-        if (validateServerString(hostname)) {
-            this.hostname = hostname;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean setServerPort(String port) {
-        if (port.matches("-?\\d+")) {
-            int portValue = Integer.parseInt(port);
-            if (portValue < 1024 || portValue > 65535)
-                return false;
-            this.port = portValue;
-            return true;
+    public boolean setServerAddress(String hostname, int port) {
+        try {
+            if (validateServerString(hostname)) {
+                serverAddress = new InetSocketAddress(hostname, port);
+                return true;
+            }
+        } catch (IllegalArgumentException ignored) {
         }
         return false;
     }
@@ -104,18 +78,21 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
     /**
      * This method sets up the connection and starts the communicationHandler.
      */
-    public void startConnection() {
+    public boolean startConnection() {
         try {
-            communicationHandler.setSocket(new Socket(hostname, port));
+            Socket socket = new Socket();
+            socket.connect(serverAddress, 5 * 1000);
+            communicationHandler.setSocket(socket);
             communicationHandler.setDisconnectListener(this);
             communicationHandler.start();
             if (stopped) {
                 stopped = false;
                 new Thread(this).start();
             }
+            return true;
         } catch (IOException e) {
-            userInterface.serverUnavailable();
             closeConnection();
+            return false;
         }
     }
 
@@ -142,11 +119,11 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
     }
 
     public boolean sendLogin() {
-        if (nickname != null && hostname != null && port != 0) {
-            startConnection();
+        if (nickname != null && serverAddress != null && startConnection()) {
             onMessage(new Login(nickname));
             return true;
         }
+        userInterface.serverUnavailable();
         return false;
     }
 
@@ -186,18 +163,12 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
                     default -> userInterface.showCommMessage((CommMessage) message);
                 }
             }
-            case AVAILABLE_WIZARDS -> {
-                userInterface.setWizardView(((AvailableWizards) message).getWizardsView());
-                userInterface.showWizardMenu();
-            }
+            case AVAILABLE_WIZARDS -> userInterface.setWizardView(((AvailableWizards) message).getWizardsView());
             case CURRENT_TEAMS -> userInterface.setTeamsView(((CurrentTeams) message).getTeamsView());
             case PLAY_ASSISTANT_CARD, MULTIPLE_POSSIBLE_MOVES, CHOOSE_CLOUD, CHOOSE_ISLAND, CHOOSE_STUDENT_COLOR, MOVE_MOTHER_NATURE, MOVE_STUDENT, SWAP_STUDENTS ->
-                    userInterface.setPossibleMoves(message);
+                    userInterface.setPossibleActions(message);
 
-            case CURRENT_GAME_STATE -> {
-                userInterface.setGameView(((CurrentGameState) message).getGameView());
-                userInterface.showGameScreen();
-            }
+            case CURRENT_GAME_STATE -> userInterface.setGameView(((CurrentGameState) message).getGameView());
         }
     }
 
@@ -220,9 +191,25 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
         stopped = true;
     }
 
+    /**
+     * Validates the server string.
+     *
+     * @param server the server hostname string
+     * @return true if the string is valid, false otherwise
+     */
     public static boolean validateServerString(String server) {
         String ipPattern = "^((0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)\\.){3}(0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)$";
         String domainPattern = "^((?!-)[A-Za-z\\d-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$";
         return server.matches(ipPattern) || server.matches(domainPattern) || server.equals("localhost");
+    }
+
+    /**
+     * Validates the port string.
+     *
+     * @param port the port string
+     * @return true if the string is valid, false otherwise
+     */
+    public static boolean validateServerPort(String port) {
+        return port.matches("^\\d*$") && Integer.parseInt(port) > 0 && Integer.parseInt(port) < 65536;
     }
 }

@@ -3,7 +3,6 @@ package it.polimi.ingsw.server.controller;
 import it.polimi.ingsw.network.listeners.*;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
-import it.polimi.ingsw.network.messages.actions.requests.SwapStudents;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
 import it.polimi.ingsw.network.messages.client.ChosenWizard;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
@@ -29,7 +28,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Each client handler request to the Controller class specified methods for updating the model. Controller verifies the validity
  * of the request and calls the correct method. Provide an updated view for each client
  */
-public class Controller implements MessageListener, DisconnectListenerSubscriber, EndGameListenerSubscriber {
+public class Controller implements Runnable, MessageListener, DisconnectListenerSubscriber, EndGameListenerSubscriber {
 
     /**
      * the instance of the game model
@@ -52,9 +51,11 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
     private Lobby lobby;
 
     /**
-     * The queue used to send messages.
+     * The queue used to process the message events.
      */
     private final LinkedBlockingQueue<MessageEvent> queue;
+
+    private volatile boolean stopped = true;
 
     /**
      * Default constructor of class Controller
@@ -74,6 +75,7 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
 
     /**
      * Method used for know if the model is instantiated
+     *
      * @return true if the model is instantiated
      */
     public boolean isInstantiated() {
@@ -82,8 +84,9 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
 
     /**
      * Setter of the model. Calls the GameBuilder
+     *
      * @param preset is the number of players for the game
-     * @param mode is the mode of the game
+     * @param mode   is the mode of the game
      */
     public void setModelAndLobby(GamePreset preset, GameMode mode, Lobby lobby) {
         model = GameBuilder.getGame(preset, mode);
@@ -92,11 +95,12 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
 
     /**
      * Method for sett a new player inside the model
+     *
      * @param nickname the nickname of the new player
      * @return True if the player has been added. False if the game is full or the nickname is already chosen
      */
     public boolean addPlayer(String nickname) {
-        if(isInstantiated()) {
+        if (isInstantiated()) {
             return lobby.addPlayer(nickname);
         }
         return false;
@@ -104,6 +108,7 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
 
     /**
      * This method adds a new listener to the model
+     *
      * @param listener the listener of the model
      */
     public void addModelListener(MessageListener listener) {
@@ -113,6 +118,7 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
 
     /**
      * Removes one selected listener from the model
+     *
      * @param listener the removed listener
      */
     public void removeModelListener(MessageListener listener) {
@@ -121,10 +127,11 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
 
     /**
      * Returns if the game is started
+     *
      * @return a boolean true if the game is started
      */
     public boolean isGameStarted() {
-        if(model == null)
+        if (model == null)
             return false;
         return model.getGameState().equals(GameState.STARTED);
     }
@@ -133,6 +140,7 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
      * Override methods from MessageListener Interface.
      * When a Virtual Client receives a valid message notify the controller that put the event in a queue that contains
      * all the request that need to be handled .
+     *
      * @param event of the received message
      */
     @Override
@@ -143,10 +151,11 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
     /**
      * Handles the message event. Analyze the message and apply the request to the model (if it's possible).
      * onMessage method is divided into 5 different methods; each of the methods handle a specific game phase.
+     *
      * @param event of the received message
      */
     public void handleMessage(MessageEvent event) {
-        VirtualClient vc = (VirtualClient)event.getSource();
+        VirtualClient vc = (VirtualClient) event.getSource();
         Message msg = event.getMessage();
 
         switch (MessageType.retrieveByMessage(msg)) {
@@ -177,6 +186,7 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
 
     /**
      * Handles the skip turn request.
+     *
      * @param vc the virtual client that sent the request
      */
     private void handleSkipTurn(VirtualClient vc) {
@@ -189,8 +199,7 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
                         lobby.removeAllMessageListeners();
                         notifyEndGame();
                         model = null;
-                    }
-                    else {
+                    } else {
                         lobby.removePlayer(identifier);
                         lobby.removeMessageListener(vc);
                         notifyDisconnectListener(new DisconnectEvent(vc));
@@ -211,29 +220,29 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
 
     /**
      * Handle the messages during the setup phase
-     * @param vc is the Virtual Client bonded with the request
+     *
+     * @param vc  is the Virtual Client bonded with the request
      * @param msg is the Message
      */
     private void handleGameSetup(VirtualClient vc, Message msg) {
         switch (MessageType.retrieveByMessage(msg)) {
             case CHOSEN_TEAM -> {
-                ChosenTeam chosenTeam = (ChosenTeam)msg;
-                changeTeam(vc.getIdentifier(),chosenTeam.getTower());
+                ChosenTeam chosenTeam = (ChosenTeam) msg;
+                changeTeam(vc.getIdentifier(), chosenTeam.getTower());
             }
             case START_GAME -> {
-                if(!lobby.getMaster().equals(vc.getIdentifier()))
-                    vc.sendMessage(new CommMessage(CommMsgType. ERROR_NOT_MASTER));
+                if (!lobby.getMaster().equals(vc.getIdentifier()))
+                    vc.sendMessage(new CommMessage(CommMsgType.ERROR_NOT_MASTER));
                 else if (!startGame(vc.getIdentifier()))
-                        vc.sendMessage(new CommMessage(CommMsgType.ERROR_CANT_START));
+                    vc.sendMessage(new CommMessage(CommMsgType.ERROR_CANT_START));
             }
 
             case CHOSEN_WIZARD -> {
-                ChosenWizard chosenWizard = (ChosenWizard)msg;
-                if(!lobby.setWizard(chosenWizard.getWizard(),vc.getIdentifier())){
+                ChosenWizard chosenWizard = (ChosenWizard) msg;
+                if (!lobby.setWizard(chosenWizard.getWizard(), vc.getIdentifier())) {
                     vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                     vc.sendMessage(new AvailableWizards(lobby.getWizardsView()));
-                }
-                else {
+                } else {
                     vc.sendMessage(new CommMessage(CommMsgType.OK));
                     lobby.notifyAvailableWizards();
                     lobby.notifyTeams(vc.getIdentifier());
@@ -245,21 +254,23 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
 
     /**
      * Send the current wizard situation to a specified listener
+     *
      * @param messageListener the client who is going to receive
      */
-    public synchronized void sendInitialStats(MessageListener messageListener){
+    public synchronized void sendInitialStats(MessageListener messageListener) {
         lobby.notifyAvailableWizards(messageListener.getIdentifier());
     }
 
     /**
      * Handle the messages during the planning phase
-     * @param vc is the Virtual Client bonded with the request
+     *
+     * @param vc  is the Virtual Client bonded with the request
      * @param msg is the Message
      */
     private void handlePlanningPhase(VirtualClient vc, Message msg) {
         if (MessageType.retrieveByMessage(msg) == MessageType.PLAYED_ASSISTANT_CARD) {
             PlayedAssistantCard playedAssistantCard = (PlayedAssistantCard) msg;
-            if(!model.playAssistantCard(playedAssistantCard.getAssistantCard()))
+            if (!model.playAssistantCard(playedAssistantCard.getAssistantCard()))
                 vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
         } else {
             vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
@@ -268,11 +279,12 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
 
     /**
      * Handle the messages during the playing phase
-     * @param vc is the Virtual Client bonded with the request
+     *
+     * @param vc  is the Virtual Client bonded with the request
      * @param msg is the Message
      */
     private void handlePlayingPhase(VirtualClient vc, Message msg) {
-        switch (MessageType.retrieveByMessage(msg)){
+        switch (MessageType.retrieveByMessage(msg)) {
             case MOVED_STUDENT -> {
                 MovedStudent movedStudent = (MovedStudent) msg;
                 CharacterParameters parameters;
@@ -282,11 +294,11 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
                     case ENTRANCE:
                         switch (movedStudent.getTo()) {
                             case HALL -> {
-                                if(!model.moveStudentToHall(movedStudent.getFromIndex()))
+                                if (!model.moveStudentToHall(movedStudent.getFromIndex()))
                                     vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                             }
                             case ISLAND -> {
-                                if(!model.moveStudentToIsland(movedStudent.getFromIndex(), movedStudent.getToIndex()))
+                                if (!model.moveStudentToIsland(movedStudent.getFromIndex(), movedStudent.getToIndex()))
                                     vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                             }
                             default -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
@@ -297,7 +309,7 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
                         switch (movedStudent.getTo()) {
                             case ISLAND, ENTRANCE, HALL -> {
                                 parameters = CharacterChoiceAdapter.convert(movedStudent);
-                                if(!model.applyEffect(parameters))
+                                if (!model.applyEffect(parameters))
                                     vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                             }
                         }
@@ -305,76 +317,75 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
 
                     case HALL:
                         parameters = CharacterChoiceAdapter.convert(movedStudent);
-                        if(!model.applyEffect(parameters))
+                        if (!model.applyEffect(parameters))
                             vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                         break;
 
-                    default: vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
+                    default:
+                        vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                 }
             }
             case SWAPPED_STUDENTS -> {
                 SwappedStudents movedStudent = (SwappedStudents) msg;
                 CharacterParameters parameters;
 
-                switch (movedStudent.getFrom()){
+                switch (movedStudent.getFrom()) {
                     case ENTRANCE -> {
-                        if(movedStudent.getTo() == MoveLocation.HALL){
+                        if (movedStudent.getTo() == MoveLocation.HALL) {
                             parameters = CharacterChoiceAdapter.convert(movedStudent);
-                            if(!model.applyEffect(parameters))
+                            if (!model.applyEffect(parameters))
                                 vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                         }
                     }
                     case CARD -> {
                         if (movedStudent.getTo() == MoveLocation.ENTRANCE) {
-                            parameters = CharacterChoiceAdapter.convert((MovedStudent)movedStudent);
-                            if(!model.applyEffect(parameters))
+                            parameters = new CharacterParameters(StudentColor.retrieveStudentColorByOrdinal(movedStudent.getFromIndex()), movedStudent.getToIndex());
+                            if (!model.applyEffect(parameters))
                                 vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                         }
                     }
-                    default  -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
+                    default -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                 }
 
             }
             case ACTIVATED_CHARACTER_CARD -> {
                 ActivatedCharacterCard activatedCharacterCard = (ActivatedCharacterCard) msg;
-                if(!model.activateCharacterCard(activatedCharacterCard.getCharacterCardIndex()))
+                if (!model.activateCharacterCard(activatedCharacterCard.getCharacterCardIndex()))
                     vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
             }
 
-            case CHOSEN_ISLAND ->{
+            case CHOSEN_ISLAND -> {
                 ChosenIsland chosenIsland = (ChosenIsland) msg;
                 CharacterParameters parameters = CharacterChoiceAdapter.convert(chosenIsland);
-                if(!model.applyEffect(parameters))
+                if (!model.applyEffect(parameters))
                     vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
             }
 
             case CHOSEN_STUDENT_COLOR -> {
-                ChosenStudentColor chosenStudentColor = (ChosenStudentColor)msg;
+                ChosenStudentColor chosenStudentColor = (ChosenStudentColor) msg;
                 CharacterParameters parameters = CharacterChoiceAdapter.convert(chosenStudentColor);
-                if(!model.applyEffect(parameters))
+                if (!model.applyEffect(parameters))
                     vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
             }
 
             case CONCLUDE_CHARACTER_CARD_EFFECT -> {
-                if(!model.endEffect())
+                if (!model.endEffect())
                     vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
             }
             case MOVED_MOTHER_NATURE -> {
-                if(model.getPhase().equals(GamePhase.MOVE_MOTHER_NATURE)) {
+                if (model.getPhase().equals(GamePhase.MOVE_MOTHER_NATURE)) {
                     MovedMotherNature movedMotherNature = (MovedMotherNature) msg;
                     if (!model.moveMotherNature(movedMotherNature.getNumMoves()))
                         vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
-                }
-                else vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
+                } else vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
             }
 
             case CHOSEN_CLOUD -> {
-                if(model.getPhase().equals(GamePhase.CHOOSE_CLOUD)){
+                if (model.getPhase().equals(GamePhase.CHOOSE_CLOUD)) {
                     ChosenCloud chosenCloud = (ChosenCloud) msg;
-                    if(!model.getStudentsFromCloud(chosenCloud.getCloudIndex()))
+                    if (!model.getStudentsFromCloud(chosenCloud.getCloudIndex()))
                         vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
-                }
-                else vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
+                } else vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
             }
 
             default -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
@@ -383,32 +394,35 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
 
     /**
      * Method used by onMessage for starting the game.
+     *
      * @param nickname who try to call this method
      * @return true if the game is started. False if the game can't start or who request this method doesn't have
      * the rights
      */
     private synchronized boolean startGame(String nickname) {
         if (nickname.equals(lobby.getMaster()) && lobby.canStart()) {
-           for(PlayerDetails p : lobby.getPlayers()){
-               model.addPlayer(p);
-           }
-           return model.startGame();
+            for (PlayerDetails p : lobby.getPlayers()) {
+                model.addPlayer(p);
+            }
+            return model.startGame();
         }
         return false;
     }
 
     /**
      * Tries to change the team of one player
+     *
      * @param nickname of the player who wants to change team
-     * @param tower the team he wants to join
+     * @param tower    the team he wants to join
      */
-     private synchronized void changeTeam(String nickname, Tower tower) {
-         lobby.changeTeam(nickname, tower);
-     }
+    private synchronized void changeTeam(String nickname, Tower tower) {
+        lobby.changeTeam(nickname, tower);
+    }
 
 
     /**
      * Used for know if is a player turn
+     *
      * @param nickname the player who send a message
      * @return true if the player is the current player
      */
@@ -418,10 +432,11 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
 
     /**
      * Return the nickname of the current Player
+     *
      * @return null if the model is not instantiated or the nickname of the current player
      */
-    public String getCurrentPlayer(){
-        if(isInstantiated())
+    public String getCurrentPlayer() {
+        if (isInstantiated())
             return model.getCurrentPlayer();
         return null;
     }
@@ -429,13 +444,21 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
     /**
      * This method take the request from the queue and try to apply the changes.
      */
-    public void startController() {
-        try {
-            while (!Thread.interrupted()) {
-                handleMessage(queue.take());
+    public void run() {
+        if (stopped) {
+            stopped = false;
+            queue.clear();
+            try {
+                while (!stopped) {
+                    handleMessage(queue.take());
+                }
+            } catch (InterruptedException ignored) {
             }
-        } catch (InterruptedException ignored) {
         }
+    }
+
+    public void stop() {
+        stopped = true;
     }
 
     /**
@@ -456,6 +479,7 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
     @Override
     public void notifyDisconnectListener(DisconnectEvent event) {
         if (disconnectListener != null) {
+            System.out.println("CONTR: Notifying disconnection listener");
             disconnectListener.onDisconnect(event);
         }
     }
@@ -476,6 +500,7 @@ public class Controller implements MessageListener, DisconnectListenerSubscriber
     @Override
     public void notifyEndGame() {
         if (endGameListener != null) {
+            System.out.println("CONTR: Notify end game");
             endGameListener.onEndGameEvent(new EndGameEvent(this));
         }
     }

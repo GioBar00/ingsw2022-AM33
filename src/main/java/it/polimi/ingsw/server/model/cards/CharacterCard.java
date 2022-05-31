@@ -127,11 +127,27 @@ public abstract class CharacterCard {
      */
     public boolean endEffect() {
         if (!appliedEffect && currentChoicesNumber >= requiredChoicesNumber) {
-            additionalCost++;
-            appliedEffect = true;
+            forceEndEffect();
             return true;
         }
         return false;
+    }
+
+    /**
+     * Returns if the effect could be ended.
+     *
+     * @return true if the effect could be ended.
+     */
+    public boolean canEndEffect() {
+        return currentChoicesNumber >= requiredChoicesNumber;
+    }
+
+    /**
+     * Resets the effect of the card.
+     */
+    public void forceEndEffect() {
+        additionalCost++;
+        appliedEffect = true;
     }
 
     /**
@@ -234,5 +250,12 @@ public abstract class CharacterCard {
      */
     public int getNumBlocks() {
         return 0;
+    }
+
+    /**
+     * @return if the card can store a history of swapped professors.
+     */
+    public boolean canHandleHistory() {
+        return false;
     }
 }

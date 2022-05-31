@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.enums.Wizard;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerView implements Serializable {
     /**
@@ -18,7 +19,7 @@ public class PlayerView implements Serializable {
     /**
      * assistant cards that the player still has in its hand
      */
-    private final ArrayList<AssistantCard> assistantCards;
+    private final List<AssistantCard> assistantCards;
     /**
      * last assistant card played (null if there's none)
      */
@@ -32,7 +33,7 @@ public class PlayerView implements Serializable {
      */
     private final SchoolBoardView schoolBoardView;
 
-    public PlayerView(String nickname, Wizard wizard,ArrayList<AssistantCard> assistantCards, AssistantCard playedCard, int numAssistantCards, SchoolBoardView schoolBoardView) {
+    public PlayerView(String nickname, Wizard wizard, List<AssistantCard> assistantCards, AssistantCard playedCard, int numAssistantCards, SchoolBoardView schoolBoardView) {
         this.nickname = nickname;
         this.wizard = wizard;
         this.assistantCards = assistantCards;
@@ -58,7 +59,7 @@ public class PlayerView implements Serializable {
     /**
      * @return the assistant cards
      */
-    public ArrayList<AssistantCard> getAssistantCards() {
+    public List<AssistantCard> getAssistantCards() {
         return assistantCards;
     }
 

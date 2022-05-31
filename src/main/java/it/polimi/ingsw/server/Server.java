@@ -42,11 +42,6 @@ public class Server implements EndGameListener, DisconnectListener {
     private Controller controller;
 
     /**
-     * The executor used to allocate the controller.
-     */
-    private ExecutorService executor;
-
-    /**
      * Current server state
      */
     private ServerState state;
@@ -73,6 +68,7 @@ public class Server implements EndGameListener, DisconnectListener {
      * Reset the controller
      */
     private void resetGame() {
+        System.out.println("S: Resetting game");
         controller = new Controller();
         controller.setEndGameListener(this);
         controller.setDisconnectListener(this);
@@ -97,14 +93,14 @@ public class Server implements EndGameListener, DisconnectListener {
                         switch (state) {
                             case EMPTY -> {
                                 state = ServerState.HANDLING_FIRST;
-                                Executors.newSingleThreadExecutor().execute(() -> handleFirstPlayer(communicationHandler));
+                                new Thread(() -> handleFirstPlayer(communicationHandler)).start();
                             }
-                            case HANDLING_FIRST -> Executors.newSingleThreadExecutor().submit(() -> {
+                            case HANDLING_FIRST -> new Thread(() -> {
                                 communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_SERVER_UNAVAILABLE));
                                 communicationHandler.stop();
-                            });
+                            }).start();
                             case NORMAL ->
-                                    Executors.newSingleThreadExecutor().execute(() -> handleNewPlayer(communicationHandler));
+                                    new Thread(() -> handleNewPlayer(communicationHandler)).start();
                         }
                     }
                 } catch (Throwable e) {
@@ -132,6 +128,7 @@ public class Server implements EndGameListener, DisconnectListener {
                 CountDownLatch countDownLatch = new CountDownLatch(1);
                 communicationHandler.setMessageHandler((message) -> {
                     if (message.isValid() && MessageType.retrieveByMessage(message) == MessageType.CHOSEN_GAME) {
+                        communicationHandler.setDisconnectListener(null);
                         ChosenGame choice = (ChosenGame) message;
                         controller.setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
                         synchronized (this) {
@@ -141,6 +138,13 @@ public class Server implements EndGameListener, DisconnectListener {
                         }
                     } else
                         communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
+                });
+                communicationHandler.setDisconnectListener((e) -> {
+                    communicationHandler.stop();
+                    synchronized (this) {
+                        state = ServerState.EMPTY;
+                    }
+                    System.out.println("S: EMPTY");
                 });
 
                 communicationHandler.sendMessage(new CommMessage(CommMsgType.CHOOSE_GAME));
@@ -153,15 +157,19 @@ public class Server implements EndGameListener, DisconnectListener {
                 }
 
             } else {
+                communicationHandler.stop();
                 synchronized (this) {
                     state = ServerState.EMPTY;
                 }
             }
         } catch (TimeoutException e) {
-            communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
-            communicationHandler.stop();
-            synchronized (this) {
-                state = ServerState.EMPTY;
+            if (communicationHandler.isConnected()) {
+                communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
+                communicationHandler.stop();
+                synchronized (this) {
+                    state = ServerState.EMPTY;
+                }
+                System.out.println("S: EMPTY");
             }
         }
     }
@@ -186,6 +194,10 @@ public class Server implements EndGameListener, DisconnectListener {
             }
             latch.countDown();
         });
+        communicationHandler.setDisconnectListener((e) -> {
+            nickname.set(null);
+            latch.countDown();
+        });
 
         communicationHandler.start();
 
@@ -200,6 +212,7 @@ public class Server implements EndGameListener, DisconnectListener {
         } catch (InterruptedException ignored) {
         }
         communicationHandler.setMessageHandler(null);
+        communicationHandler.setDisconnectListener(null);
         throw new TimeoutException();
     }
 
@@ -213,12 +226,11 @@ public class Server implements EndGameListener, DisconnectListener {
             String nickname = getPlayerNickname(communicationHandler);
 
             if (nickname != null) {
-                communicationHandler.setMessageHandler(null);
+                communicationHandler.setMessageHandler((m) -> {});
                 if (controller.isGameStarted()) {
                     synchronized (this) {
                         if (virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()) {
-                            communicationHandler.stop(false);
-                            virtualClients.get(nickname).reconnect(communicationHandler.getSocket());
+                            virtualClients.get(nickname).reconnect(communicationHandler);
                         } else {
                             communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
                             communicationHandler.stop();
@@ -233,7 +245,8 @@ public class Server implements EndGameListener, DisconnectListener {
                         communicationHandler.stop();
                     }
                 }
-            }
+            } else
+                communicationHandler.stop();
         } catch (TimeoutException e) {
             communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
             communicationHandler.stop();
@@ -250,9 +263,8 @@ public class Server implements EndGameListener, DisconnectListener {
     private boolean addPlayer(CommunicationHandler communicationHandler, String nickname) {
         if (controller.addPlayer(nickname)) {
             System.out.println("S: added player " + nickname);
-            communicationHandler.stop(false);
             VirtualClient vc = new VirtualClient(nickname);
-            startVirtualClient(vc, communicationHandler.getSocket());
+            connectToVirtualClient(vc, communicationHandler);
             virtualClients.put(nickname, vc);
             controller.sendInitialStats(vc);
             return true;
@@ -264,13 +276,14 @@ public class Server implements EndGameListener, DisconnectListener {
      * Starts a virtual client and adds it to the model listeners. Adds the controller to the VirtualClient listeners
      *
      * @param vc     the VirtualClient
-     * @param socket Socket for connection
+     * @param communicationHandler handler for connection
      */
-    private void startVirtualClient(VirtualClient vc, Socket socket) {
-        vc.setSocket(socket);
+    private void connectToVirtualClient(VirtualClient vc, CommunicationHandler communicationHandler) {
+        vc.setCommunicationHandler(communicationHandler);
+        communicationHandler.setDisconnectListener(vc);
+        communicationHandler.setMessageHandler(vc);
         controller.addModelListener(vc);
         vc.addMessageListener(controller);
-        vc.start();
     }
 
     /**
@@ -282,17 +295,16 @@ public class Server implements EndGameListener, DisconnectListener {
      */
     @Override
     public synchronized void onEndGameEvent(EndGameEvent event) {
+        controller.stop();
+        controller.removeEndGameListener();
+        controller.setDisconnectListener(null);
         for (VirtualClient vc : virtualClients.values()) {
             controller.removeModelListener(vc);
             vc.stop();
         }
         virtualClients.clear();
-        ExecutorService oldController = executor;
-        controller.removeEndGameListener();
-        controller.setDisconnectListener(null);
-        resetGame();
         System.out.println("S: disconnected all players");
-        oldController.shutdownNow();
+        resetGame();
     }
 
     /**
@@ -308,15 +320,14 @@ public class Server implements EndGameListener, DisconnectListener {
      * Closes the controller thread
      */
     public void stopController() {
-        executor.shutdownNow();
+        controller.stop();
     }
 
     /**
      * Starts the controller
      */
     private void startController() {
-        executor = Executors.newSingleThreadExecutor();
-        executor.submit(controller::startController);
+        new Thread(controller, "Controller Thread").start();
     }
 
     /**

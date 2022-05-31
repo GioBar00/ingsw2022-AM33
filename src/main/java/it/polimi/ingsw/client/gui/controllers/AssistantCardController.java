@@ -1,74 +1,116 @@
 package it.polimi.ingsw.client.gui.controllers;
 
-import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
+import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.network.messages.actions.PlayedAssistantCard;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 
-import java.util.*;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The controller related to choose-assistant view
  */
 public class AssistantCardController implements GUIController {
-    private GUI gui;
-
-    @FXML
-    public Button cheetahBtn;
-    @FXML
-    public Button ostrichBtn;
-    @FXML
-    public Button catBtn;
-    @FXML
-    public Button eagleBtn;
-    @FXML
-    public Button foxBtn;
-    @FXML
-    public Button snakeBtn;
-    @FXML
-    public Button octopusBtn;
-    @FXML
-    public Button dogBtn;
-    @FXML
-    public Button elephantBtn;
-    @FXML
-    public Button turtleBtn;
-
-    @FXML
-    public ImageView cheetahImg;
-    @FXML
-    public ImageView ostrichImg;
-    @FXML
-    public ImageView catImg;
-    @FXML
-    public ImageView eagleImg;
-    @FXML
-    public ImageView foxImg;
-    @FXML
-    public ImageView snakeImg;
-    @FXML
-    public ImageView octopusImg;
-    @FXML
-    public ImageView dogImg;
-    @FXML
-    public ImageView elephantImg;
-    @FXML
-    public ImageView turtleImg;
-
-    private EnumMap<AssistantCard, AssistantView> assistantViews;
-
-    private final List<AssistantCard> played;
 
     /**
-     * The constructor
+     * Private record that contains the anchorPaneButton and imageView related to an Assistant card
      */
-    public AssistantCardController() {
-        played = new ArrayList<>();
+    private record AssistantView(AnchorPane anchorPaneButton, AnchorPane anchorPaneImageView) {
     }
+
+    @FXML
+    public Text lblTitle;
+
+    private GUI gui;
+    private Pane root;
+    private boolean choseAnAssistant = false;
+
+    @FXML
+    public AnchorPane cheetahBtn;
+    @FXML
+    public AnchorPane ostrichBtn;
+    @FXML
+    public AnchorPane catBtn;
+    @FXML
+    public AnchorPane eagleBtn;
+    @FXML
+    public AnchorPane foxBtn;
+    @FXML
+    public AnchorPane snakeBtn;
+    @FXML
+    public AnchorPane octopusBtn;
+    @FXML
+    public AnchorPane dogBtn;
+    @FXML
+    public AnchorPane elephantBtn;
+    @FXML
+    public AnchorPane turtleBtn;
+
+    @FXML
+    public AnchorPane cheetahImg;
+    @FXML
+    public AnchorPane ostrichImg;
+    @FXML
+    public AnchorPane catImg;
+    @FXML
+    public AnchorPane eagleImg;
+    @FXML
+    public AnchorPane foxImg;
+    @FXML
+    public AnchorPane snakeImg;
+    @FXML
+    public AnchorPane octopusImg;
+    @FXML
+    public AnchorPane dogImg;
+    @FXML
+    public AnchorPane elephantImg;
+    @FXML
+    public AnchorPane turtleImg;
+
+    @FXML
+    public GridPane cheetah;
+    @FXML
+    public GridPane ostrich;
+    @FXML
+    public GridPane cat;
+    @FXML
+    public GridPane eagle;
+    @FXML
+    public GridPane fox;
+    @FXML
+    public GridPane snake;
+    @FXML
+    public GridPane octopus;
+    @FXML
+    public GridPane dog;
+    @FXML
+    public GridPane elephant;
+    @FXML
+    public GridPane turtle;
+
+    @FXML
+    public FlowPane flowpane;
+
+    private EnumMap<AssistantCard, GridPane> assistantGridMap;
+
+    private Map<GridPane, AssistantView> assistantViewMaps;
+
+    private EnumSet<AssistantCard> availableCards = EnumSet.noneOf(AssistantCard.class);
 
     /**
      * This method is used to set the GUI of the controller.
@@ -81,83 +123,61 @@ public class AssistantCardController implements GUIController {
     }
 
     /**
+     * This method is used to load the scene of the controller on the stage.
+     *
+     * @param stage the stage to load the scene on.
+     */
+    @Override
+    public void loadScene(Stage stage) {
+        stage.setScene(new Scene(getRootPane()));
+        stage.setMinHeight(540.0);
+        stage.setMinWidth(870.0);
+        stage.setResizable(false);
+    }
+
+    /**
+     * This method is used to set the assistant cards available to the player.
+     *
+     * @param availableCards the available cards
+     */
+    public void setAvailableCards(EnumSet<AssistantCard> availableCards) {
+        this.availableCards = availableCards;
+    }
+
+    /**
+     * @return if the player has chosen an assistant
+     */
+    public boolean hasChosenAnAssistant() {
+        return choseAnAssistant;
+    }
+
+    /**
      * This methods set the values in the assistant card view
      *
      * @param playableAssistantCards an EnumSet of playable card
      */
     public void setPlayable(EnumSet<AssistantCard> playableAssistantCards) {
-
-        ArrayList<AssistantCard> notPlayable = new ArrayList<>(Arrays.asList(AssistantCard.values()));
-
-        for (AssistantCard assistantCard : playableAssistantCards) {
-            notPlayable.remove(assistantCard);
-            enableCard(assistantCard);
-        }
-        for (AssistantCard assistantCard : played) {
-            notPlayable.remove(assistantCard);
-            playedCard(assistantCard);
-        }
-
-        for (AssistantCard assistantCard : notPlayable) {
-            deactivateCard(assistantCard);
-            deactivateCard(assistantCard);
-        }
-
+        lblTitle.setText("Choose an assistant card");
+        setCards(playableAssistantCards, true);
     }
 
     /**
-     * Adds the last played card into the played cards
-     *
-     * @param assistantCard the last played card
+     * This method shows the image of the cards
      */
-    public void setPlayedCard(AssistantCard assistantCard) {
-        if (played.contains(assistantCard))
-            return;
-        played.add(assistantCard);
+    public void showAssistantCards() {
+        lblTitle.setText("Your assistant cards");
+        setCards(availableCards, false);
     }
 
     /**
-     * This method gives to the user the possibility of play a specified card.
+     * Send a {@link PlayedAssistantCard} request to the server.
      *
-     * @param assistantCard the card the player could play.
-     */
-    private void enableCard(AssistantCard assistantCard) {
-        assistantViews.get(assistantCard).assistantImage.setImage(new Image(getImagePath(assistantCard).getPath()));
-        assistantViews.get(assistantCard).assistantButton.setDisable(false);
-        assistantViews.get(assistantCard).assistantButton.setVisible(true);
-    }
-
-    /**
-     * This method disables a card in the GUI showing that was already played.
-     *
-     * @param assistantCard the card that was already played.
-     */
-    private void playedCard(AssistantCard assistantCard) {
-        assistantViews.get(assistantCard).assistantImage.setImage(new Image(ImagePath.BACK_CARD.getPath()));
-        assistantViews.get(assistantCard).assistantButton.setDisable(true);
-        assistantViews.get(assistantCard).assistantButton.setVisible(false);
-
-    }
-
-    /**
-     * This methods disables a button related to a card cause is not playable in the current turn.
-     *
-     * @param assistantCard the card that can't be played now.
-     */
-    private void deactivateCard(AssistantCard assistantCard) {
-        assistantViews.get(assistantCard).assistantImage.setImage(new Image(getImagePath(assistantCard).getPath()));
-        assistantViews.get(assistantCard).assistantButton.setDisable(true);
-        assistantViews.get(assistantCard).assistantButton.setVisible(false);
-    }
-
-    /**
-     * Send a {@link PlayedAssistantCard} reqest to the server.
-     *
-     * @param card the card the player wants to play.@
+     * @param card the card the player wants to play.
      */
     @FXML
     public void playAssistantCard(AssistantCard card) {
         gui.notifyViewListener(new PlayedAssistantCard(card));
+        forceClose();
     }
 
     /**
@@ -165,84 +185,123 @@ public class AssistantCardController implements GUIController {
      */
     @Override
     public void init() {
-        cheetahBtn.setOnAction(e -> playAssistantCard(AssistantCard.CHEETAH));
-        ostrichBtn.setOnAction(e -> playAssistantCard(AssistantCard.OSTRICH));
-        catBtn.setOnAction(e -> playAssistantCard(AssistantCard.CAT));
-        eagleBtn.setOnAction(e -> playAssistantCard(AssistantCard.EAGLE));
-        foxBtn.setOnAction(e -> playAssistantCard(AssistantCard.FOX));
-        snakeBtn.setOnAction(e -> playAssistantCard(AssistantCard.SNAKE));
-        octopusBtn.setOnAction(e -> playAssistantCard(AssistantCard.OCTOPUS));
-        dogBtn.setOnAction(e -> playAssistantCard(AssistantCard.DOG));
-        elephantBtn.setOnAction(e -> playAssistantCard(AssistantCard.ELEPHANT));
-        turtleBtn.setOnAction(e -> playAssistantCard(AssistantCard.TURTLE));
+        assistantGridMap = new EnumMap<>(AssistantCard.class);
+        assistantGridMap.put(AssistantCard.CHEETAH, cheetah);
+        assistantGridMap.put(AssistantCard.OSTRICH, ostrich);
+        assistantGridMap.put(AssistantCard.CAT, cat);
+        assistantGridMap.put(AssistantCard.EAGLE, eagle);
+        assistantGridMap.put(AssistantCard.FOX, fox);
+        assistantGridMap.put(AssistantCard.SNAKE, snake);
+        assistantGridMap.put(AssistantCard.OCTOPUS, octopus);
+        assistantGridMap.put(AssistantCard.DOG, dog);
+        assistantGridMap.put(AssistantCard.ELEPHANT, elephant);
+        assistantGridMap.put(AssistantCard.TURTLE, turtle);
 
-        assistantViews = new EnumMap<>(AssistantCard.class);
-        assistantViews.put(AssistantCard.CHEETAH, new AssistantView(cheetahBtn, cheetahImg));
-        assistantViews.put(AssistantCard.OSTRICH, new AssistantView(ostrichBtn, ostrichImg));
-        assistantViews.put(AssistantCard.CAT, new AssistantView(catBtn, catImg));
-        assistantViews.put(AssistantCard.EAGLE, new AssistantView(eagleBtn, eagleImg));
-        assistantViews.put(AssistantCard.FOX, new AssistantView(foxBtn, foxImg));
-        assistantViews.put(AssistantCard.SNAKE, new AssistantView(snakeBtn, snakeImg));
-        assistantViews.put(AssistantCard.OCTOPUS, new AssistantView(octopusBtn, octopusImg));
-        assistantViews.put(AssistantCard.DOG, new AssistantView(dogBtn, dogImg));
-        assistantViews.put(AssistantCard.ELEPHANT, new AssistantView(elephantBtn, elephantImg));
-        assistantViews.put(AssistantCard.TURTLE, new AssistantView(turtleBtn, turtleImg));
+        assistantViewMaps = new HashMap<>();
+        assistantViewMaps.put(cheetah, new AssistantView(cheetahBtn, cheetahImg));
+        assistantViewMaps.put(ostrich, new AssistantView(ostrichBtn, ostrichImg));
+        assistantViewMaps.put(cat, new AssistantView(catBtn, catImg));
+        assistantViewMaps.put(eagle, new AssistantView(eagleBtn, eagleImg));
+        assistantViewMaps.put(fox, new AssistantView(foxBtn, foxImg));
+        assistantViewMaps.put(snake, new AssistantView(snakeBtn, snakeImg));
+        assistantViewMaps.put(octopus, new AssistantView(octopusBtn, octopusImg));
+        assistantViewMaps.put(dog, new AssistantView(dogBtn, dogImg));
+        assistantViewMaps.put(elephant, new AssistantView(elephantBtn, elephantImg));
+        assistantViewMaps.put(turtle, new AssistantView(turtleBtn, turtleImg));
+
+        for (AssistantCard card : AssistantCard.values()) {
+            flowpane.heightProperty().addListener((observable, oldValue, newValue) -> {
+                double value = (newValue.doubleValue() - 20) / 2;
+                assistantGridMap.get(card).setPrefHeight(value);
+                assistantGridMap.get(card).setPrefWidth(value * 6 / 10);
+            });
+        }
 
     }
 
     /**
-     * This method returns the path of the image related to a specified Assistant CArd
+     * This method is used to set the parent of the controller.
      *
-     * @param card the card
-     * @return the ImagePath of the card
+     * @param root the parent of the controller.
      */
-    private ImagePath getImagePath(AssistantCard card) {
-        switch (card) {
-            case CHEETAH -> {
-                return ImagePath.CHEETAH;
-            }
-            case OSTRICH -> {
-                return ImagePath.OSTRICH;
-            }
-            case CAT -> {
-                return ImagePath.CAT;
-            }
-            case EAGLE -> {
-                return ImagePath.EAGLE;
-            }
-            case FOX -> {
-                return ImagePath.FOX;
-            }
-            case SNAKE -> {
-                return ImagePath.SNAKE;
-            }
-            case OCTOPUS -> {
-                return ImagePath.OCTOPUS;
-            }
-            case DOG -> {
-                return ImagePath.DOG;
-            }
-            case ELEPHANT -> {
-                return ImagePath.ELEPHANT;
-            }
-            case TURTLE -> {
-                return ImagePath.TURTLE;
-            }
-
-        }
-        return null;
+    @Override
+    public void setRootPane(Pane root) {
+        this.root = root;
     }
 
     /**
-     * Private class that contains the button and imageView related to an Assistant card
+     * This method returns the node of the controller.
+     *
+     * @return the node of the controller.
      */
-    private static class AssistantView {
-        Button assistantButton;
-        ImageView assistantImage;
+    @Override
+    public Pane getRootPane() {
+        return root;
+    }
 
-        AssistantView(Button button, ImageView imageView) {
-            assistantButton = button;
-            assistantImage = imageView;
+    /**
+     * this method is used to set the grids inside the FlowPane
+     *
+     * @param availableCards the card that will be displayed
+     * @param setButtons     true if the buttons need to be shown
+     */
+    public void setCards(EnumSet<AssistantCard> availableCards, boolean setButtons) {
+        clearAllGrids();
+        for (AssistantCard ac : AssistantCard.values()) {
+            if (availableCards.contains(ac)) {
+                setAssistantImage(assistantViewMaps.get(assistantGridMap.get(ac)).anchorPaneImageView(), ac);
+                if (setButtons)
+                    setAssistantButton(assistantViewMaps.get(assistantGridMap.get(ac)).anchorPaneButton(), ac);
+            } else {
+                flowpane.getChildren().remove(assistantGridMap.get(ac));
+            }
         }
+    }
+
+    /**
+     * this method sets the anchorPaneButton of a specific gridPane
+     *
+     * @param anchorPane inside the cell of the grid, where the anchorPaneButton will be placed
+     * @param ac         that will be shown in the grid
+     */
+    public void setAssistantButton(AnchorPane anchorPane, AssistantCard ac) {
+        Button button = new Button();
+        button.setText(ac.name());
+        button.setTextAlignment(TextAlignment.CENTER);
+        button.setAlignment(Pos.CENTER);
+        button.setOnAction(e -> playAssistantCard(ac));
+        GUIUtils.addToAnchorPane(anchorPane, button);
+    }
+
+    /**
+     * this method sets the image of an Assistant of a specific gridPane
+     *
+     * @param anchorPane inside the cell of the grid, where the image will be placed
+     * @param ac         assistant that will be shown in the image
+     */
+    public void setAssistantImage(AnchorPane anchorPane, AssistantCard ac) {
+        ImageView imageView = new ImageView();
+        imageView.setImage(GUIUtils.getAssistantCard(ac));
+        anchorPane.getChildren().add(imageView);
+        GUIUtils.bindSize(anchorPane, imageView);
+    }
+
+    /**
+     * This method clears all the grids. Il will be called before setting new content in the cells
+     * of the grid so that there are no duplicates
+     */
+    public void clearAllGrids() {
+        for (AssistantCard ac : AssistantCard.values()) {
+            assistantViewMaps.get(assistantGridMap.get(ac)).anchorPaneImageView().getChildren().removeAll();
+            assistantViewMaps.get(assistantGridMap.get(ac)).anchorPaneButton().getChildren().removeAll();
+        }
+    }
+
+    /**
+     * This method closes the window and prevents its reopening.
+     */
+    public void forceClose() {
+        choseAnAssistant = true;
+        ((Stage) root.getScene().getWindow()).close();
     }
 }
