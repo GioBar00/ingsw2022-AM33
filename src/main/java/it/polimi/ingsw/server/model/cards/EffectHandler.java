@@ -153,4 +153,10 @@ public interface EffectHandler {
      */
     Set<Integer> getAvailableIslandIndexes();
 
+    /**
+     * This method is used for checking the professors when a pawn is removed from the schoolboard.
+     *
+     * @param s the StudentColor that has been removed.
+     */
+    void checkProfessorOnRemove(StudentColor s);
 }

@@ -645,7 +645,11 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
     @Override
     public boolean addStudentToHall(StudentColor s) {
         SchoolBoard sb = model.playersManager.getSchoolBoard();
-        return sb.addToHall(s);
+        if (sb.addToHall(s)) {
+            checkProfessor(s);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -866,6 +870,49 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
                 case MOVE_MOTHER_NATURE -> model.notifyMoveMotherNature(additionalMotherNatureMovement);
                 case CHOOSE_CLOUD -> model.notifyChooseCloud();
             }
+        }
+    }
+
+    /**
+     * This method is used for checking the professors when a pawn is removed from the schoolboard.
+     *
+     * @param s the StudentColor that has been removed.
+     */
+    @Override
+    public void checkProfessorOnRemove(StudentColor s) {
+        SchoolBoard schoolBoard;
+        for (Player p : model.playersManager.getPlayers()) {
+            schoolBoard = model.playersManager.getSchoolBoard(p);
+            if (schoolBoard.getProfessors().contains(s))
+                if (schoolBoard.getStudentsInHall(s) <= 0)
+                    schoolBoard.removeProfessor(s);
+        }
+        Player max = null;
+        Player oldOwner = null;
+        int maxStudents;
+        for (Player p : model.playersManager.getPlayers()) {
+            schoolBoard = model.playersManager.getSchoolBoard(p);
+            if (schoolBoard.getProfessors().contains(s)) {
+                oldOwner = p;
+                break;
+            }
+        }
+        if (oldOwner != null) {
+            maxStudents = model.playersManager.getSchoolBoard(oldOwner).getStudentsInHall(s);
+        } else maxStudents = 0;
+
+        for (Player p : model.playersManager.getPlayers()) {
+            schoolBoard = model.playersManager.getSchoolBoard(p);
+            if (schoolBoard.getStudentsInHall(s) > maxStudents) {
+                maxStudents = schoolBoard.getStudentsInHall(s);
+                max = p;
+            }
+        }
+
+        if (max != null) {
+            model.playersManager.getSchoolBoard(max).addProfessor(s);
+            if (oldOwner != null)
+                model.playersManager.getSchoolBoard(oldOwner).removeProfessor(s);
         }
     }
 

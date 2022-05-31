@@ -36,6 +36,7 @@ public class Minstrel extends CharacterCard {
             if (s == null || entranceIndex == null)
                 return false;
             if (effectHandler.removeStudentFromHall(s)) {
+                effectHandler.checkProfessorOnRemove(s);
                 StudentColor onEntrance = effectHandler.popStudentFromEntrance(entranceIndex);
                 if (onEntrance != null) {
                     if (effectHandler.addStudentToHall(onEntrance)) {
