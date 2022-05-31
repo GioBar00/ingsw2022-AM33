@@ -1,9 +1,11 @@
 package it.polimi.ingsw.client.gui.controllers;
 
+import it.polimi.ingsw.client.enums.AudioPath;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
+import it.polimi.ingsw.client.gui.audio.AudioManager;
 import it.polimi.ingsw.client.gui.audio.MuteToggle;
 import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.network.messages.views.PlayerView;
@@ -120,6 +122,7 @@ public class WinnerScreenController implements GUIController, MuteToggle {
                     "!";
             lblWinner.setText(sb);
         }
+        AudioManager.playAudio(AudioPath.LOST);
     }
 
     /**

@@ -40,6 +40,8 @@ public class SchoolBoardController implements GUIController {
     private final EnumMap<StudentColor, List<ImageView>> hallImageViewsByColor = new EnumMap<>(StudentColor.class);
 
     public final EnumMap<StudentColor, Button> hallButtonsByColor = new EnumMap<>(StudentColor.class);
+
+    public final EnumMap<StudentColor, AnchorPane> hallAnchorPaneByColor = new EnumMap<>(StudentColor.class);
     
 
     private Pane root;
@@ -158,6 +160,11 @@ public class SchoolBoardController implements GUIController {
     
     private void initHall() {
         GUIUtils.resetButton(hallButton);
+        hallAnchorPaneByColor.put(StudentColor.BLUE, anchorPaneBlue);
+        hallAnchorPaneByColor.put(StudentColor.GREEN, anchorPaneGreen);
+        hallAnchorPaneByColor.put(StudentColor.MAGENTA, anchorPaneMagenta);
+        hallAnchorPaneByColor.put(StudentColor.RED, anchorPaneRed);
+        hallAnchorPaneByColor.put(StudentColor.YELLOW, anchorPaneYellow);
         for (StudentColor sc : StudentColor.values()) {
             GUIUtils.resetButton(hallButtonsByColor.get(sc));
             hallImageViewsByColor.put(sc, new ArrayList<>(10));

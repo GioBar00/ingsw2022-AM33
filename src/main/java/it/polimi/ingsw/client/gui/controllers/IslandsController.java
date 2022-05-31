@@ -45,7 +45,7 @@ public class IslandsController implements GUIController {
                 anchor.setPrefWidth(newValue.doubleValue() / 2.5);
             });
             IslandController islandGui;
-            islandGui = (IslandController) ResourceLoader.loadFXML(FXMLPath.ISLAND, gui);
+            islandGui = ResourceLoader.loadFXML(FXMLPath.ISLAND, gui);
             islandControllers.add(islandGui);
             GUIUtils.addToAnchorPane(anchor, islandGui.getRootPane());
             islandGui.init();
@@ -57,8 +57,12 @@ public class IslandsController implements GUIController {
             boolean motherNatureIsThere = motherNatureIndex == i;
             islandControllers.get(i).setIsland(islandsView.get(i), motherNatureIsThere);
         }
+
         for (int i = islandsView.size(); i < anchors.size(); i++)
             flowPane.getChildren().remove(anchors.get(i));
+
+        while (islandControllers.size() > islandsView.size())
+            islandControllers.remove(islandControllers.size() - 1);
     }
 
     @Override
