@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.util.EnumSet;
@@ -55,6 +56,10 @@ public class PlayerController implements GUIController {
     public ImageView imgViewHand;
     @FXML
     public HBox hBoxTower;
+    @FXML
+    public Rectangle playerBackground;
+    @FXML
+    public AnchorPane baseRoot;
 
     private GUI gui;
 
@@ -91,6 +96,7 @@ public class PlayerController implements GUIController {
         GUIUtils.bindSize(anchorPaneHand, imgViewHand);
         GUIUtils.bindSize(anchorPaneHand, btnHand);
         GUIUtils.bindSize(hBoxPlayedAssistantCard, imgViewPlayedCard);
+        GUIUtils.bindSize(baseRoot, playerBackground);
     }
 
     public void setShowHand(Function function) {

@@ -177,7 +177,7 @@
                               <AnchorPane fx:id="anchorPanePlayerInfo" minHeight="0.0" minWidth="0.0" GridPane.rowIndex="1">
                                  <children>
                                     <Rectangle fx:id="playerInfoBackground" arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f67" height="310.0" stroke="RED" strokeType="INSIDE" strokeWidth="3.0" width="958.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                    <Label layoutX="43.0" layoutY="15.0" text="Player Info">
+                                    <Label layoutX="43.0" layoutY="15.0" text="Player Info" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="5.0">
                                        <font>
                                           <Font name="Trattatello" size="18.0" />
                                        </font>
@@ -187,17 +187,23 @@
                         </GridPane>
                         <GridPane GridPane.columnIndex="1">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="10.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="5.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="5.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="0.0" percentHeight="100.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <AnchorPane fx:id="suggestionBox" minHeight="0.0" minWidth="0.0" GridPane.columnIndex="1">
+                              <AnchorPane fx:id="suggestionBox" minHeight="0.0" minWidth="0.0" GridPane.columnIndex="1" GridPane.columnSpan="3">
                                  <children>
                                     <Rectangle fx:id="suggestionBackground" arcHeight="5.0" arcWidth="5.0" fill="#1fff477a" height="383.0" stroke="#0d9013" strokeType="INSIDE" strokeWidth="3.0" width="768.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+                                 <children>
                                     <Label fx:id="lblAction" alignment="CENTER" minHeight="0.0" minWidth="0.0" prefHeight="230.0" prefWidth="694.0" text="inserisci qui tutti i suggerimenti che vuoi bla bla bla" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
                                           <Font name="Trattatello" size="18.0" />
