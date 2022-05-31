@@ -152,4 +152,5 @@ public interface EffectHandler {
      * @return the available island indexes.
      */
     Set<Integer> getAvailableIslandIndexes();
+
 }

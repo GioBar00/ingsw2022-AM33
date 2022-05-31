@@ -77,7 +77,10 @@ class CharacterCardViewTest {
             CharacterCardView ccv1 = ccv.get(0);
 
             assertEquals(ct, ccv1.getType());
-            assertTrue(ccv1.canBeUsed());
+            if(ccv1.getType() == CharacterType.MINSTREL) {
+                assertFalse(ccv1.canBeUsed());
+            }
+            else assertTrue(ccv1.canBeUsed());
             assertEquals(characterCard.getCost(), ccv1.getOriginalCost());
             assertEquals(0, ccv1.getAdditionalCost());
             if (characterCard.canHandleBlocks())

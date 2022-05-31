@@ -17,14 +17,15 @@ public class Minstrel extends CharacterCard {
      * Creates minstrel.
      */
     public Minstrel() {
-        super(CharacterType.MINSTREL, 1, 0, 2);
+        super(CharacterType.MINSTREL, 1, 1, 2);
     }
 
     /**
      * Applies the effect of the character card if the parameters are correct.
      * Can exchange up to 2 students between the entrance and the hall.
+     *
      * @param effectHandler handler for the effects.
-     * @param parameters for the effect.
+     * @param parameters    for the effect.
      * @return if the effect was applied.
      */
     @Override

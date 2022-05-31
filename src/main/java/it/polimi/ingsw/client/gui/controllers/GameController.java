@@ -481,15 +481,20 @@ public class GameController implements GUIController, MuteToggle {
         if (cardIndex == null)
             return;
 
+        //TODO hallbuttons don't work
+        if(toIndexes.isEmpty() || fromIndexes.isEmpty())
+            return;
+
         characterCardControllers.get(cardIndex).activateEndButton();
 
         SchoolBoardController schoolBoardController = playerControllersByNickname.get(gui.getNickname()).getSchoolBoardController();
         for (Integer fromIndex : fromIndexes) {
-            for (Integer resInd : fromIndexes) {
-                GUIUtils.resetButton(schoolBoardController.entranceButtons.get(resInd));
-            }
             GUIUtils.setButton(schoolBoardController.entranceButtons.get(fromIndex), e -> {
                 lblAction.setText("Select a highlighted student color in the hall");
+                lblAction.setText("Select an highlighted student color in the hall");
+                for (Integer resInd : fromIndexes) {
+                    GUIUtils.resetButton(schoolBoardController.entranceButtons.get(resInd));
+                }
                 characterCardControllers.get(cardIndex).hideEndButton();
                 for (Integer toIndex : toIndexes) {
                     GUIUtils.setButton(schoolBoardController.hallButtonsByColor.get(StudentColor.retrieveStudentColorByOrdinal(toIndex)), action -> {
