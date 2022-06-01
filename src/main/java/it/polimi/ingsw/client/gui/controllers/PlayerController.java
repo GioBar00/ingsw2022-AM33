@@ -166,7 +166,7 @@ public class PlayerController implements GUIController {
      * This method instantiates the school board controller.
      */
     private void instantiateSchoolBoardController() {
-        schoolBoardController = (SchoolBoardController) ResourceLoader.loadFXML(FXMLPath.SCHOOL_BOARD, gui);
+        schoolBoardController = ResourceLoader.loadFXML(FXMLPath.SCHOOL_BOARD, gui);
         schoolBoardController.init();
     }
 
@@ -228,7 +228,7 @@ public class PlayerController implements GUIController {
     private void showAssistantCards(EnumSet<AssistantCard> cards, boolean isPlayable) {
         if (playerView == null)
             return;
-        AssistantCardController controller = (AssistantCardController) ResourceLoader.loadFXML(FXMLPath.CHOOSE_ASSISTANT, gui);
+        AssistantCardController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_ASSISTANT, gui);
         assistantCardController = controller;
         controller.init();
         if (isPlayable)

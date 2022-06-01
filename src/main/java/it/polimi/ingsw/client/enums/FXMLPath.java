@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.enums;
 
+/**
+ * Enum for the FXML paths.
+ */
 public enum FXMLPath {
     START_SCREEN("/fxml/start-screen.fxml"),
     CHOOSE_GAME("/fxml/choose-game.fxml"),

@@ -15,6 +15,7 @@ import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.GamePhase;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.util.Function;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -479,7 +480,7 @@ public class GameController implements GUIController, MuteToggle {
         if (cardIndex == null)
             return;
 
-        if(toIndexes.isEmpty() || fromIndexes.isEmpty())
+        if (toIndexes.isEmpty() || fromIndexes.isEmpty())
             return;
 
         characterCardControllers.get(cardIndex).activateEndButton();

@@ -49,6 +49,10 @@ public class GUI extends Application implements UI {
 
     private ViewState viewState = ViewState.SETUP;
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
     public void init() {
         try {
@@ -176,8 +180,6 @@ public class GUI extends Application implements UI {
         boolean show = checkGameController();
         if (gameView.getWinners() != null && !gameView.getWinners().isEmpty()) {
             show = false;
-            viewState = ViewState.END_GAME;
-            gameController = null;
             showWinnerScreen(gameView);
         } else
             Platform.runLater(() -> gameController.updateGameView(gameView, nickname));
@@ -212,8 +214,8 @@ public class GUI extends Application implements UI {
     @Override
     public void showStartScreen() {
         System.out.println("Showing start screen");
-        checkStartScreenController();
         viewState = ViewState.SETUP;
+        checkStartScreenController();
         Platform.runLater(() -> {
             chooseWizardController = null;
             lobbyController = null;
@@ -279,8 +281,11 @@ public class GUI extends Application implements UI {
     }
 
     private void showWinnerScreen(GameView gameView) {
+        viewState = ViewState.END_GAME;
+        gameController = null;
         WinnerScreenController controller = ResourceLoader.loadFXML(FXMLPath.WINNER_SCREEN, this);
         Platform.runLater(() -> {
+            controller.init();
             controller.loadScene(stage);
             controller.updateGameView(gameView);
         });

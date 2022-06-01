@@ -298,6 +298,11 @@ public class Server implements EndGameListener, DisconnectListener {
         controller.stop();
         controller.removeEndGameListener();
         controller.setDisconnectListener(null);
+        System.out.println("S: ending game");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ignored) {
+        }
         for (VirtualClient vc : virtualClients.values()) {
             controller.removeModelListener(vc);
             vc.stop();

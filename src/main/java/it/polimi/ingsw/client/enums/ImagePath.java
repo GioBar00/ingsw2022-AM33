@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.enums;
 
+/**
+ * Enum for the image paths.
+ */
 public enum ImagePath {
     ICON("/images/icon.jpg"),
     START("/images/icons/start.png"),

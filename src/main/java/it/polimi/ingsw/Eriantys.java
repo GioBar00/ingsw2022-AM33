@@ -47,7 +47,7 @@ public class Eriantys {
                     new CLI().showStartScreen();
                 } else {
                     System.out.println("Starting game in GUI mode");
-                    Application.launch(GUI.class);
+                    GUI.main(args);
                 }
             }
 

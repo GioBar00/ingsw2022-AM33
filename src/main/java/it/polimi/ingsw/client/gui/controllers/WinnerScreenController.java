@@ -110,19 +110,23 @@ public class WinnerScreenController implements GUIController, MuteToggle {
         if (winners.stream().findAny().isPresent()) {
             List<String> players = gameView.getPlayersView().stream().filter(p -> winners.contains(p.getSchoolBoardView().getTower())).map(PlayerView::getNickname).toList();
 
-            if (winners.size() > 1)
+            if (winners.size() > 1) {
                 lblResult.setText("Draw!");
-            else if (players.contains(gui.getNickname()))
+                AudioManager.playAudio(AudioPath.DRAW);
+            } else if (players.contains(gui.getNickname())) {
                 lblResult.setText("You won!");
-            else
+                AudioManager.playAudio(AudioPath.WON);
+            } else {
                 lblResult.setText(winners.stream().findAny().get().toString().toLowerCase() + " won!");
+                AudioManager.playAudio(AudioPath.LOST);
+            }
 
             String sb = "Congratulations to " +
                     String.join(", ", players) +
                     "!";
             lblWinner.setText(sb);
         }
-        AudioManager.playAudio(AudioPath.LOST);
+
     }
 
     /**

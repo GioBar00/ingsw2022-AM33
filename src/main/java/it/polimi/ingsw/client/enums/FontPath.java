@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.enums;
 
+/**
+ * Enum for the font paths.
+ */
 public enum FontPath {
     TRATTATELLO("/fonts/Trattatello.ttf");
 

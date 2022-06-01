@@ -44,8 +44,7 @@ public class IslandsController implements GUIController {
                 anchor.setPrefHeight(newValue.doubleValue() / 3);
                 anchor.setPrefWidth(newValue.doubleValue() / 2.5);
             });
-            IslandController islandGui;
-            islandGui = ResourceLoader.loadFXML(FXMLPath.ISLAND, gui);
+            IslandController islandGui = ResourceLoader.loadFXML(FXMLPath.ISLAND, gui);
             islandControllers.add(islandGui);
             GUIUtils.addToAnchorPane(anchor, islandGui.getRootPane());
             islandGui.init();

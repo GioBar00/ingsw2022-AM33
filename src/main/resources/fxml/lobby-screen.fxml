@@ -56,7 +56,7 @@
                            <graphic>
                               <ImageView fx:id="startImg" fitHeight="50.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/icons/start-highlighted.png" />
+                                    <Image url="@../images/icons/start.png" />
                                  </image>
                               </ImageView>
                            </graphic>
