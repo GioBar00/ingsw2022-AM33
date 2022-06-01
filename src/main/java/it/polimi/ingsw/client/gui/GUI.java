@@ -204,6 +204,12 @@ public class GUI extends Application implements UI {
             chooseGameStage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
             controller.loadScene(chooseGameStage);
             chooseGameStage.setAlwaysOnTop(true);
+            chooseGameStage.onCloseRequestProperty().set(event -> {
+                viewState = ViewState.SETUP;
+                client.closeConnection();
+                if (startScreenController != null)
+                    startScreenController.disableCenter(false);
+            });
             chooseGameStage.show();
         });
     }
@@ -249,6 +255,8 @@ public class GUI extends Application implements UI {
                 } else {
                     viewState = ViewState.SETUP;
                     client.closeConnection();
+                    if (startScreenController != null)
+                        startScreenController.disableCenter(false);
                 }
                 chooseWizardController = null;
             });
@@ -388,7 +396,7 @@ public class GUI extends Application implements UI {
     @Override
     public void serverUnavailable() {
         System.out.println("Server unavailable");
-        if (viewState != ViewState.END_GAME) {
+        if (viewState != ViewState.END_GAME && viewState != ViewState.SETUP) {
             showAlert("Lost connection with the server or server unavailable.\n" +
                     "Please try again later.");
             if (viewState == ViewState.SETUP) {
