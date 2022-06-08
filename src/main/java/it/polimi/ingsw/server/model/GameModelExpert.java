@@ -92,7 +92,7 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
             characterCards.add(types.get(sel).instantiate());
             types.remove(sel);
         }
-
+        
         reserve = 20;
 
     }

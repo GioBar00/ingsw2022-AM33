@@ -7,6 +7,7 @@ public interface EndGameListenerSubscriber {
 
     /**
      * Method to subscribe a EndGameListener
+     *
      * @param listener the EndGameListener to subscribe
      */
     void setEndGameListener(EndGameListener listener);

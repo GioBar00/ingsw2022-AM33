@@ -2,6 +2,9 @@ package it.polimi.ingsw.server.model.cards;
 
 import it.polimi.ingsw.server.model.enums.StudentColor;
 
+/**
+ * This class converts a set of StudentColor and index to a {@link CharacterParameters} object.
+ */
 public class CharacterParameters {
 
     /**
@@ -15,8 +18,8 @@ public class CharacterParameters {
 
     /**
      * constructor for a CharacterParameters with both index and studentColor
-     * @param studentColor
-     * @param index
+     * @param studentColor color of the student.
+     * @param index index of student, island or entrance.
      */
     public CharacterParameters(StudentColor studentColor, Integer index) {
         this.studentColor = studentColor;
@@ -25,7 +28,7 @@ public class CharacterParameters {
 
     /**
      * constructor for a CharacterParameters without the index
-     * @param studentColor
+     * @param studentColor color of the student.
      */
     public CharacterParameters(StudentColor studentColor) {
         this.studentColor = studentColor;
@@ -34,7 +37,7 @@ public class CharacterParameters {
 
     /**
      * constructor a CharacterParameters without the student color
-     * @param index
+     * @param index index of student, island or entrance.
      */
     public CharacterParameters(Integer index){
         this.studentColor = null;
