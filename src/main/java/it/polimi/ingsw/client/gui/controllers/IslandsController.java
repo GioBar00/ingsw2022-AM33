@@ -13,8 +13,14 @@ import javafx.scene.layout.Pane;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This class is the controller of the islands view.
+ */
 public class IslandsController implements GUIController {
 
+    /**
+     * {@link GUI} instance.
+     */
     GUI gui;
 
     private final List<AnchorPane> anchors = new LinkedList<>();
@@ -27,11 +33,20 @@ public class IslandsController implements GUIController {
     @FXML
     private AnchorPane root;
 
+
+    /**
+     * This method is used to set the GUI of the controller.
+     *
+     * @param gui the GUI of the controller.
+     */
     @Override
     public void setGUI(GUI gui) {
         this.gui = gui;
     }
 
+    /**
+     * This method is used to initialize the controller and stage.
+     */
     @Override
     public void init() {
         for (int i = 0; i < 12; i++) {
@@ -51,6 +66,12 @@ public class IslandsController implements GUIController {
         }
     }
 
+    /**
+     * This method is used to set the islandsView.
+     *
+     * @param islandsView       the islandsView.
+     * @param motherNatureIndex the index of the mother nature.
+     */
     public void setIslandsView(List<IslandGroupView> islandsView, int motherNatureIndex) {
         for (int i = 0; i < islandsView.size(); i++) {
             boolean motherNatureIsThere = motherNatureIndex == i;
@@ -64,11 +85,21 @@ public class IslandsController implements GUIController {
             islandControllers.remove(islandControllers.size() - 1);
     }
 
+    /**
+     * This method is used to set the parent of the controller.
+     *
+     * @param root the parent of the controller.
+     */
     @Override
     public void setRootPane(Pane root) {
         // already set
     }
 
+    /**
+     * This method returns the node of the controller.
+     *
+     * @return the node of the controller.
+     */
     @Override
     public Pane getRootPane() {
         return root;

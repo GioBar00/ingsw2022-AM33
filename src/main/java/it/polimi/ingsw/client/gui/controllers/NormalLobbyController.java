@@ -10,10 +10,19 @@ import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-
+/**
+ * This class is the controller of the lobby screen when the game isn't a team one.
+ */
 public class NormalLobbyController implements LobbyController {
+
+    /**
+     * {@link GUI} instance.
+     */
     private GUI gui;
 
+    /**
+     * The root of the scene.
+     */
     private Pane root;
 
     @FXML
@@ -88,7 +97,7 @@ public class NormalLobbyController implements LobbyController {
     /**
      * This method sends a start game request to the server
      */
-    public void sendStart(){
+    public void sendStart() {
         gui.notifyViewListener(new StartGame());
         GUIUtils.hideButton(startBtn);
     }

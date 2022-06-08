@@ -74,7 +74,7 @@ public class Controller implements Runnable, MessageListener, DisconnectListener
     }
 
     /**
-     * Method used for know if the model is instantiated
+     * Method used to know if the model is instantiated
      *
      * @return true if the model is instantiated
      */
@@ -421,7 +421,7 @@ public class Controller implements Runnable, MessageListener, DisconnectListener
 
 
     /**
-     * Used for know if is a player turn
+     * Used to know if is a player turn
      *
      * @param nickname the player who send a message
      * @return true if the player is the current player

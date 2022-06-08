@@ -22,6 +22,9 @@ import javafx.stage.Stage;
 import java.util.EnumSet;
 import java.util.List;
 
+/**
+ * This class is the controller of the winner screen.
+ */
 public class WinnerScreenController implements GUIController, MuteToggle {
     @FXML
     public Label lblResult;
@@ -38,8 +41,14 @@ public class WinnerScreenController implements GUIController, MuteToggle {
     @FXML
     public ImageView imgViewBackground;
 
+    /**
+     * {@link GUI} instance.
+     */
     private GUI gui;
 
+    /**
+     * The root of the scene.
+     */
     private Pane root;
 
 

@@ -28,6 +28,9 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
      */
     private SocketAddress serverAddress;
 
+    /**
+     * The nickname of the user.
+     */
     private String nickname;
 
     /**
@@ -45,6 +48,9 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
      */
     private final LinkedBlockingQueue<Message> queue;
 
+    /**
+     * Boolean that indicates if the {@link CommunicationHandler} is active
+     */
     private volatile boolean stopped = true;
 
     /**
@@ -56,10 +62,20 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
         userInterface = ui;
     }
 
+    /**
+     * This method show the start screen in the user interface.
+     */
     public void startClient() {
         userInterface.showStartScreen();
     }
 
+    /**
+     * This method set the server address.
+     *
+     * @param hostname the hostname of the server.
+     * @param port     the port of the server.
+     * @return true if the server address is set, false otherwise.
+     */
     public boolean setServerAddress(String hostname, int port) {
         try {
             if (validateServerString(hostname)) {
@@ -71,6 +87,11 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
         return false;
     }
 
+    /**
+     * Setter of the nickname.
+     *
+     * @param nickname the nickname of the user.
+     */
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
@@ -118,6 +139,11 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
         communicationHandler.sendMessage(message);
     }
 
+    /**
+     * This method is used to send the login message to the server.
+     *
+     * @return true if the login message is sent, false otherwise.
+     */
     public boolean sendLogin() {
         if (nickname != null && serverAddress != null && startConnection()) {
             onMessage(new Login(nickname));

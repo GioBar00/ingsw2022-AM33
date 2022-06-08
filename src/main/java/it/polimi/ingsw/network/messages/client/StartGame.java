@@ -8,7 +8,7 @@ import it.polimi.ingsw.network.messages.Message;
 public class StartGame implements Message {
 
     /**
-     * Used for checking the validity of the message
+     * Used to check the validity of the message
      * @return true if the message is valid
      */
     public boolean isValid() {

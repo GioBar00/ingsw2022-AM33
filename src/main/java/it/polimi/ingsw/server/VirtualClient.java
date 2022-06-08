@@ -48,7 +48,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     }
 
     /**
-     * Method used for know if the client is still connected
+     * Method used to know if the client is still connected
      *
      * @return true if is connected, false in other case
      */

@@ -18,8 +18,40 @@ import javafx.stage.Stage;
 
 import java.util.EnumSet;
 
+/**
+ * This class is the controller of the player-view.
+ */
 public class PlayerController implements GUIController {
 
+    /**
+     * {@link GUI} instance.
+     */
+    private GUI gui;
+
+    /**
+     * The root of the scene.
+     */
+    private Pane root;
+
+    /**
+     * The controller of the schoolboard view.
+     */
+    private SchoolBoardController schoolBoardController;
+
+    /**
+     * The current player view.
+     */
+    private PlayerView playerView;
+
+    /**
+     * The controller of the assistantCard view.
+     */
+    public AssistantCardController assistantCardController;
+
+    /**
+     * the controller of assistantCard or hand view.
+     */
+    private GUIController handStageHandler;
     @FXML
     public AnchorPane anchorPaneSchoolBoard;
 
@@ -60,18 +92,6 @@ public class PlayerController implements GUIController {
     public Rectangle playerBackground;
     @FXML
     public AnchorPane baseRoot;
-
-    private GUI gui;
-
-    private Pane root;
-
-    private SchoolBoardController schoolBoardController;
-
-    private PlayerView playerView;
-
-    public AssistantCardController assistantCardController;
-
-    private GUIController handStageHandler;
 
     /**
      * This method is used to set the GUI of the controller.
@@ -203,6 +223,11 @@ public class PlayerController implements GUIController {
         GUIUtils.addToAnchorPane(newContainer, gridPane);
     }
 
+    /**
+     * This method shows the cards available and forces the player to choose one.
+     *
+     * @param availableCards the cards available.
+     */
     public void playAssistantCard(EnumSet<AssistantCard> availableCards) {
         if (assistantCardController != null)
             assistantCardController.forceClose();
@@ -225,6 +250,12 @@ public class PlayerController implements GUIController {
         });
     }
 
+    /**
+     * Shows the available cards, and forces the player to choose one if he has to play.
+     *
+     * @param cards      the available cards.
+     * @param isPlayable true if the player has to choose one, false otherwise.
+     */
     private void showAssistantCards(EnumSet<AssistantCard> cards, boolean isPlayable) {
         if (playerView == null)
             return;

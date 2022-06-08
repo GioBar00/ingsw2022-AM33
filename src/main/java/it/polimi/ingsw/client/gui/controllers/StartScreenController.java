@@ -20,13 +20,31 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
+/**
+ * This class is the controller of the start screen.
+ */
 public class StartScreenController implements GUIController, MuteToggle {
 
+    /**
+     * hostname of the server.
+     */
     static String hostname = "";
+
+    /**
+     * port of the server.
+     */
     static String port = "";
+
+    /**
+     * username of the player.
+     */
     static String nickname = "";
 
+    /**
+     * {@link GUI} instance.
+     */
     private GUI gui;
+
     @FXML
     public AnchorPane root;
     @FXML
@@ -62,6 +80,9 @@ public class StartScreenController implements GUIController, MuteToggle {
         this.gui = gui;
     }
 
+    /**
+     * This method initialize the view.
+     */
     public void init() {
 
         txtFieldServer.setText(hostname);
@@ -129,6 +150,11 @@ public class StartScreenController implements GUIController, MuteToggle {
         stage.setResizable(true);
     }
 
+    /**
+     * This method check the field in the start screen form.
+     *
+     * @return true if the form is valid, false otherwise.
+     */
     private boolean checkFields() {
         if (!txtFieldServer.getText().isEmpty() && !Client.validateServerString(txtFieldServer.getText())) {
             System.out.println("Server not valid");
@@ -146,6 +172,11 @@ public class StartScreenController implements GUIController, MuteToggle {
         return true;
     }
 
+    /**
+     * This method hide/show the play button.
+     *
+     * @param hide true if the button should be hidden, false otherwise.
+     */
     private void hideCenter(boolean hide) {
         btnPlay.setVisible(hide);
         btnPlay.setDisable(!hide);
@@ -153,15 +184,26 @@ public class StartScreenController implements GUIController, MuteToggle {
         grpConnect.setVisible(!hide);
     }
 
+    /**
+     * This method disable/enable the form.
+     *
+     * @param disable true if the form should be disabled, false otherwise.
+     */
     public void disableCenter(boolean disable) {
         grpConnect.setDisable(disable);
     }
 
+    /**
+     * This method is used to show the form.
+     */
     @FXML
     public void handlePlayButton() {
         hideCenter(false);
     }
 
+    /**
+     * This method handle the start button which is used to send to the GUI the information contained in the form.
+     */
     @FXML
     public void handleStartButton() {
         disableCenter(true);

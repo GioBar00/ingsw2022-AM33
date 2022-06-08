@@ -17,9 +17,19 @@ import java.util.EnumMap;
 import java.util.MissingResourceException;
 import java.util.Objects;
 
+/**
+ * This class is used to load the resources needed by the GUI.
+ */
 public abstract class ResourceLoader {
 
+    /**
+     * This map contains the images loaded by the ResourceLoader.
+     */
     private static final EnumMap<ImagePath, Image> images = new EnumMap<>(ImagePath.class);
+
+    /**
+     * This map contains the media player loaded by the ResourceLoader.
+     */
     private static final EnumMap<AudioPath, MediaPlayer> audios = new EnumMap<>(AudioPath.class);
 
     /**

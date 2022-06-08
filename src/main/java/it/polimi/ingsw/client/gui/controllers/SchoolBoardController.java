@@ -15,8 +15,20 @@ import javafx.scene.layout.Pane;
 
 import java.util.*;
 
+/**
+ * This class is the controller of the school board view.
+ */
 public class SchoolBoardController implements GUIController {
 
+    /**
+     * {@link GUI} instance.
+     */
+    private GUI gui;
+
+    /**
+     * The root of the scene.
+     */
+    private Pane root;
     @FXML
     public ImageView imgBoard;
     @FXML
@@ -27,7 +39,6 @@ public class SchoolBoardController implements GUIController {
     public AnchorPane anchorPaneRed;
     public AnchorPane anchorPaneMagenta;
     public AnchorPane anchorPaneHall;
-    private GUI gui;
 
     public final List<Button> entranceButtons = new ArrayList<>(9);
 
@@ -42,9 +53,6 @@ public class SchoolBoardController implements GUIController {
     public final EnumMap<StudentColor, Button> hallButtonsByColor = new EnumMap<>(StudentColor.class);
 
     public final EnumMap<StudentColor, AnchorPane> hallAnchorPaneByColor = new EnumMap<>(StudentColor.class);
-    
-
-    private Pane root;
 
     @FXML
     private Button blueHallButton;
@@ -86,6 +94,9 @@ public class SchoolBoardController implements GUIController {
         this.gui = gui;
     }
 
+    /**
+     * method to initialize the view.
+     */
     @Override
     public void init() {
         initEntrance();
@@ -106,6 +117,9 @@ public class SchoolBoardController implements GUIController {
         GUIUtils.addToPaneCenterKeepRatio(root, anchorPaneBoard, 1125.0 / 488);
     }
 
+    /**
+     * This method initializes buttons of the entrance.
+     */
     private void initEntrance() {
         for (int i = 0; i < 9; i++) {
             Button btn = new Button();
@@ -124,6 +138,9 @@ public class SchoolBoardController implements GUIController {
         }
     }
 
+    /**
+     * This method initializes the towers.
+     */
     private void initTowers() {
         for (int i = 0; i < 8; i++) {
             AnchorPane anchorPane = new AnchorPane();
@@ -143,6 +160,9 @@ public class SchoolBoardController implements GUIController {
         hallButtonsByColor.put(StudentColor.YELLOW, yellowHallButton);
     }
 
+    /**
+     * This method initializes the professors.
+     */
     private void initProfessors() {
         for (StudentColor sc : StudentColor.values()) {
             AnchorPane anchorPane = new AnchorPane();
@@ -157,7 +177,10 @@ public class SchoolBoardController implements GUIController {
             profsGrid.add(anchorPane, 1, (sc.ordinal() * 2) + 1);
         }
     }
-    
+
+    /**
+     * This method initializes the hall.
+     */
     private void initHall() {
         GUIUtils.resetButton(hallButton);
         hallAnchorPaneByColor.put(StudentColor.BLUE, anchorPaneBlue);
@@ -210,7 +233,11 @@ public class SchoolBoardController implements GUIController {
     }
 
 
-
+    /**
+     * This method is used to set the schoolboard view and showing all the pawns on it.
+     *
+     * @param schoolBoardView the schoolboard view.
+     */
     public void setSchoolBoardView(SchoolBoardView schoolBoardView) {
         setEntrance(schoolBoardView.getEntrance());
         setHall(schoolBoardView.getStudentsHall());
@@ -218,6 +245,11 @@ public class SchoolBoardController implements GUIController {
         setTowers(schoolBoardView.getNumTowers(), schoolBoardView.getTower());
     }
 
+    /**
+     * This method sets the pawns on the entrance.
+     *
+     * @param entrance a list of pawns on the entrance.
+     */
     public void setEntrance(List<StudentColor> entrance) {
         for (int i = 0; i < entrance.size(); i++) {
             if (entrance.get(i) != null) {
@@ -228,6 +260,11 @@ public class SchoolBoardController implements GUIController {
         }
     }
 
+    /**
+     * This method sets the pawns on the hall.
+     *
+     * @param hall a map of the pawns on the hall divided by color.
+     */
     public void setHall(EnumMap<StudentColor, Integer> hall) {
         for (StudentColor sc : hallImageViewsByColor.keySet()) {
             int num = 0;
@@ -238,6 +275,11 @@ public class SchoolBoardController implements GUIController {
         }
     }
 
+    /**
+     * This method sets the pawns of the professors.
+     *
+     * @param professors a map of the professors.
+     */
     public void setProfs(EnumSet<StudentColor> professors) {
         for (StudentColor sc : StudentColor.values()) {
             if (professors.contains(sc)) {
@@ -247,6 +289,12 @@ public class SchoolBoardController implements GUIController {
         }
     }
 
+    /**
+     * This method sets the pawns on the towers.
+     *
+     * @param numTowers the number of towers.
+     * @param tower     the towers.
+     */
     public void setTowers(int numTowers, Tower tower) {
         Image towerImage = GUIUtils.getTowerImage(tower);
         int num = 0;
@@ -257,12 +305,12 @@ public class SchoolBoardController implements GUIController {
     }
 
     /**
-     * This method is used for clear all the buttons in the school board.
+     * This method is used to clear all the buttons in the school board.
      */
     public void clearAllButtons() {
         for (Button button : entranceButtons)
             GUIUtils.resetButton(button);
-        for(Button button : hallButtonsByColor.values())
+        for (Button button : hallButtonsByColor.values())
             GUIUtils.resetButton(button);
         GUIUtils.resetButton(hallButton);
     }

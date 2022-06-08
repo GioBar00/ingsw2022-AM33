@@ -15,7 +15,7 @@ import javafx.scene.shape.Rectangle;
 import java.util.List;
 
 /**
- * This class contains methods for getting the proper image path from an enumeration
+ * This class contains methods for getting the proper image path from an enumeration and other utility methods used in the GUI.
  */
 public abstract class GUIUtils {
 

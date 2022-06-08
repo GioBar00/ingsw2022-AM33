@@ -77,7 +77,7 @@ public class Server implements EndGameListener, DisconnectListener {
     }
 
     /**
-     * Main Method used for instantiate Virtual Client if is permitted.
+     * Main Method used to instantiate Virtual Client if is permitted.
      * Each of this Virtual Client are run on different threads
      */
     public void handleRequests() {

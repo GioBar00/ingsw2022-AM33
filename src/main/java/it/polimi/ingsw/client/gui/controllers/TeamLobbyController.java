@@ -18,9 +18,19 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * This class is the controller of the team lobby screen.
+ */
 public class TeamLobbyController implements LobbyController {
+
+    /**
+     * {@link GUI} instance.
+     */
     private GUI gui;
 
+    /**
+     * The root of the scene.
+     */
     private Pane root;
 
     @FXML
@@ -238,12 +248,11 @@ public class TeamLobbyController implements LobbyController {
             lobbyLabels[i].setText("");
         }
 
-        if(view.getTeams().get(Tower.BLACK).contains(nickname)) {
+        if (view.getTeams().get(Tower.BLACK).contains(nickname)) {
             GUIUtils.showButton(whiteBtn);
-        }else if(view.getTeams().get(Tower.WHITE).contains(nickname)) {
+        } else if (view.getTeams().get(Tower.WHITE).contains(nickname)) {
             GUIUtils.showButton(blackBtn);
-        }
-        else {
+        } else {
             GUIUtils.showButton(blackBtn);
             GUIUtils.showButton(whiteBtn);
         }

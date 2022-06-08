@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client;
 
+//TODO: javaDOC
 public class Coordinates {
     int row;
     int column;
