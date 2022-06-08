@@ -16,7 +16,12 @@ public class IslandGroupView implements Serializable {
      */
     private final boolean isBlocked;
 
-
+    /**
+     * Constructor
+     *
+     * @param islands   view of the islands in the island group
+     * @param isBlocked boolean attribute which is true if the island is blocked
+     */
     public IslandGroupView(List<IslandView> islands, boolean isBlocked) {
         this.islands = islands;
         this.isBlocked = isBlocked;

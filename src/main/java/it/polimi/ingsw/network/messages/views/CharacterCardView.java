@@ -44,6 +44,18 @@ public class CharacterCardView implements Serializable {
      */
     private final boolean canEndEffect;
 
+    /**
+     * Constructor
+     *
+     * @param type           CharacterType of the card.
+     * @param canBeUsed      boolean attribute which is true if the destination player can use the card, false otherwise.
+     * @param originalCost   original cost of the card.
+     * @param additionalCost additional cost of the card.
+     * @param numBlocks      number of blocks on the card (for type Herbalist).
+     * @param students       students on the card (for the types that have them).
+     * @param isActivating   boolean attribute which is true while the player is using the card (making choices, selecting effects,...)
+     * @param canEndEffect   boolean attribute which is true if the player can end the effect of the card, false otherwise.
+     */
     public CharacterCardView(CharacterType type, boolean canBeUsed, int originalCost, int additionalCost, int numBlocks, EnumMap<StudentColor, Integer> students, boolean isActivating, boolean canEndEffect) {
         this.type = type;
         this.canBeUsed = canBeUsed;

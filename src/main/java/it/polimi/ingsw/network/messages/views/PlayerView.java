@@ -36,6 +36,16 @@ public class PlayerView implements Serializable {
      */
     private final SchoolBoardView schoolBoardView;
 
+    /**
+     * Constructor.
+     *
+     * @param nickname          nickname of the player.
+     * @param wizard            wizard of the player.
+     * @param assistantCards    assistant cards that the player still has in its hand.
+     * @param playedCard        last assistant card played (null if there's none).
+     * @param numAssistantCards number of assistant cards that the player still has in its hand.
+     * @param schoolBoardView   schoolboard of the player.
+     */
     public PlayerView(String nickname, Wizard wizard, List<AssistantCard> assistantCards, AssistantCard playedCard, int numAssistantCards, SchoolBoardView schoolBoardView) {
         this.nickname = nickname;
         this.wizard = wizard;

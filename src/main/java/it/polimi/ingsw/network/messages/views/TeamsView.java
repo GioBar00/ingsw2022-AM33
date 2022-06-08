@@ -21,9 +21,15 @@ public class TeamsView implements Serializable {
      */
     private final List<String> lobby;
 
-    public TeamsView(EnumMap<Tower, List<String>> teams, List<String> lobby){
+    /**
+     * Constructor
+     *
+     * @param teams teams that have formed up to now
+     * @param lobby nicknames of the players that haven't chosen a teams yet
+     */
+    public TeamsView(EnumMap<Tower, List<String>> teams, List<String> lobby) {
         EnumMap<Tower, List<String>> teamsString = new EnumMap<>(Tower.class);
-        for (Tower t: teams.keySet()) {
+        for (Tower t : teams.keySet()) {
             teamsString.put(t, new LinkedList<>());
             ArrayList<String> playerNicks = new ArrayList<>();
             for (String s : teams.get(t)) {

@@ -58,12 +58,29 @@ public class GameView extends InvalidMessage {
      */
     private final Map<String, Integer> playerCoins;
 
+    /**
+     * The list of {@link CloudView}.
+     */
     private final List<CloudView> cloudViews;
 
+    /**
+     * The list of winners.
+     */
     private final EnumSet<Tower> winners;
 
     /**
-     * constructor of the GameView for an easy game
+     * Constructor.
+     *
+     * @param mode              mode of the game (easy or expert).
+     * @param preset            preset of the game (two, three or four players).
+     * @param state             state of the game (uninitialized, started, ended).
+     * @param phase             phase of the round in the game (planning or the action phases).
+     * @param currentPlayer     the current player.
+     * @param islandsView       view of the Islands.
+     * @param playersView       view of the Players.
+     * @param motherNatureIndex index of the islands on which mother nature is on.
+     * @param cloudViews        the list of {@link CloudView}.
+     * @param winners           the list of winners.
      */
     public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, ArrayList<CloudView> cloudViews, EnumSet<Tower> winners) {
         this.mode = mode;
@@ -83,6 +100,20 @@ public class GameView extends InvalidMessage {
 
     /**
      * constructor of the GameView for an expert game (sets also the attributes for the CharacterCard)
+     *
+     * @param mode              mode of the game (easy or expert).
+     * @param preset            preset of the game (two, three or four players).
+     * @param state             state of the game (uninitialized, started, ended).
+     * @param phase             phase of the round in the game (planning or the action phases).
+     * @param currentPlayer     the current player.
+     * @param islandsView       view of the Islands.
+     * @param playersView       view of the Players.
+     * @param motherNatureIndex index of the islands on which mother nature is on.
+     * @param reserve           reserve of coins.
+     * @param characterCardView view of the character cards.
+     * @param playerCoins       coins of each player.
+     * @param cloudViews        the list of {@link CloudView}.
+     * @param winners           the list of winners.
      */
     public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, Integer reserve, List<CharacterCardView> characterCardView, Map<String, Integer> playerCoins, ArrayList<CloudView> cloudViews, EnumSet<Tower> winners) {
         this.mode = mode;
@@ -184,6 +215,9 @@ public class GameView extends InvalidMessage {
         return cloudViews;
     }
 
+    /**
+     * @return the winners
+     */
     public EnumSet<Tower> getWinners() {
         return winners;
     }

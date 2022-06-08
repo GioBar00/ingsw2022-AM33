@@ -33,6 +33,15 @@ public class SchoolBoardView implements Serializable {
      */
     private final EnumSet<StudentColor> professors;
 
+    /**
+     * Constructor.
+     *
+     * @param numTowers    number of towers still on the board.
+     * @param tower        type of tower.
+     * @param studentsHall students in the hall.
+     * @param entrance     students in the entrance.
+     * @param professors   professors on the board.
+     */
     public SchoolBoardView(int numTowers, Tower tower, EnumMap<StudentColor, Integer> studentsHall, ArrayList<StudentColor> entrance, EnumSet<StudentColor> professors) {
         this.numTowers = numTowers;
         this.tower = tower;
