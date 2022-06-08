@@ -48,18 +48,25 @@ public enum MessageType {
     GAME_STATE_REQUEST(GameStateRequest.class),
     SKIP_TURN(SkipTurn.class);
 
+    /**
+     * A map that contains the message type and the class of the message.
+     */
     private static final Map<Class<? extends Message>, MessageType> LOOKUP_MAP;
 
     static {
         LOOKUP_MAP = new HashMap<>();
-        for (MessageType m: MessageType.values())
+        for (MessageType m : MessageType.values())
             LOOKUP_MAP.put(m.getMessageClass(), m);
     }
 
+    /**
+     * The class of the message.
+     */
     private final Class<? extends Message> messageClass;
 
     /**
      * Constructor
+     *
      * @param c the class of the message
      */
     MessageType(Class<? extends Message> c) {
@@ -68,6 +75,7 @@ public enum MessageType {
 
     /**
      * Returns the class of the message
+     *
      * @return the class of the message
      */
     public Class<? extends Message> getMessageClass() {
@@ -76,6 +84,7 @@ public enum MessageType {
 
     /**
      * Returns the type of the message
+     *
      * @param message the message
      * @return the type of the message
      */

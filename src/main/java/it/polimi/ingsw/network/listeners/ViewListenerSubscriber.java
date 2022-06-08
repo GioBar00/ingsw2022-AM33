@@ -9,12 +9,14 @@ public interface ViewListenerSubscriber {
 
     /**
      * Sets the view listener.
+     *
      * @param listener the listener to set
      */
     void setViewListener(ViewListener listener);
 
     /**
      * Notifies the listener that a request has occurred.
+     *
      * @param message the request to notify
      */
     void notifyViewListener(Message message);

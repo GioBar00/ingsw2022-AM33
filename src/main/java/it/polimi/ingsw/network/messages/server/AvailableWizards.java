@@ -3,6 +3,9 @@ package it.polimi.ingsw.network.messages.server;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.views.WizardsView;
 
+/**
+ * Message sent by the server to the client to notify the available wizards.
+ */
 public class AvailableWizards implements Message {
 
     /**

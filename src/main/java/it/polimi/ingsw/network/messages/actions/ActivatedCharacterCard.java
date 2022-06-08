@@ -14,6 +14,7 @@ public class ActivatedCharacterCard implements Action {
 
     /**
      * Creates the message
+     *
      * @param characterCardIndex index of the activated character card.
      */
     public ActivatedCharacterCard(Integer characterCardIndex) {

@@ -14,6 +14,7 @@ public class MoveMotherNature implements ActionRequest {
 
     /**
      * Creates message.
+     *
      * @param maxNumMoves maximum movement mother nature can do.
      */
     public MoveMotherNature(Integer maxNumMoves) {

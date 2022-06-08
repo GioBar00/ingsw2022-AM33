@@ -7,6 +7,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class contains all the information about the player.
+ */
 public class PlayerView implements Serializable {
     /**
      * nickname of the player

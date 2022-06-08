@@ -5,6 +5,9 @@ import it.polimi.ingsw.server.model.enums.*;
 
 import java.util.*;
 
+/**
+ * This class is the representation of the current state of the game.
+ */
 public class GameView extends InvalidMessage {
     /**
      * mode of the game (easy or expert)

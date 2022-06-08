@@ -18,6 +18,7 @@ public class PlayAssistantCard implements ActionRequest {
 
     /**
      * Creates message.
+     *
      * @param cards playable assistant cards.
      */
     public PlayAssistantCard(EnumSet<AssistantCard> cards) {

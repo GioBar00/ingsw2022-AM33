@@ -30,10 +30,11 @@ public class MoveStudent implements MoveActionRequest {
 
     /**
      * Creates message.
-     * @param from location.
+     *
+     * @param from           location.
      * @param fromIndexesSet from location indexes.
-     * @param to location.
-     * @param toIndexesSet to location indexes.
+     * @param to             location.
+     * @param toIndexesSet   to location indexes.
      */
     public MoveStudent(MoveLocation from, Set<Integer> fromIndexesSet, MoveLocation to, Set<Integer> toIndexesSet) {
         this.from = from;
@@ -48,6 +49,7 @@ public class MoveStudent implements MoveActionRequest {
     public MoveLocation getFrom() {
         return from;
     }
+
     /**
      * @return from location indexes.
      */
@@ -56,12 +58,14 @@ public class MoveStudent implements MoveActionRequest {
             return null;
         return Set.copyOf(fromIndexesSet);
     }
+
     /**
      * @return to location.
      */
     public MoveLocation getTo() {
         return to;
     }
+
     /**
      * @return to location indexes.
      */
@@ -76,7 +80,7 @@ public class MoveStudent implements MoveActionRequest {
      */
     @Override
     public boolean isValid() {
-        if(from != null && to != null) {
+        if (from != null && to != null) {
             if (from.requiresFromIndex() && (fromIndexesSet == null || fromIndexesSet.isEmpty()))
                 return false;
             if (to.requiresToIndex() && (toIndexesSet == null || toIndexesSet.isEmpty()))

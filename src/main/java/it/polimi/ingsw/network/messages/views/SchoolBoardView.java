@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
+/**
+ * This class contains the information about the schoolboard.
+ */
 public class SchoolBoardView implements Serializable {
     /**
      * number of towers still on the board

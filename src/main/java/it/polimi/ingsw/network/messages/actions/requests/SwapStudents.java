@@ -12,9 +12,10 @@ public class SwapStudents extends MoveStudent {
 
     /**
      * Creates message
-     * @param first location
-     * @param firstIndexes first location indexes.
-     * @param second location
+     *
+     * @param first         location
+     * @param firstIndexes  first location indexes.
+     * @param second        location
      * @param secondIndexes second location indexes.
      */
     public SwapStudents(MoveLocation first, Set<Integer> firstIndexes, MoveLocation second, Set<Integer> secondIndexes) {
@@ -26,7 +27,7 @@ public class SwapStudents extends MoveStudent {
      */
     @Override
     public boolean isValid() {
-        if(from != null && to != null) {
+        if (from != null && to != null) {
             if (from.requiresIndex() && (fromIndexesSet == null || fromIndexesSet.isEmpty()))
                 return false;
             if (to.requiresIndex() && (toIndexesSet == null))

@@ -3,6 +3,9 @@ package it.polimi.ingsw.network.messages.views;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * This class represents a view of the islands group.
+ */
 public class IslandGroupView implements Serializable {
     /**
      * view of the islands in the island group

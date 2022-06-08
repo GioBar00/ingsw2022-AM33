@@ -14,6 +14,7 @@ public class ChosenCloud implements Action {
 
     /**
      * Creates the message.
+     *
      * @param cloudIndex index of the chosen cloud.
      */
     public ChosenCloud(Integer cloudIndex) {

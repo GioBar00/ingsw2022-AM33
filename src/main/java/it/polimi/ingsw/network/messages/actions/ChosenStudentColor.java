@@ -15,6 +15,7 @@ public class ChosenStudentColor implements Action {
 
     /**
      * Creates the message.
+     *
      * @param studentColor chosen student color.
      */
     public ChosenStudentColor(StudentColor studentColor) {

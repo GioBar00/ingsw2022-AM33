@@ -6,6 +6,9 @@ import it.polimi.ingsw.server.model.enums.Tower;
 import java.io.Serializable;
 import java.util.EnumMap;
 
+/**
+ * This class represents a view of the island.
+ */
 public class IslandView implements Serializable {
     /**
      * tower of the island (if there is none is null)

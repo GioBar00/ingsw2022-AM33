@@ -14,6 +14,7 @@ public abstract class ConcreteMessageListenerSubscriber implements MessageListen
 
     /**
      * Adds a message listener.
+     *
      * @param listener the listener to add
      */
     @Override
@@ -23,6 +24,7 @@ public abstract class ConcreteMessageListenerSubscriber implements MessageListen
 
     /**
      * Removes a message listener.
+     *
      * @param listener the listener to remove
      */
     @Override
@@ -33,12 +35,13 @@ public abstract class ConcreteMessageListenerSubscriber implements MessageListen
     /**
      * Removes all the message listener.
      */
-    public  void removeAllMessageListeners() {
+    public void removeAllMessageListeners() {
         listeners.clear();
     }
 
     /**
      * Notifies all listeners.
+     *
      * @param event of the message to notify
      */
     @Override
