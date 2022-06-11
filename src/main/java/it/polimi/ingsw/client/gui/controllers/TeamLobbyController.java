@@ -1,18 +1,14 @@
 package it.polimi.ingsw.client.gui.controllers;
 
-import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
-import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
 import it.polimi.ingsw.network.messages.client.StartGame;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.server.model.enums.Tower;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -34,69 +30,69 @@ public class TeamLobbyController implements LobbyController {
     private Pane root;
 
     @FXML
-    public Button blackBtn;
+    private Button blackBtn;
 
     @FXML
-    public Button whiteBtn;
+    private Button whiteBtn;
 
     @FXML
-    public Button startButton;
+    private Button startButton;
 
     @FXML
-    public Label firstBName;
+    private Label firstBName;
 
     @FXML
-    public Label secondBName;
+    private Label secondBName;
 
     @FXML
-    public Label thirdBName;
+    private Label thirdBName;
 
     @FXML
-    public Label fourthBName;
+    private Label fourthBName;
 
     @FXML
-    public Label firstWName;
+    private Label firstWName;
 
     @FXML
-    public Label secondWName;
+    private Label secondWName;
 
     @FXML
-    public Label thirdWName;
+    private Label thirdWName;
 
     @FXML
-    public Label fourthWName;
+    private Label fourthWName;
 
     @FXML
-    public Label firstLName;
+    private Label firstLName;
 
     @FXML
-    public Label secondLName;
+    private Label secondLName;
 
     @FXML
-    public Label thirdLName;
+    private Label thirdLName;
 
     @FXML
-    public Label fourthLName;
+    private Label fourthLName;
 
     @FXML
-    public ImageView startImg;
+    ImageView startImg;
 
     @FXML
-    public ImageView imgViewBackground;
+    private ImageView imgViewBackground;
     @FXML
-    public ImageView imgViewMute;
+    private ImageView imgViewMute;
     @FXML
-    public Rectangle rectWhite;
+    private Rectangle rectWhite;
     @FXML
-    public Rectangle rectLobby;
+    private Rectangle rectLobby;
     @FXML
-    public Rectangle rectBlack;
+    private Rectangle rectBlack;
     @FXML
-    public AnchorPane anchorPaneBlack;
+    private AnchorPane anchorPaneBlack;
     @FXML
-    public AnchorPane anchorPaneLobby;
+    private AnchorPane anchorPaneLobby;
     @FXML
-    public AnchorPane anchorPaneWhite;
+    private AnchorPane anchorPaneWhite;
 
     private final Label[] blackLabels;
 

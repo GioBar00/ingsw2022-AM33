@@ -1,19 +1,16 @@
 package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.Client;
-import it.polimi.ingsw.client.enums.AudioPath;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
-import it.polimi.ingsw.client.gui.audio.AudioManager;
 import it.polimi.ingsw.client.gui.audio.MuteToggle;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -48,25 +45,25 @@ public class StartScreenController implements GUIController, MuteToggle {
     @FXML
     public AnchorPane root;
     @FXML
-    public ImageView imgBackground;
+    private ImageView imgBackground;
     @FXML
-    public ImageView imgViewMute;
+    private ImageView imgViewMute;
     @FXML
-    public ImageView imgTitle;
+    private ImageView imgTitle;
     @FXML
-    public GridPane grpConnect;
+    private GridPane grpConnect;
     @FXML
-    public TextField txtFieldServer;
+    private TextField txtFieldServer;
     @FXML
-    public TextField txtFieldPort;
+    private TextField txtFieldPort;
     @FXML
-    public TextField txtFieldNickname;
+    private TextField txtFieldNickname;
     @FXML
-    public Button btnStart;
+    private Button btnStart;
     @FXML
-    public ImageView imgStart;
+    private ImageView imgStart;
     @FXML
-    public Button btnPlay;
+    private Button btnPlay;
     @FXML
     public Button btnMute;
 

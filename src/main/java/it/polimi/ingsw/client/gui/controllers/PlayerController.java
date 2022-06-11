@@ -53,45 +53,45 @@ public class PlayerController implements GUIController {
      */
     private GUIController handStageHandler;
     @FXML
-    public AnchorPane anchorPaneSchoolBoard;
+    private AnchorPane anchorPaneSchoolBoard;
 
     @FXML
-    public Label lblName;
+    private Label lblName;
 
     @FXML
-    public ImageView imgViewTower;
+    private ImageView imgViewTower;
 
     @FXML
-    public Label lblCoins;
+    private Label lblCoins;
 
     @FXML
-    public ImageView imgViewPlayedCard;
+    private ImageView imgViewPlayedCard;
 
     @FXML
-    public Button btnHand;
+    private Button btnHand;
 
     @FXML
-    public ImageView imgViewCoin;
+    private ImageView imgViewCoin;
 
     @FXML
-    public AnchorPane anchorPaneHand;
+    private AnchorPane anchorPaneHand;
 
     @FXML
-    public GridPane gridPlayerInfo;
+    private GridPane gridPlayerInfo;
     @FXML
-    public GridPane gridName;
+    private GridPane gridName;
     @FXML
-    public HBox hBoxPlayedAssistantCard;
+    private HBox hBoxPlayedAssistantCard;
     @FXML
-    public GridPane gridCards;
+    private GridPane gridCards;
     @FXML
-    public ImageView imgViewHand;
+    private ImageView imgViewHand;
     @FXML
-    public HBox hBoxTower;
+    private HBox hBoxTower;
     @FXML
-    public Rectangle playerBackground;
+    private Rectangle playerBackground;
     @FXML
-    public AnchorPane baseRoot;
+    private AnchorPane baseRoot;
 
     /**
      * This method is used to set the GUI of the controller.

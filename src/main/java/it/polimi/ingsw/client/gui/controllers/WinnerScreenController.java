@@ -27,19 +27,19 @@ import java.util.List;
  */
 public class WinnerScreenController implements GUIController, MuteToggle {
     @FXML
-    public Label lblResult;
+    private Label lblResult;
     @FXML
-    public Label lblWinner;
+    private Label lblWinner;
     @FXML
-    public Button btnReload;
+    private Button btnReload;
     @FXML
     public Button btnMute;
     @FXML
-    public ImageView imgViewMute;
+    private ImageView imgViewMute;
     @FXML
-    public ImageView imgViewReload;
+    private ImageView imgViewReload;
     @FXML
-    public ImageView imgViewBackground;
+    private ImageView imgViewBackground;
 
     /**
      * {@link GUI} instance.

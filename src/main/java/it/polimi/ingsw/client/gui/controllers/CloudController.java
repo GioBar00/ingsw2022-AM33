@@ -13,36 +13,45 @@ import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 
+/**
+ * This class is the controller of the cloud view.
+ */
 public class CloudController implements GUIController {
 
+    /**
+     * {@link GUI} instance.
+     */
+    private GUI gui;
+
+    /**
+     * The root of the scene.
+     */
+    private int cloudIndex;
     @FXML
-    public Pane root;
+    private Pane root;
     @FXML
     public Button cloudBtn;
 
     @FXML
-    public ImageView pawn0Img;
+    private ImageView pawn0Img;
 
     @FXML
-    public ImageView pawn1Img;
+    private ImageView pawn1Img;
 
     @FXML
-    public ImageView pawn2Img;
+    private ImageView pawn2Img;
 
     @FXML
-    public ImageView pawn3Img;
+    private ImageView pawn3Img;
     @FXML
-    public ImageView imgViewCloud;
+    private ImageView imgViewCloud;
     @FXML
-    public AnchorPane anchorPanePawn;
+    private AnchorPane anchorPanePawn;
     @FXML
     public AnchorPane anchorPaneCloud;
 
-    private ArrayList<ImageView> imageViews;
+    public ArrayList<ImageView> imageViews;
 
-    private GUI gui;
-
-    private int cloudIndex;
 
     /**
      * This method is used to set the GUI of the controller.

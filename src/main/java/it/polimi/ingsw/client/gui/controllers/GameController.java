@@ -27,6 +27,9 @@ import javafx.stage.Stage;
 
 import java.util.*;
 
+/**
+ * This class is the controller of the game screen.
+ */
 public class GameController implements GUIController, MuteToggle {
     @FXML
     public AnchorPane anchorPaneCharacterCard0;
@@ -406,6 +409,13 @@ public class GameController implements GUIController, MuteToggle {
         playerControllersByNickname.get(nickname).getSchoolBoardController().clearAllButtons();
     }
 
+    /**
+     * This method handle the move to island requests. It highlights the islands the player could move to.
+     * When the player chooses an island it sends a {@link MovedStudent} message to the server.
+     *
+     * @param fromIndexes a set of indexes that represents the available student colors on the character card.
+     * @param toIndexes   a set of indexes that represents the available island indexes.
+     */
     public void processMoveCardIsland(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
         lblAction.setText("Select a student from the character card");
         Integer cardIndex = findActivatedCard();
@@ -429,6 +439,12 @@ public class GameController implements GUIController, MuteToggle {
         }
     }
 
+    /**
+     * This method handles the move from a card to the hall. Highlights the colors of the students that could be moved.
+     * When the player chooses a student it sends a {@link MovedStudent} message to the server.
+     *
+     * @param fromIndexes a set of indexes that represents the available student colors on the character card.
+     */
     public void processMoveCardHall(Set<Integer> fromIndexes) {
         lblAction.setText("Select a student from the character card to move to the hall");
         Integer cardIndex = findActivatedCard();
@@ -445,6 +461,13 @@ public class GameController implements GUIController, MuteToggle {
         }
     }
 
+    /**
+     * This method handles the swap of students between card and entrance. Highlights the colors of the students that could be swapped and the students in the entrance.
+     * When the player chooses a student it sends a {@link SwappedStudents} message to the server.
+     *
+     * @param cardIndexes a set of indexes that represents the available student colors on the character card.
+     * @param toIndexes   a set of indexes that represents the available students on the entrance.
+     */
     public void processSwapCardEntrance(Set<Integer> cardIndexes, Set<Integer> toIndexes) {
         lblAction.setText("Select a student from the character card");
         Integer cardIndex = findActivatedCard();
@@ -474,6 +497,13 @@ public class GameController implements GUIController, MuteToggle {
         }
     }
 
+    /**
+     * This method handles the swap of students between entrance and hall. Highlights the students that could be swapped.
+     * When the player chooses a student it sends a {@link SwappedStudents} message to the server.
+     *
+     * @param fromIndexes a set of indexes that represents the available students on the entrance.
+     * @param toIndexes   a set of indexes that represents the available student colors on the hall.
+     */
     public void processSwapEntranceHall(Set<Integer> fromIndexes, Set<Integer> toIndexes) {
         lblAction.setText("Select a highlighted student in the entrance");
         Integer cardIndex = findActivatedCard();
@@ -507,6 +537,13 @@ public class GameController implements GUIController, MuteToggle {
         }
     }
 
+    /**
+     * This method handles a multiple possible moves. It highlights the clickable buttons and , after the choice of the player, sends the move to the server.
+     *
+     * @param entranceIndexes       a set of indexes that represents the available students on the entrance that can be moved to an island.
+     * @param islandIndexes         a set of indexes that represents the available island.
+     * @param entranceToHallIndexes a set of indexes that represents the available students on the entrance that can be moved to the hall.
+     */
     public void processMultiplePossibleMoves(Set<Integer> entranceIndexes, Set<Integer> islandIndexes, Set<Integer> entranceToHallIndexes) {
         lblAction.setText("Select a highlighted student in the entrance");
         PlayerController me = playerControllersByNickname.get(gui.getNickname());
@@ -549,6 +586,11 @@ public class GameController implements GUIController, MuteToggle {
         }
     }
 
+    /**
+     * Helper method that returns the activated character card.
+     *
+     * @return the index of the active character card.
+     */
     private Integer findActivatedCard() {
         if (characterCardControllers.isEmpty())
             return null;
@@ -563,6 +605,11 @@ public class GameController implements GUIController, MuteToggle {
         return cardIndex;
     }
 
+    /**
+     * This method handles the request of playing a card. It shows the available cards.
+     *
+     * @param availableCards an enum set of available cards.
+     */
     public void processPlayAssistantCard(EnumSet<AssistantCard> availableCards) {
         PlayerController me = playerControllersByNickname.get(gui.getNickname());
         me.playAssistantCard(availableCards);

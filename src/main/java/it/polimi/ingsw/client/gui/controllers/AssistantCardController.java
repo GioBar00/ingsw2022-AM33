@@ -33,84 +33,94 @@ public class AssistantCardController implements GUIController {
     private record AssistantView(AnchorPane anchorPaneButton, AnchorPane anchorPaneImageView) {
     }
 
-    @FXML
-    public Text lblTitle;
-
+    /**
+     * {@link GUI} instance.
+     */
     private GUI gui;
+
+    /**
+     * The root of the scene.
+     */
     private Pane root;
+
+    /**
+     * Boolean set to true if the player has to choose an assistant card.
+     */
     private boolean choseAnAssistant = false;
-
-    @FXML
-    public AnchorPane cheetahBtn;
-    @FXML
-    public AnchorPane ostrichBtn;
-    @FXML
-    public AnchorPane catBtn;
-    @FXML
-    public AnchorPane eagleBtn;
-    @FXML
-    public AnchorPane foxBtn;
-    @FXML
-    public AnchorPane snakeBtn;
-    @FXML
-    public AnchorPane octopusBtn;
-    @FXML
-    public AnchorPane dogBtn;
-    @FXML
-    public AnchorPane elephantBtn;
-    @FXML
-    public AnchorPane turtleBtn;
-
-    @FXML
-    public AnchorPane cheetahImg;
-    @FXML
-    public AnchorPane ostrichImg;
-    @FXML
-    public AnchorPane catImg;
-    @FXML
-    public AnchorPane eagleImg;
-    @FXML
-    public AnchorPane foxImg;
-    @FXML
-    public AnchorPane snakeImg;
-    @FXML
-    public AnchorPane octopusImg;
-    @FXML
-    public AnchorPane dogImg;
-    @FXML
-    public AnchorPane elephantImg;
-    @FXML
-    public AnchorPane turtleImg;
-
-    @FXML
-    public GridPane cheetah;
-    @FXML
-    public GridPane ostrich;
-    @FXML
-    public GridPane cat;
-    @FXML
-    public GridPane eagle;
-    @FXML
-    public GridPane fox;
-    @FXML
-    public GridPane snake;
-    @FXML
-    public GridPane octopus;
-    @FXML
-    public GridPane dog;
-    @FXML
-    public GridPane elephant;
-    @FXML
-    public GridPane turtle;
-
-    @FXML
-    public FlowPane flowpane;
 
     private EnumMap<AssistantCard, GridPane> assistantGridMap;
 
     private Map<GridPane, AssistantView> assistantViewMaps;
 
     private EnumSet<AssistantCard> availableCards = EnumSet.noneOf(AssistantCard.class);
+    @FXML
+    private Text lblTitle;
+
+    @FXML
+    private AnchorPane cheetahBtn;
+    @FXML
+    private AnchorPane ostrichBtn;
+    @FXML
+    private AnchorPane catBtn;
+    @FXML
+    private AnchorPane eagleBtn;
+    @FXML
+    private AnchorPane foxBtn;
+    @FXML
+    private AnchorPane snakeBtn;
+    @FXML
+    private AnchorPane octopusBtn;
+    @FXML
+    private AnchorPane dogBtn;
+    @FXML
+    private AnchorPane elephantBtn;
+    @FXML
+    private AnchorPane turtleBtn;
+
+    @FXML
+    private AnchorPane cheetahImg;
+    @FXML
+    private AnchorPane ostrichImg;
+    @FXML
+    private AnchorPane catImg;
+    @FXML
+    private AnchorPane eagleImg;
+    @FXML
+    private AnchorPane foxImg;
+    @FXML
+    private AnchorPane snakeImg;
+    @FXML
+    private AnchorPane octopusImg;
+    @FXML
+    private AnchorPane dogImg;
+    @FXML
+    private AnchorPane elephantImg;
+    @FXML
+    private AnchorPane turtleImg;
+
+    @FXML
+    private GridPane cheetah;
+    @FXML
+    private GridPane ostrich;
+    @FXML
+    private GridPane cat;
+    @FXML
+    private GridPane eagle;
+    @FXML
+    private GridPane fox;
+    @FXML
+    private GridPane snake;
+    @FXML
+    private GridPane octopus;
+    @FXML
+    private GridPane dog;
+    @FXML
+    private GridPane elephant;
+    @FXML
+    private GridPane turtle;
+
+    @FXML
+    private FlowPane flowpane;
 
     /**
      * This method is used to set the GUI of the controller.

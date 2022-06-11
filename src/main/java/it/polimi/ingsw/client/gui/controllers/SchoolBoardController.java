@@ -30,9 +30,9 @@ public class SchoolBoardController implements GUIController {
      */
     private Pane root;
     @FXML
-    public ImageView imgBoard;
+    private ImageView imgBoard;
     @FXML
-    public AnchorPane anchorPaneBoard;
+    private AnchorPane anchorPaneBoard;
     public AnchorPane anchorPaneBlue;
     public AnchorPane anchorPaneYellow;
     public AnchorPane anchorPaneGreen;

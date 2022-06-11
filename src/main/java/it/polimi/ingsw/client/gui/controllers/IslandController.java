@@ -28,25 +28,25 @@ public class IslandController implements GUIController {
      */
     private GUI gui;
     @FXML
-    public AnchorPane anchorPaneStudent;
+    private AnchorPane anchorPaneStudent;
     @FXML
-    public AnchorPane anchorPaneMotherNature;
+    private AnchorPane anchorPaneMotherNature;
     @FXML
-    public AnchorPane anchorPaneTower;
+    private AnchorPane anchorPaneTower;
     @FXML
-    public AnchorPane anchorPaneBlock;
+    private AnchorPane anchorPaneBlock;
     @FXML
-    public ImageView imgStudent0;
+    private ImageView imgStudent0;
     @FXML
-    public ImageView imgStudent1;
+    private ImageView imgStudent1;
     @FXML
-    public ImageView imgStudent2;
+    private ImageView imgStudent2;
     @FXML
-    public ImageView imgStudent3;
+    private ImageView imgStudent3;
     @FXML
-    public ImageView imgStudent4;
+    private ImageView imgStudent4;
     @FXML
-    public AnchorPane anchorPaneIsland;
+    private AnchorPane anchorPaneIsland;
 
     Map<StudentColor, Label> studentNumbersMap = new HashMap<>();
 

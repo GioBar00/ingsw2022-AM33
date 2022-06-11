@@ -29,12 +29,12 @@ public class NormalLobbyController implements LobbyController {
     private Button startBtn;
 
     @FXML
-    public ImageView startImg;
+    private ImageView startImg;
 
     @FXML
-    public ImageView imageViewBackground;
+    private ImageView imageViewBackground;
     @FXML
-    public ImageView imageViewMute;
+    private ImageView imageViewMute;
 
 
     /**

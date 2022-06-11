@@ -15,26 +15,36 @@ import javafx.stage.Stage;
 
 import java.util.*;
 
+/**
+ * This class is the controller of the "choose color" view.
+ */
 public class ChooseColorController implements GUIController {
 
+    /**
+     * {@link GUI} instance
+     */
+    private GUI gui;
+
+    /**
+     * The root of the scene.
+     */
+    private Pane root;
     @FXML
-    public Button blueBtn;
+    private Button blueBtn;
 
     @FXML
-    public Button greenBtn;
+    private Button greenBtn;
 
     @FXML
-    public Button magentaBtn;
+    private Button magentaBtn;
 
     @FXML
-    public Button redBtn;
+    private Button redBtn;
 
     @FXML
-    public Button yellowBtn;
+    private Button yellowBtn;
 
     private Map<StudentColor, Button> buttonsMap;
-    private GUI gui;
-    private Pane root;
 
 
     /**
