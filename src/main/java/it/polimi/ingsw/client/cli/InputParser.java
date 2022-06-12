@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.cli;
 
+import it.polimi.ingsw.client.enums.Color;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.*;
@@ -31,6 +32,9 @@ public class InputParser {
 
     private WizardsView wizardsView;
     private boolean canEndEffect;
+    private final String RESET = Color.RESET.getName();
+    private final String RED = Color.RED.getName();
+
 
     public InputParser(CLI cli) {
         this.cli = cli;
@@ -106,7 +110,7 @@ public class InputParser {
                     printInvalidMessage();
                 }
             } else {
-                System.out.println(cli.colors.get("red") + "Not your turn" + cli.colors.get("reset"));
+                System.out.println(cli.colors.get(RED) + "Not your turn" + cli.colors.get(RESET));
             }
         } catch (IndexOutOfBoundsException e) {
             printInvalidMessage();
@@ -118,7 +122,7 @@ public class InputParser {
     }
 
     private void printInvalidMessage() {
-        System.out.println(cli.colors.get("red") + "Error invalid message" + cli.colors.get("reset"));
+        System.out.println(cli.colors.get(RED) + "Error invalid message" + cli.colors.get(RESET));
     }
 
     private void parseNewGame(String[] in) {
