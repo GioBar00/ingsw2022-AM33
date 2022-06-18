@@ -301,6 +301,7 @@ public class GUI extends Application implements UI {
             chooseWizardController = null;
             lobbyController = null;
             gameController = null;
+            startScreenController.disableCenter(false);
             startScreenController.loadScene(stage);
             if (!stage.isShowing())
                 stage.show();
