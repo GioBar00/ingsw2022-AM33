@@ -10,12 +10,26 @@ public enum AudioPath {
     LOST("/audio/lost.mp3"),
     WON("/audio/won.mp3"),
     DRAW("/audio/draw.mp3");
+
+    /**
+     * The path of the audio file.
+     */
     private final String path;
 
+    /**
+     * Constructor.
+     *
+     * @param path the path of the audio file.
+     */
     AudioPath(String path) {
         this.path = path;
     }
 
+    /**
+     * Getter of the path of the audio file.
+     *
+     * @return the path of the audio file.
+     */
     public String getPath() {
         return path;
     }

@@ -21,6 +21,7 @@ public enum CommMsgType {
     ERROR_HOST_DISCONNECTED("ERROR: the host has left the party."),
     ERROR_TIMEOUT("ERROR: the connection has timed out"),
 
+    WAITING("Wait for other players"),
     // COMMUNICATION MESSAGES FOR REQUESTS/ACKs
     PING("Are you still alive?"),
     CHOOSE_GAME("Choose the difficulty of the game: EASY or EXPERT.\nChoose the number of players: TWO, THREE or FOUR."),

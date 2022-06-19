@@ -16,67 +16,144 @@ import it.polimi.ingsw.server.model.enums.*;
 
 import java.util.*;
 
+/**
+ * This class has the task to parse the input from the user.
+ */
 public class InputParser {
 
+    /**
+     * A link to the CLI.
+     */
     private final CLI cli;
 
+    /**
+     * Boolean that indicates if the player is the host
+     */
     private boolean isHost;
+
+    /**
+     * Boolean that indicates if the player can choose a wizard.
+     */
     private boolean canChoseWizard;
 
+    /**
+     * Boolean that indicates if the player can send a {@link StartGame} message.
+     */
     private boolean canStart;
 
+    /**
+     * Boolean that indicates if the player can type something.
+     */
     private boolean canWrite;
 
+    /**
+     * Boolean that indicates if the server is available.
+     */
     private boolean serverStatus;
+
+    /**
+     * {@link Message} that contains the last request received from the server.
+     */
     private Message lastRequest;
 
+    /**
+     * {@link WizardsView} that contains the available wizards.
+     */
     private WizardsView wizardsView;
+
+    /**
+     * Boolean that indicates if the player can send a {@link ConcludeCharacterCardEffect} message.
+     */
     private boolean canEndEffect;
+
+
     private final String RESET = Color.RESET.getName();
     private final String RED = Color.RED.getName();
 
 
+    /**
+     * Constructor.
+     *
+     * @param cli the CLI.
+     */
     public InputParser(CLI cli) {
         this.cli = cli;
         isHost = false;
     }
 
+    /**
+     * This method is used for setting if the player is the host.
+     */
     synchronized void setHost() {
         isHost = true;
     }
 
+    /**
+     * Getter of the boolean that indicates if the player is the host.
+     *
+     * @return true if the player is the host, false otherwise.
+     */
     synchronized boolean isHost() {
         return isHost;
     }
+
+    /**
+     * This method is used for setting if the player can choose a wizard.
+     *
+     * @param value true if the player can choose a wizard, false otherwise.
+     */
 
     synchronized void setCanChoseWizard(boolean value) {
         canChoseWizard = value;
     }
 
+    /**
+     * This method is used for setting if the player can write.
+     */
     synchronized void canWrite() {
         canWrite = true;
     }
 
+    /**
+     * This method is used for setting if the player can't write.
+     */
     synchronized void cantWrite() {
         canWrite = false;
     }
 
+    /**
+     * This method is used for setting if the player can start the game.
+     */
     synchronized void setCanStart(boolean value) {
         canStart = value;
     }
 
+    /**
+     * This method is used for setting the status of the server.
+     */
     synchronized void setServerStatus(boolean value) {
         serverStatus = value;
     }
 
+    /**
+     * This method is used for setting the last request received from the server.
+     */
     synchronized void setLastRequest(Message request) {
         lastRequest = request;
     }
 
+    /**
+     * This method is used for setting the available wizards.
+     */
     synchronized void setWizardsView(WizardsView wizardsView) {
         this.wizardsView = wizardsView;
     }
 
+    /**
+     * This method parse the string that the user typed.
+     *
+     * @param input a String
+     */
     synchronized void parse(String input) {
         try {
             String[] in = input.split(" ");
@@ -117,14 +194,24 @@ public class InputParser {
         }
     }
 
+    /**
+     * This method check if the input is valid according to the phase of the game.
+     *
+     * @param messageType the type of the message the player wants to send.
+     * @return true if the input is valid, false otherwise.
+     */
     private boolean checkRightMoment(MessageType messageType) {
         return MessageType.retrieveByMessage(lastRequest).equals(messageType);
     }
 
+    /**
+     * Shows an error to the user when the input is invalid.
+     */
     private void printInvalidMessage() {
         System.out.println(cli.colors.get(RED) + "Error invalid message" + cli.colors.get(RESET));
     }
 
+    //TODO: javaDoc from here.
     private void parseNewGame(String[] in) {
         if (isHost && wizardsView == null && lastRequest == null) {
             if (in.length == 3) {

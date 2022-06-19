@@ -17,17 +17,19 @@ import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.network.messages.server.Winners;
 import it.polimi.ingsw.network.messages.views.GameView;
+import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
+import it.polimi.ingsw.server.model.enums.GameState;
+import it.polimi.ingsw.server.model.enums.Tower;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
-import java.util.HashSet;
-import java.util.MissingResourceException;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The GUI class handle all the view controllers for the graphic user interface.
@@ -78,6 +80,11 @@ public class GUI extends Application implements UI {
      * The current state of the view.
      */
     private ViewState viewState = ViewState.SETUP;
+
+    /**
+     * A list of the playerView in the game.
+     */
+    private List<PlayerView> players;
 
     public static void main(String[] args) {
         launch(args);
@@ -253,11 +260,13 @@ public class GUI extends Application implements UI {
     @Override
     public void setGameView(GameView gameView) {
         boolean show = checkGameController();
-        if (gameView.getWinners() != null && !gameView.getWinners().isEmpty()) {
+        if (this.players == null) {
+            players = gameView.getPlayersView();
+        }
+
+        if (gameView.getState() == GameState.ENDED) {
             show = false;
-            showWinnerScreen(gameView);
-        } else
-            Platform.runLater(() -> gameController.updateGameView(gameView, nickname));
+        } else Platform.runLater(() -> gameController.updateGameView(gameView, nickname));
         if (show) {
             viewState = ViewState.PLAYING;
             showGameScreen();
@@ -369,16 +378,16 @@ public class GUI extends Application implements UI {
     /**
      * This method shows the winner screen.
      *
-     * @param gameView the GameView that contains the winners.
+     * @param winners a list with the winners.
      */
-    private void showWinnerScreen(GameView gameView) {
+    private void showWinnerScreen(EnumSet<Tower> winners) {
         viewState = ViewState.END_GAME;
         gameController = null;
         WinnerScreenController controller = ResourceLoader.loadFXML(FXMLPath.WINNER_SCREEN, this);
         Platform.runLater(() -> {
             controller.init();
             controller.loadScene(stage);
-            controller.updateGameView(gameView);
+            controller.updateGameView(this.players, winners);
         });
     }
 
@@ -544,6 +553,18 @@ public class GUI extends Application implements UI {
 
         System.out.println("Showing comm message");
         System.out.println(MessageBuilder.toJson(message));
+    }
+
+    /**
+     * This method shows the winners of the game.
+     *
+     * @param winners a {@link Winners} message containing the winners.
+     */
+    @Override
+    public void showWinners(Winners winners) {
+        if (winners.getWinners() != null && !winners.getWinners().isEmpty()) {
+            showWinnerScreen(winners.getWinners());
+        }
     }
 
     /**

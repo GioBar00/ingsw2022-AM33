@@ -12,12 +12,13 @@ import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.network.messages.server.Winners;
 import it.polimi.ingsw.network.messages.views.*;
 import it.polimi.ingsw.server.model.enums.*;
+
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 
 
 public class CLI implements UI {
@@ -360,16 +361,19 @@ public class CLI implements UI {
                 System.out.println(schoolBoardRows.get(i));
         }
 
-
-        if (gameView.getState().equals(GameState.ENDED)) {
-            if (gameView.getWinners() != null)
-                System.out.println(colors.get(YELLOW) + gameView.getWinners().toString() + " has won" + colors.get(RESET));
-            else System.out.println(colors.get(YELLOW) + "The game ended with a draw" + colors.get(RESET));
-            System.exit(0);
-        }
-
-
         showPossibleMoves();
+    }
+
+    /**
+     * This method shows the winners of the game.
+     *
+     * @param winners a {@link Winners} message containing the winners.
+     */
+    public void showWinners(Winners winners) {
+        if (winners.getWinners() != null)
+            System.out.println(colors.get(YELLOW) + winners.getWinners().toString() + " has won" + colors.get(RESET));
+        else System.out.println(colors.get(YELLOW) + "The game ended with a draw" + colors.get(RESET));
+        System.exit(0);
     }
 
     public void showPossibleMoves() {
@@ -522,7 +526,6 @@ public class CLI implements UI {
     public void notifyViewListener(Message message) {
         listener.onMessage(message);
     }
-
 
 
     Map<String, Integer> playableCharacterCards() {

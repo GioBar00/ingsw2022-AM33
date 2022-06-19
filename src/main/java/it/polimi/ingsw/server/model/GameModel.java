@@ -859,9 +859,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return the current gameView
      */
     public CurrentGameState getCurrentGameState(Player destPlayer) {
-        if (gameState == GameState.ENDED)
-            return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex, getCloudsView(), roundManager.getWinners()));
-        return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex, getCloudsView(), null));
+        return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex, getCloudsView()));
     }
 
 
@@ -893,7 +891,17 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param player the player to notify
      */
     void notifyPersonalizedGameState(Player player) {
-        notifyMessageListener(player.getNickname(), new MessageEvent(this, getCurrentGameState(player)));
+        if(roundManager.getWinners().isEmpty()){
+            notifyMessageListener(player.getNickname(), new MessageEvent(this, getCurrentGameState(player)));
+        }
+        else  notifyWinner(player);
+    }
+
+    /**
+     * Notifies each player with the list of winners.
+     */
+    void notifyWinner(Player player){
+        notifyMessageListener(player.getNickname(), new MessageEvent(this, new Winners(roundManager.getWinners())));
     }
 
     /**
