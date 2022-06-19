@@ -9,10 +9,7 @@ import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.client.Login;
 import it.polimi.ingsw.network.messages.enums.MessageType;
-import it.polimi.ingsw.network.messages.server.AvailableWizards;
-import it.polimi.ingsw.network.messages.server.CommMessage;
-import it.polimi.ingsw.network.messages.server.CurrentGameState;
-import it.polimi.ingsw.network.messages.server.CurrentTeams;
+import it.polimi.ingsw.network.messages.server.*;
 
 import java.io.IOException;
 import java.net.*;
@@ -195,6 +192,7 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
                     userInterface.setPossibleActions(message);
 
             case CURRENT_GAME_STATE -> userInterface.setGameView(((CurrentGameState) message).getGameView());
+            case WINNERS -> userInterface.showWinners(((Winners) message));
         }
     }
 

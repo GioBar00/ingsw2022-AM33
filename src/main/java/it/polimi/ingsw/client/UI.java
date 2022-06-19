@@ -3,6 +3,7 @@ package it.polimi.ingsw.client;
 import it.polimi.ingsw.network.listeners.ViewListenerSubscriber;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.network.messages.server.Winners;
 import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
@@ -91,4 +92,11 @@ public interface UI extends ViewListenerSubscriber {
      * @param message the message to show.
      */
     void showCommMessage(CommMessage message);
+
+    /**
+     * This method shows the winners of the game.
+     *
+     * @param winners a {@link Winners} message containing the winners.
+     */
+    void showWinners(Winners winners);
 }

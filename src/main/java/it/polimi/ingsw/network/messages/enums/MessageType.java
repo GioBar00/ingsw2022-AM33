@@ -44,6 +44,8 @@ public enum MessageType {
     LOGIN(Login.class),
     START_GAME(StartGame.class),
 
+    WINNERS(Winners.class),
+
     // internal messages
     GAME_STATE_REQUEST(GameStateRequest.class),
     SKIP_TURN(SkipTurn.class);
