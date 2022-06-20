@@ -514,16 +514,18 @@ public class GUI extends Application implements UI {
     @Override
     public void serverUnavailable() {
         System.out.println("Server unavailable");
+
+        if (viewState == ViewState.SETUP) {
+            showAlert("Server unavailable, please try again later.");
+            if (startScreenController != null) {
+                Platform.runLater(() -> startScreenController.disableCenter(false));
+            }
+        } else {
+            showStartScreen();
+        }
         if (viewState != ViewState.END_GAME && viewState != ViewState.SETUP) {
             showAlert("Lost connection with the server or server unavailable.\n" +
                     "Please try again later.");
-            if (viewState == ViewState.SETUP) {
-                if (startScreenController != null) {
-                    Platform.runLater(() -> startScreenController.disableCenter(false));
-                }
-            } else {
-                showStartScreen();
-            }
         }
     }
 
