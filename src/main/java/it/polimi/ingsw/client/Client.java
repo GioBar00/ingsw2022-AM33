@@ -183,6 +183,7 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
                     case CAN_START -> userInterface.hostCanStart();
                     case ERROR_CANT_START -> userInterface.hostCantStart();
                     case ERROR_TIMEOUT, ERROR_SERVER_UNAVAILABLE -> userInterface.serverUnavailable();
+                    case WAITING -> userInterface.showWaiting();
                     default -> userInterface.showCommMessage((CommMessage) message);
                 }
             }

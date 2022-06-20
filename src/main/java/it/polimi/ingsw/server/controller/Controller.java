@@ -256,8 +256,8 @@ public class Controller implements Runnable, MessageListener, EndGameListenerSub
                     vc.sendMessage(new CommMessage(CommMsgType.OK));
                     lobby.notifyAvailableWizards();
                     lobby.notifyTeams(vc.getIdentifier());
+                    lobby.sendStart();
                 }
-                lobby.sendStart();
             }
             default -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
         }
@@ -428,6 +428,7 @@ public class Controller implements Runnable, MessageListener, EndGameListenerSub
      */
     private synchronized void changeTeam(String nickname, Tower tower) {
         lobby.changeTeam(nickname, tower);
+        lobby.sendStart();
     }
 
 

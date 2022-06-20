@@ -61,6 +61,7 @@ class CLIPrinter {
         System.out.println("██╔══╝  ██╔══██╗██║██╔══██║██║╚██╗██║   ██║     ╚██╔╝  ╚════██║");
         System.out.println("███████╗██║  ██║██║██║  ██║██║ ╚████║   ██║      ██║   ███████║ ");
         System.out.println("╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝      ╚═╝   ╚══════╝ " + colors.get(reset));
+
     }
 
     EnumSet<StudentColor> fromIntegersToEnums(Set<Integer> choices) {

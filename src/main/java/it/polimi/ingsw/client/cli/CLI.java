@@ -32,7 +32,7 @@ public class CLI implements UI {
     private WizardsView wizardsView;
     private Message lastRequest;
 
-    private ViewState lastState;
+    ViewState lastState;
 
     final Map<String, String> colors;
     private final InputParser inputParser;
@@ -98,6 +98,8 @@ public class CLI implements UI {
     }
 
     void sendLogin() {
+        lastState = ViewState.SETUP;
+        inputParser.resetParser();
         inputParser.setServerStatus(true);
         if (!client.sendLogin()) {
             showStartScreen();
@@ -112,6 +114,7 @@ public class CLI implements UI {
 
     @Override
     public void chooseGame() {
+        inputParser.resetParser();
         inputParser.setHost();
         inputParser.canWrite();
 
@@ -376,6 +379,15 @@ public class CLI implements UI {
         System.exit(0);
     }
 
+    /**
+     * This method notifies the player that they have to wait for the other players.
+     */
+    @Override
+    public void showWaiting() {
+        lastState = ViewState.WAITING;
+        System.out.println(colors.get(RESET) + "Waiting for other players...");
+    }
+
     public void showPossibleMoves() {
         if (nickname.equals(gameView.getCurrentPlayer()))
             inputParser.canWrite();
@@ -482,6 +494,7 @@ public class CLI implements UI {
         if (lastState.equals((ViewState.SETUP)) && message.getType().equals(CommMsgType.ERROR_NICKNAME_UNAVAILABLE)) {
             System.out.println("\n" + message.getType().getMessage());
             System.out.println("Try to reconnect with a different nickname");
+            System.exit(0);
             return;
         }
         if (lastState.equals(ViewState.SETUP) && message.getType().equals(CommMsgType.ERROR_NO_SPACE)) {

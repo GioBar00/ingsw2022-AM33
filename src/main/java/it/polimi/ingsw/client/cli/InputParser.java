@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.cli;
 
 import it.polimi.ingsw.client.enums.Color;
+import it.polimi.ingsw.client.enums.ViewState;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.*;
@@ -150,11 +151,24 @@ public class InputParser {
     }
 
     /**
+     * This method is used for resetting the input parser.
+     */
+    void resetParser(){
+        wizardsView = null;
+        lastRequest = null;
+    }
+    /**
      * This method parse the string that the user typed.
      *
      * @param input a String
      */
     synchronized void parse(String input) {
+
+        if(cli.lastState == ViewState.WAITING){
+            System.out.println(cli.colors.get(RED) + "Waiting for other players..." + cli.colors.get(RESET));
+            return;
+        }
+
         try {
             String[] in = input.split(" ");
             if (!serverStatus) {
