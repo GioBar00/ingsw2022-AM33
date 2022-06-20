@@ -83,7 +83,7 @@ public class NormalLobbyController implements LobbyController {
      */
     @Override
     public void setCanStart() {
-        GUIUtils.showButton(startBtn);
+        startBtn.setDisable(false);
     }
 
     /**
@@ -91,7 +91,8 @@ public class NormalLobbyController implements LobbyController {
      */
     @Override
     public void setCantStart() {
-        GUIUtils.hideButton(startBtn);
+        GUIUtils.showButton(startBtn);
+        startBtn.setDisable(true);
     }
 
     /**
@@ -99,7 +100,7 @@ public class NormalLobbyController implements LobbyController {
      */
     public void sendStart() {
         gui.notifyViewListener(new StartGame());
-        GUIUtils.hideButton(startBtn);
+        startBtn.setDisable(true);
     }
 
     /**
