@@ -8,5 +8,8 @@ public enum ViewState {
     CHOOSE_WIZARD,
     CHOOSE_TEAM,
     PLAYING,
-    END_GAME
+
+    WAITING,
+    END_GAME,
+
 }

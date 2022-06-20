@@ -99,4 +99,9 @@ public interface UI extends ViewListenerSubscriber {
      * @param winners a {@link Winners} message containing the winners.
      */
     void showWinners(Winners winners);
+
+    /**
+     * This method notifies the player that they have to wait for the other players.
+     */
+    void showWaiting();
 }

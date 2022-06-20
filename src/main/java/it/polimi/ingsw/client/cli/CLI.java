@@ -32,7 +32,7 @@ public class CLI implements UI {
     private WizardsView wizardsView;
     private Message lastRequest;
 
-    private ViewState lastState;
+    ViewState lastState;
 
     final Map<String, String> colors;
     private final InputParser inputParser;
@@ -374,6 +374,15 @@ public class CLI implements UI {
             System.out.println(colors.get(YELLOW) + winners.getWinners().toString() + " has won" + colors.get(RESET));
         else System.out.println(colors.get(YELLOW) + "The game ended with a draw" + colors.get(RESET));
         System.exit(0);
+    }
+
+    /**
+     * This method notifies the player that they have to wait for the other players.
+     */
+    @Override
+    public void showWaiting() {
+        lastState = ViewState.WAITING;
+        System.out.println(colors.get(RESET) + "Waiting for other players...");
     }
 
     public void showPossibleMoves() {

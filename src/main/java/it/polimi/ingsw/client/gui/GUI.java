@@ -569,6 +569,14 @@ public class GUI extends Application implements UI {
     }
 
     /**
+     * This method notifies the player that they have to wait for the other players.
+     */
+    @Override
+    public void showWaiting() {
+        //TODO: show waiting screen
+    }
+
+    /**
      * Sets the view listener.
      *
      * @param listener the listener to set
