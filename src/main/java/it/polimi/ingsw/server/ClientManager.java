@@ -162,6 +162,7 @@ public class ClientManager implements EndGameListener, MessageListener {
                     controller.setWaiting(true);
                     new Thread(() -> {
                         try {
+                            System.out.println("S: waiting for other players");
                             if (forceEndGameLatch.await(60, TimeUnit.SECONDS)) {
                                 for (Tower t : connectedPlayersByTeam.keySet()) {
                                     for (VirtualClient player : connectedPlayersByTeam.get(t)) {
@@ -170,13 +171,14 @@ public class ClientManager implements EndGameListener, MessageListener {
                                 }
                                 controller.setWaiting(false);
                                 forceEndGameLatch = null;
+                                System.out.println("S: continue game");
                             } else {
                                 for (Tower t : connectedPlayersByTeam.keySet()) {
                                     for (VirtualClient player : connectedPlayersByTeam.get(t)) {
                                         player.sendMessage(new Winners(EnumSet.of(t)));
                                     }
-                                    onEndGameEvent(null);
                                 }
+                                onEndGameEvent(null);
                             }
                         } catch (InterruptedException ignored) {
                             controller.setWaiting(false);
