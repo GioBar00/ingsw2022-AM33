@@ -375,8 +375,14 @@ class CLIPrinter {
             stringBuilder.append(colors.get(green)).append("║ ");
             for (int i = 0; i < igv.getIslands().size(); i++) {
                 appendStudentNumber(BLUE, igv.getIslands().get(i).getStudents().get(StudentColor.BLUE), stringBuilder);
+                if (igv.getIslands().get(i).getStudents().get(StudentColor.BLUE) < 10 && igv.getIslands().get(i).getStudents().get(StudentColor.BLUE) != 0)
+                    stringBuilder.append(" ");
                 appendStudentNumber(RED, igv.getIslands().get(i).getStudents().get(StudentColor.RED), stringBuilder);
+                if (igv.getIslands().get(i).getStudents().get(StudentColor.RED) < 10 && igv.getIslands().get(i).getStudents().get(StudentColor.RED) != 0)
+                    stringBuilder.append(" ");
                 appendStudentNumber(GREEN, igv.getIslands().get(i).getStudents().get(GREEN), stringBuilder);
+                if (igv.getIslands().get(i).getStudents().get(StudentColor.GREEN) < 10 && igv.getIslands().get(i).getStudents().get(StudentColor.GREEN) != 0)
+                    stringBuilder.append(" ");
                 stringBuilder.append(colors.get(green)).append("║ ");
             }
             stringBuilder.append(colors.get(blue)).append("░ ");
@@ -391,7 +397,11 @@ class CLIPrinter {
             stringBuilder.append(colors.get(green)).append("║ ");
             for (int i = 0; i < igv.getIslands().size(); i++) {
                 appendStudentNumber(MAGENTA, igv.getIslands().get(i).getStudents().get(MAGENTA), stringBuilder);
+                if (igv.getIslands().get(i).getStudents().get(StudentColor.MAGENTA) < 10 && igv.getIslands().get(i).getStudents().get(StudentColor.MAGENTA) != 0)
+                    stringBuilder.append(" ");
                 appendStudentNumber(YELLOW, igv.getIslands().get(i).getStudents().get(YELLOW), stringBuilder);
+                if (igv.getIslands().get(i).getStudents().get(StudentColor.YELLOW) < 10 && igv.getIslands().get(i).getStudents().get(StudentColor.YELLOW) != 0)
+                    stringBuilder.append(" ");
                 stringBuilder.append("  ");
                 stringBuilder.append(colors.get(green)).append("║ ");
             }
@@ -650,11 +660,11 @@ class CLIPrinter {
             s.append("  ");
         else
             switch (studentColor) {
-                case RED -> s.append(colors.get(red)).append(num).append(" ").append(colors.get(reset));
-                case BLUE -> s.append(colors.get(blue)).append(num).append(" ").append(colors.get(reset));
-                case GREEN -> s.append(colors.get(green)).append(num).append(" ").append(colors.get(reset));
-                case MAGENTA -> s.append(colors.get(magenta)).append(num).append(" ").append(colors.get(reset));
-                case YELLOW -> s.append(colors.get(yellow)).append(num).append(" ").append(colors.get(reset));
+                case RED -> s.append(colors.get(red)).append(num).append(colors.get(reset));
+                case BLUE -> s.append(colors.get(blue)).append(num).append(colors.get(reset));
+                case GREEN -> s.append(colors.get(green)).append(num).append(colors.get(reset));
+                case MAGENTA -> s.append(colors.get(magenta)).append(num).append(colors.get(reset));
+                case YELLOW -> s.append(colors.get(yellow)).append(num).append(colors.get(reset));
             }
     }
 
