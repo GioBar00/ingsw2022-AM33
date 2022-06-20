@@ -12,4 +12,6 @@ public enum ViewState {
     WAITING,
     END_GAME,
 
+    RESET
+
 }

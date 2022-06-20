@@ -86,6 +86,11 @@ public class GUI extends Application implements UI {
      */
     private List<PlayerView> players;
 
+    /**
+     * The controller of the waiting view.
+     */
+    private WaitingViewController waitingViewController;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -262,6 +267,9 @@ public class GUI extends Application implements UI {
         boolean show = checkGameController();
         if (this.players == null) {
             players = gameView.getPlayersView();
+        }
+        if(waitingViewController != null) {
+            Platform.runLater( () -> waitingViewController.close());
         }
 
         if (gameView.getState() == GameState.ENDED) {
@@ -574,6 +582,13 @@ public class GUI extends Application implements UI {
     @Override
     public void showWaiting() {
         //TODO: show waiting screen
+        waitingViewController = ResourceLoader.loadFXML(FXMLPath.WAITING_SCREEN, this);
+        Platform.runLater(() -> {
+            gameController.closeAssistantCardView();
+            waitingViewController.init();
+            waitingViewController.loadScene(new Stage());
+            waitingViewController.startTimer();
+        });
     }
 
     /**

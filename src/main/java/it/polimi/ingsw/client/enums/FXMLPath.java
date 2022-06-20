@@ -19,7 +19,9 @@ public enum FXMLPath {
     PLAYER("/fxml/player.fxml"),
 
     CHOOSE_COLOR("/fxml/choose-color.fxml"),
-    WINNER_SCREEN("/fxml/winner-screen.fxml");
+    WINNER_SCREEN("/fxml/winner-screen.fxml"),
+
+    WAITING_SCREEN("/fxml/waiting.fxml");
 
     /**
      * The path of the FXML file.

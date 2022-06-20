@@ -616,6 +616,14 @@ public class GameController implements GUIController, MuteToggle {
     }
 
     /**
+     * This method close the Assistant Card View.
+     */
+    public void closeAssistantCardView() {
+        PlayerController me = playerControllersByNickname.get(gui.getNickname());
+        me.closeAssistantCardView();
+    }
+
+    /**
      * Disables all the character card buttons.
      */
     private void clearCharacterButtons() {

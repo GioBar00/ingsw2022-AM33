@@ -235,6 +235,14 @@ public class PlayerController implements GUIController {
     }
 
     /**
+     * This method closes the Assistant Card View.
+     */
+    void closeAssistantCardView() {
+        if (assistantCardController != null)
+            assistantCardController.forceClose();
+    }
+
+    /**
      * This method enables the player to view his hand.
      *
      * @param handStageHandler the handler of the stage.

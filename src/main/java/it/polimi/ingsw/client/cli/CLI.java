@@ -85,6 +85,7 @@ public class CLI implements UI {
 
     @Override
     public void serverUnavailable() {
+        lastState = ViewState.RESET;
         if (executorService == null) {
             System.out.println("We are sorry, the server is unavailable");
             System.out.println("Type a character if you want to close the application");
