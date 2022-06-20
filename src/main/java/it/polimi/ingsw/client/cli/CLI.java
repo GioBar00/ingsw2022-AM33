@@ -98,6 +98,8 @@ public class CLI implements UI {
     }
 
     void sendLogin() {
+        lastState = ViewState.SETUP;
+        inputParser.resetParser();
         inputParser.setServerStatus(true);
         if (!client.sendLogin()) {
             showStartScreen();
@@ -112,6 +114,7 @@ public class CLI implements UI {
 
     @Override
     public void chooseGame() {
+        inputParser.resetParser();
         inputParser.setHost();
         inputParser.canWrite();
 
@@ -491,6 +494,7 @@ public class CLI implements UI {
         if (lastState.equals((ViewState.SETUP)) && message.getType().equals(CommMsgType.ERROR_NICKNAME_UNAVAILABLE)) {
             System.out.println("\n" + message.getType().getMessage());
             System.out.println("Try to reconnect with a different nickname");
+            System.exit(0);
             return;
         }
         if (lastState.equals(ViewState.SETUP) && message.getType().equals(CommMsgType.ERROR_NO_SPACE)) {
