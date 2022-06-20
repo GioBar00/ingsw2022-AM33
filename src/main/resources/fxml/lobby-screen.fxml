@@ -69,7 +69,7 @@
                <children>
                   <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Waiting For Other Players" textAlignment="CENTER" wrappingWidth="400.0">
                      <font>
-                        <Font name="Trattatello" size="36.0" />
+                        <Font name="Sono Medium" size="36.0" />
                      </font>
                   </Text>
                </children>

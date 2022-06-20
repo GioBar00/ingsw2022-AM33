@@ -47,7 +47,7 @@
                            <children>
                               <Label fx:id="lblName" alignment="CENTER" prefHeight="86.0" prefWidth="203.0" text="Umberto" textOverrun="CENTER_ELLIPSIS" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
-                                    <Font name="Trattatello" size="18.0" />
+                                    <Font name="Sono Medium" size="18.0" />
                                  </font>
                               </Label>
                            </children>
@@ -69,7 +69,7 @@
                                     </ImageView>
                                     <Label fx:id="lblCoins" alignment="CENTER" minHeight="0.0" minWidth="0.0" text="1">
                                        <font>
-                                          <Font name="Trattatello" size="18.0" />
+                                          <Font name="Sono Medium" size="18.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -118,7 +118,7 @@
                                           </ImageView>
                                        </graphic>
                                        <font>
-                                          <Font name="Trattatello" size="36.0" />
+                                          <Font name="Sono Medium" size="36.0" />
                                        </font>
                                     </Button>
                                  </children>

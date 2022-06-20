@@ -27,7 +27,7 @@
         </rowConstraints>
         <Text fx:id="lblTitle" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose an Assistant Card" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
             <font>
-                <Font name="System Bold" size="24.0" />
+                <Font name="Sono Medium" size="24.0" />
             </font>
         </Text>
         <FlowPane fx:id="flowpane" hgap="20.0" minHeight="0.0" minWidth="0.0" vgap="20.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
