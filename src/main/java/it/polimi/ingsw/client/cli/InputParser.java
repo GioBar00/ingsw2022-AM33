@@ -225,7 +225,10 @@ public class InputParser {
         System.out.println(cli.colors.get(RED) + "Error invalid message" + cli.colors.get(RESET));
     }
 
-    //TODO: javaDoc from here.
+    /**
+     * This method is used for parsing the input of the user when he wants to start the game.
+     * @param in the input of the user.
+     */
     private void parseNewGame(String[] in) {
         if (isHost && wizardsView == null && lastRequest == null) {
             if (in.length == 3) {

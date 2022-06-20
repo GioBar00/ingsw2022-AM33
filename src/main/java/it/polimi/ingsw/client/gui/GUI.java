@@ -583,7 +583,6 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showWaiting() {
-        //TODO: show waiting screen
         waitingViewController = ResourceLoader.loadFXML(FXMLPath.WAITING_SCREEN, this);
         Platform.runLater(() -> {
             gameController.closeAssistantCardView();

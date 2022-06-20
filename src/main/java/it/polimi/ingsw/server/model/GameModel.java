@@ -247,7 +247,12 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param currentPlayer the current player
      */
     private void nextInPlanningPhase(Player currentPlayer) {
+
         if (currentPlayer.equals(playersManager.getLastPlayer())) {
+            if (!checkSomeoneHasPlayed()) {
+                nextRound();
+                return;
+            }
             roundManager.startActionPhase();
             playersManager.calculatePlayerOrder();
         }
@@ -256,6 +261,19 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             roundManager.setLastRound();
 
         playersManager.nextPlayer();
+    }
+
+    /**
+     * This method check if someone has played an assistant card in the last round.
+     *
+     * @return true if someone has played an assistant card in the last round, false otherwise.
+     */
+    private boolean checkSomeoneHasPlayed() {
+        for (Player p : playersManager.getPlayers()) {
+            if (playersManager.getPlayedCard(p) != null)
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -903,16 +921,15 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param player the player to notify
      */
     void notifyPersonalizedGameState(Player player) {
-        if(roundManager.getWinners().isEmpty()){
+        if (roundManager.getWinners().isEmpty()) {
             notifyMessageListener(player.getNickname(), new MessageEvent(this, getCurrentGameState(player)));
-        }
-        else  notifyWinner(player);
+        } else notifyWinner(player);
     }
 
     /**
      * Notifies each player with the list of winners.
      */
-    void notifyWinner(Player player){
+    void notifyWinner(Player player) {
         notifyMessageListener(player.getNickname(), new MessageEvent(this, new Winners(roundManager.getWinners())));
     }
 
@@ -923,9 +940,17 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         if (gameState == GameState.STARTED && roundManager.getWinners().isEmpty()) {
             switch (roundManager.getGamePhase()) {
                 case PLANNING -> notifyPlayAssistantCard();
-                case MOVE_STUDENTS -> notifyMultiplePossibleMoves();
-                case MOVE_MOTHER_NATURE -> notifyMoveMotherNature(0);
-                case CHOOSE_CLOUD -> notifyChooseCloud();
+                case MOVE_STUDENTS, MOVE_MOTHER_NATURE, CHOOSE_CLOUD -> {
+                    if (playersManager.getPlayedCard() != null) {
+                        switch (roundManager.getGamePhase()) {
+                            case MOVE_STUDENTS -> notifyMultiplePossibleMoves();
+                            case MOVE_MOTHER_NATURE -> notifyMoveMotherNature(0);
+                            case CHOOSE_CLOUD -> notifyChooseCloud();
+                            default -> {
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -944,6 +969,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      */
     void notifyMultiplePossibleMoves() {
         Player curr = playersManager.getCurrentPlayer();
+
         SchoolBoard currSb = playersManager.getSchoolBoard();
         Set<Integer> validEntranceIndexes = new HashSet<>();
         Set<Integer> hallEntranceIndexes = new HashSet<>();

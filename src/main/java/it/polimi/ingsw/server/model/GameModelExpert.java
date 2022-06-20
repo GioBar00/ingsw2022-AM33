@@ -878,9 +878,18 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
         if (model.gameState == GameState.STARTED && model.roundManager.getWinners().isEmpty()) {
             switch (model.roundManager.getGamePhase()) {
                 case PLANNING -> model.notifyPlayAssistantCard();
-                case MOVE_STUDENTS -> model.notifyMultiplePossibleMoves();
-                case MOVE_MOTHER_NATURE -> model.notifyMoveMotherNature(additionalMotherNatureMovement);
-                case CHOOSE_CLOUD -> model.notifyChooseCloud();
+                case MOVE_STUDENTS, MOVE_MOTHER_NATURE, CHOOSE_CLOUD -> {
+                    if (model.playersManager.getPlayedCard() != null) {
+                        switch (model.roundManager.getGamePhase()) {
+                            case MOVE_STUDENTS -> model.notifyMultiplePossibleMoves();
+                            case MOVE_MOTHER_NATURE -> model.notifyMoveMotherNature(additionalMotherNatureMovement);
+                            case CHOOSE_CLOUD -> model.notifyChooseCloud();
+                            default -> {
+                            }
+                        }
+                    }
+
+                }
             }
         }
     }
