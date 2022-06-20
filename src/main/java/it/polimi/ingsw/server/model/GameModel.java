@@ -729,6 +729,16 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     }
 
     /**
+     * @param nickname of the player.
+     * @return the team of the player or null if the player is not in the game.
+     */
+    @Override
+    public Tower getPlayerTeam(String nickname) {
+        return playersManager.getPlayers().stream().filter(p -> p.getNickname().equals(nickname)).findFirst()
+                .map(value -> playersManager.getSchoolBoard(value).getTower()).orElse(null);
+    }
+
+    /**
      * Skips the current player's turn.
      *
      * @return if the turn was skipped successfully.

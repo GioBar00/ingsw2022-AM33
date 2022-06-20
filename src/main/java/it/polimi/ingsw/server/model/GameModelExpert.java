@@ -1,17 +1,18 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.server.CurrentGameState;
-import it.polimi.ingsw.network.messages.server.Winners;
-import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.network.listeners.MessageEvent;
 import it.polimi.ingsw.network.listeners.MessageListener;
-import it.polimi.ingsw.server.model.cards.*;
-import it.polimi.ingsw.server.model.player.Player;
-import it.polimi.ingsw.server.model.player.SchoolBoard;
+import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.server.CurrentGameState;
 import it.polimi.ingsw.network.messages.views.CharacterCardView;
 import it.polimi.ingsw.network.messages.views.GameView;
+import it.polimi.ingsw.server.PlayerDetails;
+import it.polimi.ingsw.server.model.cards.CharacterCard;
+import it.polimi.ingsw.server.model.cards.CharacterParameters;
+import it.polimi.ingsw.server.model.cards.EffectHandler;
 import it.polimi.ingsw.server.model.enums.*;
+import it.polimi.ingsw.server.model.player.Player;
+import it.polimi.ingsw.server.model.player.SchoolBoard;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -310,6 +311,16 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
     @Override
     public GamePhase getPhase() {
         return model.getPhase();
+    }
+
+    /**
+     * @param nickname of the player.
+     * @return the team of the player or null if the player is not in the game.
+     */
+    @Override
+    public Tower getPlayerTeam(String nickname) {
+        return model.playersManager.getPlayers().stream().filter(p -> p.getNickname().equals(nickname)).findFirst()
+                .map(value -> model.playersManager.getSchoolBoard(value).getTower()).orElse(null);
     }
 
     /**

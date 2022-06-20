@@ -388,7 +388,7 @@ public class GUI extends Application implements UI {
         Platform.runLater(() -> {
             controller.init();
             controller.loadScene(stage);
-            controller.updateGameView(this.players, winners);
+            controller.updateWinners(this.players, winners);
         });
     }
 

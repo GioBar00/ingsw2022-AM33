@@ -47,8 +47,8 @@ public enum MessageType {
     WINNERS(Winners.class),
 
     // internal messages
-    GAME_STATE_REQUEST(GameStateRequest.class),
-    SKIP_TURN(SkipTurn.class);
+    CONNECTED(Connected.class),
+    DISCONNECTED(Disconnected.class);
 
     /**
      * A map that contains the message type and the class of the message.

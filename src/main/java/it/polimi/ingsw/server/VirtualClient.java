@@ -5,10 +5,8 @@ import it.polimi.ingsw.network.MessageHandler;
 import it.polimi.ingsw.network.listeners.*;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
-import it.polimi.ingsw.network.messages.server.GameStateRequest;
-import it.polimi.ingsw.network.messages.server.SkipTurn;
-
-import java.net.Socket;
+import it.polimi.ingsw.network.messages.server.Connected;
+import it.polimi.ingsw.network.messages.server.Disconnected;
 
 /**
  * Class for handle connection between a specified player and the server. Virtual Client forward valid request to the
@@ -74,7 +72,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
         setCommunicationHandler(ch);
         ch.setDisconnectListener(this);
         ch.setMessageHandler(this);
-        notifyMessageListeners(new MessageEvent(this, new GameStateRequest()));
+        notifyMessageListeners(new MessageEvent(this, new Connected()));
     }
 
     /**
@@ -103,7 +101,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
      */
     @Override
     public synchronized void onMessage(MessageEvent event) {
-        if (!isConnected()) notifyMessageListeners(new MessageEvent(this, new SkipTurn()));
+        if (!isConnected()) notifyMessageListeners(new MessageEvent(this, new Disconnected()));
         else sendMessage(event.getMessage());
 
     }
@@ -128,7 +126,7 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     @Override
     public void onDisconnect(DisconnectEvent event) {
         System.out.println("VC " + identifier + ": disconnected");
-        notifyMessageListeners(new MessageEvent(this, new SkipTurn()));
+        notifyMessageListeners(new MessageEvent(this, new Disconnected()));
     }
 }
 

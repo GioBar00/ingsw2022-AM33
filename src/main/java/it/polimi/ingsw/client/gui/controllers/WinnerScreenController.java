@@ -114,7 +114,7 @@ public class WinnerScreenController implements GUIController, MuteToggle {
      * @param playerViews the list of playerViews.
      * @param winners     the list of winners.
      */
-    public void updateGameView(List<PlayerView> playerViews, EnumSet<Tower> winners) {
+    public void updateWinners(List<PlayerView> playerViews, EnumSet<Tower> winners) {
         if (winners.stream().findAny().isPresent()) {
             List<String> players = playerViews.stream().filter(p -> winners.contains(p.getSchoolBoardView().getTower())).map(PlayerView::getNickname).toList();
 

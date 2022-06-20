@@ -1,6 +1,8 @@
 package it.polimi.ingsw.server.controller;
 
-import it.polimi.ingsw.network.listeners.*;
+import it.polimi.ingsw.network.listeners.MessageEvent;
+import it.polimi.ingsw.network.listeners.MessageListener;
+import it.polimi.ingsw.network.listeners.MessageListenerSubscriber;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
@@ -10,17 +12,19 @@ import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.server.AvailableWizards;
 import it.polimi.ingsw.network.messages.server.CommMessage;
-import it.polimi.ingsw.server.listeners.EndGameEvent;
-import it.polimi.ingsw.server.listeners.EndGameListenerSubscriber;
-import it.polimi.ingsw.server.lobby.Lobby;
 import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.server.VirtualClient;
+import it.polimi.ingsw.server.listeners.EndGameEvent;
 import it.polimi.ingsw.server.listeners.EndGameListener;
+import it.polimi.ingsw.server.listeners.EndGameListenerSubscriber;
+import it.polimi.ingsw.server.lobby.Lobby;
 import it.polimi.ingsw.server.model.Game;
 import it.polimi.ingsw.server.model.GameBuilder;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.enums.*;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -28,7 +32,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Each client handler request to the Controller class specified methods for updating the model. Controller verifies the validity
  * of the request and calls the correct method. Provide an updated view for each client
  */
-public class Controller implements Runnable, MessageListener, DisconnectListenerSubscriber, EndGameListenerSubscriber {
+public class Controller implements Runnable, MessageListener, EndGameListenerSubscriber, MessageListenerSubscriber {
 
     /**
      * the instance of the game model
@@ -41,11 +45,6 @@ public class Controller implements Runnable, MessageListener, DisconnectListener
     private EndGameListener endGameListener;
 
     /**
-     * disconnect listener of the Controller
-     */
-    private DisconnectListener disconnectListener;
-
-    /**
      * Lobby for the party
      */
     private Lobby lobby;
@@ -54,6 +53,8 @@ public class Controller implements Runnable, MessageListener, DisconnectListener
      * The queue used to process the message events.
      */
     private final LinkedBlockingQueue<MessageEvent> queue;
+
+    private final List<MessageListener> messageListeners = new LinkedList<>();
 
     private volatile boolean stopped = true;
 
@@ -122,7 +123,8 @@ public class Controller implements Runnable, MessageListener, DisconnectListener
      * @param listener the removed listener
      */
     public void removeModelListener(MessageListener listener) {
-        model.removeMessageListener(listener);
+        if (model != null)
+            model.removeMessageListener(listener);
     }
 
     /**
@@ -159,8 +161,8 @@ public class Controller implements Runnable, MessageListener, DisconnectListener
         Message msg = event.getMessage();
 
         switch (MessageType.retrieveByMessage(msg)) {
-            case GAME_STATE_REQUEST -> model.notifyCurrentGameStateToPlayer(vc.getIdentifier());
-            case SKIP_TURN -> handleSkipTurn(vc);
+            case CONNECTED -> model.notifyCurrentGameStateToPlayer(vc.getIdentifier());
+            case DISCONNECTED -> handleDisconnect(vc);
             default -> {
                 switch (model.getGameState()) {
                     case UNINITIALIZED -> handleGameSetup(vc, msg);
@@ -181,7 +183,7 @@ public class Controller implements Runnable, MessageListener, DisconnectListener
                 }
             }
         }
-
+        notifyMessageListeners(event);
     }
 
     /**
@@ -189,7 +191,7 @@ public class Controller implements Runnable, MessageListener, DisconnectListener
      *
      * @param vc the virtual client that sent the request
      */
-    private void handleSkipTurn(VirtualClient vc) {
+    private void handleDisconnect(VirtualClient vc) {
         String identifier = vc.getIdentifier();
         System.out.println("CONTR: Skip turn from " + identifier);
         switch (model.getGameState()) {
@@ -202,19 +204,18 @@ public class Controller implements Runnable, MessageListener, DisconnectListener
                     } else {
                         lobby.removePlayer(identifier);
                         lobby.removeMessageListener(vc);
-                        notifyDisconnectListener(new DisconnectEvent(vc));
+                        lobby.sendStart();
                     }
                 }
             }
-            case ENDED -> notifyEndGame();
-            default -> {
+            case STARTED -> {
                 if (isInstantiated()) {
-                    notifyDisconnectListener(new DisconnectEvent(vc));
                     if (identifier.equals(model.getCurrentPlayer())) {
                         model.skipCurrentPlayerTurn();
                     }
                 }
             }
+            case ENDED -> notifyEndGame();
         }
     }
 
@@ -247,6 +248,7 @@ public class Controller implements Runnable, MessageListener, DisconnectListener
                     lobby.notifyAvailableWizards();
                     lobby.notifyTeams(vc.getIdentifier());
                 }
+                lobby.sendStart();
             }
             default -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
         }
@@ -462,29 +464,6 @@ public class Controller implements Runnable, MessageListener, DisconnectListener
     }
 
     /**
-     * Sets the disconnection listener.
-     *
-     * @param listener the listener to set
-     */
-    @Override
-    public void setDisconnectListener(DisconnectListener listener) {
-        disconnectListener = listener;
-    }
-
-    /**
-     * Notifies the listener that a disconnection has occurred.
-     *
-     * @param event the event to notify
-     */
-    @Override
-    public void notifyDisconnectListener(DisconnectEvent event) {
-        if (disconnectListener != null) {
-            System.out.println("CONTR: Notifying disconnection listener");
-            disconnectListener.onDisconnect(event);
-        }
-    }
-
-    /**
      * Method to subscribe a EndGameListener
      *
      * @param listener the EndGameListener to subscribe
@@ -503,5 +482,57 @@ public class Controller implements Runnable, MessageListener, DisconnectListener
             System.out.println("CONTR: Notify end game");
             endGameListener.onEndGameEvent(new EndGameEvent(this));
         }
+    }
+
+    public Tower getPlayerTeam(String identifier) {
+        return model.getPlayerTeam(identifier);
+    }
+
+    public void notifyCurrentGameStateToPlayer(String identifier) {
+        if (isInstantiated())
+            model.notifyCurrentGameStateToPlayer(identifier);
+    }
+
+    /**
+     * Adds a message listener.
+     *
+     * @param listener the listener to add
+     */
+    @Override
+    public void addMessageListener(MessageListener listener) {
+        messageListeners.add(listener);
+    }
+
+    /**
+     * Removes a message listener.
+     *
+     * @param listener the listener to remove
+     */
+    @Override
+    public void removeMessageListener(MessageListener listener) {
+        messageListeners.remove(listener);
+    }
+
+    /**
+     * Notifies all listeners.
+     *
+     * @param event of the message to notify
+     */
+    @Override
+    public void notifyMessageListeners(MessageEvent event) {
+        for (MessageListener listener : messageListeners) {
+            listener.onMessage(event);
+        }
+    }
+
+    /**
+     * Notifies a specific listener.
+     *
+     * @param identifier of the listener to notify
+     * @param event      of the message to notify
+     */
+    @Override
+    public void notifyMessageListener(String identifier, MessageEvent event) {
+        messageListeners.stream().filter(l -> l.getIdentifier().equals(identifier)).forEach(l -> l.onMessage(event));
     }
 }

@@ -37,6 +37,6 @@ public class Winners implements Message {
      */
     @Override
     public boolean isValid() {
-        return true;
+        return winners != null;
     }
 }

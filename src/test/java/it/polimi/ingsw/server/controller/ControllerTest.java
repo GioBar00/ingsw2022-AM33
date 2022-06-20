@@ -6,7 +6,7 @@ import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
 import it.polimi.ingsw.network.messages.client.ChosenWizard;
-import it.polimi.ingsw.network.messages.server.SkipTurn;
+import it.polimi.ingsw.network.messages.server.Disconnected;
 import it.polimi.ingsw.network.messages.client.StartGame;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
@@ -84,11 +84,10 @@ class ControllerTest {
      */
     void  controllerCreationTest() {
 
-
         Server server = new Server();
-        server.stopController();
+        server.getClientManager().getController().stop();
         controller = new Controller();
-        controller.setEndGameListener(server);
+        controller.setEndGameListener(server.getClientManager());
 
         modelListeners = new ModelListeners();
         ModelListener m1 = new ModelListener("p1", controller);
@@ -198,7 +197,7 @@ class ControllerTest {
 
         //skip turn
         ModelListener skip = modelListeners.getByNickname(controller.getCurrentPlayer());
-        controller.handleMessage(new MessageEvent(skip, new SkipTurn()));
+        controller.handleMessage(new MessageEvent(skip, new Disconnected()));
 
         assertEquals(current.getIdentifier(), controller.getCurrentPlayer());
 
@@ -296,9 +295,9 @@ class ControllerTest {
     void EarlyDisconnectionTest(){
 
         Server server = new Server();
-        server.stopController();
+        server.getClientManager().getController().stop();
         Controller c = new Controller();
-        c.setEndGameListener(server);
+        c.setEndGameListener(server.getClientManager());
         c.setModelAndLobby(GamePreset.FOUR,GameMode.EASY,LobbyConstructor.getLobby(GamePreset.TWO));
 
         assertTrue(c.isInstantiated());
@@ -319,7 +318,7 @@ class ControllerTest {
         c.addPlayer(m4.getIdentifier());
         c.addModelListener(m4);
 
-        c.handleMessage(new MessageEvent(m2, new SkipTurn()));
+        c.handleMessage(new MessageEvent(m2, new Disconnected()));
 
 
         m2 = new ModelListener("p2", c);
@@ -328,7 +327,7 @@ class ControllerTest {
 
         assertFalse(c.addPlayer("p10"));
 
-        c.handleMessage(new MessageEvent(m1, new SkipTurn()));
+        c.handleMessage(new MessageEvent(m1, new Disconnected()));
         assertFalse(c.isInstantiated());
     }
 
@@ -338,7 +337,7 @@ class ControllerTest {
     @Test
     void chooseTeamTest(){
         Server server = new Server();
-        Controller c = server.getController();
+        Controller c = server.getClientManager().getController();
         c.setModelAndLobby(GamePreset.FOUR,GameMode.EASY,LobbyConstructor.getLobby(GamePreset.FOUR));
 
         ModelListener m1 = new ModelListener("p1", c);
