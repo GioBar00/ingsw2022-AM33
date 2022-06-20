@@ -76,27 +76,27 @@
                   </AnchorPane>
                   <Label fx:id="numGreen" alignment="CENTER" contentDisplay="CENTER" prefHeight="69.0" prefWidth="84.0" text="0" textAlignment="CENTER" textFill="#0d0d0d" GridPane.columnIndex="1" GridPane.rowIndex="4">
                       <font>
-                          <Font name="Sono Medium" size="18.0" />
+                          <Font name="Sono Medium" size="16.0" />
                       </font>
                   </Label>
                   <Label fx:id="numRed" alignment="CENTER" prefHeight="69.0" prefWidth="134.0" text="0" textAlignment="CENTER" textFill="#141414" GridPane.columnIndex="2" GridPane.rowIndex="4">
                       <font>
-                          <Font name="Sono Medium" size="18.0" />
+                          <Font name="Sono Medium" size="16.0" />
                       </font>
                   </Label>
                   <Label fx:id="numYellow" alignment="CENTER" prefHeight="69.0" prefWidth="119.0" text="0" textAlignment="CENTER" textFill="#171717" GridPane.columnIndex="3" GridPane.rowIndex="4">
                       <font>
-                          <Font name="Sono Medium" size="18.0" />
+                          <Font name="Sono Medium" size="16.0" />
                       </font>
                   </Label>
                   <Label fx:id="numMagenta" alignment="CENTER" prefHeight="69.0" prefWidth="141.0" text="0" textFill="#222121" GridPane.columnIndex="4" GridPane.rowIndex="4">
                       <font>
-                          <Font name="Sono Medium" size="18.0" />
+                          <Font name="Sono Medium" size="16.0" />
                       </font>
                   </Label>
                   <Label fx:id="numBlue" alignment="CENTER" prefHeight="69.0" prefWidth="204.0" text="0" textFill="#141414" GridPane.columnIndex="5" GridPane.rowIndex="4">
                       <font>
-                          <Font name="Sono Medium" size="18.0" />
+                          <Font name="Sono Medium" size="16.0" />
                       </font>
                   </Label>
                   <AnchorPane fx:id="anchorPaneMotherNature" maxHeight="200.0" maxWidth="200.0" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowSpan="3">
