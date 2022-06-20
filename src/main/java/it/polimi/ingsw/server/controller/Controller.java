@@ -58,6 +58,8 @@ public class Controller implements Runnable, MessageListener, EndGameListenerSub
 
     private volatile boolean stopped = true;
 
+    private volatile boolean waiting = false;
+
     /**
      * Default constructor of class Controller
      */
@@ -65,6 +67,10 @@ public class Controller implements Runnable, MessageListener, EndGameListenerSub
         model = null;
         lobby = null;
         queue = new LinkedBlockingQueue<>();
+    }
+
+    public void setWaiting(boolean waiting) {
+        this.waiting = waiting;
     }
 
     /**
@@ -159,28 +165,31 @@ public class Controller implements Runnable, MessageListener, EndGameListenerSub
     public void handleMessage(MessageEvent event) {
         VirtualClient vc = (VirtualClient) event.getSource();
         Message msg = event.getMessage();
-
         switch (MessageType.retrieveByMessage(msg)) {
             case CONNECTED -> model.notifyCurrentGameStateToPlayer(vc.getIdentifier());
             case DISCONNECTED -> handleDisconnect(vc);
             default -> {
-                switch (model.getGameState()) {
-                    case UNINITIALIZED -> handleGameSetup(vc, msg);
-                    case STARTED -> {
-                        if (!canPlay(vc.getIdentifier())) {
-                            vc.sendMessage(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN));
-                        } else if (isInstantiated()) {
-                            switch (model.getPhase()) {
-                                case PLANNING -> handlePlanningPhase(vc, msg);
+                if (!waiting) {
+                    switch (model.getGameState()) {
+                        case UNINITIALIZED -> handleGameSetup(vc, msg);
+                        case STARTED -> {
+                            if (!canPlay(vc.getIdentifier())) {
+                                vc.sendMessage(new CommMessage(CommMsgType.ERROR_NOT_YOUR_TURN));
+                            } else if (isInstantiated()) {
+                                switch (model.getPhase()) {
+                                    case PLANNING -> handlePlanningPhase(vc, msg);
 
-                                case MOVE_STUDENTS, MOVE_MOTHER_NATURE, CHOOSE_CLOUD -> handlePlayingPhase(vc, msg);
+                                    case MOVE_STUDENTS, MOVE_MOTHER_NATURE, CHOOSE_CLOUD -> handlePlayingPhase(vc, msg);
 
+                                }
+                            } else {
+                                vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                             }
-                        } else {
-                            vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
                         }
                     }
-                }
+                } else
+                    vc.sendMessage(new CommMessage(CommMsgType.WAITING));
+
             }
         }
         notifyMessageListeners(event);

@@ -445,6 +445,8 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
         for (Player player : players)
             if (player.getNickname().equals(nickname)) {
                 notifyPersonalizedGameState(player);
+                if (getCurrentPlayer().equals(nickname))
+                    notifyPossibleActions();
                 return;
             }
     }

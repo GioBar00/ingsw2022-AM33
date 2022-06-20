@@ -785,6 +785,8 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         for (Player player : players)
             if (player.getNickname().equals(nickname)) {
                 notifyPersonalizedGameState(player);
+                if (getCurrentPlayer().equals(nickname))
+                    notifyPossibleActions();
                 return;
             }
 

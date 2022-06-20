@@ -109,9 +109,6 @@ public class ClientManager implements EndGameListener, MessageListener {
         communicationHandler.setMessageHandler(vc);
         controller.addModelListener(vc);
         vc.addMessageListener(controller);
-        if (controller.isGameStarted()) {
-            playerConnected(vc);
-        }
     }
 
     /**
@@ -162,6 +159,7 @@ public class ClientManager implements EndGameListener, MessageListener {
                             player.sendMessage(new CommMessage(CommMsgType.WAITING));
                         }
                     }
+                    controller.setWaiting(true);
                     new Thread(() -> {
                         try {
                             if (forceEndGameLatch.await(60, TimeUnit.SECONDS)) {
@@ -170,6 +168,7 @@ public class ClientManager implements EndGameListener, MessageListener {
                                         controller.notifyCurrentGameStateToPlayer(player.getIdentifier());
                                     }
                                 }
+                                controller.setWaiting(false);
                                 forceEndGameLatch = null;
                             } else {
                                 for (Tower t : connectedPlayersByTeam.keySet()) {
@@ -180,6 +179,7 @@ public class ClientManager implements EndGameListener, MessageListener {
                                 }
                             }
                         } catch (InterruptedException ignored) {
+                            controller.setWaiting(false);
                             forceEndGameLatch = null;
                         }
                     }).start();
@@ -229,7 +229,9 @@ public class ClientManager implements EndGameListener, MessageListener {
                 connectedPlayersByTeam.get(team).remove(vc);
             }
         } else {
-            playerDisconnected(vc);
+            Tower team = controller.getPlayerTeam(vc.getIdentifier());
+            if (connectedPlayersByTeam.get(team).contains(vc))
+                playerDisconnected(vc);
         }
         System.out.println("S: disconnected player " + vc.getIdentifier());
     }
@@ -241,15 +243,17 @@ public class ClientManager implements EndGameListener, MessageListener {
      */
     @Override
     public synchronized void onMessage(MessageEvent event) {
-        if (MessageType.retrieveByMessage(event.getMessage()) == MessageType.DISCONNECTED) {
-            onDisconnect((VirtualClient) event.getSource());
-        } else if (MessageType.retrieveByMessage(event.getMessage()) == MessageType.START_GAME) {
-            for (Tower t: Tower.values())
-                connectedPlayersByTeam.computeIfAbsent(t, k -> new LinkedList<>());
-            for (VirtualClient vc : virtualClients.values()) {
-                Tower t = controller.getPlayerTeam(vc.getIdentifier());
-                if (t != null) {
-                    connectedPlayersByTeam.get(t).add(vc);
+        switch (MessageType.retrieveByMessage(event.getMessage())) {
+            case CONNECTED -> playerConnected((VirtualClient) event.getSource());
+            case DISCONNECTED -> onDisconnect((VirtualClient) event.getSource());
+            case START_GAME -> {
+                for (Tower t: Tower.values())
+                    connectedPlayersByTeam.computeIfAbsent(t, k -> new LinkedList<>());
+                for (VirtualClient vc : virtualClients.values()) {
+                    Tower t = controller.getPlayerTeam(vc.getIdentifier());
+                    if (t != null) {
+                        connectedPlayersByTeam.get(t).add(vc);
+                    }
                 }
             }
         }
