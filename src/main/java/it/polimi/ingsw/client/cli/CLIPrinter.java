@@ -12,10 +12,19 @@ import java.util.*;
 import static it.polimi.ingsw.server.model.enums.StudentColor.*;
 import static it.polimi.ingsw.server.model.enums.StudentColor.YELLOW;
 
+/**
+ * This class gives method for printing contents in the CLI.
+ */
 class CLIPrinter {
 
+    /**
+     * A string that identifies the OS.
+     */
     private final String os;
 
+    /**
+     * A Map that contains the colors and their corresponding ANSI escape codes.
+     */
     final Map<String, String> colors;
 
     private final String green = Color.GREEN.getName();
@@ -27,13 +36,20 @@ class CLIPrinter {
     private final String cyan = Color.CYAN.getName();
     private final String white = Color.WHITE.getName();
 
-
-
+    /**
+     * Constructor.
+     *
+     * @param colors a Map that contains the colors and their corresponding ANSI escape codes.
+     */
     CLIPrinter(Map<String, String> colors) {
         os = System.getProperty("os.name");
         this.colors = colors;
     }
 
+
+    /**
+     * This method clears the terminal.
+     */
     void clearTerminal() {
         if (os.contains("Windows")) {
             try {
@@ -53,6 +69,9 @@ class CLIPrinter {
 
     }
 
+    /**
+     * This method prints the title of the game.
+     */
     void printGameName() {
         clearTerminal();
         System.out.println(colors.get(yellow) + "███████╗██████╗ ██╗ █████╗ ███╗   ██╗████████╗██╗   ██╗███████╗");
@@ -64,6 +83,12 @@ class CLIPrinter {
 
     }
 
+    /**
+     * This method converts a set of integer into their StudentColor equivalent values.
+     *
+     * @param choices the set of integer to convert
+     * @return the set of StudentColor.
+     */
     EnumSet<StudentColor> fromIntegersToEnums(Set<Integer> choices) {
         List<StudentColor> ret = new ArrayList<>();
         for (int i : choices) {
@@ -72,6 +97,13 @@ class CLIPrinter {
         return EnumSet.copyOf(ret);
     }
 
+    /**
+     * This method converts an enum-set of <T> into a printable string.
+     *
+     * @param choices the enum-set to convert.
+     * @param <T>     the type of the enum-set.
+     * @return the string representation of the enum-set.
+     */
     <T extends Enum<T>> String buildSequence(EnumSet<T> choices) {
         StringBuilder text = new StringBuilder("[ ");
         for (T w : choices) {
@@ -82,6 +114,12 @@ class CLIPrinter {
         return text.toString();
     }
 
+    /**
+     * This method converts a set of integer into a printable string.
+     *
+     * @param choices the set of integer to convert.
+     * @return the string representation of the set.
+     */
     String buildSequence(Set<Integer> choices) {
         StringBuilder text = new StringBuilder("[ ");
         List<Integer> sorted = choices.stream().sorted().toList();
@@ -92,6 +130,11 @@ class CLIPrinter {
         return text.toString();
     }
 
+    /**
+     * This method prints a {@link MoveActionRequest}.
+     *
+     * @param move the move to print.
+     */
     void printMove(MoveActionRequest move) {
         StringBuilder text = printCommonMoveParts(move);
         Set<Integer> choices = move.getToIndexesSet();
@@ -100,6 +143,12 @@ class CLIPrinter {
         System.out.println(text);
     }
 
+    /**
+     * This method returns a string-builder that represent a generic {@link MoveActionRequest}.
+     *
+     * @param move the move to print.
+     * @return a string-builder representation of the move.
+     */
     private StringBuilder printCommonMoveParts(MoveActionRequest move) {
         Set<Integer> choices;
         StringBuilder text = new StringBuilder("Move from " + move.getFrom().toString());
@@ -114,6 +163,11 @@ class CLIPrinter {
         return text;
     }
 
+    /**
+     * This method prints a {@link MoveActionRequest} when it's a swap.
+     *
+     * @param move the move to print.
+     */
     void printSwap(MoveActionRequest move) {
         StringBuilder text = printCommonMoveParts(move);
         Set<Integer> choices = move.getToIndexesSet();
@@ -127,6 +181,12 @@ class CLIPrinter {
         System.out.println(text);
     }
 
+    /**
+     * This method returns an array of strings that represent the Team Lobby view.
+     *
+     * @param teamsView the teams view to print.
+     * @return an array of strings that represent the Team Lobby view.
+     */
     String[] buildTeamLobby(TeamsView teamsView) {
         String[] view = new String[7];
         view[0] = "";
@@ -202,6 +262,13 @@ class CLIPrinter {
         return view;
     }
 
+    /**
+     * This method returns an array of strings that represent a specific SchoolBoard.
+     *
+     * @param sbv    the school board view to print.
+     * @param preset the preset to use.
+     * @return an array of strings that represent a specific SchoolBoard.
+     */
     ArrayList<String> getSchoolBoardLines(SchoolBoardView sbv, GamePreset preset) {
         ArrayList<String> schoolBoardLines = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
@@ -317,6 +384,13 @@ class CLIPrinter {
         return schoolBoardLines;
     }
 
+    /**
+     * This method returns an array-list of strings that represent the islands view.
+     *
+     * @param views             a list of the {@link IslandGroupView}s to print.
+     * @param motherNatureIndex the index of the island where mother nature is.
+     * @return an array-list of strings that represent the islands view.
+     */
     ArrayList<String> getIslandsLines(List<IslandGroupView> views, int motherNatureIndex) {
         ArrayList<String> islandsLines = new ArrayList<>(7);
         StringBuilder stringBuilder = new StringBuilder();
@@ -436,6 +510,12 @@ class CLIPrinter {
         return islandsLines;
     }
 
+    /**
+     * This method returns an array-list of strings that represent the character card view.
+     *
+     * @param characterCardView the character card view to be represented.
+     * @return an array-list of strings that represent the character card view.
+     */
     ArrayList<String> getCardLines(CharacterCardView characterCardView) {
         ArrayList<String> cardLines = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
@@ -527,6 +607,13 @@ class CLIPrinter {
         return cardLines;
     }
 
+    /**
+     * This method returns an array-list of strings that represent the cloud view.
+     *
+     * @param cloudViews a list of cloud views to be represented.
+     * @return an array-list of strings that represent the cloud view.
+     */
+
     ArrayList<String> getCloudsLines(List<CloudView> cloudViews) {
         ArrayList<String> cloudsLines = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
@@ -595,6 +682,12 @@ class CLIPrinter {
         return cloudsLines;
     }
 
+    /**
+     * This method appends to a string builder the representation of a student.
+     *
+     * @param studentColor the color of the student.
+     * @param s            the string builder to append to.
+     */
     private void appendStudent(StudentColor studentColor, StringBuilder s) {
         switch (studentColor) {
             case RED -> s.append(colors.get(red)).append(" © ").append(colors.get(reset));
@@ -605,6 +698,12 @@ class CLIPrinter {
         }
     }
 
+    /**
+     * This method appends to a string builder the representation of a tower.
+     *
+     * @param tower the tower to be represented.
+     * @param s     the string builder to append to.
+     */
     private void appendTower(Tower tower, StringBuilder s) {
         switch (tower) {
             case WHITE -> s.append(colors.get(reset)).append(" W ").append(colors.get(reset));
@@ -613,6 +712,12 @@ class CLIPrinter {
         }
     }
 
+    /**
+     * This method appends to a string builder a border.
+     *
+     * @param studentColor the color of the border.
+     * @param s            the string builder to append to.
+     */
     private void appendBorder(StudentColor studentColor, StringBuilder s) {
         switch (studentColor) {
             case RED -> s.append(colors.get(red)).append("░░").append(colors.get(reset));
@@ -623,6 +728,13 @@ class CLIPrinter {
         }
     }
 
+    /**
+     * This method appends to a string builder the representation of the hall.
+     *
+     * @param row      the row of the hall.
+     * @param s        the string builder to append to.
+     * @param hallView the hall to be represented.
+     */
     private void appendHall(int row, StringBuilder s, EnumMap<StudentColor, Integer> hallView) {
         StudentColor studentColor = studentColorByRow(row);
         appendBorder(studentColor, s);
@@ -636,6 +748,12 @@ class CLIPrinter {
         }
     }
 
+    /**
+     * This method returns the color of a student by its row.
+     *
+     * @param row the row of the hall.
+     * @return the color of the student.
+     */
     private StudentColor studentColorByRow(int row) {
         StudentColor studentColor = null;
         switch (row) {
@@ -648,6 +766,12 @@ class CLIPrinter {
         return studentColor;
     }
 
+    /**
+     * This method appends to a string builder a block.
+     *
+     * @param isBlocked if we have to add the block or not.
+     * @param s         the string builder to append to.
+     */
     private void appendBlock(boolean isBlocked, StringBuilder s) {
         if (isBlocked)
             s.append(colors.get(red)).append(" X ").append(colors.get(reset));
@@ -655,6 +779,13 @@ class CLIPrinter {
             s.append("   ");
     }
 
+    /**
+     * This method appends to a string builder a number that represents the number of students of that color on the island.
+     *
+     * @param studentColor the color of the student.
+     * @param num          the number of students.
+     * @param s            the string builder to append to.
+     */
     private void appendStudentNumber(StudentColor studentColor, int num, StringBuilder s) {
         if (num == 0)
             s.append("  ");
@@ -668,12 +799,24 @@ class CLIPrinter {
             }
     }
 
+    /**
+     * This method appends to a string builder a border.
+     *
+     * @param s the string builder to append to.
+     */
     private void appendWater(StringBuilder s) {
         s.append(colors.get(blue));
         s.append("░".repeat(144));
         s.append(colors.get(reset));
     }
 
+    /**
+     * This method returns a string with information about the owner of a schoolboard.
+     *
+     * @param nickname the nickname of the owner.
+     * @param gameView the game view.
+     * @return the string with information about the owner.
+     */
     String getFirstLine(String nickname, GameView gameView) {
         String text = "Eriantys       Player : " + nickname;
         text = text + "   Current Player : " + gameView.getCurrentPlayer();

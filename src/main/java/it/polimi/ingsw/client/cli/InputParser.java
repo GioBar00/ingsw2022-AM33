@@ -129,6 +129,15 @@ public class InputParser {
         canStart = value;
     }
 
+
+    /**
+     * This method is used for setting if the user can end a effect.
+     * @param b true if the user can end a effect, false otherwise.
+     */
+    public void setCanEndEffect(boolean b) {
+        canEndEffect = b;
+    }
+
     /**
      * This method is used for setting the status of the server.
      */
@@ -153,10 +162,11 @@ public class InputParser {
     /**
      * This method is used for resetting the input parser.
      */
-    void resetParser(){
+    void resetParser() {
         wizardsView = null;
         lastRequest = null;
     }
+
     /**
      * This method parse the string that the user typed.
      *
@@ -164,7 +174,7 @@ public class InputParser {
      */
     synchronized void parse(String input) {
 
-        if(cli.lastState == ViewState.WAITING){
+        if (cli.lastState == ViewState.WAITING) {
             System.out.println(cli.colors.get(RED) + "Waiting for other players..." + cli.colors.get(RESET));
             return;
         }
@@ -227,6 +237,7 @@ public class InputParser {
 
     /**
      * This method is used for parsing the input of the user when he wants to start the game.
+     *
      * @param in the input of the user.
      */
     private void parseNewGame(String[] in) {
@@ -250,6 +261,11 @@ public class InputParser {
         printInvalidMessage();
     }
 
+    /**
+     * This method is used for parsing the input of the user when he wants to choose a wizard.
+     *
+     * @param in the input of the user.
+     */
     private void parseWizard(String[] in) {
         if (canChoseWizard) {
             if (in.length == 2) {
@@ -265,6 +281,11 @@ public class InputParser {
         printInvalidMessage();
     }
 
+    /**
+     * This method is used for parsing the input of the user when he wants to choose a team.
+     *
+     * @param in the input of the user.
+     */
     private void parseTeam(String[] in) {
         if (in.length == 2) {
             String i = in[1].toUpperCase();
@@ -279,6 +300,11 @@ public class InputParser {
         printInvalidMessage();
     }
 
+    /**
+     * This method is used for parsing the input of the user when he wants to start the game.
+     *
+     * @param in the input of the user.
+     */
     private void parseStart(String[] in) {
         System.out.println(canStart);
         if (canStart) {
@@ -290,6 +316,11 @@ public class InputParser {
         printInvalidMessage();
     }
 
+    /**
+     * This method is used for parsing the input of the user when he wants to choose an assistant card.
+     *
+     * @param in the input of the user.
+     */
     private void parseAssistantCard(String[] in) {
         if (checkRightMoment(MessageType.PLAY_ASSISTANT_CARD)) {
             EnumSet<AssistantCard> playableAssistantCard = ((PlayAssistantCard) lastRequest).getPlayableAssistantCards();
@@ -307,6 +338,11 @@ public class InputParser {
         }
     }
 
+    /**
+     * This method is used for parsing the input of the user when he wants to choose a character card.
+     *
+     * @param in the input of the user.
+     */
     private void parseCharacterCard(String[] in) {
         Map<String, Integer> cards = cli.playableCharacterCards();
         if (cards != null)
@@ -320,6 +356,13 @@ public class InputParser {
         printInvalidMessage();
     }
 
+    /**
+     * This method is used for knowing if an input (a string that represent an integer) is contained in a set of integers.
+     *
+     * @param available the set of integers.
+     * @param in        the input of the user.
+     * @return true if the input is contained in the set, false otherwise.
+     */
     private boolean inIntegerSet(Set<Integer> available, String in) {
         if (in.matches("-?\\d+")) {
             Integer i = Integer.parseInt(in);
@@ -328,6 +371,11 @@ public class InputParser {
         return false;
     }
 
+    /**
+     * This method is used for parsing the input of the user when he wants to choose an island.
+     *
+     * @param in the input of the user.
+     */
     private void parseIslandChoice(String[] in) {
         if (checkRightMoment(MessageType.CHOOSE_ISLAND) || !cli.playableCharacterCards().isEmpty()) {
             if (in.length == 2) {
@@ -340,6 +388,11 @@ public class InputParser {
         printInvalidMessage();
     }
 
+    /**
+     * This method is used for parsing the input of the user when he wants to choose a cloud.
+     *
+     * @param in the input of the user.
+     */
     private void parseCloudChoice(String[] in) {
         if (checkRightMoment(MessageType.CHOOSE_CLOUD)) {
             if (in.length == 2) {
@@ -352,6 +405,11 @@ public class InputParser {
         printInvalidMessage();
     }
 
+    /**
+     * This method is used for parsing the input of the user when he wants to choose a color
+     *
+     * @param in the input of the user.
+     */
     private void parseColor(String[] in) {
         if (checkRightMoment(MessageType.CHOOSE_STUDENT_COLOR))
             if (in.length == 2) {
@@ -366,6 +424,11 @@ public class InputParser {
         printInvalidMessage();
     }
 
+    /**
+     * This method is used for parsing the input of the user when he wants to move mother nature.
+     *
+     * @param in the input of the user.
+     */
     private void parseMotherNature(String[] in) {
         if (checkRightMoment(MessageType.MOVE_MOTHER_NATURE))
             if (in.length == 2) {
@@ -380,6 +443,11 @@ public class InputParser {
         printInvalidMessage();
     }
 
+    /**
+     * This method is used for parsing the input of the user when he wants to move a student.
+     *
+     * @param in the input of the user.
+     */
     private void parseMoveChoice(String[] in) {
         MovedStudent message = checkMoveChoice(in);
         if (message != null) {
@@ -389,6 +457,11 @@ public class InputParser {
         printInvalidMessage();
     }
 
+    /**
+     * This method is used for parsing the input of the user when he wants to swap a student.
+     *
+     * @param in the input of the user.
+     */
     private void parseSwapChoice(String[] in) {
         if (checkRightMoment(MessageType.SWAP_STUDENTS)) {
 
@@ -429,6 +502,15 @@ public class InputParser {
         printInvalidMessage();
     }
 
+    /**
+     * This method converts a string into an integer.
+     * The conversion is based on the move location.
+     *
+     * @param location the move location.
+     * @param in       the input of the user.
+     * @return the integer if the conversion is successful, null otherwise.
+     * the integer could represent the index of the student in the entrance or a student color.
+     */
     private Integer getSwapInt(MoveLocation location, String in) {
         Integer index = null;
         if (location.equals(MoveLocation.ENTRANCE)) {
@@ -443,6 +525,9 @@ public class InputParser {
         return index;
     }
 
+    /**
+     * This method is used for parsing the input of the user when he wants to end a effect.
+     */
     private void parseConcludeChoice() {
         if (checkRightMoment(MessageType.SWAP_STUDENTS) && canEndEffect) {
             cli.notifyViewListener(new ConcludeCharacterCardEffect());
@@ -450,10 +535,33 @@ public class InputParser {
     }
 
 
+    /**
+     * Helper method used for checking a move request.
+     *
+     * @param from      the start location.
+     * @param fromIndex indexes of students in the start location.
+     * @param to        the end location.
+     * @param toIndex   indexes of students in the end location.
+     * @param m         the request of the move.
+     * @return true if the move is valid, false otherwise.
+     */
     private boolean checkMove(MoveLocation from, int fromIndex, MoveLocation to, Integer toIndex, MoveActionRequest m) {
         return checkMove(from, fromIndex, to, toIndex, m.getFrom(), m.getTo(), m.getFromIndexesSet(), m.getToIndexesSet());
     }
 
+    /**
+     * Helper method used for checking if the move is valid.
+     *
+     * @param from              the start location selected by the user.
+     * @param fromIndex         the index of the student in the start location selected by the user.
+     * @param to                the end location selected by the user.
+     * @param toIndex           the index of the student in the end location selected by the user.
+     * @param getFrom           the start location.
+     * @param getTo             the end location.
+     * @param getFromIndexesSet indexes of students in the start location
+     * @param getToIndexSet     indexes of students in the end location.
+     * @return true if the move is valid, false otherwise.
+     */
     private boolean checkMove(MoveLocation from, int fromIndex, MoveLocation to, Integer toIndex, MoveLocation getFrom, MoveLocation getTo, Set<Integer> getFromIndexesSet, Set<Integer> getToIndexSet) {
         if (from.equals(getFrom))
             if (to.equals(getTo))
@@ -466,6 +574,11 @@ public class InputParser {
         return false;
     }
 
+    /**
+     * This method is used for checking if the input is a valid move.
+     *
+     * @param in the input of the user.
+     */
     private MovedStudent checkMoveChoice(String[] in) {
         if (checkRightMoment(MessageType.MULTIPLE_POSSIBLE_MOVES) || checkRightMoment(MessageType.MOVE_STUDENT)) {
             if (in.length == 4 || in.length == 5) {
@@ -531,9 +644,5 @@ public class InputParser {
             }
         }
         return null;
-    }
-
-    public void setCanEndEffect(boolean b) {
-        this.canEndEffect = b;
     }
 }

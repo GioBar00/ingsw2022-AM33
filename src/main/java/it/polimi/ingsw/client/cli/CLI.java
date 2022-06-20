@@ -20,30 +20,87 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
+/**
+ * This class implements the CLI interface.
+ */
 public class CLI implements UI {
+    /**
+     * The client.
+     */
     private final Client client;
+
+    /**
+     * The nickname of the player.
+     */
     private String nickname;
+
+    /**
+     * The Scanner to read the input.
+     */
     private final Scanner input;
+
+    /**
+     * A boolean to tells if it's the first connection.
+     */
     private boolean firstConnection;
+
+    /**
+     * The listener of the view.
+     */
     private ViewListener listener;
+
+    /**
+     * The team View.
+     */
     private TeamsView teamsView;
+
+    /**
+     * The game view.
+     */
     private GameView gameView;
+
+    /**
+     * the wizard view.
+     */
     private WizardsView wizardsView;
+
+    /**
+     * last request made by the server.
+     */
     private Message lastRequest;
 
+    /**
+     * The last state of the CLI.
+     */
     ViewState lastState;
 
+    /**
+     * A Map that contains the colors and their corresponding ANSI escape codes.
+     */
     final Map<String, String> colors;
+
+    /**
+     * {@link InputParser} to parse the input.
+     */
     private final InputParser inputParser;
+
+    /**
+     * The executor service.
+     */
     private ExecutorService executorService;
 
+    /**
+     * {@link CLIPrinter} to print the cli.
+     */
     private final CLIPrinter cliPrinter;
 
     private final String GREEN = Color.GREEN.getName();
     private final String RESET = Color.RESET.getName();
     private final String YELLOW = Color.YELLOW.getName();
 
+    /**
+     * Constructor.
+     */
     public CLI() {
         lastState = ViewState.SETUP;
         executorService = null;
@@ -57,6 +114,11 @@ public class CLI implements UI {
 
     }
 
+    /**
+     * This method sets the WizardView.
+     *
+     * @param wizardsView the WizardView to set.
+     */
     @Override
     public void setWizardView(WizardsView wizardsView) {
         this.wizardsView = wizardsView;
@@ -64,18 +126,33 @@ public class CLI implements UI {
         showWizardMenu();
     }
 
+    /**
+     * This method sets the TeamView.
+     *
+     * @param teamsView the TeamView to set.
+     */
     @Override
     synchronized public void setTeamsView(TeamsView teamsView) {
         this.teamsView = teamsView;
         showLobbyScreen();
     }
 
+    /**
+     * This method sets the GameView.
+     *
+     * @param gameView the GameView to set.
+     */
     @Override
     synchronized public void setGameView(GameView gameView) {
         this.gameView = gameView;
         showGameScreen();
     }
 
+    /**
+     * This method sets the possible actions the player can do.
+     *
+     * @param message the message containing the possible actions.
+     */
     @Override
     synchronized public void setPossibleActions(Message message) {
         lastRequest = message;
@@ -83,6 +160,9 @@ public class CLI implements UI {
         showPossibleMoves();
     }
 
+    /**
+     * This method notifies the player when the server is unavailable.
+     */
     @Override
     public void serverUnavailable() {
         lastState = ViewState.RESET;
@@ -98,6 +178,9 @@ public class CLI implements UI {
         }
     }
 
+    /**
+     * This method requests the client to send a login message.
+     */
     void sendLogin() {
         lastState = ViewState.SETUP;
         inputParser.resetParser();
@@ -107,12 +190,18 @@ public class CLI implements UI {
         }
     }
 
+    /**
+     * This method close the UI.
+     */
     @Override
     public void close() {
         inputParser.cantWrite();
         System.exit(0);
     }
 
+    /**
+     * This method requests to the user to choose the game mode and the number of players.
+     */
     @Override
     public void chooseGame() {
         inputParser.resetParser();
@@ -133,21 +222,33 @@ public class CLI implements UI {
         setUpInputReader();
     }
 
+    /**
+     * This method shows the start screen.
+     */
     @Override
     public void showStartScreen() {
         printGameName();
         printRequests();
     }
 
+    /**
+     * This method ask the user to insert a server address and a nickname.
+     */
     private void printRequests() {
         requestServerAddress();
         chooseNickname();
     }
 
+    /**
+     * This method prints the game title.
+     */
     private void printGameName() {
         cliPrinter.printGameName();
     }
 
+    /**
+     * This method requests the user to insert the server address.
+     */
     private void requestServerAddress() {
         String server;
         int port;
@@ -165,6 +266,9 @@ public class CLI implements UI {
         } while (!client.setServerAddress(server, port));
     }
 
+    /**
+     * This method requests the user to insert the nickname.
+     */
     private void chooseNickname() {
         do {
             System.out.print("Choose Nickname -> ");
@@ -178,6 +282,9 @@ public class CLI implements UI {
         sendLogin();
     }
 
+    /**
+     * This method sets up the input reader.
+     */
     private void setUpInputReader() {
         if (firstConnection) {
             executorService = Executors.newSingleThreadExecutor();
@@ -186,6 +293,9 @@ public class CLI implements UI {
         }
     }
 
+    /**
+     * This method reads the inputs from the user.
+     */
     private void readInput() {
         while (!partyEnded() && !Thread.interrupted()) {
             input.reset();
@@ -196,6 +306,11 @@ public class CLI implements UI {
         client.closeConnection();
     }
 
+    /**
+     * This method checks if the party has ended.
+     *
+     * @return true if the party has ended, false otherwise.
+     */
     private boolean partyEnded() {
         if (gameView == null)
             return false;
@@ -204,6 +319,9 @@ public class CLI implements UI {
         }
     }
 
+    /**
+     * This method shows the wizard menu.
+     */
     public void showWizardMenu() {
         if (lastState.equals(ViewState.SETUP)) {
 
@@ -221,6 +339,9 @@ public class CLI implements UI {
         }
     }
 
+    /**
+     * This method shows the game menu where the player can choose the team.
+     */
     @Override
     public void showLobbyScreen() {
         cliPrinter.clearTerminal();
@@ -243,6 +364,9 @@ public class CLI implements UI {
         System.out.println("Select/change team by Typing TEAM <BLACK/WHITE>");
     }
 
+    /**
+     * This method notifies the host that the game can start.
+     */
     @Override
     synchronized public void hostCanStart() {
         if (inputParser.isHost()) {
@@ -254,6 +378,10 @@ public class CLI implements UI {
         System.out.println("The match can start now. Type START if you want to start it");
     }
 
+    /**
+     * This method notifies the host that the game cant start.
+     */
+    @Override
     synchronized public void hostCantStart() {
         if (teamsView != null) {
             inputParser.setCanStart(false);
@@ -261,6 +389,9 @@ public class CLI implements UI {
         }
     }
 
+    /**
+     * This method shows the main game screen.
+     */
     @Override
     public void showGameScreen() {
         lastState = ViewState.PLAYING;
@@ -389,6 +520,9 @@ public class CLI implements UI {
         System.out.println(colors.get(RESET) + "Waiting for other players...");
     }
 
+    /**
+     * This method shows the possible moves the player could make.
+     */
     public void showPossibleMoves() {
         if (nickname.equals(gameView.getCurrentPlayer()))
             inputParser.canWrite();
@@ -474,6 +608,11 @@ public class CLI implements UI {
         }
     }
 
+    /**
+     * This method check if the player can end the effect of a CharacterCard.
+     *
+     * @return true if the player can end the effect, false otherwise.
+     */
     private boolean checkCanEndEffect() {
         boolean canEnd = false;
 
@@ -490,6 +629,11 @@ public class CLI implements UI {
         return canEnd;
     }
 
+    /**
+     * This method shows a {@link CommMessage} to the user.
+     *
+     * @param message the message to show.
+     */
     @Override
     public void showCommMessage(CommMessage message) {
         if (lastState.equals((ViewState.SETUP)) && message.getType().equals(CommMsgType.ERROR_NICKNAME_UNAVAILABLE)) {
@@ -541,7 +685,11 @@ public class CLI implements UI {
         listener.onMessage(message);
     }
 
-
+    /**
+     * This method returns a map with the name of the playable characters card and their corresponding number.
+     *
+     * @return a map with the name of the playable characters card and their corresponding number.
+     */
     Map<String, Integer> playableCharacterCards() {
         if (gameView != null)
             if (gameView.getMode().equals(GameMode.EXPERT)) {
@@ -563,7 +711,5 @@ public class CLI implements UI {
             }
         return new HashMap<>();
     }
-
-
 }
 
