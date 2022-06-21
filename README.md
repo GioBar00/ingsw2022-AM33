@@ -34,7 +34,7 @@ the [rules](https://www.craniocreations.it/wp-content/uploads/2021/11/Eriantys_I
 | 4 players              |    [![](https://img.shields.io/badge/Status-tested-green.svg?style=flat)](https://www.craniocreations.it/prodotto/eriantys/)     |
 | Multiple Games         | [![](https://img.shields.io/badge/Status-not_implemented-red.svg?style=flat)](https://www.craniocreations.it/prodotto/eriantys/) |
 | Persistence            | [![](https://img.shields.io/badge/Status-not_implemented-red.svg?style=flat)](https://www.craniocreations.it/prodotto/eriantys/) |
-| Disconnections control | [![](https://img.shields.io/badge/Status-implementing-yellow.svg?style=flat)](https://www.craniocreations.it/prodotto/eriantys/) |
+| Disconnections control |    [![](https://img.shields.io/badge/Status-testing-blue.svg?style=flat)](https://www.craniocreations.it/prodotto/eriantys/)     |
 
 ### Legend
 
