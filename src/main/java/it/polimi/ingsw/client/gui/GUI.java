@@ -548,7 +548,7 @@ public class GUI extends Application implements UI {
      *
      * @param message The message to be shown.
      */
-    private void showAlert(String message) {
+    public void showAlert(String message) {
         Platform.runLater(() -> {
             Alert messageAlert = new Alert(Alert.AlertType.ERROR);
             messageAlert.setContentText(message);
