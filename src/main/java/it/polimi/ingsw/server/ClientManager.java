@@ -76,6 +76,14 @@ public class ClientManager {
     }
 
     /**
+     * @param vc of the player
+     * @return if the virtual client is managed by the server
+     */
+    public boolean isClientInGame(VirtualClient vc) {
+        return virtualClients.containsValue(vc);
+    }
+
+    /**
      * Resetting the controller
      */
     public void resetGame() {
@@ -199,11 +207,13 @@ public class ClientManager {
             vc.stop();
         }
         virtualClients.clear();
-        System.out.println("S: disconnected all players");
-        resetGame();
-        if (server.getState() == ServerState.NORMAL && forceEndGameLatch != null) {
-            forceEndGameLatch.countDown();
+        synchronized (server) {
+            resetGame();
+            if (server.getState() == ServerState.NORMAL && forceEndGameLatch != null) {
+                forceEndGameLatch.countDown();
+            }
         }
+        System.out.println("S: disconnected all players");
     }
 
     /**

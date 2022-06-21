@@ -170,6 +170,7 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
                 throw new RuntimeException(e);
             }
         }
+        System.out.println("Client: stopped!!");
     }
 
     /**

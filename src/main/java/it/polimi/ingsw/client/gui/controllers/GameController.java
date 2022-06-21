@@ -190,8 +190,8 @@ public class GameController implements GUIController, MuteToggle {
         stage.setResizable(true);
         stage.setMinHeight(0.0);
         stage.setMinWidth(0.0);
-        stage.setMaxHeight(Double.MAX_VALUE);
-        stage.setMaxWidth(Double.MAX_VALUE);
+        // needed to trigger change
+        stage.setMaximized(false);
         stage.setMaximized(true);
         stage.setResizable(false);
     }

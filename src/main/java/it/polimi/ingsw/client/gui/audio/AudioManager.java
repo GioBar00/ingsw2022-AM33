@@ -49,6 +49,7 @@ public abstract class AudioManager {
     public static void playAudio(AudioPath audio) {
         MediaPlayer newPlayer = ResourceLoader.loadAudio(audio);
         if (currentPlayer != newPlayer) {
+            newPlayer.seek(newPlayer.getStartTime());
             newPlayer.setMute(isMuted);
             newPlayer.setOnEndOfMedia(() -> {
                 newPlayer.seek(newPlayer.getStartTime());

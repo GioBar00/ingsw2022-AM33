@@ -202,7 +202,7 @@ public class Controller implements Runnable, MessageListener {
      * @param vc the virtual client that sent the request
      */
     private void handleDisconnect(VirtualClient vc) {
-        if (waiting)
+        if (waiting || !clientManager.isClientInGame(vc))
             return;
         String identifier = vc.getIdentifier();
         System.out.println("CONTR: Skip turn from " + identifier);
@@ -227,7 +227,6 @@ public class Controller implements Runnable, MessageListener {
                     }
                 }
             }
-            case ENDED -> clientManager.gameEnded();
         }
     }
 

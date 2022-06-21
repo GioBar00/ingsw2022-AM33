@@ -56,6 +56,8 @@ public class GUI extends Application implements UI {
      */
     private String nickname;
 
+    private ChooseGameController chooseGameController;
+
     /**
      * The controller of the choose-wizard view.
      */
@@ -284,10 +286,10 @@ public class GUI extends Application implements UI {
             if (startScreenController != null)
                 startScreenController.disableCenter(true);
             Stage chooseGameStage = new Stage();
-            GUIController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_GAME, this);
+            chooseGameController = ResourceLoader.loadFXML(FXMLPath.CHOOSE_GAME, this);
             chooseGameStage.setTitle("Create a new game");
             chooseGameStage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
-            controller.loadScene(chooseGameStage);
+            chooseGameController.loadScene(chooseGameStage);
             chooseGameStage.setAlwaysOnTop(true);
             chooseGameStage.onCloseRequestProperty().set(event -> {
                 viewState = ViewState.SETUP;
@@ -308,7 +310,16 @@ public class GUI extends Application implements UI {
         viewState = ViewState.SETUP;
         checkStartScreenController();
         Platform.runLater(() -> {
-            chooseWizardController = null;
+            if (chooseWizardController != null) {
+                ChooseWizardController copy = chooseWizardController;
+                chooseWizardController = null;
+                ((Stage) copy.getRootPane().getScene().getWindow()).close();
+            }
+            if (chooseGameController != null) {
+                ChooseGameController copy = chooseGameController;
+                chooseGameController = null;
+                ((Stage) copy.getRootPane().getScene().getWindow()).close();
+            }
             lobbyController = null;
             if (gameController != null)
                 gameController.unload();
@@ -336,17 +347,19 @@ public class GUI extends Application implements UI {
             chooseWizardStage.setTitle("Choose a Wizard");
             chooseWizardStage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
             chooseWizardStage.onHidingProperty().set(event -> {
-                if (chooseWizardController.hasChosenWizard()) {
-                    viewState = ViewState.CHOOSE_TEAM;
-                    if (lobbyController != null)
-                        showLobbyScreen();
-                } else {
-                    viewState = ViewState.SETUP;
-                    client.closeConnection();
-                    if (startScreenController != null)
-                        startScreenController.disableCenter(false);
+                if (chooseWizardController != null) {
+                    if (chooseWizardController.hasChosenWizard()) {
+                        viewState = ViewState.CHOOSE_TEAM;
+                        if (lobbyController != null)
+                            showLobbyScreen();
+                    } else {
+                        viewState = ViewState.SETUP;
+                        client.closeConnection();
+                        if (startScreenController != null)
+                            startScreenController.disableCenter(false);
+                    }
+                    chooseWizardController = null;
                 }
-                chooseWizardController = null;
             });
             chooseWizardController.loadScene(chooseWizardStage);
             chooseWizardStage.setAlwaysOnTop(true);
