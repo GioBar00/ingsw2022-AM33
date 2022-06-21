@@ -32,6 +32,9 @@ public class WaitingViewController implements GUIController {
      * The timer used for the countdown.
      */
     private Timer timer;
+
+    private int currentTime = 0;
+
     /**
      * This method is used to set the GUI of the controller.
      *
@@ -53,20 +56,28 @@ public class WaitingViewController implements GUIController {
     /**
      * This method is used for setting and updating the timer inside the waiting screen.
      */
-    public void startTimer() {
+    public void startTimer(int startTime) {
         activated = true;
         timerLbl.setAlignment(javafx.geometry.Pos.CENTER);
+        currentTime = startTime;
         timer.scheduleAtFixedRate(new TimerTask() {
-            int interval = 60;
-
             public void run() {
-                if (interval > 0) {
-                    Platform.runLater(() -> timerLbl.setText(String.valueOf(interval)));
-                    interval--;
-                } else
-                    timer.cancel();
+                synchronized (this) {
+                    if (currentTime > 0) {
+                        Platform.runLater(() -> timerLbl.setText(String.valueOf(currentTime)));
+                        currentTime--;
+                    } else
+                        timer.cancel();
+                }
             }
         }, 1000, 1000);
+    }
+
+    /**
+     * @return the current time of the timer.
+     */
+    public synchronized int getTimer() {
+        return currentTime;
     }
 
     /**
@@ -83,18 +94,17 @@ public class WaitingViewController implements GUIController {
         stage.setAlwaysOnTop(true);
 
         stage.setScene(new Scene(getRootPane()));
-        this.showNewDisablingStage(stage);
-
     }
 
     /**
-     * Closes the stage.
+     * This method is called when changing scene or closing the stage.
      */
-    public void close(){
-        if(activated){
+    @Override
+    public void unload() {
+        currentTime = 0;
+        if (activated) {
             timer.cancel();
             timer.purge();
-            ((Stage) root.getScene().getWindow()).close();
             activated = false;
         }
     }

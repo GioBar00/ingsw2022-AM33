@@ -88,8 +88,7 @@ class ControllerTest {
 
         Server server = new Server();
         server.getClientManager().getController().stop();
-        controller = new Controller();
-        controller.setEndGameListener(server.getClientManager());
+        controller = new Controller(server.getClientManager());
 
         modelListeners = new ModelListeners();
         ModelListener m1 = new ModelListener("p1", controller);
@@ -315,8 +314,7 @@ class ControllerTest {
 
         Server server = new Server();
         server.getClientManager().getController().stop();
-        Controller c = new Controller();
-        c.setEndGameListener(server.getClientManager());
+        Controller c = new Controller(server.getClientManager());
         c.setModelAndLobby(GamePreset.FOUR,GameMode.EASY,LobbyConstructor.getLobby(GamePreset.TWO));
 
         assertTrue(c.isInstantiated());
@@ -404,7 +402,7 @@ class ControllerTest {
         c.notifyCurrentGameStateToPlayer(m1.getIdentifier());
         assertFalse(m1.queueContains(MessageType.CURRENT_GAME_STATE));
 
-        c.removeMessageListener(m2);
+        //c.removeMessageListener(m2);
         c.notifyCurrentGameStateToPlayer(m2.getIdentifier());
         assertFalse(m1.queueContains(MessageType.CURRENT_GAME_STATE));
     }

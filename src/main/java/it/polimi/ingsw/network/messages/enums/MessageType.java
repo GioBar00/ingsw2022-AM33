@@ -1,5 +1,6 @@
 package it.polimi.ingsw.network.messages.enums;
 
+import it.polimi.ingsw.network.messages.IgnoreMessage;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.actions.requests.*;
@@ -14,6 +15,7 @@ import java.util.Map;
  */
 public enum MessageType {
     INVALID(null),
+    IGNORE(IgnoreMessage.class),
     // server messages
     PLAY_ASSISTANT_CARD(PlayAssistantCard.class),
     MOVE_STUDENT(MoveStudent.class),

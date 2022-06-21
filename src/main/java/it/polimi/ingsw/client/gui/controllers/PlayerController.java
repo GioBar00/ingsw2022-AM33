@@ -145,6 +145,14 @@ public class PlayerController implements GUIController {
     }
 
     /**
+     * This method is called when changing scene or closing the stage.
+     */
+    @Override
+    public void unload() {
+        closeAssistantCardView();
+    }
+
+    /**
      * @return the SchoolBoardController
      */
     public SchoolBoardController getSchoolBoardController() {

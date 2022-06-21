@@ -1,7 +1,9 @@
 package it.polimi.ingsw.network;
 
-import it.polimi.ingsw.network.listeners.*;
-import it.polimi.ingsw.network.messages.InvalidMessage;
+import it.polimi.ingsw.network.listeners.DisconnectEvent;
+import it.polimi.ingsw.network.listeners.DisconnectListener;
+import it.polimi.ingsw.network.listeners.DisconnectListenerSubscriber;
+import it.polimi.ingsw.network.messages.IgnoreMessage;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
@@ -14,7 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class is used to handle the message exchange between the server and the client and vice versa.
@@ -66,8 +70,14 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      */
     private Timer timer;
 
+    /**
+     * If the communication handler is stopped.
+     */
     private volatile boolean stopped = true;
 
+    /**
+     * if the disconnection was already notified.
+     */
     private boolean notifiedDisconnect = false;
 
     /**
@@ -164,7 +174,8 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                 } catch (InterruptedException e) {
                     if (isMaster) System.out.println("CH : output interrupted");
                 }
-                MessageExchange.sendMessage(m, writer);
+                if (m != null && MessageType.retrieveByMessage(m) != MessageType.IGNORE)
+                    MessageExchange.sendMessage(m, writer);
             }
             System.out.println("CH: Stop handle output");
             notifyDisconnectIfNotAlreadyDone();
@@ -283,7 +294,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
             System.out.println("CH : stop");
             timer.cancel();
             timer.purge();
-            queue.add(new InvalidMessage());
+            queue.add(new IgnoreMessage());
         }
         try {
             if (socket != null) socket.close();

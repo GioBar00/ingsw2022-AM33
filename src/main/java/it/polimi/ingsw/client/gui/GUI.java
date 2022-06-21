@@ -86,11 +86,6 @@ public class GUI extends Application implements UI {
      */
     private List<PlayerView> players;
 
-    /**
-     * The controller of the waiting view.
-     */
-    private WaitingViewController waitingViewController;
-
     public static void main(String[] args) {
         launch(args);
     }
@@ -268,13 +263,11 @@ public class GUI extends Application implements UI {
         if (this.players == null) {
             players = gameView.getPlayersView();
         }
-        if(waitingViewController != null) {
-            Platform.runLater( () -> waitingViewController.close());
-        }
 
         if (gameView.getState() == GameState.ENDED) {
             show = false;
-        } else Platform.runLater(() -> gameController.updateGameView(gameView, nickname));
+        } else
+            Platform.runLater(() -> gameController.updateGameView(gameView, nickname));
         if (show) {
             viewState = ViewState.PLAYING;
             showGameScreen();
@@ -317,6 +310,8 @@ public class GUI extends Application implements UI {
         Platform.runLater(() -> {
             chooseWizardController = null;
             lobbyController = null;
+            if (gameController != null)
+                gameController.unload();
             gameController = null;
             startScreenController.disableCenter(false);
             startScreenController.loadScene(stage);
@@ -391,6 +386,8 @@ public class GUI extends Application implements UI {
      */
     private void showWinnerScreen(EnumSet<Tower> winners) {
         viewState = ViewState.END_GAME;
+        if (gameController != null)
+            gameController.unload();
         gameController = null;
         WinnerScreenController controller = ResourceLoader.loadFXML(FXMLPath.WINNER_SCREEN, this);
         Platform.runLater(() -> {
@@ -513,19 +510,15 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void serverUnavailable() {
-        System.out.println("Server unavailable");
-
-        if (viewState == ViewState.SETUP) {
-            showAlert("Server unavailable, please try again later.");
-            if (startScreenController != null) {
-                Platform.runLater(() -> startScreenController.disableCenter(false));
+        if (viewState != ViewState.END_GAME) {
+            System.out.println("Server unavailable");
+            if (viewState == ViewState.SETUP) {
+                showAlert("Server unavailable, please try again later.");
+            } else {
+                showAlert("Lost connection with the server or server unavailable.\n" +
+                        "Please try again later.");
             }
-        } else {
             showStartScreen();
-        }
-        if (viewState != ViewState.END_GAME && viewState != ViewState.SETUP) {
-            showAlert("Lost connection with the server or server unavailable.\n" +
-                    "Please try again later.");
         }
     }
 
@@ -584,13 +577,9 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showWaiting() {
-        waitingViewController = ResourceLoader.loadFXML(FXMLPath.WAITING_SCREEN, this);
-        Platform.runLater(() -> {
-            gameController.closeAssistantCardView();
-            waitingViewController.init();
-            waitingViewController.loadScene(new Stage());
-            waitingViewController.startTimer();
-        });
+        if (gameController != null)
+            gameController.showWaiting();
+
     }
 
     /**
