@@ -18,6 +18,7 @@ public class ChooseStudentColor implements ActionRequest {
 
     /**
      * Creates message.
+     *
      * @param availableStudentColors available student colors.
      */
     public ChooseStudentColor(EnumSet<StudentColor> availableStudentColors) {

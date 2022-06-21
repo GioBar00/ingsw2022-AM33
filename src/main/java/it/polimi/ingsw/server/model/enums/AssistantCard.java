@@ -8,22 +8,51 @@ public enum AssistantCard {
     FOX(5, 3), SNAKE(6, 3), OCTOPUS(7, 4), DOG(8, 4),
     ELEPHANT(9, 5), TURTLE(10, 5);
 
+    /**
+     * number of card
+     */
     private final Integer value;
+
+    /**
+     * number of moves
+     */
     private final Integer moves;
 
+    /**
+     * Public constructor of the class.
+     *
+     * @param value number of card
+     * @param moves number of moves
+     */
     AssistantCard(Integer value, Integer moves) {
         this.value = value;
         this.moves = moves;
     }
 
+    /**
+     * Getter for the value of the card
+     *
+     * @return the value of the card
+     */
     public Integer getValue() {
         return value;
     }
 
+    /**
+     * Getter for the number of moves
+     *
+     * @return the number of moves
+     */
     public Integer getMoves() {
         return moves;
     }
 
+    /**
+     * Getter for the card from a number
+     *
+     * @param value the number of the card
+     * @return the card
+     */
     public static AssistantCard getFromInt(int value) {
         return switch (value) {
             case 1 -> CHEETAH;

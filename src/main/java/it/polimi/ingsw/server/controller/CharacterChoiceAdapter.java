@@ -16,32 +16,41 @@ public class CharacterChoiceAdapter {
 
     /**
      * Convert a ChosenIsland message into the proper CharacterParameters
+     *
      * @param message is an instance of ChosenIsland
      * @return the proper CharacterParameters
      */
     static CharacterParameters convert(ChosenIsland message) {
-            return new CharacterParameters(message.getIslandIndex());
+        return new CharacterParameters(message.getIslandIndex());
     }
 
     /**
      * Convert a ChosenStudentColor message into the proper CharacterParameters
+     *
      * @param message is an instance of ChosenStudentColor
      * @return the proper CharacterParameters
      */
     static CharacterParameters convert(ChosenStudentColor message) {
-            return new CharacterParameters(message.getStudentColor());
+        return new CharacterParameters(message.getStudentColor());
     }
 
     /**
      * Convert a MovedStudent message into the proper CharacterParameters
+     *
      * @param message is an instance of MovedStudent
      * @return the proper CharacterParameters
      */
     static CharacterParameters convert(MovedStudent message) {
-            return new CharacterParameters(StudentColor.retrieveStudentColorByOrdinal(message.getFromIndex()), message.getToIndex());
+        return new CharacterParameters(StudentColor.retrieveStudentColorByOrdinal(message.getFromIndex()), message.getToIndex());
     }
 
-    static CharacterParameters convert (SwappedStudents message) {
-            return new CharacterParameters(StudentColor.retrieveStudentColorByOrdinal(message.getToIndex()), message.getFromIndex());
+    /**
+     * Convert a SwappedStudents message into the proper CharacterParameters.
+     *
+     * @param message is an instance of SwappedStudents.
+     * @return the proper CharacterParameters.
+     */
+    static CharacterParameters convert(SwappedStudents message) {
+        return new CharacterParameters(StudentColor.retrieveStudentColorByOrdinal(message.getToIndex()), message.getFromIndex());
     }
 }

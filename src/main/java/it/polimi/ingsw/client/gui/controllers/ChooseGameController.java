@@ -13,20 +13,30 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+/**
+ * This class is the controller of the "choose game" view.
+ */
 public class ChooseGameController implements GUIController {
-    @FXML
-    public RadioButton radioBtn2;
-    @FXML
-    public RadioButton radioBtn3;
-    @FXML
-    public RadioButton radioBtn4;
-    @FXML
-    public CheckBox checkBoxExpert;
-    @FXML
-    public Button btnCreateGame;
 
+    /**
+     * {@link GUI} instance.
+     */
     private GUI gui;
+
+    /**
+     * The root of the scene.
+     */
     private Pane root;
+    @FXML
+    private RadioButton radioBtn2;
+    @FXML
+    private RadioButton radioBtn3;
+    @FXML
+    private RadioButton radioBtn4;
+    @FXML
+    private CheckBox checkBoxExpert;
+    @FXML
+    private Button btnCreateGame;
 
 
     /**

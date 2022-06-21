@@ -4,7 +4,6 @@ import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
-import it.polimi.ingsw.network.messages.actions.ActivatedCharacterCard;
 import it.polimi.ingsw.network.messages.actions.ConcludeCharacterCardEffect;
 import it.polimi.ingsw.network.messages.views.CharacterCardView;
 import it.polimi.ingsw.server.model.enums.StudentColor;
@@ -17,74 +16,97 @@ import javafx.scene.layout.Pane;
 
 import java.util.EnumMap;
 
-
+/**
+ * This class is the controller of the character card view.
+ */
 public class CharacterCardController implements GUIController {
 
+    /**
+     * {@link GUI} instance.
+     */
+    private GUI gui;
+
+    /**
+     * The root of the scene.
+     */
+    private Pane root;
+
+    /**
+     * A map of the student color buttons on the card.
+     */
+    EnumMap<StudentColor, Button> buttons;
+
+    /**
+     * A map of labels associated to the student color buttons.
+     */
+    EnumMap<StudentColor, Label> labels;
+
+    /**
+     * The index of the character card.
+     */
+    private Integer index;
+
+    /**
+     * Boolean set to true if the effect of the character card could be concluded.
+     */
+    private boolean canEndEffect;
     @FXML
-    public ImageView imgViewGreen;
+    private ImageView imgViewGreen;
     @FXML
-    public ImageView imgViewRed;
+    private ImageView imgViewRed;
     @FXML
-    public ImageView imgViewMagenta;
+    private ImageView imgViewMagenta;
     @FXML
-    public ImageView imgViewBlue;
+    private ImageView imgViewBlue;
     @FXML
-    public ImageView imgViewYellow;
+    private ImageView imgViewYellow;
     @FXML
-    public ImageView imgViewCoin;
+    private ImageView imgViewCoin;
     @FXML
-    public Button endEffectBtn;
+    private Button endEffectBtn;
     @FXML
-    public ImageView endEffectImg;
+    private ImageView endEffectImg;
 
     @FXML
-    public AnchorPane anchorPaneCharacter;
+    private AnchorPane anchorPaneCharacter;
     @FXML
-    public AnchorPane anchorPanePawn;
+    private AnchorPane anchorPanePawn;
     @FXML
-    public ImageView characterImg;
+    private ImageView characterImg;
     @FXML
     public Button characterBtn;
     @FXML
-    public Label coinLbl;
+    private Label coinLbl;
 
     @FXML
-    public Button greenBtn;
+    private Button greenBtn;
     @FXML
-    public Label greenLbl;
+    private Label greenLbl;
 
     @FXML
-    public Button redBtn;
+    private Button redBtn;
     @FXML
-    public Label redLbl;
+    private Label redLbl;
 
     @FXML
-    public Button pinkBtn;
+    private Button pinkBtn;
     @FXML
-    public Label pinkLbl;
-
-    @FXML
-    public Button blueBtn;
-    @FXML
-    public Label blueLbl;
+    private Label pinkLbl;
 
     @FXML
-    public Label yellowLbl;
+    private Button blueBtn;
+    @FXML
+    private Label blueLbl;
 
     @FXML
-    public Button yellowBtn;
+    private Label yellowLbl;
 
     @FXML
-    public AnchorPane anchorPaneCoin;
+    private Button yellowBtn;
 
-    private GUI gui;
-    private Pane root;
-    EnumMap<StudentColor, Button> buttons;
-    EnumMap<StudentColor, Label> labels;
+    @FXML
+    private AnchorPane anchorPaneCoin;
 
-    private Integer index;
-
-    private boolean canEndEffect;
 
     /**
      * This method is used to set the GUI of the controller.
@@ -175,7 +197,7 @@ public class CharacterCardController implements GUIController {
      * This method activates the "conclude effect" button which sends a {@link ConcludeCharacterCardEffect}.
      */
     void activateEndButton() {
-        if(canEndEffect) {
+        if (canEndEffect) {
             endEffectImg.setVisible(true);
             endEffectBtn.setVisible(true);
             GUIUtils.setButton(endEffectBtn, e -> {

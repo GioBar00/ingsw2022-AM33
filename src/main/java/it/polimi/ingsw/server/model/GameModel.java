@@ -247,7 +247,12 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param currentPlayer the current player
      */
     private void nextInPlanningPhase(Player currentPlayer) {
+
         if (currentPlayer.equals(playersManager.getLastPlayer())) {
+            if (!checkSomeoneHasPlayed()) {
+                nextRound();
+                return;
+            }
             roundManager.startActionPhase();
             playersManager.calculatePlayerOrder();
         }
@@ -256,6 +261,19 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             roundManager.setLastRound();
 
         playersManager.nextPlayer();
+    }
+
+    /**
+     * This method check if someone has played an assistant card in the last round.
+     *
+     * @return true if someone has played an assistant card in the last round, false otherwise.
+     */
+    private boolean checkSomeoneHasPlayed() {
+        for (Player p : playersManager.getPlayers()) {
+            if (playersManager.getPlayedCard(p) != null)
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -729,6 +747,16 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     }
 
     /**
+     * @param nickname of the player.
+     * @return the team of the player or null if the player is not in the game.
+     */
+    @Override
+    public Tower getPlayerTeam(String nickname) {
+        return playersManager.getPlayers().stream().filter(p -> p.getNickname().equals(nickname)).findFirst()
+                .map(value -> playersManager.getSchoolBoard(value).getTower()).orElse(null);
+    }
+
+    /**
      * Skips the current player's turn.
      *
      * @return if the turn was skipped successfully.
@@ -775,6 +803,8 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         for (Player player : players)
             if (player.getNickname().equals(nickname)) {
                 notifyPersonalizedGameState(player);
+                if (getCurrentPlayer().equals(nickname))
+                    notifyPossibleActions();
                 return;
             }
 
@@ -859,9 +889,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @return the current gameView
      */
     public CurrentGameState getCurrentGameState(Player destPlayer) {
-        if (gameState == GameState.ENDED)
-            return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex, getCloudsView(), roundManager.getWinners()));
-        return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex, getCloudsView(), null));
+        return new CurrentGameState(new GameView(gameMode, playersManager.getPreset(), gameState, roundManager.getGamePhase(), getCurrentPlayer(), islandsManager.getIslandsView(), playersManager.getPlayersView(destPlayer), motherNatureIndex, getCloudsView()));
     }
 
 
@@ -893,7 +921,16 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      * @param player the player to notify
      */
     void notifyPersonalizedGameState(Player player) {
-        notifyMessageListener(player.getNickname(), new MessageEvent(this, getCurrentGameState(player)));
+        if (roundManager.getWinners().isEmpty()) {
+            notifyMessageListener(player.getNickname(), new MessageEvent(this, getCurrentGameState(player)));
+        } else notifyWinner(player);
+    }
+
+    /**
+     * Notifies each player with the list of winners.
+     */
+    void notifyWinner(Player player) {
+        notifyMessageListener(player.getNickname(), new MessageEvent(this, new Winners(roundManager.getWinners())));
     }
 
     /**
@@ -903,9 +940,17 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
         if (gameState == GameState.STARTED && roundManager.getWinners().isEmpty()) {
             switch (roundManager.getGamePhase()) {
                 case PLANNING -> notifyPlayAssistantCard();
-                case MOVE_STUDENTS -> notifyMultiplePossibleMoves();
-                case MOVE_MOTHER_NATURE -> notifyMoveMotherNature(0);
-                case CHOOSE_CLOUD -> notifyChooseCloud();
+                case MOVE_STUDENTS, MOVE_MOTHER_NATURE, CHOOSE_CLOUD -> {
+                    if (playersManager.getPlayedCard() != null) {
+                        switch (roundManager.getGamePhase()) {
+                            case MOVE_STUDENTS -> notifyMultiplePossibleMoves();
+                            case MOVE_MOTHER_NATURE -> notifyMoveMotherNature(0);
+                            case CHOOSE_CLOUD -> notifyChooseCloud();
+                            default -> {
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -924,6 +969,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
      */
     void notifyMultiplePossibleMoves() {
         Player curr = playersManager.getCurrentPlayer();
+
         SchoolBoard currSb = playersManager.getSchoolBoard();
         Set<Integer> validEntranceIndexes = new HashSet<>();
         Set<Integer> hallEntranceIndexes = new HashSet<>();

@@ -44,7 +44,7 @@
                      <children>
                         <Label fx:id="lblResult" alignment="CENTER" contentDisplay="CENTER" text="You Won" textFill="#ffdf00" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <font>
-                              <Font name="Trattatello" size="96.0" />
+                              <Font name="Sono Medium" size="96.0" />
                            </font>
                         </Label>
                      </children>
@@ -53,7 +53,7 @@
                      <children>
                         <Label fx:id="lblWinner" alignment="CENTER" contentDisplay="CENTER" text="Congratulations ingconti" textFill="#ffdf00" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <font>
-                              <Font name="Trattatello" size="36.0" />
+                              <Font name="Sono Medium" size="36.0" />
                            </font>
                         </Label>
                      </children>

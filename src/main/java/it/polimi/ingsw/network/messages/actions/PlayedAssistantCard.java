@@ -15,6 +15,7 @@ public class PlayedAssistantCard implements Action {
 
     /**
      * Creates the message
+     *
      * @param card played.
      */
     public PlayedAssistantCard(AssistantCard card) {

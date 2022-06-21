@@ -6,7 +6,6 @@ import it.polimi.ingsw.network.messages.views.WizardsView;
 import it.polimi.ingsw.server.model.enums.Wizard;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
@@ -15,26 +14,42 @@ import javafx.stage.Stage;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is the controller of the "choose wizard" view.
+ */
 public class ChooseWizardController implements GUIController {
 
-    @FXML
-    public Button merlinBtn;
-
-    @FXML
-    public Button witchBtn;
-
-    @FXML
-    public Button kingBtn;
-
-    @FXML
-    public Button senseiBtn;
-
-    private final Map<Button, Wizard> wizardByButton = new HashMap<>(4);
-
+    /**
+     * {@link GUI} instance.
+     */
     private GUI gui;
+
+    /**
+     * The root of the scene.
+     */
     private Pane root;
 
+    /**
+     * The map of the wizard buttons.
+     */
+    private final Map<Button, Wizard> wizardByButton = new HashMap<>(4);
+
+    /**
+     * A boolean that indicates if the player has already chosen a wizard.
+     */
     private boolean choseWizard = false;
+    @FXML
+    private Button merlinBtn;
+
+    @FXML
+    private Button witchBtn;
+
+    @FXML
+    private Button kingBtn;
+
+    @FXML
+    private Button senseiBtn;
+
 
     /**
      * This method is used to set the GUI of the controller.

@@ -7,7 +7,6 @@ import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.client.gui.audio.AudioManager;
 import it.polimi.ingsw.client.gui.audio.MuteToggle;
-import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.server.model.enums.Tower;
 import javafx.fxml.FXML;
@@ -22,24 +21,33 @@ import javafx.stage.Stage;
 import java.util.EnumSet;
 import java.util.List;
 
+/**
+ * This class is the controller of the winner screen.
+ */
 public class WinnerScreenController implements GUIController, MuteToggle {
     @FXML
-    public Label lblResult;
+    private Label lblResult;
     @FXML
-    public Label lblWinner;
+    private Label lblWinner;
     @FXML
-    public Button btnReload;
+    private Button btnReload;
     @FXML
     public Button btnMute;
     @FXML
-    public ImageView imgViewMute;
+    private ImageView imgViewMute;
     @FXML
-    public ImageView imgViewReload;
+    private ImageView imgViewReload;
     @FXML
-    public ImageView imgViewBackground;
+    private ImageView imgViewBackground;
 
+    /**
+     * {@link GUI} instance.
+     */
     private GUI gui;
 
+    /**
+     * The root of the scene.
+     */
     private Pane root;
 
 
@@ -103,26 +111,30 @@ public class WinnerScreenController implements GUIController, MuteToggle {
     /**
      * This method is used to set the winner/s of the game.
      *
-     * @param gameView the game view of the game.
+     * @param playerViews the list of playerViews.
+     * @param winners     the list of winners.
      */
-    public void updateGameView(GameView gameView) {
-        EnumSet<Tower> winners = gameView.getWinners();
+    public void updateWinners(List<PlayerView> playerViews, EnumSet<Tower> winners) {
         if (winners.stream().findAny().isPresent()) {
-            List<String> players = gameView.getPlayersView().stream().filter(p -> winners.contains(p.getSchoolBoardView().getTower())).map(PlayerView::getNickname).toList();
+            List<String> players = playerViews.stream().filter(p -> winners.contains(p.getSchoolBoardView().getTower())).map(PlayerView::getNickname).toList();
 
-            if (winners.size() > 1)
+            if (winners.size() > 1) {
                 lblResult.setText("Draw!");
-            else if (players.contains(gui.getNickname()))
+                AudioManager.playAudio(AudioPath.DRAW);
+            } else if (players.contains(gui.getNickname())) {
                 lblResult.setText("You won!");
-            else
+                AudioManager.playAudio(AudioPath.WON);
+            } else {
                 lblResult.setText(winners.stream().findAny().get().toString().toLowerCase() + " won!");
+                AudioManager.playAudio(AudioPath.LOST);
+            }
 
             String sb = "Congratulations to " +
                     String.join(", ", players) +
                     "!";
             lblWinner.setText(sb);
         }
-        AudioManager.playAudio(AudioPath.LOST);
+
     }
 
     /**

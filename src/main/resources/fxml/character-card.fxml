@@ -64,7 +64,7 @@
                                           </Button>
                                           <Label fx:id="greenLbl" alignment="CENTER" layoutX="22.0" layoutY="32.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
-                                                <Font name="System Bold" size="12.0" />
+                                                <Font name="Sono Medium" size="12.0" />
                                              </font>
                                           </Label>
                                        </children>
@@ -82,7 +82,7 @@
                                           </Button>
                                           <Label fx:id="redLbl" alignment="CENTER" layoutX="21.0" layoutY="28.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
-                                                <Font name="System Bold" size="12.0" />
+                                                <Font name="Sono Medium" size="12.0" />
                                              </font>
                                           </Label>
                                        </children>
@@ -100,7 +100,7 @@
                                           </Button>
                                           <Label fx:id="pinkLbl" alignment="CENTER" layoutX="21.0" layoutY="28.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
-                                                <Font name="System Bold" size="12.0" />
+                                                <Font name="Sono Medium" size="12.0" />
                                              </font>
                                           </Label>
                                        </children>
@@ -131,7 +131,7 @@
                                           </Button>
                                           <Label fx:id="blueLbl" alignment="CENTER" layoutX="22.0" layoutY="32.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
-                                                <Font name="System Bold" size="12.0" />
+                                                <Font name="Sono Medium" size="12.0" />
                                              </font>
                                           </Label>
                                        </children>
@@ -149,7 +149,7 @@
                                           </Button>
                                           <Label fx:id="yellowLbl" alignment="CENTER" layoutX="22.0" layoutY="32.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
-                                                <Font name="System Bold" size="12.0" />
+                                                <Font name="Sono Medium" size="12.0" />
                                              </font>
                                           </Label>
                                        </children>
@@ -206,7 +206,7 @@
                                                    <children>
                                                       <Label fx:id="coinLbl" alignment="CENTER" minHeight="0.0" minWidth="0.0" text="1" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <font>
-                                                            <Font name="System Bold Italic" size="12.0" />
+                                                            <Font name="Sono Medium" size="12.0" />
                                                          </font>
                                                       </Label>
                                                    </children>

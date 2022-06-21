@@ -5,7 +5,7 @@ import it.polimi.ingsw.network.messages.Message;
 /**
  * This message is used to notify the controller if the client is disconnected
  */
-public class SkipTurn implements Message {
+public class Disconnected implements Message {
     /**
      * @return if the message is valid.
      */

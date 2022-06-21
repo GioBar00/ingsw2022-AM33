@@ -1,16 +1,18 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.server.CurrentGameState;
-import it.polimi.ingsw.server.PlayerDetails;
 import it.polimi.ingsw.network.listeners.MessageEvent;
 import it.polimi.ingsw.network.listeners.MessageListener;
-import it.polimi.ingsw.server.model.cards.*;
-import it.polimi.ingsw.server.model.player.Player;
-import it.polimi.ingsw.server.model.player.SchoolBoard;
+import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.server.CurrentGameState;
 import it.polimi.ingsw.network.messages.views.CharacterCardView;
 import it.polimi.ingsw.network.messages.views.GameView;
+import it.polimi.ingsw.server.PlayerDetails;
+import it.polimi.ingsw.server.model.cards.CharacterCard;
+import it.polimi.ingsw.server.model.cards.CharacterParameters;
+import it.polimi.ingsw.server.model.cards.EffectHandler;
 import it.polimi.ingsw.server.model.enums.*;
+import it.polimi.ingsw.server.model.player.Player;
+import it.polimi.ingsw.server.model.player.SchoolBoard;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -92,7 +94,7 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
             characterCards.add(types.get(sel).instantiate());
             types.remove(sel);
         }
-
+        
         reserve = 20;
 
     }
@@ -312,6 +314,16 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
     }
 
     /**
+     * @param nickname of the player.
+     * @return the team of the player or null if the player is not in the game.
+     */
+    @Override
+    public Tower getPlayerTeam(String nickname) {
+        return model.playersManager.getPlayers().stream().filter(p -> p.getNickname().equals(nickname)).findFirst()
+                .map(value -> model.playersManager.getSchoolBoard(value).getTower()).orElse(null);
+    }
+
+    /**
      * Activates character card at index if the player has not already activated another card, the index is valid and the player has enough coins.
      * Notifies the listeners.
      *
@@ -433,6 +445,8 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
         for (Player player : players)
             if (player.getNickname().equals(nickname)) {
                 notifyPersonalizedGameState(player);
+                if (getCurrentPlayer().equals(nickname))
+                    notifyPossibleActions();
                 return;
             }
     }
@@ -700,7 +714,10 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
      * @param p player to notify.
      */
     private void notifyPersonalizedGameState(Player p) {
-        notifyMessageListener(p.getNickname(), new MessageEvent(this, getCurrentGameState(p)));
+        if(model.roundManager.getWinners().isEmpty()){
+            notifyMessageListener(p.getNickname(), new MessageEvent(this, getCurrentGameState(p)));
+        }
+        else  model.notifyWinner(p);
     }
 
     /**
@@ -708,14 +725,9 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
      * @return the current game view
      */
     public CurrentGameState getCurrentGameState(Player destPlayer) {
-        if (!model.gameState.equals(GameState.ENDED)) {
-            return new CurrentGameState(new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
-                    getCurrentPlayer(), model.islandsManager.getIslandsView(), model.playersManager.getPlayersView(destPlayer), model.motherNatureIndex,
-                    reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins, model.getCloudsView(), null));
-        }
         return new CurrentGameState(new GameView(model.gameMode, model.playersManager.getPreset(), model.gameState, model.roundManager.getGamePhase(),
                 getCurrentPlayer(), model.islandsManager.getIslandsView(), model.playersManager.getPlayersView(destPlayer), model.motherNatureIndex,
-                reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins, model.getCloudsView(), model.roundManager.getWinners()));
+                reserve, getCharacterCardsView(destPlayer.getNickname()), playerCoins, model.getCloudsView()));
     }
 
     /**
@@ -866,15 +878,24 @@ public class GameModelExpert implements Game, EffectHandler, ProfessorChecker {
         if (model.gameState == GameState.STARTED && model.roundManager.getWinners().isEmpty()) {
             switch (model.roundManager.getGamePhase()) {
                 case PLANNING -> model.notifyPlayAssistantCard();
-                case MOVE_STUDENTS -> model.notifyMultiplePossibleMoves();
-                case MOVE_MOTHER_NATURE -> model.notifyMoveMotherNature(additionalMotherNatureMovement);
-                case CHOOSE_CLOUD -> model.notifyChooseCloud();
+                case MOVE_STUDENTS, MOVE_MOTHER_NATURE, CHOOSE_CLOUD -> {
+                    if (model.playersManager.getPlayedCard() != null) {
+                        switch (model.roundManager.getGamePhase()) {
+                            case MOVE_STUDENTS -> model.notifyMultiplePossibleMoves();
+                            case MOVE_MOTHER_NATURE -> model.notifyMoveMotherNature(additionalMotherNatureMovement);
+                            case CHOOSE_CLOUD -> model.notifyChooseCloud();
+                            default -> {
+                            }
+                        }
+                    }
+
+                }
             }
         }
     }
 
     /**
-     * This method is used for checking the professors when a pawn is removed from the schoolboard.
+     * This method is used to check the professors when a pawn is removed from the schoolboard.
      *
      * @param s the StudentColor that has been removed.
      */

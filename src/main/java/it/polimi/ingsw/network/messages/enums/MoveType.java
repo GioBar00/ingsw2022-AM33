@@ -20,16 +20,28 @@ public enum MoveType {
     MOVED(MovedStudent.class),
     SWAPPED(SwappedStudents.class);
 
+    /**
+     * A map that contains the move type and the class of the move.
+     */
     private static final Map<Class<? extends Move>, MoveType> LOOKUP_MAP;
+
 
     static {
         LOOKUP_MAP = new HashMap<>();
-        for (MoveType m: MoveType.values())
+        for (MoveType m : MoveType.values())
             LOOKUP_MAP.put(m.getMoveClass(), m);
     }
 
+    /**
+     * The class of the move.
+     */
     private final Class<? extends Move> moveClass;
 
+    /**
+     * Constructor.
+     *
+     * @param moveClass the class of the move.
+     */
     MoveType(Class<? extends Move> moveClass) {
         this.moveClass = moveClass;
     }

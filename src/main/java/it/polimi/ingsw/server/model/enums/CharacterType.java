@@ -79,5 +79,10 @@ public enum CharacterType {
         }
     };
 
+    /**
+     * instantiates a CharacterCard of the current type
+     *
+     * @return the instantiated CharacterCard
+     */
     public abstract CharacterCard instantiate();
 }

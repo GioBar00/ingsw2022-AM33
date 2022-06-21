@@ -3,7 +3,9 @@ package it.polimi.ingsw.network.messages.server;
 import it.polimi.ingsw.network.messages.views.GameView;
 import it.polimi.ingsw.network.messages.Message;
 
-
+/**
+ * Message sent by the server to the client to notify the current game state.
+ */
 public class CurrentGameState implements Message {
     /**
      * The current game view.
@@ -12,6 +14,7 @@ public class CurrentGameState implements Message {
 
     /**
      * Constructor.
+     *
      * @param gameView the current game view.
      */
     public CurrentGameState(GameView gameView) {
@@ -20,6 +23,7 @@ public class CurrentGameState implements Message {
 
     /**
      * Getter.
+     *
      * @return the current game view.
      */
     public GameView getGameView() {
@@ -31,7 +35,7 @@ public class CurrentGameState implements Message {
      */
     @Override
     public boolean isValid() {
-        if(gameView.getMode() == null || gameView.getPreset() == null || gameView.getPhase() == null || gameView.getState() == null)
+        if (gameView.getMode() == null || gameView.getPreset() == null || gameView.getPhase() == null || gameView.getState() == null)
             return false;
         return gameView.getIslandsView() != null && gameView.getPlayersView() != null;
     }

@@ -75,7 +75,6 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
         if (update != null) {
             if (update.getWizard() == null) {
                 update.setWizard(wizard);
-                sendStart();
                 return true;
             }
         }
@@ -217,10 +216,11 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
     /**
      * Notifies the start to the host
      */
-    void sendStart() {
+    public void sendStart() {
         if (canStart()) {
             notifyMessageListener(getMaster(), new MessageEvent(this, new CommMessage(CommMsgType.CAN_START)));
-        }
+        } else
+            notifyMessageListener(getMaster(), new MessageEvent(this, new CommMessage(CommMsgType.ERROR_CANT_START)));
     }
 
     /**

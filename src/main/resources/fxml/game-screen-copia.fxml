@@ -82,7 +82,7 @@
                                        <children>
                                           <Label text="Reserve">
                                              <font>
-                                                <Font name="Trattatello" size="18.0" />
+                                                <Font name="Sono Medium" size="18.0" />
                                              </font>
                                           </Label>
                                           <ImageView fx:id="imgViewReserveCoin" fitHeight="69.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
@@ -92,7 +92,7 @@
                                           </ImageView>
                                           <Label fx:id="lblReserveCoins" text="20">
                                              <font>
-                                                <Font name="Trattatello" size="18.0" />
+                                                <Font name="Sono Medium" size="18.0" />
                                              </font>
                                           </Label>
                                        </children>
@@ -138,7 +138,7 @@
                                                    <children>
                                                       <Label fx:id="lblTurn" minHeight="0.0" minWidth="0.0" text="Your Turn" textOverrun="CENTER_ELLIPSIS" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <font>
-                                                            <Font name="Trattatello" size="18.0" />
+                                                            <Font name="Sono Medium" size="18.0" />
                                                          </font>
                                                       </Label>
                                                    </children>
@@ -147,7 +147,7 @@
                                                    <children>
                                                       <Label fx:id="lblRound" alignment="CENTER" minHeight="0.0" minWidth="0.0" text="Round 3" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <font>
-                                                            <Font name="Trattatello" size="18.0" />
+                                                            <Font name="Sono Medium" size="18.0" />
                                                          </font>
                                                       </Label>
                                                    </children>
@@ -156,7 +156,7 @@
                                           </GridPane>
                                           <Label fx:id="lblGamePhase" layoutX="10.0" layoutY="170.0" minHeight="0.0" minWidth="0.0" prefHeight="69.0" prefWidth="383.0" text="Planning Phase">
                                              <font>
-                                                <Font name="Trattatello" size="18.0" />
+                                                <Font name="Sono Medium" size="18.0" />
                                              </font>
                                           </Label>
                                        </children>
@@ -179,7 +179,7 @@
                                     <Rectangle fx:id="playerInfoBackground" arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f67" height="310.0" stroke="RED" strokeType="INSIDE" strokeWidth="3.0" width="958.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                     <Label layoutX="43.0" layoutY="15.0" text="Player Info" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="5.0">
                                        <font>
-                                          <Font name="Trattatello" size="18.0" />
+                                          <Font name="Sono Medium" size="18.0" />
                                        </font>
                                     </Label>
                                  </children></AnchorPane>
@@ -206,7 +206,7 @@
                                  <children>
                                     <Label fx:id="lblAction" alignment="CENTER" minHeight="0.0" minWidth="0.0" prefHeight="230.0" prefWidth="694.0" text="inserisci qui tutti i suggerimenti che vuoi bla bla bla" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
-                                          <Font name="Trattatello" size="18.0" />
+                                          <Font name="Sono Medium" size="18.0" />
                                        </font>
                                     </Label>
                                  </children>

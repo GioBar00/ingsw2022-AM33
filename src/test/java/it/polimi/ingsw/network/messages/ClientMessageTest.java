@@ -4,7 +4,7 @@ import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.*;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
-import it.polimi.ingsw.network.messages.server.SkipTurn;
+import it.polimi.ingsw.network.messages.server.Disconnected;
 import it.polimi.ingsw.server.model.enums.*;
 import org.junit.jupiter.api.Test;
 
@@ -250,13 +250,13 @@ class ClientMessageTest {
      */
     @Test
     void SkipTurnTest(){
-        SkipTurn skipTurn = new SkipTurn();
-        assertTrue(skipTurn.isValid());
+        Disconnected disconnected = new Disconnected();
+        assertTrue(disconnected.isValid());
 
-        String line = MessageBuilder.toJson(skipTurn);
+        String line = MessageBuilder.toJson(disconnected);
         Message m = MessageBuilder.fromJson(line);
-        assertEquals(MessageType.SKIP_TURN, MessageType.retrieveByMessage(m));
-        SkipTurn mes = (SkipTurn)m;
+        assertEquals(MessageType.DISCONNECTED, MessageType.retrieveByMessage(m));
+        Disconnected mes = (Disconnected)m;
         assertTrue(mes.isValid());
     }
 

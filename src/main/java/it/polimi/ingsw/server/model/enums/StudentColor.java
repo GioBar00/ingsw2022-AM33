@@ -6,13 +6,28 @@ package it.polimi.ingsw.server.model.enums;
 public enum StudentColor {
     GREEN, RED, YELLOW, MAGENTA, BLUE;
 
+    /**
+     * private attribute to store the value of the color.
+     */
     private static final StudentColor[] values = StudentColor.values();
 
+    /**
+     * Returns the StudentColor from a number.
+     *
+     * @param ordinal the number of the color.
+     * @return the StudentColor.
+     */
     public static StudentColor retrieveStudentColorByOrdinal(int ordinal) {
         return values[ordinal];
     }
 
-    public static StudentColor getColorFromString(String input){
+    /**
+     * Returns the StudentColor from a string.
+     *
+     * @param input the string of the color.
+     * @return the StudentColor.
+     */
+    public static StudentColor getColorFromString(String input) {
         input = input.toLowerCase();
         return switch (input) {
             case "green" -> GREEN;

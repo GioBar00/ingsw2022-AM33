@@ -37,12 +37,14 @@ public enum MoveLocation {
     public boolean requiresFromIndex() {
         return doesRequireFromIndex;
     }
+
     /**
      * @return True if the "to location" requires an index, false otherwise
      */
     public boolean requiresToIndex() {
         return doesRequireToIndex;
     }
+
     /**
      * @return True if the location requires an index, false otherwise
      */
@@ -52,12 +54,13 @@ public enum MoveLocation {
 
     /**
      * Convert a string into the proper MoveLocation
+     *
      * @param input String
      * @return null if the value in input is not valid or the MoveLocation if it's valid
      */
-    public static MoveLocation getFromString(String input){
+    public static MoveLocation getFromString(String input) {
         input = input.toLowerCase();
-        return switch(input){
+        return switch (input) {
             case "entrance" -> ENTRANCE;
             case "hall" -> HALL;
             case "island" -> ISLAND;

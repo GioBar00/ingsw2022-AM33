@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.controller;
 import it.polimi.ingsw.network.messages.actions.ChosenIsland;
 import it.polimi.ingsw.network.messages.actions.ChosenStudentColor;
 import it.polimi.ingsw.network.messages.actions.MovedStudent;
+import it.polimi.ingsw.network.messages.actions.SwappedStudents;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.enums.StudentColor;
@@ -35,6 +36,12 @@ class CharacterChoiceAdapterTest {
         parameters = CharacterChoiceAdapter.convert(movedStudent);
         assertEquals(StudentColor.retrieveStudentColorByOrdinal(1), parameters.getStudentColor());
         assertEquals(10, parameters.getIndex());
+
+
+        SwappedStudents swapStudents = new SwappedStudents(MoveLocation.CARD, 1 ,MoveLocation.HALL,3);
+        parameters = CharacterChoiceAdapter.convert(swapStudents);
+        assertEquals(StudentColor.retrieveStudentColorByOrdinal(3), parameters.getStudentColor());
+        assertEquals(StudentColor.retrieveStudentColorByOrdinal(1), StudentColor.retrieveStudentColorByOrdinal(parameters.getIndex()));
 
 
     }

@@ -18,60 +18,80 @@ import javafx.stage.Stage;
 
 import java.util.EnumSet;
 
+/**
+ * This class is the controller of the player-view.
+ */
 public class PlayerController implements GUIController {
 
-    @FXML
-    public AnchorPane anchorPaneSchoolBoard;
-
-    @FXML
-    public Label lblName;
-
-    @FXML
-    public ImageView imgViewTower;
-
-    @FXML
-    public Label lblCoins;
-
-    @FXML
-    public ImageView imgViewPlayedCard;
-
-    @FXML
-    public Button btnHand;
-
-    @FXML
-    public ImageView imgViewCoin;
-
-    @FXML
-    public AnchorPane anchorPaneHand;
-
-    @FXML
-    public GridPane gridPlayerInfo;
-    @FXML
-    public GridPane gridName;
-    @FXML
-    public HBox hBoxPlayedAssistantCard;
-    @FXML
-    public GridPane gridCards;
-    @FXML
-    public ImageView imgViewHand;
-    @FXML
-    public HBox hBoxTower;
-    @FXML
-    public Rectangle playerBackground;
-    @FXML
-    public AnchorPane baseRoot;
-
+    /**
+     * {@link GUI} instance.
+     */
     private GUI gui;
 
+    /**
+     * The root of the scene.
+     */
     private Pane root;
 
+    /**
+     * The controller of the schoolboard view.
+     */
     private SchoolBoardController schoolBoardController;
 
+    /**
+     * The current player view.
+     */
     private PlayerView playerView;
 
+    /**
+     * The controller of the assistantCard view.
+     */
     public AssistantCardController assistantCardController;
 
+    /**
+     * the controller of assistantCard or hand view.
+     */
     private GUIController handStageHandler;
+    @FXML
+    private AnchorPane anchorPaneSchoolBoard;
+
+    @FXML
+    private Label lblName;
+
+    @FXML
+    private ImageView imgViewTower;
+
+    @FXML
+    private Label lblCoins;
+
+    @FXML
+    private ImageView imgViewPlayedCard;
+
+    @FXML
+    private Button btnHand;
+
+    @FXML
+    private ImageView imgViewCoin;
+
+    @FXML
+    private AnchorPane anchorPaneHand;
+
+    @FXML
+    private GridPane gridPlayerInfo;
+    @FXML
+    private GridPane gridName;
+    @FXML
+    private HBox hBoxPlayedAssistantCard;
+    @FXML
+    private GridPane gridCards;
+    @FXML
+    private ImageView imgViewHand;
+    @FXML
+    private HBox hBoxTower;
+    @FXML
+    private Rectangle playerBackground;
+    @FXML
+    private AnchorPane baseRoot;
 
     /**
      * This method is used to set the GUI of the controller.
@@ -166,7 +186,7 @@ public class PlayerController implements GUIController {
      * This method instantiates the school board controller.
      */
     private void instantiateSchoolBoardController() {
-        schoolBoardController = (SchoolBoardController) ResourceLoader.loadFXML(FXMLPath.SCHOOL_BOARD, gui);
+        schoolBoardController = ResourceLoader.loadFXML(FXMLPath.SCHOOL_BOARD, gui);
         schoolBoardController.init();
     }
 
@@ -203,10 +223,23 @@ public class PlayerController implements GUIController {
         GUIUtils.addToAnchorPane(newContainer, gridPane);
     }
 
+    /**
+     * This method shows the cards available and forces the player to choose one.
+     *
+     * @param availableCards the cards available.
+     */
     public void playAssistantCard(EnumSet<AssistantCard> availableCards) {
         if (assistantCardController != null)
             assistantCardController.forceClose();
         showAssistantCards(availableCards, true);
+    }
+
+    /**
+     * This method closes the Assistant Card View.
+     */
+    void closeAssistantCardView() {
+        if (assistantCardController != null)
+            assistantCardController.forceClose();
     }
 
     /**
@@ -225,10 +258,16 @@ public class PlayerController implements GUIController {
         });
     }
 
+    /**
+     * Shows the available cards, and forces the player to choose one if he has to play.
+     *
+     * @param cards      the available cards.
+     * @param isPlayable true if the player has to choose one, false otherwise.
+     */
     private void showAssistantCards(EnumSet<AssistantCard> cards, boolean isPlayable) {
         if (playerView == null)
             return;
-        AssistantCardController controller = (AssistantCardController) ResourceLoader.loadFXML(FXMLPath.CHOOSE_ASSISTANT, gui);
+        AssistantCardController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_ASSISTANT, gui);
         assistantCardController = controller;
         controller.init();
         if (isPlayable)

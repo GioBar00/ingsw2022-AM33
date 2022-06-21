@@ -15,6 +15,7 @@ public class ChooseCloud implements ActionRequest {
 
     /**
      * Creates message.
+     *
      * @param availableCloudIndexes available cloud indexes.
      */
     public ChooseCloud(Set<Integer> availableCloudIndexes) {

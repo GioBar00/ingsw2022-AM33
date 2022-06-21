@@ -75,7 +75,7 @@
                            <children>
                               <Label text="Server IP/domain:">
                                  <font>
-                                    <Font name="Trattatello" size="24.0" />
+                                    <Font name="Sono Medium" size="24.0" />
                                  </font>
                               </Label>
                            </children>
@@ -84,7 +84,7 @@
                            <children>
                               <TextField fx:id="txtFieldServer" promptText="127.0.0.1" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
-                                    <Font name="Trattatello" size="18.0" />
+                                    <Font name="Sono Medium" size="18.0" />
                                  </font>
                               </TextField>
                            </children>
@@ -93,7 +93,7 @@
                            <children>
                               <Label text="Port:">
                                  <font>
-                                    <Font name="Trattatello" size="24.0" />
+                                    <Font name="Sono Medium" size="24.0" />
                                  </font>
                               </Label>
                            </children>
@@ -102,7 +102,7 @@
                            <children>
                               <Label text="Nickname:">
                                  <font>
-                                    <Font name="Trattatello" size="24.0" />
+                                    <Font name="Sono Medium" size="24.0" />
                                  </font>
                               </Label>
                            </children>
@@ -111,7 +111,7 @@
                            <children>
                               <TextField fx:id="txtFieldPort" promptText="1234" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
-                                    <Font name="Trattatello" size="18.0" />
+                                    <Font name="Sono Medium" size="18.0" />
                                  </font>
                               </TextField>
                            </children>
@@ -120,7 +120,7 @@
                            <children>
                               <TextField fx:id="txtFieldNickname" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
-                                    <Font name="Trattatello" size="18.0" />
+                                    <Font name="Sono Medium" size="18.0" />
                                  </font>
                               </TextField>
                            </children>

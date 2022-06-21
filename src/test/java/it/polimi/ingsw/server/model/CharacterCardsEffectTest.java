@@ -182,6 +182,13 @@ class CharacterCardsEffectTest {
         assertFalse(schoolBoardCurrent.getProfessors().contains(StudentColor.MAGENTA));
         assertTrue(schoolBoardCurrent.getProfessors().contains(StudentColor.GREEN));
 
+        gme.checkProfessor(StudentColor.RED);
+        schoolBoardCurrent.addToHall(StudentColor.MAGENTA);
+
+        gme.checkProfessor(StudentColor.MAGENTA);
+
+        assertTrue(schoolBoardCurrent.getProfessors().contains(StudentColor.MAGENTA));
+
         assertFalse(farmer.endEffect());
 
         farmer.revertEffect(gme);
@@ -195,7 +202,7 @@ class CharacterCardsEffectTest {
     }
 
     /**
-     * Tests Farmer's effect.
+     * Tests friar's effect.
      */
     @Test
     void friarEffectTest() {

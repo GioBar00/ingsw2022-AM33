@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.enums;
 
+/**
+ * Enum for the FXML paths.
+ */
 public enum FXMLPath {
     START_SCREEN("/fxml/start-screen.fxml"),
     CHOOSE_GAME("/fxml/choose-game.fxml"),
@@ -16,14 +19,29 @@ public enum FXMLPath {
     PLAYER("/fxml/player.fxml"),
 
     CHOOSE_COLOR("/fxml/choose-color.fxml"),
-    WINNER_SCREEN("/fxml/winner-screen.fxml");
+    WINNER_SCREEN("/fxml/winner-screen.fxml"),
 
+    WAITING_SCREEN("/fxml/waiting.fxml");
+
+    /**
+     * The path of the FXML file.
+     */
     private final String path;
 
+    /**
+     * Constructor.
+     *
+     * @param path the path of the FXML file.
+     */
     FXMLPath(String path) {
         this.path = path;
     }
 
+    /**
+     * Getter of the path of the FXML file.
+     *
+     * @return the path of the FXML file.
+     */
     public String getPath() {
         return path;
     }

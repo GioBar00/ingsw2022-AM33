@@ -245,7 +245,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                 try {
                     if (isMaster) sendMessage(new CommMessage(CommMsgType.PING));
                     if (!latch.await(seconds, TimeUnit.SECONDS)) {
-                        System.out.println("CH : timer Stop");
+                        System.out.println("CH : timer timeout");
                         notifyDisconnectIfNotAlreadyDone();
                         stop();
                     }
@@ -282,6 +282,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
             stopped = true;
             System.out.println("CH : stop");
             timer.cancel();
+            timer.purge();
             queue.add(new InvalidMessage());
         }
         try {

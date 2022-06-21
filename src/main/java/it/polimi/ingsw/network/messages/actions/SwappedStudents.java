@@ -12,9 +12,10 @@ public class SwappedStudents extends MovedStudent {
 
     /**
      * Creates the message.
-     * @param first location.
-     * @param firstIndex first location index.
-     * @param second location.
+     *
+     * @param first       location.
+     * @param firstIndex  first location index.
+     * @param second      location.
      * @param secondIndex second location index.
      */
     public SwappedStudents(MoveLocation first, Integer firstIndex, MoveLocation second, Integer secondIndex) {
@@ -23,17 +24,19 @@ public class SwappedStudents extends MovedStudent {
 
     /**
      * Creates the message from a MoveStudent message
+     *
      * @param message the message which has to be converted in a SwappedMessage
      */
-    public SwappedStudents(MovedStudent message){
+    public SwappedStudents(MovedStudent message) {
         super(message.getFrom(), message.fromIndex, message.getTo(), message.getToIndex());
     }
+
     /**
      * @return if the message is valid.
      */
     @Override
     public boolean isValid() {
-        if(from != null && to != null) {
+        if (from != null && to != null) {
             if (from.requiresIndex() && fromIndex == null)
                 return false;
             if (to.requiresIndex() && toIndex == null)

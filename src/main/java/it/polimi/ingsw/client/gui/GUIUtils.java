@@ -15,7 +15,7 @@ import javafx.scene.shape.Rectangle;
 import java.util.List;
 
 /**
- * This class contains methods for getting the proper image path from an enumeration
+ * This class contains methods for getting the proper image path from an enumeration and other utility methods used in the GUI.
  */
 public abstract class GUIUtils {
 
@@ -272,6 +272,8 @@ public abstract class GUIUtils {
      * @param hover    the image when the mouse is over it
      */
     public static void changeImageHoverButton(Button btn, ImageView graphic, Image notHover, Image hover) {
+        btn.toFront();
+        graphic.setImage(notHover);
         btn.setOnMouseEntered(e -> graphic.setImage(hover));
         btn.setOnMouseExited(e -> graphic.setImage(notHover));
     }

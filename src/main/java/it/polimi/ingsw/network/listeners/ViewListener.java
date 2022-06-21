@@ -11,6 +11,7 @@ public interface ViewListener extends EventListener {
 
     /**
      * Method called when the user want to update the model
+     *
      * @param message the request
      */
     void onMessage(Message message);

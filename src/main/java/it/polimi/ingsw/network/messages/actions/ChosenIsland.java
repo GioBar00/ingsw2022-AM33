@@ -14,6 +14,7 @@ public class ChosenIsland implements Action {
 
     /**
      * Creates the message.
+     *
      * @param islandIndex index of the chosen island.
      */
     public ChosenIsland(Integer islandIndex) {

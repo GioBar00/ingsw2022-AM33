@@ -9,6 +9,7 @@ public interface EndGameListener extends EventListener {
 
     /**
      * Method called when a connection is closed
+     *
      * @param event of the connection
      */
     void onEndGameEvent(EndGameEvent event);

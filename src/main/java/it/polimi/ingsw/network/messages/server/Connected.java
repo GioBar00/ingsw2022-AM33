@@ -5,7 +5,7 @@ import it.polimi.ingsw.network.messages.Message;
 /**
  * Internal message to request the current game state
  */
-public class GameStateRequest implements Message {
+public class Connected implements Message {
     /**
      * @return if the message is valid.
      */

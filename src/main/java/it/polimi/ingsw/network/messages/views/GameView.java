@@ -5,6 +5,9 @@ import it.polimi.ingsw.server.model.enums.*;
 
 import java.util.*;
 
+/**
+ * This class is the representation of the current state of the game.
+ */
 public class GameView extends InvalidMessage {
     /**
      * mode of the game (easy or expert)
@@ -55,14 +58,26 @@ public class GameView extends InvalidMessage {
      */
     private final Map<String, Integer> playerCoins;
 
+    /**
+     * The list of {@link CloudView}.
+     */
     private final List<CloudView> cloudViews;
 
-    private final EnumSet<Tower> winners;
 
     /**
-     * constructor of the GameView for an easy game
+     * Constructor.
+     *
+     * @param mode              mode of the game (easy or expert).
+     * @param preset            preset of the game (two, three or four players).
+     * @param state             state of the game (uninitialized, started, ended).
+     * @param phase             phase of the round in the game (planning or the action phases).
+     * @param currentPlayer     the current player.
+     * @param islandsView       view of the Islands.
+     * @param playersView       view of the Players.
+     * @param motherNatureIndex index of the islands on which mother nature is on.
+     * @param cloudViews        the list of {@link CloudView}.
      */
-    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, ArrayList<CloudView> cloudViews, EnumSet<Tower> winners) {
+    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, ArrayList<CloudView> cloudViews) {
         this.mode = mode;
         this.preset = preset;
         this.state = state;
@@ -75,13 +90,25 @@ public class GameView extends InvalidMessage {
         this.characterCardView = null;
         this.playerCoins = null;
         this.cloudViews = cloudViews;
-        this.winners = winners;
     }
 
     /**
      * constructor of the GameView for an expert game (sets also the attributes for the CharacterCard)
+     *
+     * @param mode              mode of the game (easy or expert).
+     * @param preset            preset of the game (two, three or four players).
+     * @param state             state of the game (uninitialized, started, ended).
+     * @param phase             phase of the round in the game (planning or the action phases).
+     * @param currentPlayer     the current player.
+     * @param islandsView       view of the Islands.
+     * @param playersView       view of the Players.
+     * @param motherNatureIndex index of the islands on which mother nature is on.
+     * @param reserve           reserve of coins.
+     * @param characterCardView view of the character cards.
+     * @param playerCoins       coins of each player.
+     * @param cloudViews        the list of {@link CloudView}.
      */
-    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, Integer reserve, List<CharacterCardView> characterCardView, Map<String, Integer> playerCoins, ArrayList<CloudView> cloudViews, EnumSet<Tower> winners) {
+    public GameView(GameMode mode, GamePreset preset, GameState state, GamePhase phase, String currentPlayer, List<IslandGroupView> islandsView, List<PlayerView> playersView, Integer motherNatureIndex, Integer reserve, List<CharacterCardView> characterCardView, Map<String, Integer> playerCoins, ArrayList<CloudView> cloudViews) {
         this.mode = mode;
         this.preset = preset;
         this.state = state;
@@ -94,7 +121,6 @@ public class GameView extends InvalidMessage {
         this.characterCardView = characterCardView;
         this.playerCoins = playerCoins;
         this.cloudViews = cloudViews;
-        this.winners = winners;
     }
 
     /**
@@ -181,7 +207,4 @@ public class GameView extends InvalidMessage {
         return cloudViews;
     }
 
-    public EnumSet<Tower> getWinners() {
-        return winners;
-    }
 }

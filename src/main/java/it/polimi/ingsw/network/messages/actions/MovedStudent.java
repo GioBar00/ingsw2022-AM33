@@ -28,10 +28,11 @@ public class MovedStudent implements MoveAction {
 
     /**
      * Creates the message.
-     * @param from location.
+     *
+     * @param from      location.
      * @param fromIndex location index.
-     * @param to location.
-     * @param toIndex location index.
+     * @param to        location.
+     * @param toIndex   location index.
      */
     public MovedStudent(MoveLocation from, Integer fromIndex, MoveLocation to, Integer toIndex) {
         this.from = from;
@@ -46,18 +47,21 @@ public class MovedStudent implements MoveAction {
     public MoveLocation getFrom() {
         return from;
     }
+
     /**
      * @return from location index.
      */
     public Integer getFromIndex() {
         return fromIndex;
     }
+
     /**
      * @return to location.
      */
     public MoveLocation getTo() {
         return to;
     }
+
     /**
      * @return to location index.
      */
@@ -70,7 +74,7 @@ public class MovedStudent implements MoveAction {
      */
     @Override
     public boolean isValid() {
-        if(from != null && to != null) {
+        if (from != null && to != null) {
             if (from.requiresFromIndex() && fromIndex == null)
                 return false;
             if (to.requiresToIndex() && toIndex == null)

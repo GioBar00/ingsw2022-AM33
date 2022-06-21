@@ -18,6 +18,7 @@ public class MultiplePossibleMoves implements ActionRequest {
 
     /**
      * Creates message.
+     *
      * @param moves the player can make.
      */
     public MultiplePossibleMoves(List<MoveActionRequest> moves) {
@@ -37,7 +38,7 @@ public class MultiplePossibleMoves implements ActionRequest {
     @Override
     public boolean isValid() {
         if (possibleMoves != null && !possibleMoves.isEmpty()) {
-            for (MoveActionRequest move: possibleMoves)
+            for (MoveActionRequest move : possibleMoves)
                 if (move == null || !move.isValid())
                     return false;
             return true;

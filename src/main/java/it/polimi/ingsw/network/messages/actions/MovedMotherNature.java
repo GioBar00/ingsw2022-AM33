@@ -14,6 +14,7 @@ public class MovedMotherNature implements Action {
 
     /**
      * Creates the message.
+     *
      * @param numMoves number of moves that mother nature made.
      */
     public MovedMotherNature(Integer numMoves) {

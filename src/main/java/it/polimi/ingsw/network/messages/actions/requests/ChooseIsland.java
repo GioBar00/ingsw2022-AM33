@@ -17,6 +17,7 @@ public class ChooseIsland implements ActionRequest {
 
     /**
      * Creates message.
+     *
      * @param availableIslandIndexes available island indexes.
      */
     public ChooseIsland(Set<Integer> availableIslandIndexes) {

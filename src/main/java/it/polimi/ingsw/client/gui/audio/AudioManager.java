@@ -61,6 +61,7 @@ public abstract class AudioManager {
                                 new KeyValue(oldPlayer.volumeProperty(), 0)));
                 timeline.setOnFinished(event -> {
                     oldPlayer.stop();
+                    oldPlayer.setVolume(1);
                     newPlayer.play();
                 });
                 timeline.play();

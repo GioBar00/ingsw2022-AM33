@@ -26,7 +26,7 @@
          <children>
             <Text fill="WHITE" layoutX="100.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose a Wizard" textAlignment="CENTER" wrappingWidth="540.0">
                <font>
-                  <Font name="System Bold" size="38.0" />
+                  <Font name="Sono Medium" size="38.0" />
                </font>
             </Text>
          </children>

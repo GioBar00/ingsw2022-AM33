@@ -138,6 +138,12 @@ public interface Game extends MessageListenerSubscriber {
     }
 
     /**
+     * @param nickname of the player.
+     * @return the team of the player or null if the player is not in the game.
+     */
+    Tower getPlayerTeam(String nickname);
+
+    /**
      * Skips the current player's turn.
      */
     void skipCurrentPlayerTurn();

@@ -1,7 +1,9 @@
 package it.polimi.ingsw.client.gui.controllers;
 
 import it.polimi.ingsw.client.gui.GUI;
+import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 /**
@@ -41,7 +43,6 @@ public interface GUIController {
      * @param stage the stage to load the scene on.
      */
     default void loadScene(Stage stage) {
-
     }
 
     /**

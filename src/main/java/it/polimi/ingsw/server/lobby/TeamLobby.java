@@ -80,7 +80,6 @@ public class TeamLobby extends Lobby {
         if (update != null) {
             update.setTower(tower);
             notifyTeams();
-            sendStart();
             return true;
         } else return false;
     }

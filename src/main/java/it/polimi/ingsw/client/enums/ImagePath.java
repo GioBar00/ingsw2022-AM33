@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.enums;
 
+/**
+ * Enum for the image paths.
+ */
 public enum ImagePath {
     ICON("/images/icon.jpg"),
     START("/images/icons/start.png"),
@@ -57,13 +60,25 @@ public enum ImagePath {
     RELOAD("/images/icons/reload.png"),
     RELOAD_HIGHLIGHTED("/images/icons/reload-highlighted.png");
 
-
+    /**
+     * The string path of the image.
+     */
     private final String path;
 
+    /**
+     * Constructor of {@link ImagePath} class.
+     *
+     * @param path the path of the image.
+     */
     ImagePath(String path) {
         this.path = path;
     }
 
+    /**
+     * Getter of the path of the image.
+     *
+     * @return the path of the image.
+     */
     public String getPath() {
         return path;
     }

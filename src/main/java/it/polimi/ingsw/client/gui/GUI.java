@@ -13,42 +13,109 @@ import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.requests.*;
-import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.network.messages.server.Winners;
 import it.polimi.ingsw.network.messages.views.GameView;
+import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
+import it.polimi.ingsw.server.model.enums.GameState;
+import it.polimi.ingsw.server.model.enums.Tower;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
-import java.util.HashSet;
-import java.util.MissingResourceException;
-import java.util.Set;
+import java.util.*;
 
+/**
+ * The GUI class handle all the view controllers for the graphic user interface.
+ */
 public class GUI extends Application implements UI {
+
+    /**
+     * The stage of the application.
+     */
     private Stage stage;
 
+    /**
+     * {@link Client}.
+     */
     private Client client;
 
+    /**
+     * The view listener used to notify a new message.
+     */
     private ViewListener listener;
 
+    /**
+     * The nickname of the player.
+     */
     private String nickname;
 
+    /**
+     * The controller of the choose-wizard view.
+     */
     private ChooseWizardController chooseWizardController;
 
+    /**
+     * The controller of the lobby view.
+     */
     private LobbyController lobbyController;
 
+    /**
+     * The controller of the start-screen view.
+     */
     private StartScreenController startScreenController;
 
+    /**
+     * The controller of the game-screen view.
+     */
     private GameController gameController;
 
+    /**
+     * The current state of the view.
+     */
     private ViewState viewState = ViewState.SETUP;
 
+    /**
+     * A list of the playerView in the game.
+     */
+    private List<PlayerView> players;
+
+    /**
+     * The controller of the waiting view.
+     */
+    private WaitingViewController waitingViewController;
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    /**
+     * This method set the player's nickname.
+     *
+     * @param nickname the nickname to set.
+     */
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    /**
+     * Getter of the nickname.
+     *
+     * @return the nickname.
+     */
+    public String getNickname() {
+        return nickname;
+    }
+
+    /**
+     * Init method of the application. Check the path of the resources.
+     */
     @Override
     public void init() {
         try {
@@ -59,6 +126,11 @@ public class GUI extends Application implements UI {
         }
     }
 
+    /**
+     * Create a new {@link Client} and starts it.
+     *
+     * @param stage the stage of the application.
+     */
     @Override
     public void start(Stage stage) {
         this.stage = stage;
@@ -71,15 +143,28 @@ public class GUI extends Application implements UI {
         client.startClient();
     }
 
+    /**
+     * This method close the UI.
+     */
     @Override
     public void stop() {
         System.exit(0);
     }
 
+    /**
+     * Getter of the client.
+     *
+     * @return the client.
+     */
     public Client getClient() {
         return client;
     }
 
+    /**
+     * Getter of the stage.
+     *
+     * @return the stage.
+     */
     public Stage getStage() {
         return stage;
     }
@@ -147,7 +232,9 @@ public class GUI extends Application implements UI {
     }
 
     /**
-     * @param wizardsView
+     * This method sets the WizardView.
+     *
+     * @param wizardsView the WizardView to set.
      */
     @Override
     public void setWizardView(WizardsView wizardsView) {
@@ -158,7 +245,9 @@ public class GUI extends Application implements UI {
     }
 
     /**
-     * @param teamsView
+     * This method sets the TeamView.
+     *
+     * @param teamsView the TeamView to set.
      */
     @Override
     public void setTeamsView(TeamsView teamsView) {
@@ -169,18 +258,23 @@ public class GUI extends Application implements UI {
     }
 
     /**
-     * @param gameView
+     * This method sets the GameView.
+     *
+     * @param gameView the GameView to set.
      */
     @Override
     public void setGameView(GameView gameView) {
         boolean show = checkGameController();
-        if (gameView.getWinners() != null && !gameView.getWinners().isEmpty()) {
+        if (this.players == null) {
+            players = gameView.getPlayersView();
+        }
+        if(waitingViewController != null) {
+            Platform.runLater( () -> waitingViewController.close());
+        }
+
+        if (gameView.getState() == GameState.ENDED) {
             show = false;
-            viewState = ViewState.END_GAME;
-            gameController = null;
-            showWinnerScreen(gameView);
-        } else
-            Platform.runLater(() -> gameController.updateGameView(gameView, nickname));
+        } else Platform.runLater(() -> gameController.updateGameView(gameView, nickname));
         if (show) {
             viewState = ViewState.PLAYING;
             showGameScreen();
@@ -189,7 +283,7 @@ public class GUI extends Application implements UI {
     }
 
     /**
-     *
+     * This method requests to the user to choose the game mode and the number of players.
      */
     @Override
     public void chooseGame() {
@@ -202,22 +296,29 @@ public class GUI extends Application implements UI {
             chooseGameStage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
             controller.loadScene(chooseGameStage);
             chooseGameStage.setAlwaysOnTop(true);
+            chooseGameStage.onCloseRequestProperty().set(event -> {
+                viewState = ViewState.SETUP;
+                client.closeConnection();
+                if (startScreenController != null)
+                    startScreenController.disableCenter(false);
+            });
             chooseGameStage.show();
         });
     }
 
     /**
-     *
+     * This method shows the start screen.
      */
     @Override
     public void showStartScreen() {
         System.out.println("Showing start screen");
-        checkStartScreenController();
         viewState = ViewState.SETUP;
+        checkStartScreenController();
         Platform.runLater(() -> {
             chooseWizardController = null;
             lobbyController = null;
             gameController = null;
+            startScreenController.disableCenter(false);
             startScreenController.loadScene(stage);
             if (!stage.isShowing())
                 stage.show();
@@ -227,7 +328,7 @@ public class GUI extends Application implements UI {
     }
 
     /**
-     *
+     * This method shows the wizard menu where the player can choose the wizard.
      */
     @Override
     public void showWizardMenu() {
@@ -247,6 +348,8 @@ public class GUI extends Application implements UI {
                 } else {
                     viewState = ViewState.SETUP;
                     client.closeConnection();
+                    if (startScreenController != null)
+                        startScreenController.disableCenter(false);
                 }
                 chooseWizardController = null;
             });
@@ -258,7 +361,7 @@ public class GUI extends Application implements UI {
     }
 
     /**
-     *
+     * This method shows the game menu where the player can choose the team.
      */
     @Override
     public void showLobbyScreen() {
@@ -269,6 +372,9 @@ public class GUI extends Application implements UI {
         startScreenController = null;
     }
 
+    /**
+     * This method shows the main game screen.
+     */
     @Override
     public void showGameScreen() {
         Platform.runLater(() -> {
@@ -278,16 +384,24 @@ public class GUI extends Application implements UI {
         lobbyController = null;
     }
 
-    private void showWinnerScreen(GameView gameView) {
+    /**
+     * This method shows the winner screen.
+     *
+     * @param winners a list with the winners.
+     */
+    private void showWinnerScreen(EnumSet<Tower> winners) {
+        viewState = ViewState.END_GAME;
+        gameController = null;
         WinnerScreenController controller = ResourceLoader.loadFXML(FXMLPath.WINNER_SCREEN, this);
         Platform.runLater(() -> {
+            controller.init();
             controller.loadScene(stage);
-            controller.updateGameView(gameView);
+            controller.updateWinners(this.players, winners);
         });
     }
 
     /**
-     *
+     * This method notifies the host that the game can start.
      */
     @Override
     public void hostCanStart() {
@@ -297,7 +411,7 @@ public class GUI extends Application implements UI {
     }
 
     /**
-     *
+     * This method notifies the host that the game cant start.
      */
     @Override
     public void hostCantStart() {
@@ -307,21 +421,20 @@ public class GUI extends Application implements UI {
     }
 
     /**
-     * @param message
+     * This method sets the possible actions the player can do.
+     *
+     * @param message the message containing the possible actions.
      */
     @Override
     public void setPossibleActions(Message message) {
         processLastRequest(message);
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
+    /**
+     * Private method used to process the last request sent from the server.
+     *
+     * @param message the message containing the possible actions.
+     */
     private void processLastRequest(Message message) {
         Platform.runLater(() -> gameController.clearAllButtons(nickname));
 
@@ -347,6 +460,11 @@ public class GUI extends Application implements UI {
         }
     }
 
+    /**
+     * This method handles a {@link MoveStudent} request.
+     *
+     * @param moveStudent the {@link MoveStudent} request.
+     */
     private void handleMoveStudent(MoveStudent moveStudent) {
         switch (moveStudent.getTo()) {
             case ISLAND ->
@@ -355,6 +473,11 @@ public class GUI extends Application implements UI {
         }
     }
 
+    /**
+     * This method handles a {@link MultiplePossibleMoves} request.
+     *
+     * @param multiplePossibleMoves the {@link MultiplePossibleMoves} request.
+     */
     private void handlePossibleMoves(MultiplePossibleMoves multiplePossibleMoves) {
         Set<Integer> entrance = new HashSet<>();
         Set<Integer> islands = new HashSet<>();
@@ -370,6 +493,11 @@ public class GUI extends Application implements UI {
         gameController.processMultiplePossibleMoves(entrance, islands, entranceToHallIndexes);
     }
 
+    /**
+     * This method handles a {@link SwapStudents} request.
+     *
+     * @param swapStudents the {@link SwapStudents} request.
+     */
     private void handleSwap(SwapStudents swapStudents) {
         if (swapStudents.getFrom().equals(MoveLocation.CARD)) {
             gameController.processSwapCardEntrance(swapStudents.getFromIndexesSet(), swapStudents.getToIndexesSet());
@@ -380,24 +508,29 @@ public class GUI extends Application implements UI {
         }
     }
 
+    /**
+     * This method notifies the player when the server is unavailable.
+     */
     @Override
     public void serverUnavailable() {
         System.out.println("Server unavailable");
-        if (viewState != ViewState.END_GAME) {
+
+        if (viewState == ViewState.SETUP) {
+            showAlert("Server unavailable, please try again later.");
+            if (startScreenController != null) {
+                Platform.runLater(() -> startScreenController.disableCenter(false));
+            }
+        } else {
+            showStartScreen();
+        }
+        if (viewState != ViewState.END_GAME && viewState != ViewState.SETUP) {
             showAlert("Lost connection with the server or server unavailable.\n" +
                     "Please try again later.");
-            if (viewState == ViewState.SETUP) {
-                if (startScreenController != null) {
-                    Platform.runLater(() -> startScreenController.disableCenter(false));
-                }
-            } else {
-                showStartScreen();
-            }
         }
     }
 
     /**
-     *
+     * This method close the UI.
      */
     @Override
     public void close() {
@@ -413,12 +546,15 @@ public class GUI extends Application implements UI {
         Platform.runLater(() -> {
             Alert messageAlert = new Alert(Alert.AlertType.ERROR);
             messageAlert.setContentText(message);
+            messageAlert.initOwner(stage);
             messageAlert.show();
         });
     }
 
     /**
-     * @param message
+     * This method shows a {@link CommMessage} to the user.
+     *
+     * @param message the message to show.
      */
     @Override
     public void showCommMessage(CommMessage message) {
@@ -429,6 +565,32 @@ public class GUI extends Application implements UI {
 
         System.out.println("Showing comm message");
         System.out.println(MessageBuilder.toJson(message));
+    }
+
+    /**
+     * This method shows the winners of the game.
+     *
+     * @param winners a {@link Winners} message containing the winners.
+     */
+    @Override
+    public void showWinners(Winners winners) {
+        if (winners.getWinners() != null && !winners.getWinners().isEmpty()) {
+            showWinnerScreen(winners.getWinners());
+        }
+    }
+
+    /**
+     * This method notifies the player that they have to wait for the other players.
+     */
+    @Override
+    public void showWaiting() {
+        waitingViewController = ResourceLoader.loadFXML(FXMLPath.WAITING_SCREEN, this);
+        Platform.runLater(() -> {
+            gameController.closeAssistantCardView();
+            waitingViewController.init();
+            waitingViewController.loadScene(new Stage());
+            waitingViewController.startTimer();
+        });
     }
 
     /**

@@ -10,22 +10,31 @@ import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-
+/**
+ * This class is the controller of the lobby screen when the game isn't a team one.
+ */
 public class NormalLobbyController implements LobbyController {
+
+    /**
+     * {@link GUI} instance.
+     */
     private GUI gui;
 
+    /**
+     * The root of the scene.
+     */
     private Pane root;
 
     @FXML
     private Button startBtn;
 
     @FXML
-    public ImageView startImg;
+    private ImageView startImg;
 
     @FXML
-    public ImageView imageViewBackground;
+    private ImageView imageViewBackground;
     @FXML
-    public ImageView imageViewMute;
+    private ImageView imageViewMute;
 
 
     /**
@@ -74,7 +83,7 @@ public class NormalLobbyController implements LobbyController {
      */
     @Override
     public void setCanStart() {
-        GUIUtils.showButton(startBtn);
+        startBtn.setDisable(false);
     }
 
     /**
@@ -82,15 +91,16 @@ public class NormalLobbyController implements LobbyController {
      */
     @Override
     public void setCantStart() {
-        GUIUtils.hideButton(startBtn);
+        GUIUtils.showButton(startBtn);
+        startBtn.setDisable(true);
     }
 
     /**
      * This method sends a start game request to the server
      */
-    public void sendStart(){
+    public void sendStart() {
         gui.notifyViewListener(new StartGame());
-        GUIUtils.hideButton(startBtn);
+        startBtn.setDisable(true);
     }
 
     /**

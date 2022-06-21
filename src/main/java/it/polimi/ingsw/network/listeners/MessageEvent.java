@@ -16,7 +16,7 @@ public class MessageEvent extends EventObject {
     /**
      * Constructor.
      *
-     * @param source the source of the event
+     * @param source  the source of the event
      * @param message the message
      */
     public MessageEvent(Object source, Message message) {

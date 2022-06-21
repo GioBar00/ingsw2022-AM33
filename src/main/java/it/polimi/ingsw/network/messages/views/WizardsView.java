@@ -5,6 +5,9 @@ import it.polimi.ingsw.server.model.enums.Wizard;
 import java.io.Serializable;
 import java.util.EnumSet;
 
+/**
+ * This class contains the information about the wizards.
+ */
 public class WizardsView implements Serializable {
 
     /**

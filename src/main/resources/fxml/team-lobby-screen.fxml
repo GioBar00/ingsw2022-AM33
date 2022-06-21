@@ -69,7 +69,7 @@
                                     </ImageView>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Black Team" textAlignment="RIGHT">
                                        <font>
-                                          <Font name="System Bold Italic" size="26.0" />
+                                          <Font name="Sono Medium" size="26.0" />
                                        </font>
                                     </Text>
                                  </children>
@@ -84,7 +84,7 @@
                                           <Insets left="6.0" />
                                        </padding>
                                        <font>
-                                          <Font name="System Italic" size="14.0" />
+                                          <Font name="Sono Medium" size="14.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -96,7 +96,7 @@
                                           <Insets left="6.0" />
                                        </padding>
                                        <font>
-                                          <Font name="System Italic" size="14.0" />
+                                          <Font name="Sono Medium" size="14.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -108,7 +108,7 @@
                                           <Insets left="6.0" />
                                        </padding>
                                        <font>
-                                          <Font name="System Italic" size="14.0" />
+                                          <Font name="Sono Medium" size="14.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -120,7 +120,7 @@
                                           <Insets left="6.0" />
                                        </padding>
                                        <font>
-                                          <Font name="System Italic" size="14.0" />
+                                          <Font name="Sono Medium" size="14.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -150,7 +150,7 @@
                                  <children>
                                     <Text fill="#ffb406" strokeType="OUTSIDE" strokeWidth="0.0" text="Lobby" textAlignment="CENTER" wrappingWidth="183.20000000000005">
                                        <font>
-                                          <Font name="System Bold Italic" size="26.0" />
+                                          <Font name="Sono Medium" size="26.0" />
                                        </font>
                                     </Text>
                                  </children>
@@ -162,7 +162,7 @@
                                           <Insets left="6.0" />
                                        </padding>
                                        <font>
-                                          <Font name="System Italic" size="14.0" />
+                                          <Font name="Sono Medium" size="14.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -174,7 +174,7 @@
                                           <Insets left="6.0" />
                                        </padding>
                                        <font>
-                                          <Font name="System Italic" size="14.0" />
+                                          <Font name="Sono Medium" size="14.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -186,7 +186,7 @@
                                           <Insets left="6.0" />
                                        </padding>
                                        <font>
-                                          <Font name="System Italic" size="14.0" />
+                                          <Font name="Sono Medium" size="14.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -198,7 +198,7 @@
                                           <Insets left="6.0" />
                                        </padding>
                                        <font>
-                                          <Font name="System Italic" size="14.0" />
+                                          <Font name="Sono Medium" size="14.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -233,7 +233,7 @@
                                     </ImageView>
                                     <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="White Team" textAlignment="RIGHT">
                                        <font>
-                                          <Font name="System Bold Italic" size="26.0" />
+                                          <Font name="Sono Medium" size="26.0" />
                                        </font>
                                     </Text>
                                  </children>
@@ -248,7 +248,7 @@
                                           <Insets left="6.0" />
                                        </padding>
                                        <font>
-                                          <Font name="System Italic" size="14.0" />
+                                          <Font name="Sono Medium" size="14.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -260,7 +260,7 @@
                                           <Insets left="6.0" />
                                        </padding>
                                        <font>
-                                          <Font name="System Italic" size="14.0" />
+                                          <Font name="Sono Medium" size="14.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -272,7 +272,7 @@
                                           <Insets left="6.0" />
                                        </padding>
                                        <font>
-                                          <Font name="System Italic" size="14.0" />
+                                          <Font name="Sono Medium" size="14.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -284,7 +284,7 @@
                                           <Insets left="6.0" />
                                        </padding>
                                        <font>
-                                          <Font name="System Italic" size="14.0" />
+                                          <Font name="Sono Medium" size="14.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -297,7 +297,7 @@
                      <children>
                         <Button fx:id="blackBtn" layoutX="8.0" layoutY="7.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#sendBlackTeam" prefHeight="28.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-border-color: black;" text="Choose Black Team" textAlignment="CENTER" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
                            <font>
-                              <Font name="System Bold" size="12.0" />
+                              <Font name="Sono Medium" size="12.0" />
                            </font>
                         </Button>
                      </children>
@@ -306,7 +306,7 @@
                      <children>
                         <Button fx:id="whiteBtn" layoutX="8.0" layoutY="7.0" mnemonicParsing="false" onAction="#sendWhiteTeam" prefHeight="26.0" prefWidth="183.0" style="-fx-background-color: transparent; -fx-border-color: white;" text="Choose White Team" textFill="WHITE" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
                            <font>
-                              <Font name="System Bold" size="12.0" />
+                              <Font name="Sono Medium" size="12.0" />
                            </font>
                         </Button>
                      </children>
@@ -339,7 +339,7 @@
                      <children>
                         <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Select a Team">
                            <font>
-                              <Font name="Trattatello" size="48.0" />
+                              <Font name="Sono Medium" size="48.0" />
                            </font>
                         </Text>
                      </children>

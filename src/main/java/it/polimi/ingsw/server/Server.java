@@ -1,45 +1,34 @@
 package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.network.CommunicationHandler;
-import it.polimi.ingsw.network.listeners.DisconnectEvent;
-import it.polimi.ingsw.network.listeners.DisconnectListener;
 import it.polimi.ingsw.network.messages.client.ChosenGame;
 import it.polimi.ingsw.network.messages.client.Login;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
-import it.polimi.ingsw.server.controller.Controller;
 import it.polimi.ingsw.server.enums.ServerState;
-import it.polimi.ingsw.server.listeners.EndGameEvent;
-import it.polimi.ingsw.server.listeners.EndGameListener;
 import it.polimi.ingsw.server.lobby.LobbyConstructor;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Class for instantiate a new Game and handle new network requests
  */
-public class Server implements EndGameListener, DisconnectListener {
+public class Server {
 
     /**
-     * a collection of player nickname and their request handler
-     */
-    private final HashMap<String, VirtualClient> virtualClients;
-
-    /**
-     * tcp port of the controller
+     * tcp port of the server
      */
     private final int port;
 
-    /**
-     * Game Controller
-     */
-    private Controller controller;
+    
+    private final ClientManager clientManager;
 
     /**
      * Current server state
@@ -59,25 +48,35 @@ public class Server implements EndGameListener, DisconnectListener {
      * @param port tcp port of the server
      */
     public Server(int port) {
-        virtualClients = new HashMap<>();
         this.port = port;
-        resetGame();
+        clientManager = new ClientManager(this);
+        clientManager.resetGame();
     }
 
     /**
-     * Reset the controller
+     * @return the clientManager
      */
-    private void resetGame() {
+    public ClientManager getClientManager() {
+        return clientManager;
+    }
+
+    /**
+     * @return the state of the server
+     */
+    public ServerState getState() {
+        return state;
+    }
+
+    /**
+     * Reset the server to the initial state
+     */
+    public void resetGame() {
         System.out.println("S: Resetting game");
-        controller = new Controller();
-        controller.setEndGameListener(this);
-        controller.setDisconnectListener(this);
-        startController();
         state = ServerState.EMPTY;
     }
 
     /**
-     * Main Method used for instantiate Virtual Client if is permitted.
+     * Main Method used to instantiate Virtual Client if is permitted.
      * Each of this Virtual Client are run on different threads
      */
     public void handleRequests() {
@@ -99,8 +98,7 @@ public class Server implements EndGameListener, DisconnectListener {
                                 communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_SERVER_UNAVAILABLE));
                                 communicationHandler.stop();
                             }).start();
-                            case NORMAL ->
-                                    new Thread(() -> handleNewPlayer(communicationHandler)).start();
+                            case NORMAL -> new Thread(() -> handleNewPlayer(communicationHandler)).start();
                         }
                     }
                 } catch (Throwable e) {
@@ -130,11 +128,11 @@ public class Server implements EndGameListener, DisconnectListener {
                     if (message.isValid() && MessageType.retrieveByMessage(message) == MessageType.CHOSEN_GAME) {
                         communicationHandler.setDisconnectListener(null);
                         ChosenGame choice = (ChosenGame) message;
-                        controller.setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
+                        clientManager.getController().setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
                         synchronized (this) {
                             state = ServerState.NORMAL;
                             countDownLatch.countDown();
-                            addPlayer(communicationHandler, nickname);
+                            clientManager.addPlayer(communicationHandler, nickname);
                         }
                     } else
                         communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
@@ -226,21 +224,22 @@ public class Server implements EndGameListener, DisconnectListener {
             String nickname = getPlayerNickname(communicationHandler);
 
             if (nickname != null) {
-                communicationHandler.setMessageHandler((m) -> {});
-                if (controller.isGameStarted()) {
+                communicationHandler.setMessageHandler((m) -> {
+                });
+                if (clientManager.getController().isGameStarted()) {
                     synchronized (this) {
-                        if (virtualClients.containsKey(nickname) && !virtualClients.get(nickname).isConnected()) {
-                            virtualClients.get(nickname).reconnect(communicationHandler);
+                        if (clientManager.getVirtualClient(nickname) != null && !clientManager.getVirtualClient(nickname).isConnected()) {
+                            clientManager.getVirtualClient(nickname).reconnect(communicationHandler);
                         } else {
                             communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
                             communicationHandler.stop();
                         }
                     }
-                } else if (virtualClients.containsKey(nickname)) {
+                } else if (clientManager.getVirtualClient(nickname) != null) {
                     communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE));
                     communicationHandler.stop();
                 } else {
-                    if (!addPlayer(communicationHandler, nickname)) {
+                    if (!clientManager.addPlayer(communicationHandler, nickname)) {
                         communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
                         communicationHandler.stop();
                     }
@@ -253,96 +252,5 @@ public class Server implements EndGameListener, DisconnectListener {
         }
     }
 
-    /**
-     * Creates the virtual client for the player
-     *
-     * @param communicationHandler the communication handler of the player
-     * @param nickname             the nickname of the player
-     * @return true if the player was added, false otherwise
-     */
-    private boolean addPlayer(CommunicationHandler communicationHandler, String nickname) {
-        if (controller.addPlayer(nickname)) {
-            System.out.println("S: added player " + nickname);
-            VirtualClient vc = new VirtualClient(nickname);
-            connectToVirtualClient(vc, communicationHandler);
-            virtualClients.put(nickname, vc);
-            controller.sendInitialStats(vc);
-            return true;
-        }
-        return false;
-    }
 
-    /**
-     * Starts a virtual client and adds it to the model listeners. Adds the controller to the VirtualClient listeners
-     *
-     * @param vc     the VirtualClient
-     * @param communicationHandler handler for connection
-     */
-    private void connectToVirtualClient(VirtualClient vc, CommunicationHandler communicationHandler) {
-        vc.setCommunicationHandler(communicationHandler);
-        communicationHandler.setDisconnectListener(vc);
-        communicationHandler.setMessageHandler(vc);
-        controller.addModelListener(vc);
-        vc.addMessageListener(controller);
-    }
-
-    /**
-     * Method called by Virtual Client if the connection is lost. Server removes the thread from execution and remove the
-     * virtual Client bonded with the nickname of disconnected player.
-     * Calls method skip turn on controller.
-     *
-     * @param event of the connection
-     */
-    @Override
-    public synchronized void onEndGameEvent(EndGameEvent event) {
-        controller.stop();
-        controller.removeEndGameListener();
-        controller.setDisconnectListener(null);
-        for (VirtualClient vc : virtualClients.values()) {
-            controller.removeModelListener(vc);
-            vc.stop();
-        }
-        virtualClients.clear();
-        System.out.println("S: disconnected all players");
-        resetGame();
-    }
-
-    /**
-     * Getter of the controller
-     *
-     * @return the controller
-     */
-    public Controller getController() {
-        return controller;
-    }
-
-    /**
-     * Closes the controller thread
-     */
-    public void stopController() {
-        controller.stop();
-    }
-
-    /**
-     * Starts the controller
-     */
-    private void startController() {
-        new Thread(controller, "Controller Thread").start();
-    }
-
-    /**
-     * Invoked when a client disconnects from the server and vice versa.
-     *
-     * @param event the event object
-     */
-    @Override
-    public synchronized void onDisconnect(DisconnectEvent event) {
-        VirtualClient vc = (VirtualClient) event.getSource();
-        vc.stop();
-        if (!controller.isGameStarted()) {
-            controller.removeModelListener(vc);
-            virtualClients.remove(vc.getIdentifier());
-        }
-        System.out.println("S: disconnected player " + vc.getIdentifier());
-    }
 }
