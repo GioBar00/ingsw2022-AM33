@@ -80,6 +80,7 @@ public class WaitingViewController implements GUIController {
         stage.setHeight(500.0);
         stage.setWidth(800.0);
         stage.setResizable(false);
+        stage.setAlwaysOnTop(true);
 
         stage.setScene(new Scene(getRootPane()));
         this.showNewDisablingStage(stage);

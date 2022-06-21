@@ -61,6 +61,13 @@ public class Server {
     }
 
     /**
+     * @return the state of the server
+     */
+    public ServerState getState() {
+        return state;
+    }
+
+    /**
      * Reset the server to the initial state
      */
     public void resetGame() {

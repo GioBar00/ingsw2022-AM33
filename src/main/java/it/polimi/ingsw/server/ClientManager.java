@@ -8,6 +8,7 @@ import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.server.Winners;
 import it.polimi.ingsw.server.controller.Controller;
+import it.polimi.ingsw.server.enums.ServerState;
 import it.polimi.ingsw.server.listeners.EndGameEvent;
 import it.polimi.ingsw.server.listeners.EndGameListener;
 import it.polimi.ingsw.server.model.enums.Tower;
@@ -163,22 +164,27 @@ public class ClientManager implements EndGameListener, MessageListener {
                     new Thread(() -> {
                         try {
                             System.out.println("S: waiting for other players");
-                            if (forceEndGameLatch.await(60, TimeUnit.SECONDS)) {
-                                for (Tower t : connectedPlayersByTeam.keySet()) {
-                                    for (VirtualClient player : connectedPlayersByTeam.get(t)) {
-                                        controller.notifyCurrentGameStateToPlayer(player.getIdentifier());
+                            boolean cameBack = forceEndGameLatch.await(60, TimeUnit.SECONDS);
+                            synchronized (this) {
+                                if (server.getState() == ServerState.NORMAL) {
+                                    if (cameBack) {
+                                        for (Tower t : connectedPlayersByTeam.keySet()) {
+                                            for (VirtualClient player : connectedPlayersByTeam.get(t)) {
+                                                controller.notifyCurrentGameStateToPlayer(player.getIdentifier());
+                                            }
+                                        }
+                                        controller.setWaiting(false);
+                                        System.out.println("S: continue game");
+                                    } else {
+                                        for (Tower t : connectedPlayersByTeam.keySet()) {
+                                            for (VirtualClient player : connectedPlayersByTeam.get(t)) {
+                                                player.sendMessage(new Winners(EnumSet.of(t)));
+                                            }
+                                        }
+                                        onEndGameEvent(null);
                                     }
+                                    forceEndGameLatch = null;
                                 }
-                                controller.setWaiting(false);
-                                forceEndGameLatch = null;
-                                System.out.println("S: continue game");
-                            } else {
-                                for (Tower t : connectedPlayersByTeam.keySet()) {
-                                    for (VirtualClient player : connectedPlayersByTeam.get(t)) {
-                                        player.sendMessage(new Winners(EnumSet.of(t)));
-                                    }
-                                }
-                                onEndGameEvent(null);
                             }
                         } catch (InterruptedException ignored) {
                             controller.setWaiting(false);
@@ -214,6 +220,9 @@ public class ClientManager implements EndGameListener, MessageListener {
         virtualClients.clear();
         System.out.println("S: disconnected all players");
         resetGame();
+        if (server.getState() == ServerState.NORMAL && forceEndGameLatch != null) {
+            forceEndGameLatch.countDown();
+        }
     }
 
     /**

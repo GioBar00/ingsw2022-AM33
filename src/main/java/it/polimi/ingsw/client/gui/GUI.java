@@ -546,6 +546,7 @@ public class GUI extends Application implements UI {
         Platform.runLater(() -> {
             Alert messageAlert = new Alert(Alert.AlertType.ERROR);
             messageAlert.setContentText(message);
+            messageAlert.initOwner(stage);
             messageAlert.show();
         });
     }
