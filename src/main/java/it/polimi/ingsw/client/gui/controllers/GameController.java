@@ -50,8 +50,6 @@ public class GameController implements GUIController, MuteToggle {
     @FXML
     public Label lblTurn;
     @FXML
-    public Label lblRound;
-    @FXML
     public Label lblGamePhase;
     @FXML
     public Label lblAction;
@@ -216,7 +214,6 @@ public class GameController implements GUIController, MuteToggle {
     public void updateGameView(GameView gameView, String nickname) {
         closeWaitingStage();
         this.gameView = gameView;
-        lblRound.setText("Round: 1");
         lblGamePhase.setText("Game Phase: " + gamePhaseMessageMap.get(gameView.getPhase()));
         if (gameView.getCurrentPlayer().equals(gui.getNickname()))
             lblTurn.setText("Your turn");
