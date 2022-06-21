@@ -69,6 +69,11 @@ public class Controller implements Runnable, MessageListener, EndGameListenerSub
         queue = new LinkedBlockingQueue<>();
     }
 
+    /**
+     * This method sets the status to waiting. It is used when there's only one player left in the party.
+     *
+     * @param waiting true if the party is waiting for the other player to join.
+     */
     public void setWaiting(boolean waiting) {
         this.waiting = waiting;
     }
@@ -469,6 +474,9 @@ public class Controller implements Runnable, MessageListener, EndGameListenerSub
         }
     }
 
+    /**
+     * Method used to stop the thread.
+     */
     public void stop() {
         stopped = true;
     }
@@ -494,10 +502,22 @@ public class Controller implements Runnable, MessageListener, EndGameListenerSub
         }
     }
 
+    /**
+     * Returns the team of the player.
+     *
+     * @param identifier the nickname of the player.
+     * @return the team of the player.
+     */
     public Tower getPlayerTeam(String identifier) {
         return model.getPlayerTeam(identifier);
     }
 
+
+    /**
+     * Notifies a specific player sending him the game view.
+     *
+     * @param identifier the nickname of the player.
+     */
     public void notifyCurrentGameStateToPlayer(String identifier) {
         if (isInstantiated())
             model.notifyCurrentGameStateToPlayer(identifier);

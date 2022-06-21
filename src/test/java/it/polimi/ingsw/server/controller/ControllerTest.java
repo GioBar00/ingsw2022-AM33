@@ -6,6 +6,8 @@ import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
 import it.polimi.ingsw.network.messages.client.ChosenWizard;
+import it.polimi.ingsw.network.messages.enums.CommMsgType;
+import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.server.Disconnected;
 import it.polimi.ingsw.network.messages.client.StartGame;
 import it.polimi.ingsw.network.messages.enums.MessageType;
@@ -201,6 +203,14 @@ class ControllerTest {
 
         assertEquals(current.getIdentifier(), controller.getCurrentPlayer());
 
+        controller.notifyCurrentGameStateToPlayer(current.getIdentifier());
+        assertFalse(current.queueContains(MessageType.COMM_MESSAGE));
+        assertTrue(current.queueContains(MessageType.CURRENT_GAME_STATE));
+
+        controller.setWaiting(true);
+        controller.handleMessage(new MessageEvent(current, new ChosenCloud(1)));
+        assertTrue(current.queueContains(MessageType.COMM_MESSAGE));
+        assertFalse(current.queueContains(MessageType.CURRENT_GAME_STATE));
     }
 
     /**
@@ -268,6 +278,15 @@ class ControllerTest {
         controller.handleMessage(new MessageEvent(current, new MovedStudent(MoveLocation.ENTRANCE,5,MoveLocation.ISLAND,4)));
         assertFalse(current.queueContains(MessageType.COMM_MESSAGE));
         assertTrue(current.queueContains(MessageType.CURRENT_GAME_STATE));
+
+
+        controller.handleMessage(new MessageEvent(current, new SwappedStudents(MoveLocation.ENTRANCE,5,MoveLocation.HALL,4)));
+        assertTrue(current.queueContains(MessageType.COMM_MESSAGE));
+        assertFalse(current.queueContains(MessageType.CURRENT_GAME_STATE));
+
+        controller.handleMessage(new MessageEvent(current, new SwappedStudents(MoveLocation.CARD,4,MoveLocation.ENTRANCE,4)));
+        assertTrue(current.queueContains(MessageType.COMM_MESSAGE));
+        assertFalse(current.queueContains(MessageType.CURRENT_GAME_STATE));
     }
 
     /**
@@ -378,6 +397,16 @@ class ControllerTest {
         c.handleMessage(new MessageEvent(m1, new ChosenTeam(Tower.WHITE)));
         c.handleMessage(new MessageEvent(m1, new StartGame()));
         assertTrue(m1.queueContains(MessageType.CURRENT_GAME_STATE));
+
+        assertEquals(Tower.WHITE, c.getPlayerTeam(m1.getIdentifier()));
+
+        c.removeModelListener(m1);
+        c.notifyCurrentGameStateToPlayer(m1.getIdentifier());
+        assertFalse(m1.queueContains(MessageType.CURRENT_GAME_STATE));
+
+        c.removeMessageListener(m2);
+        c.notifyCurrentGameStateToPlayer(m2.getIdentifier());
+        assertFalse(m1.queueContains(MessageType.CURRENT_GAME_STATE));
     }
 }
 
