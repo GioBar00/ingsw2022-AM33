@@ -10,7 +10,6 @@ import it.polimi.ingsw.client.gui.audio.AudioManager;
 import it.polimi.ingsw.client.gui.controllers.*;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
@@ -56,6 +55,9 @@ public class GUI extends Application implements UI {
      */
     private String nickname;
 
+    /**
+     * The controller of the choose-game view.
+     */
     private ChooseGameController chooseGameController;
 
     /**
@@ -87,6 +89,8 @@ public class GUI extends Application implements UI {
      * A list of the playerView in the game.
      */
     private List<PlayerView> players;
+
+    private boolean ignoreServerUnavailable = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -292,6 +296,7 @@ public class GUI extends Application implements UI {
             chooseGameController.loadScene(chooseGameStage);
             chooseGameStage.setAlwaysOnTop(true);
             chooseGameStage.onCloseRequestProperty().set(event -> {
+                ignoreServerUnavailable = true;
                 viewState = ViewState.SETUP;
                 client.closeConnection();
                 if (startScreenController != null)
@@ -346,6 +351,7 @@ public class GUI extends Application implements UI {
             Stage chooseWizardStage = new Stage();
             chooseWizardStage.setTitle("Choose a Wizard");
             chooseWizardStage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
+            chooseWizardStage.onCloseRequestProperty().set(event -> ignoreServerUnavailable = true);
             chooseWizardStage.onHidingProperty().set(event -> {
                 if (chooseWizardController != null) {
                     if (chooseWizardController.hasChosenWizard()) {
@@ -523,6 +529,10 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void serverUnavailable() {
+        if (ignoreServerUnavailable) {
+            ignoreServerUnavailable = false;
+            return;
+        }
         if (viewState != ViewState.END_GAME) {
             System.out.println("Server unavailable");
             if (viewState == ViewState.SETUP) {
@@ -566,11 +576,11 @@ public class GUI extends Application implements UI {
     public void showCommMessage(CommMessage message) {
         if (message.getType().equals(CommMsgType.OK))
             return;
-
+        ignoreServerUnavailable = true;
         showAlert(message.getType().getMessage());
-
-        System.out.println("Showing comm message");
-        System.out.println(MessageBuilder.toJson(message));
+        if (startScreenController != null) {
+            startScreenController.disableCenter(false);
+        }
     }
 
     /**
