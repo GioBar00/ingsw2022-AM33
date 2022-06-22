@@ -2,7 +2,6 @@ package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.server.model.enums.*;
-import it.polimi.ingsw.util.Function;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -224,7 +223,7 @@ public abstract class GUIUtils {
      */
     public static void setButton(Button button, EventHandler<ActionEvent> event) {
         button.toFront();
-        button.setStyle("-fx-border-color: green; -fx-border-width: 3px; -fx-background-color: transparent;");
+        button.setStyle("-fx-border-color: #457b9d; -fx-border-width: 3px; -fx-border-insets: -3px; -fx-background-color: transparent; -fx-border-radius: 10px;");
         button.setOnAction(event);
         button.setMouseTransparent(false);
     }

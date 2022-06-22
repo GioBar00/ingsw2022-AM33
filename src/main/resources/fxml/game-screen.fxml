@@ -152,8 +152,8 @@
                            <children>
                               <AnchorPane minHeight="0.0" minWidth="0.0" GridPane.rowIndex="1">
                                  <children>
-                                    <Rectangle fx:id="playerInfoBackground" arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f67" height="310.0" stroke="RED" strokeType="INSIDE" strokeWidth="3.0" width="958.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                    <AnchorPane fx:id="anchorPanePlayerInfo" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="3.0">
+                                    <Rectangle fx:id="playerInfoBackground" arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f67" height="310.0" stroke="RED" strokeType="INSIDE" strokeWidth="0.0" width="958.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <AnchorPane fx:id="anchorPanePlayerInfo" minHeight="0.0" minWidth="0.0" style="-fx-border-width: 3px; -fx-border-color: red; -fx-border-insets: -3px; -fx-border-radius: 1px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
                                           <Label layoutX="43.0" layoutY="15.0" text="Player Info" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="5.0">
                                              <font>
