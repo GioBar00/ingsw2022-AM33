@@ -158,18 +158,12 @@ public class Controller implements Runnable, MessageListener {
      *
      * @param event of the received message
      */
-    public void handleMessage(MessageEvent event) {
+    public synchronized void handleMessage(MessageEvent event) {
         VirtualClient vc = (VirtualClient) event.getSource();
         Message msg = event.getMessage();
         switch (MessageType.retrieveByMessage(msg)) {
-            case CONNECTED -> {
-                clientManager.connected(vc);
-                model.notifyCurrentGameStateToPlayer(vc.getIdentifier());
-            }
-            case DISCONNECTED -> {
-                clientManager.disconnected(vc);
-                handleDisconnect(vc);
-            }
+            case CONNECTED -> model.notifyCurrentGameStateToPlayer(vc.getIdentifier());
+            case DISCONNECTED -> handleDisconnect(vc);
             default -> {
                 if (!waiting) {
                     switch (model.getGameState()) {
@@ -201,7 +195,7 @@ public class Controller implements Runnable, MessageListener {
      *
      * @param vc the virtual client that sent the request
      */
-    private void handleDisconnect(VirtualClient vc) {
+    public synchronized void handleDisconnect(VirtualClient vc) {
         if (waiting || !clientManager.isClientInGame(vc))
             return;
         String identifier = vc.getIdentifier();
@@ -412,17 +406,21 @@ public class Controller implements Runnable, MessageListener {
      * @return true if the game is started. False if the game can't start or who request this method doesn't have
      * the rights
      */
-    private synchronized boolean startGame(String nickname) {
+    private boolean startGame(String nickname) {
         if (nickname.equals(lobby.getMaster()) && lobby.canStart()) {
-            for (PlayerDetails p : lobby.getPlayers()) {
-                model.addPlayer(p);
+            synchronized (clientManager) {
+                synchronized (this) {
+                    for (PlayerDetails p : lobby.getPlayers()) {
+                        model.addPlayer(p);
+                    }
+                    boolean started = model.startGame();
+                    if (started) {
+                        clientManager.gameStarted();
+                        return true;
+                    }
+                    return false;
+                }
             }
-            boolean started = model.startGame();
-            if (started) {
-                clientManager.gameStarted();
-                return true;
-            }
-            return false;
         }
         return false;
     }

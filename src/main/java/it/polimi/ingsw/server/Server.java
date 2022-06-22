@@ -70,7 +70,7 @@ public class Server {
     /**
      * Reset the server to the initial state
      */
-    public void resetGame() {
+    public synchronized void resetGame() {
         System.out.println("S: Resetting game");
         state = ServerState.EMPTY;
     }
@@ -226,22 +226,24 @@ public class Server {
             if (nickname != null) {
                 communicationHandler.setMessageHandler((m) -> {
                 });
-                if (clientManager.getController().isGameStarted()) {
-                    synchronized (this) {
-                        if (clientManager.getVirtualClient(nickname) != null && !clientManager.getVirtualClient(nickname).isConnected()) {
-                            clientManager.getVirtualClient(nickname).reconnect(communicationHandler);
-                        } else {
-                            communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
+                synchronized (this) {
+                    synchronized (clientManager) {
+                        if (clientManager.getController().isGameStarted()) {
+                            if (clientManager.getVirtualClient(nickname) != null && !clientManager.getVirtualClient(nickname).isConnected()) {
+                                clientManager.reconnectPlayer(communicationHandler, nickname);
+                            } else {
+                                communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
+                                communicationHandler.stop();
+                            }
+                        } else if (clientManager.getVirtualClient(nickname) != null) {
+                            communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE));
                             communicationHandler.stop();
+                        } else {
+                            if (!clientManager.addPlayer(communicationHandler, nickname)) {
+                                communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
+                                communicationHandler.stop();
+                            }
                         }
-                    }
-                } else if (clientManager.getVirtualClient(nickname) != null) {
-                    communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE));
-                    communicationHandler.stop();
-                } else {
-                    if (!clientManager.addPlayer(communicationHandler, nickname)) {
-                        communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
-                        communicationHandler.stop();
                     }
                 }
             } else

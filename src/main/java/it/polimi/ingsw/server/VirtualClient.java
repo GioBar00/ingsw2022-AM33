@@ -12,7 +12,7 @@ import it.polimi.ingsw.network.messages.server.Disconnected;
  * Class for handle connection between a specified player and the server. Virtual Client forward valid request to the
  * controller
  */
-public class VirtualClient extends ConcreteMessageListenerSubscriber implements MessageListener, MessageHandler, DisconnectListener {
+public class VirtualClient extends ConcreteMessageListenerSubscriber implements MessageListener, MessageHandler, DisconnectListener, DisconnectListenerSubscriber {
 
     /**
      * Nickname of the player who interfaces this VirtualClient
@@ -23,6 +23,11 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
      * The message exchange handler used to send and receive messages to and from the client
      */
     protected CommunicationHandler communicationHandler;
+
+    /**
+     * The disconnect listener used to notify the server that the client has disconnected.
+     */
+    private DisconnectListener disconnectListener;
 
     /**
      * Constructor of VirtualClient
@@ -87,8 +92,8 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
      */
     public void sendMessage(Message message) {
         if (isConnected()) {
-            System.out.println("VC : send to " + identifier);
-            System.out.println(MessageBuilder.toJson(message));
+//            System.out.println("VC : send to " + identifier);
+//            System.out.println(MessageBuilder.toJson(message));
             communicationHandler.sendMessage(message);
         }
     }
@@ -113,8 +118,8 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
      */
     @Override
     public void handleMessage(Message message) {
-        System.out.println("VC " + identifier + ": received message ");
-        System.out.println(MessageBuilder.toJson(message));
+//        System.out.println("VC " + identifier + ": received message ");
+//        System.out.println(MessageBuilder.toJson(message));
         notifyMessageListeners(new MessageEvent(this, message));
     }
 
@@ -126,7 +131,27 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
     @Override
     public void onDisconnect(DisconnectEvent event) {
         System.out.println("VC " + identifier + ": disconnected");
-        notifyMessageListeners(new MessageEvent(this, new Disconnected()));
+        notifyDisconnectListener(new DisconnectEvent(this));
+    }
+
+    /**
+     * Sets the disconnection listener.
+     *
+     * @param listener the listener to set
+     */
+    @Override
+    public void setDisconnectListener(DisconnectListener listener) {
+        disconnectListener = listener;
+    }
+
+    /**
+     * Notifies the listener that a disconnection has occurred.
+     *
+     * @param event the event to notify
+     */
+    @Override
+    public void notifyDisconnectListener(DisconnectEvent event) {
+        if (disconnectListener != null) disconnectListener.onDisconnect(event);
     }
 }
 

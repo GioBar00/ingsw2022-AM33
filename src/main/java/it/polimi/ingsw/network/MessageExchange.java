@@ -40,8 +40,8 @@ public abstract class MessageExchange {
         if (line.equals("") || line.equals("null")) return null;
 
         Message message = MessageBuilder.fromJson(line);
-        if (!(MessageType.retrieveByMessage(message) == MessageType.COMM_MESSAGE && (((CommMessage) message).getType() == CommMsgType.PONG || ((CommMessage) message).getType() == CommMsgType.PING)))
-            System.out.println("Real message received - " + line);
+//        if (!(MessageType.retrieveByMessage(message) == MessageType.COMM_MESSAGE && (((CommMessage) message).getType() == CommMsgType.PONG || ((CommMessage) message).getType() == CommMsgType.PING)))
+//            System.out.println("Real message received - " + line);
         return message;
     }
 
@@ -69,8 +69,8 @@ public abstract class MessageExchange {
             writer.write(MessageBuilder.toJson(message));
             writer.write("\n");
             writer.flush();
-            if (!(MessageType.retrieveByMessage(message) == MessageType.COMM_MESSAGE && (((CommMessage) message).getType() == CommMsgType.PONG || ((CommMessage) message).getType() == CommMsgType.PING)))
-                System.out.println("Real message sent - " + MessageBuilder.toJson(message));
+//            if (!(MessageType.retrieveByMessage(message) == MessageType.COMM_MESSAGE && (((CommMessage) message).getType() == CommMsgType.PONG || ((CommMessage) message).getType() == CommMsgType.PING)))
+//                System.out.println("Real message sent - " + MessageBuilder.toJson(message));
         }
     }
 

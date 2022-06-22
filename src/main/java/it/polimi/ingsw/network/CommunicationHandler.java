@@ -5,7 +5,6 @@ import it.polimi.ingsw.network.listeners.DisconnectListener;
 import it.polimi.ingsw.network.listeners.DisconnectListenerSubscriber;
 import it.polimi.ingsw.network.messages.IgnoreMessage;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
@@ -166,7 +165,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      */
     private void handleOutput() {
         try {
-            System.out.println("CH: Start handle output");
             while (!stopped) {
                 Message m = null;
                 try {
@@ -189,18 +187,15 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      */
     private void handleInput() {
         try {
-            System.out.println("CH: Start handle input");
             while (!stopped) {
                 Message message = MessageExchange.receiveMessage(reader, (event) -> {
-                    System.out.println("CH : handleInput stop");
+                    notifyDisconnectIfNotAlreadyDone();
                     stop();
                 });
                 if (message != null) {
                     if (message.isValid()) {
                         if (isMaster && !checkPong(message) || !isMaster && !checkPing(message)) {
-                            synchronized (this) {
-                                if (messageHandler != null) messageHandler.handleMessage(message);
-                            }
+                            if (messageHandler != null) messageHandler.handleMessage(message);
                         }
                     } else if (isMaster) sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
                 }
@@ -312,8 +307,8 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      */
     public void sendMessage(Message message) {
         queue.add(message);
-        if (!(MessageType.retrieveByMessage(message) == MessageType.COMM_MESSAGE && (((CommMessage) message).getType() == CommMsgType.PONG || ((CommMessage) message).getType() == CommMsgType.PING)))
-            System.out.println("CH: Added to queue - " + MessageBuilder.toJson(message));
+//        if (!(MessageType.retrieveByMessage(message) == MessageType.COMM_MESSAGE && (((CommMessage) message).getType() == CommMsgType.PONG || ((CommMessage) message).getType() == CommMsgType.PING)))
+//            System.out.println("CH: Added to queue - " + MessageBuilder.toJson(message));
     }
 
     /**
@@ -344,9 +339,8 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     @Override
     public void notifyDisconnectListener(DisconnectEvent event) {
         if (disconnectListener != null) {
-            System.out.println("CH : notifyDisconnectListener");
-            disconnectListener.onDisconnect(event);
+            System.out.println("CH : notify disconnect");
+            new Thread(() -> disconnectListener.onDisconnect(event)).start();
         }
-
     }
 }
