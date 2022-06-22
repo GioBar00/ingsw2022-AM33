@@ -193,10 +193,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     private void handleInput() {
         try {
             while (!stopped) {
-                Message message = MessageExchange.receiveMessage(reader, (event) -> {
-                    notifyDisconnectIfNotAlreadyDone();
-                    stop();
-                });
+                Message message = MessageExchange.receiveMessage(reader, (event) -> notifyDisconnectAndStop());
                 if (message != null) {
                     if (message.isValid()) {
                         if (isMaster && !checkPong(message) || !isMaster && !checkPing(message)) {
@@ -206,7 +203,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                 }
             }
             System.out.println("CH: Stopped handle input");
-            notifyDisconnectIfNotAlreadyDone();
+            notifyDisconnectAndStop();
         } catch (IOException e) {
             System.out.println("CH : handleInput IOException");
         }
@@ -257,8 +254,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                     if (isMaster) sendMessage(new CommMessage(CommMsgType.PING));
                     if (!latch.await(seconds, TimeUnit.SECONDS)) {
                         System.out.println("CH : timer timeout");
-                        notifyDisconnectIfNotAlreadyDone();
-                        stop();
+                        notifyDisconnectAndStop();
                     }
 
                 } catch (InterruptedException ignored) {
@@ -291,8 +287,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     public synchronized void stop() {
         if (!stopped) {
             stopped = true;
-            disconnectListener = event -> {
-            };
             System.out.println("CH : stop");
             timer.cancel();
             timer.purge();
@@ -343,6 +337,14 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
             notifiedDisconnect = true;
             notifyDisconnectListener(new DisconnectEvent(this));
         }
+    }
+
+    /**
+     * Notifies the disconnect listener and stops the communication handler.
+     */
+    private synchronized void notifyDisconnectAndStop() {
+        notifyDisconnectIfNotAlreadyDone();
+        if (!stopped) stop();
     }
 
     /**

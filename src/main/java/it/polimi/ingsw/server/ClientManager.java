@@ -268,10 +268,12 @@ public class ClientManager implements DisconnectListener {
      */
     @Override
     public synchronized void onDisconnect(DisconnectEvent event) {
-        if (connectedPlayersByTeam.isEmpty()) {
+        System.out.println("S: client onDisconnect");
+        if (connectedPlayersByTeam.isEmpty() && controller.isGameStarted()) {
             return;
         }
         VirtualClient vc = (VirtualClient) event.getSource();
+        System.out.println("S: client disconnected " + vc.getIdentifier());
         if (!controller.isGameStarted()) {
             controller.handleDisconnect(vc);
             controller.removeModelListener(vc);
