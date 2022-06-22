@@ -11,6 +11,6 @@ public class Disconnected implements Message {
      */
     @Override
     public boolean isValid() {
-        return true;
+        return false;
     }
 }

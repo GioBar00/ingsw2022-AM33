@@ -9,15 +9,14 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.WaitingViewController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.WaitingViewController">
    <children>
-      <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <HBox minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane HBox.hgrow="ALWAYS">
+            <AnchorPane minHeight="0.0" minWidth="0.0" HBox.hgrow="ALWAYS">
                <children>
-                  <ImageView fitHeight="637.0" fitWidth="1131.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="637.0" fitWidth="1131.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <image>
                         <Image url="@../images/background-1.png" />
                      </image>
@@ -26,21 +25,21 @@
             </AnchorPane>
          </children>
       </HBox>
-      <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <GridPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints percentHeight="20.0" vgrow="SOMETIMES" />
-          <RowConstraints percentHeight="60.0" vgrow="SOMETIMES" />
-          <RowConstraints percentHeight="20.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="0.0" percentHeight="20.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="0.0" percentHeight="60.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="0.0" percentHeight="20.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <GridPane GridPane.rowIndex="1">
+            <GridPane minHeight="0.0" minWidth="0.0" GridPane.rowIndex="1">
               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="30.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="10.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="80.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="10.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints percentHeight="20.0" vgrow="SOMETIMES" />
@@ -48,18 +47,18 @@
                 <RowConstraints percentHeight="20.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" GridPane.columnSpan="3" GridPane.rowSpan="2">
                      <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Waiting for Other Players" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Label alignment="CENTER" minHeight="0.0" minWidth="0.0" text="Waiting for the other players to reconnect..." textAlignment="CENTER" textFill="WHITE" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <font>
-                              <Font size="33.0" />
+                              <Font size="36.0" />
                            </font>
-                        </Text>
+                        </Label>
                      </children>
                   </AnchorPane>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
-                        <Label fx:id="timerLbl" style="-fx-text-alignment: center;" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Label fx:id="timerLbl" alignment="CENTER" minHeight="0.0" minWidth="0.0" style="-fx-text-alignment: center;" text="60" textAlignment="CENTER" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <font>
                               <Font name="System Bold" size="23.0" />
                            </font>

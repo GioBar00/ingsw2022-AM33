@@ -46,6 +46,12 @@ public interface GUIController {
     }
 
     /**
+     * This method is called when changing scene or closing the stage.
+     */
+    default void unload() {
+    }
+
+    /**
      * This method is used to show a new stage that disables the current one until it is closed.
      *
      * @param stage the stage to show.

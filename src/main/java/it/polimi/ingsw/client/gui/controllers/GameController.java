@@ -50,8 +50,6 @@ public class GameController implements GUIController, MuteToggle {
     @FXML
     public Label lblTurn;
     @FXML
-    public Label lblRound;
-    @FXML
     public Label lblGamePhase;
     @FXML
     public Label lblAction;
@@ -114,6 +112,11 @@ public class GameController implements GUIController, MuteToggle {
     ));
 
     private GameView gameView;
+
+    /**
+     * The controller of the waiting view.
+     */
+    private WaitingViewController waitingViewController;
 
     /**
      * This method is used to set the GUI of the controller.
@@ -185,8 +188,10 @@ public class GameController implements GUIController, MuteToggle {
         stage.setResizable(true);
         stage.setMinHeight(0.0);
         stage.setMinWidth(0.0);
+        // needed to trigger change
+        stage.setMaximized(false);
         stage.setMaximized(true);
-        //stage.setResizable(false);
+        stage.setResizable(false);
     }
 
     /**
@@ -207,8 +212,8 @@ public class GameController implements GUIController, MuteToggle {
      * @param gameView the new game view.
      */
     public void updateGameView(GameView gameView, String nickname) {
+        closeWaitingStage();
         this.gameView = gameView;
-        lblRound.setText("Round: 1");
         lblGamePhase.setText("Game Phase: " + gamePhaseMessageMap.get(gameView.getPhase()));
         if (gameView.getCurrentPlayer().equals(gui.getNickname()))
             lblTurn.setText("Your turn");
@@ -633,11 +638,56 @@ public class GameController implements GUIController, MuteToggle {
     }
 
     /**
+     * This method is called when changing scene or closing the stage.
+     */
+    @Override
+    public void unload() {
+        for (PlayerController playerController : playerControllersByNickname.values()) {
+            playerController.unload();
+        }
+        closeWaitingStage();
+    }
+
+    /**
+     * This method closes the waiting stage if it is open.
+     */
+    private void closeWaitingStage() {
+        if (waitingViewController != null) {
+            waitingViewController.unload();
+            Platform.runLater(() -> ((Stage) waitingViewController.getRootPane().getScene().getWindow()).close());
+
+        }
+    }
+
+    /**
      * handles the mute toggle.
      */
     @FXML
     @Override
     public void handleMuteButton() {
         toggleMute(imgViewMute);
+    }
+
+    public void showWaiting() {
+        showWaiting(60);
+    }
+
+    private void showWaiting(int timer) {
+        waitingViewController = ResourceLoader.loadFXML(FXMLPath.WAITING_SCREEN, gui);
+        Platform.runLater(() -> {
+            closeAssistantCardView();
+            waitingViewController.init();
+            Stage stage = new Stage();
+            waitingViewController.loadScene(stage);
+            showNewDisablingStage(stage);
+            waitingViewController.startTimer(timer);
+            stage.setOnHidden(event -> {
+                int t = waitingViewController.getTimer();
+                waitingViewController.unload();
+                waitingViewController = null;
+                if (t > 0)
+                    showWaiting(t);
+            });
+        });
     }
 }

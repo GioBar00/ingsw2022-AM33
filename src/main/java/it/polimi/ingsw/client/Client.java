@@ -5,6 +5,7 @@ import it.polimi.ingsw.network.MessageHandler;
 import it.polimi.ingsw.network.listeners.DisconnectEvent;
 import it.polimi.ingsw.network.listeners.DisconnectListener;
 import it.polimi.ingsw.network.listeners.ViewListener;
+import it.polimi.ingsw.network.messages.IgnoreMessage;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.client.Login;
@@ -12,7 +13,9 @@ import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.*;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -156,16 +159,18 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
      */
     @Override
     public void run() {
-        Message message;
         while (!stopped) {
             try {
-                message = queue.take();
-                System.out.println("CL : " + message.getClass().getName());
-                updateView(message);
+                Message message = queue.take();
+                if (MessageType.retrieveByMessage(message) != MessageType.IGNORE) {
+                    System.out.println("CL : " + message.getClass().getName());
+                    updateView(message);
+                }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
+        System.out.println("Client: stopped!!");
     }
 
     /**
@@ -214,6 +219,7 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
         closeConnection();
         userInterface.serverUnavailable();
         stopped = true;
+        queue.add(new IgnoreMessage());
     }
 
     /**

@@ -7,7 +7,6 @@ import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
-import it.polimi.ingsw.util.Function;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -34,7 +33,7 @@ public class PlayerController implements GUIController {
     private Pane root;
 
     /**
-     * The controller of the schoolboard view.
+     * The controller of the school board view.
      */
     private SchoolBoardController schoolBoardController;
 
@@ -119,10 +118,6 @@ public class PlayerController implements GUIController {
         GUIUtils.bindSize(baseRoot, playerBackground);
     }
 
-    public void setShowHand(Function function) {
-        btnHand.setOnAction(event -> function.apply());
-    }
-
     /**
      * This method is used to set the parent of the controller.
      *
@@ -142,6 +137,14 @@ public class PlayerController implements GUIController {
     @Override
     public Pane getRootPane() {
         return root;
+    }
+
+    /**
+     * This method is called when changing scene or closing the stage.
+     */
+    @Override
+    public void unload() {
+        closeAssistantCardView();
     }
 
     /**

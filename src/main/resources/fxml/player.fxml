@@ -14,8 +14,8 @@
 
 <AnchorPane fx:id="baseRoot" minHeight="0.0" minWidth="0.0" prefHeight="300.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.controllers.PlayerController">
    <children>
-      <Rectangle fx:id="playerBackground" arcHeight="5.0" arcWidth="5.0" fill="#ffffff4c" height="300.0" stroke="#dddddd" strokeType="INSIDE" strokeWidth="3.0" width="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <GridPane layoutX="145.0" layoutY="82.0" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Rectangle fx:id="playerBackground" arcHeight="5.0" arcWidth="5.0" fill="#ffffff4c" height="300.0" stroke="#dddddd" strokeType="INSIDE" strokeWidth="0.0" width="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <GridPane layoutX="145.0" layoutY="82.0" minHeight="0.0" minWidth="0.0" style="-fx-border-color: white; -fx-border-width: 3px; -fx-border-insets: -3px; -fx-border-radius: 1px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="70.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />

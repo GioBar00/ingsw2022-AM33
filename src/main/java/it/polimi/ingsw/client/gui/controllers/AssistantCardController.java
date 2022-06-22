@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.network.messages.actions.PlayedAssistantCard;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -312,6 +313,6 @@ public class AssistantCardController implements GUIController {
      */
     public void forceClose() {
         choseAnAssistant = true;
-        ((Stage) root.getScene().getWindow()).close();
+        Platform.runLater(() -> ((Stage) root.getScene().getWindow()).close());
     }
 }

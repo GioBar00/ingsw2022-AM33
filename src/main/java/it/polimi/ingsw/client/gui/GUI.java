@@ -10,7 +10,6 @@ import it.polimi.ingsw.client.gui.audio.AudioManager;
 import it.polimi.ingsw.client.gui.controllers.*;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
@@ -57,6 +56,11 @@ public class GUI extends Application implements UI {
     private String nickname;
 
     /**
+     * The controller of the choose-game view.
+     */
+    private ChooseGameController chooseGameController;
+
+    /**
      * The controller of the choose-wizard view.
      */
     private ChooseWizardController chooseWizardController;
@@ -86,10 +90,7 @@ public class GUI extends Application implements UI {
      */
     private List<PlayerView> players;
 
-    /**
-     * The controller of the waiting view.
-     */
-    private WaitingViewController waitingViewController;
+    private boolean ignoreServerUnavailable = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -268,13 +269,11 @@ public class GUI extends Application implements UI {
         if (this.players == null) {
             players = gameView.getPlayersView();
         }
-        if(waitingViewController != null) {
-            Platform.runLater( () -> waitingViewController.close());
-        }
 
         if (gameView.getState() == GameState.ENDED) {
             show = false;
-        } else Platform.runLater(() -> gameController.updateGameView(gameView, nickname));
+        } else
+            Platform.runLater(() -> gameController.updateGameView(gameView, nickname));
         if (show) {
             viewState = ViewState.PLAYING;
             showGameScreen();
@@ -291,12 +290,13 @@ public class GUI extends Application implements UI {
             if (startScreenController != null)
                 startScreenController.disableCenter(true);
             Stage chooseGameStage = new Stage();
-            GUIController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_GAME, this);
+            chooseGameController = ResourceLoader.loadFXML(FXMLPath.CHOOSE_GAME, this);
             chooseGameStage.setTitle("Create a new game");
             chooseGameStage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
-            controller.loadScene(chooseGameStage);
+            chooseGameController.loadScene(chooseGameStage);
             chooseGameStage.setAlwaysOnTop(true);
             chooseGameStage.onCloseRequestProperty().set(event -> {
+                ignoreServerUnavailable = true;
                 viewState = ViewState.SETUP;
                 client.closeConnection();
                 if (startScreenController != null)
@@ -315,8 +315,19 @@ public class GUI extends Application implements UI {
         viewState = ViewState.SETUP;
         checkStartScreenController();
         Platform.runLater(() -> {
-            chooseWizardController = null;
+            if (chooseWizardController != null) {
+                ChooseWizardController copy = chooseWizardController;
+                chooseWizardController = null;
+                ((Stage) copy.getRootPane().getScene().getWindow()).close();
+            }
+            if (chooseGameController != null) {
+                ChooseGameController copy = chooseGameController;
+                chooseGameController = null;
+                ((Stage) copy.getRootPane().getScene().getWindow()).close();
+            }
             lobbyController = null;
+            if (gameController != null)
+                gameController.unload();
             gameController = null;
             startScreenController.disableCenter(false);
             startScreenController.loadScene(stage);
@@ -340,18 +351,21 @@ public class GUI extends Application implements UI {
             Stage chooseWizardStage = new Stage();
             chooseWizardStage.setTitle("Choose a Wizard");
             chooseWizardStage.getIcons().add(ResourceLoader.loadImage(ImagePath.ICON));
+            chooseWizardStage.onCloseRequestProperty().set(event -> ignoreServerUnavailable = true);
             chooseWizardStage.onHidingProperty().set(event -> {
-                if (chooseWizardController.hasChosenWizard()) {
-                    viewState = ViewState.CHOOSE_TEAM;
-                    if (lobbyController != null)
-                        showLobbyScreen();
-                } else {
-                    viewState = ViewState.SETUP;
-                    client.closeConnection();
-                    if (startScreenController != null)
-                        startScreenController.disableCenter(false);
+                if (chooseWizardController != null) {
+                    if (chooseWizardController.hasChosenWizard()) {
+                        viewState = ViewState.CHOOSE_TEAM;
+                        if (lobbyController != null)
+                            showLobbyScreen();
+                    } else {
+                        viewState = ViewState.SETUP;
+                        client.closeConnection();
+                        if (startScreenController != null)
+                            startScreenController.disableCenter(false);
+                    }
+                    chooseWizardController = null;
                 }
-                chooseWizardController = null;
             });
             chooseWizardController.loadScene(chooseWizardStage);
             chooseWizardStage.setAlwaysOnTop(true);
@@ -391,6 +405,8 @@ public class GUI extends Application implements UI {
      */
     private void showWinnerScreen(EnumSet<Tower> winners) {
         viewState = ViewState.END_GAME;
+        if (gameController != null)
+            gameController.unload();
         gameController = null;
         WinnerScreenController controller = ResourceLoader.loadFXML(FXMLPath.WINNER_SCREEN, this);
         Platform.runLater(() -> {
@@ -513,19 +529,19 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void serverUnavailable() {
-        System.out.println("Server unavailable");
-
-        if (viewState == ViewState.SETUP) {
-            showAlert("Server unavailable, please try again later.");
-            if (startScreenController != null) {
-                Platform.runLater(() -> startScreenController.disableCenter(false));
-            }
-        } else {
-            showStartScreen();
+        if (ignoreServerUnavailable) {
+            ignoreServerUnavailable = false;
+            return;
         }
-        if (viewState != ViewState.END_GAME && viewState != ViewState.SETUP) {
-            showAlert("Lost connection with the server or server unavailable.\n" +
-                    "Please try again later.");
+        if (viewState != ViewState.END_GAME) {
+            System.out.println("Server unavailable");
+            if (viewState == ViewState.SETUP) {
+                showAlert("Server unavailable, please try again later.");
+            } else {
+                showAlert("Lost connection with the server or server unavailable.\n" +
+                        "Please try again later.");
+            }
+            showStartScreen();
         }
     }
 
@@ -542,7 +558,7 @@ public class GUI extends Application implements UI {
      *
      * @param message The message to be shown.
      */
-    private void showAlert(String message) {
+    public void showAlert(String message) {
         Platform.runLater(() -> {
             Alert messageAlert = new Alert(Alert.AlertType.ERROR);
             messageAlert.setContentText(message);
@@ -560,11 +576,11 @@ public class GUI extends Application implements UI {
     public void showCommMessage(CommMessage message) {
         if (message.getType().equals(CommMsgType.OK))
             return;
-
+        ignoreServerUnavailable = true;
         showAlert(message.getType().getMessage());
-
-        System.out.println("Showing comm message");
-        System.out.println(MessageBuilder.toJson(message));
+        if (startScreenController != null) {
+            startScreenController.disableCenter(false);
+        }
     }
 
     /**
@@ -584,13 +600,9 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showWaiting() {
-        waitingViewController = ResourceLoader.loadFXML(FXMLPath.WAITING_SCREEN, this);
-        Platform.runLater(() -> {
-            gameController.closeAssistantCardView();
-            waitingViewController.init();
-            waitingViewController.loadScene(new Stage());
-            waitingViewController.startTimer();
-        });
+        if (gameController != null)
+            gameController.showWaiting();
+
     }
 
     /**

@@ -11,7 +11,7 @@ public enum FXMLPath {
     LOBBY("/fxml/lobby-screen.fxml"),
     CHOOSE_ASSISTANT("/fxml/assistant-card-scene.fxml"),
     CHARACTER_CARD("/fxml/character-card.fxml"),
-    GAME_SCREEN("/fxml/game-screen-copia.fxml"),
+    GAME_SCREEN("/fxml/game-screen.fxml"),
     SCHOOL_BOARD("/fxml/school-board.fxml"),
     ISLAND("/fxml/island.fxml"),
     ISLANDS("/fxml/islands.fxml"),

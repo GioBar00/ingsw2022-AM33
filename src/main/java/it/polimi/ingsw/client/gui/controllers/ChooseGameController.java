@@ -97,7 +97,7 @@ public class ChooseGameController implements GUIController {
      * This method is used to handle the event of clicking the button to create a new game.
      */
     @FXML
-    public void handleCreateGame(ActionEvent actionEvent) {
+    public void handleCreateGame() {
         GamePreset preset = GamePreset.TWO;
         if (radioBtn3.isSelected()) {
             preset = GamePreset.THREE;

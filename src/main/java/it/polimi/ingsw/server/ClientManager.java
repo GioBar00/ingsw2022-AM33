@@ -1,26 +1,32 @@
 package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.network.CommunicationHandler;
-import it.polimi.ingsw.network.listeners.MessageEvent;
-import it.polimi.ingsw.network.listeners.MessageListener;
+import it.polimi.ingsw.network.listeners.DisconnectEvent;
+import it.polimi.ingsw.network.listeners.DisconnectListener;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
-import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.server.Winners;
 import it.polimi.ingsw.server.controller.Controller;
 import it.polimi.ingsw.server.enums.ServerState;
-import it.polimi.ingsw.server.listeners.EndGameEvent;
-import it.polimi.ingsw.server.listeners.EndGameListener;
 import it.polimi.ingsw.server.model.enums.Tower;
 
-import java.util.*;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public class ClientManager implements EndGameListener, MessageListener {
+/**
+ * Class to manage the virtual clients connected to the server.
+ */
+public class ClientManager implements DisconnectListener {
 
+    /**
+     * the server
+     */
     private final Server server;
 
     /**
@@ -43,6 +49,10 @@ public class ClientManager implements EndGameListener, MessageListener {
      */
     private CountDownLatch forceEndGameLatch;
 
+    /**
+     * Constructor
+     * @param server the server
+     */
     public ClientManager(Server server) {
         this.server = server;
     }
@@ -68,12 +78,18 @@ public class ClientManager implements EndGameListener, MessageListener {
     }
 
     /**
+     * @param vc of the player
+     * @return if the virtual client is managed by the server
+     */
+    public boolean isClientInGame(VirtualClient vc) {
+        return virtualClients.containsValue(vc);
+    }
+
+    /**
      * Resetting the controller
      */
     public void resetGame() {
-        controller = new Controller();
-        controller.setEndGameListener(this);
-        controller.addMessageListener(this);
+        controller = new Controller(this);
         startController();
         server.resetGame();
         connectedPlayersByTeam.clear();
@@ -86,10 +102,11 @@ public class ClientManager implements EndGameListener, MessageListener {
      * @param nickname             the nickname of the player
      * @return true if the player was added, false otherwise
      */
-    public boolean addPlayer(CommunicationHandler communicationHandler, String nickname) {
+    public synchronized boolean addPlayer(CommunicationHandler communicationHandler, String nickname) {
         if (controller.addPlayer(nickname)) {
             System.out.println("S: added player " + nickname);
             VirtualClient vc = new VirtualClient(nickname);
+            vc.setDisconnectListener(this);
             connectToVirtualClient(vc, communicationHandler);
             virtualClients.put(nickname, vc);
             controller.sendInitialStats(vc);
@@ -104,7 +121,7 @@ public class ClientManager implements EndGameListener, MessageListener {
      * @param vc                   the VirtualClient
      * @param communicationHandler handler for connection
      */
-    public void connectToVirtualClient(VirtualClient vc, CommunicationHandler communicationHandler) {
+    public synchronized void connectToVirtualClient(VirtualClient vc, CommunicationHandler communicationHandler) {
         vc.setCommunicationHandler(communicationHandler);
         communicationHandler.setDisconnectListener(vc);
         communicationHandler.setMessageHandler(vc);
@@ -120,29 +137,11 @@ public class ClientManager implements EndGameListener, MessageListener {
     }
 
     /**
-     * Sets a player as connected
-     *
-     * @param vc the virtual client
-     */
-    private synchronized void playerConnected(VirtualClient vc) {
-        if (controller.isGameStarted()) {
-            Tower team = controller.getPlayerTeam(vc.getIdentifier());
-            if (team != null) {
-                List<VirtualClient> connectedPlayers = connectedPlayersByTeam.get(team);
-                if (forceEndGameLatch != null && connectedPlayers.size() == 0) {
-                    forceEndGameLatch.countDown();
-                }
-                connectedPlayers.add(vc);
-            }
-        }
-    }
-
-    /**
      * Sets a player as disconnected
      *
      * @param vc the virtual client
      */
-    private synchronized void playerDisconnected(VirtualClient vc) {
+    private synchronized void disconnected(VirtualClient vc) {
         if (controller.isGameStarted()) {
             Tower team = controller.getPlayerTeam(vc.getIdentifier());
             if (team != null) {
@@ -152,6 +151,10 @@ public class ClientManager implements EndGameListener, MessageListener {
                     if (!connectedPlayersByTeam.get(teamWithPlayers).isEmpty()) {
                         numOfTeamsWithPlayers++;
                     }
+                }
+                if (numOfTeamsWithPlayers == 0) {
+                    gameEnded();
+                    return;
                 }
                 if (numOfTeamsWithPlayers <= 1) {
                     forceEndGameLatch = new CountDownLatch(1);
@@ -164,26 +167,27 @@ public class ClientManager implements EndGameListener, MessageListener {
                     new Thread(() -> {
                         try {
                             System.out.println("S: waiting for other players");
+                            Tower winnerTeam = connectedPlayersByTeam.keySet().stream().filter(t -> connectedPlayersByTeam.get(t).size() > 0).findFirst().orElse(Tower.GREY);
                             boolean cameBack = forceEndGameLatch.await(60, TimeUnit.SECONDS);
-                            synchronized (this) {
-                                if (server.getState() == ServerState.NORMAL) {
-                                    if (cameBack) {
-                                        for (Tower t : connectedPlayersByTeam.keySet()) {
-                                            for (VirtualClient player : connectedPlayersByTeam.get(t)) {
-                                                controller.notifyCurrentGameStateToPlayer(player.getIdentifier());
+                            synchronized (server) {
+                                synchronized (this) {
+                                    if (server.getState() == ServerState.NORMAL) {
+                                        if (cameBack) {
+                                            for (Tower t : connectedPlayersByTeam.keySet()) {
+                                                for (VirtualClient player : connectedPlayersByTeam.get(t)) {
+                                                    controller.notifyCurrentGameStateToPlayer(player.getIdentifier());
+                                                }
                                             }
-                                        }
-                                        controller.setWaiting(false);
-                                        System.out.println("S: continue game");
-                                    } else {
-                                        for (Tower t : connectedPlayersByTeam.keySet()) {
-                                            for (VirtualClient player : connectedPlayersByTeam.get(t)) {
-                                                player.sendMessage(new Winners(EnumSet.of(t)));
+                                            controller.setWaiting(false);
+                                            System.out.println("S: continue game");
+                                        } else {
+                                            for (VirtualClient player : connectedPlayersByTeam.get(winnerTeam)) {
+                                                player.sendMessage(new Winners(EnumSet.of(winnerTeam)));
                                             }
+                                            gameEnded();
                                         }
-                                        onEndGameEvent(null);
+                                        forceEndGameLatch = null;
                                     }
-                                    forceEndGameLatch = null;
                                 }
                             }
                         } catch (InterruptedException ignored) {
@@ -197,76 +201,116 @@ public class ClientManager implements EndGameListener, MessageListener {
     }
 
     /**
-     * Method called by Virtual Client if the connection is lost. Server removes the thread from execution and remove the
-     * virtual Client bonded with the nickname of disconnected player.
-     * Calls method skip turn on controller.
-     *
-     * @param event of the connection
+     * ends the game
      */
-    @Override
-    public synchronized void onEndGameEvent(EndGameEvent event) {
-        controller.stop();
-        controller.removeEndGameListener();
-        System.out.println("S: ending game");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
-        }
-        for (VirtualClient vc : virtualClients.values()) {
-            controller.removeModelListener(vc);
-            vc.removeAllMessageListeners();
-            vc.stop();
-        }
-        virtualClients.clear();
-        System.out.println("S: disconnected all players");
-        resetGame();
-        if (server.getState() == ServerState.NORMAL && forceEndGameLatch != null) {
-            forceEndGameLatch.countDown();
+    public void gameEnded() {
+        synchronized (server) {
+            synchronized (this) {
+                controller.stop();
+                System.out.println("S: ending game");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ignored) {
+                }
+                for (VirtualClient vc : virtualClients.values()) {
+                    controller.removeModelListener(vc);
+                    vc.removeAllMessageListeners();
+                    vc.setDisconnectListener(event -> {});
+                    vc.stop();
+                }
+                virtualClients.clear();
+                resetGame();
+                if (server.getState() == ServerState.NORMAL && forceEndGameLatch != null) {
+                    forceEndGameLatch.countDown();
+                }
+                System.out.println("S: disconnected all players");
+            }
         }
     }
 
     /**
-     * Disconnects and removes the virtual client from the server if the game has not started.
-     *
-     * @param vc virtual client
+     * This method stops the timer of end game if the player is of the disconnected team.
+     * @param vc of the player
      */
-    public synchronized void onDisconnect(VirtualClient vc) {
-        vc.stop();
+    public synchronized void connected(VirtualClient vc) {
+        if (controller.isGameStarted()) {
+            Tower team = controller.getPlayerTeam(vc.getIdentifier());
+            if (team != null) {
+                List<VirtualClient> connectedPlayers = connectedPlayersByTeam.get(team);
+                connectedPlayers.add(vc);
+                if (forceEndGameLatch != null && connectedPlayers.size() == 1) {
+                    forceEndGameLatch.countDown();
+                } else
+                    controller.notifyCurrentGameStateToPlayer(vc.getIdentifier());
+
+            }
+        }
+    }
+
+    /**
+     * Fills the connected players when they have been assigned a team.
+     */
+    public synchronized void gameStarted() {
+        for (Tower t: Tower.values())
+            connectedPlayersByTeam.computeIfAbsent(t, k -> new LinkedList<>());
+        for (VirtualClient vc : virtualClients.values()) {
+            Tower t = controller.getPlayerTeam(vc.getIdentifier());
+            if (t != null) {
+                connectedPlayersByTeam.get(t).add(vc);
+            }
+        }
+    }
+
+    /**
+     * Invoked when a client disconnects from the server and vice versa.
+     *
+     * @param event the event object
+     */
+    @Override
+    public synchronized void onDisconnect(DisconnectEvent event) {
+        System.out.println("S: client onDisconnect");
+        if (connectedPlayersByTeam.isEmpty() && controller.isGameStarted()) {
+            return;
+        }
+        VirtualClient vc = (VirtualClient) event.getSource();
+        System.out.println("S: client disconnected " + vc.getIdentifier());
         if (!controller.isGameStarted()) {
+            controller.handleDisconnect(vc);
             controller.removeModelListener(vc);
             vc.removeAllMessageListeners();
-            virtualClients.remove(vc.getIdentifier());
             for (Tower team : connectedPlayersByTeam.keySet()) {
                 connectedPlayersByTeam.get(team).remove(vc);
             }
+            virtualClients.remove(vc.getIdentifier());
         } else {
             Tower team = controller.getPlayerTeam(vc.getIdentifier());
-            if (connectedPlayersByTeam.get(team).contains(vc))
-                playerDisconnected(vc);
+            if (connectedPlayersByTeam.get(team).contains(vc)) {
+                disconnected(vc);
+                controller.handleDisconnect(vc);
+            }
         }
+
         System.out.println("S: disconnected player " + vc.getIdentifier());
     }
 
     /**
-     * Method called when a message is received
-     *
-     * @param event of the received message
+     * Invoked when a client reconnects to the server.
+     * @param communicationHandler the communication handler
+     * @param nickname the nickname
      */
-    @Override
-    public synchronized void onMessage(MessageEvent event) {
-        switch (MessageType.retrieveByMessage(event.getMessage())) {
-            case CONNECTED -> playerConnected((VirtualClient) event.getSource());
-            case DISCONNECTED -> onDisconnect((VirtualClient) event.getSource());
-            case START_GAME -> {
-                for (Tower t: Tower.values())
-                    connectedPlayersByTeam.computeIfAbsent(t, k -> new LinkedList<>());
-                for (VirtualClient vc : virtualClients.values()) {
-                    Tower t = controller.getPlayerTeam(vc.getIdentifier());
-                    if (t != null) {
-                        connectedPlayersByTeam.get(t).add(vc);
-                    }
-                }
-            }
+    public synchronized void reconnectPlayer(CommunicationHandler communicationHandler, String nickname) {
+        VirtualClient vc = virtualClients.get(nickname);
+        if (vc != null) {
+            connected(vc);
+            vc.reconnect(communicationHandler);
         }
+    }
+
+    /**
+     * For testing porposes
+     * @param vc the virtual client
+     */
+    public synchronized void addVirtualClient(VirtualClient vc) {
+        virtualClients.put(vc.getIdentifier(), vc);
     }
 }

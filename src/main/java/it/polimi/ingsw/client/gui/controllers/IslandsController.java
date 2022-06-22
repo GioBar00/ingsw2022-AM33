@@ -21,7 +21,7 @@ public class IslandsController implements GUIController {
     /**
      * {@link GUI} instance.
      */
-    GUI gui;
+    private GUI gui;
 
     private final List<AnchorPane> anchors = new LinkedList<>();
 

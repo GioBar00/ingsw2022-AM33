@@ -4,7 +4,7 @@
 
 ## Eriantys
 
-<img src="https://www.craniocreations.it/wp-content/uploads/2021/06/Eriantys_scatola3Dombra.png" width="256px" height="256px"  alt="Eriantys box" style="float: right"/>
+<img src="https://www.craniocreations.it/wp-content/uploads/2021/06/Eriantys_scatola3Dombra.png" width="256px" height="256px" alt="Eriantys box" align="right"/>
 
 The project consists in developing a software version of the board
 game [Eriantys](https://www.craniocreations.it/prodotto/eriantys/).</br>

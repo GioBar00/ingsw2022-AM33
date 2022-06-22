@@ -148,7 +148,6 @@ public abstract class ResourceLoader {
                 audios.put(path, player);
             } else
                 player = audios.get(path);
-            player.seek(player.getStartTime());
             return player;
         } catch (NullPointerException e) {
             System.err.println("Error loading audio: " + path.getPath());

@@ -249,15 +249,13 @@ class ClientMessageTest {
      * Test for SkipTurn message
      */
     @Test
-    void SkipTurnTest(){
+    void DisconnectTest() {
         Disconnected disconnected = new Disconnected();
-        assertTrue(disconnected.isValid());
+        assertFalse(disconnected.isValid());
 
         String line = MessageBuilder.toJson(disconnected);
         Message m = MessageBuilder.fromJson(line);
-        assertEquals(MessageType.DISCONNECTED, MessageType.retrieveByMessage(m));
-        Disconnected mes = (Disconnected)m;
-        assertTrue(mes.isValid());
+        assertEquals(MessageType.INVALID, MessageType.retrieveByMessage(m));
     }
 
     /**

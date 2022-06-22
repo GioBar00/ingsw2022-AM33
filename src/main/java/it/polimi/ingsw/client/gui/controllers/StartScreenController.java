@@ -94,7 +94,9 @@ public class StartScreenController implements GUIController, MuteToggle {
         root.widthProperty().addListener((obs, oldVal, newVal) -> imgTitle.setFitWidth((root.getWidth() / 3 + root.getHeight() / 1.5) / 2));
 
         txtFieldPort.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
+            if (newValue.length() > 5)
+                txtFieldPort.setText(oldValue);
+            else if (!newValue.matches("\\d*")) {
                 txtFieldPort.setText(newValue.replaceAll("\\D", ""));
             }
         });
@@ -154,15 +156,15 @@ public class StartScreenController implements GUIController, MuteToggle {
      */
     private boolean checkFields() {
         if (!txtFieldServer.getText().isEmpty() && !Client.validateServerString(txtFieldServer.getText())) {
-            System.out.println("Server not valid");
+            gui.showAlert("Server not valid.\nInsert a valid ip or domain.");
             return false;
         }
         if (!txtFieldPort.getText().isEmpty() && Integer.parseInt(txtFieldPort.getText()) > 65535) {
-            System.out.println("Port not valid");
+            gui.showAlert("Port not valid.\nInsert a valid port.");
             return false;
         }
         if (txtFieldNickname.getText().isEmpty()) {
-            System.out.println("Nickname not valid");
+            gui.showAlert("The nickname is not valid.");
             return false;
         }
 
@@ -204,6 +206,7 @@ public class StartScreenController implements GUIController, MuteToggle {
     @FXML
     public void handleStartButton() {
         disableCenter(true);
+        txtFieldNickname.setText(txtFieldNickname.getText().trim());
         if (checkFields()) {
             String server = txtFieldServer.getText().isEmpty() ? "localhost" : txtFieldServer.getText();
             int port = txtFieldPort.getText().isEmpty() ? 1234 : Integer.parseInt(txtFieldPort.getText());
@@ -220,7 +223,8 @@ public class StartScreenController implements GUIController, MuteToggle {
             } else
                 System.out.println("Server address and port not valid");
 
-        }
+        } else
+            disableCenter(false);
     }
 
     /**

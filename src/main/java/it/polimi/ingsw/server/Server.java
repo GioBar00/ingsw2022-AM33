@@ -70,7 +70,7 @@ public class Server {
     /**
      * Reset the server to the initial state
      */
-    public void resetGame() {
+    public synchronized void resetGame() {
         System.out.println("S: Resetting game");
         state = ServerState.EMPTY;
     }
@@ -94,10 +94,7 @@ public class Server {
                                 state = ServerState.HANDLING_FIRST;
                                 new Thread(() -> handleFirstPlayer(communicationHandler)).start();
                             }
-                            case HANDLING_FIRST -> new Thread(() -> {
-                                communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_SERVER_UNAVAILABLE));
-                                communicationHandler.stop();
-                            }).start();
+                            case HANDLING_FIRST -> new Thread(() -> communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_SERVER_UNAVAILABLE))).start();
                             case NORMAL -> new Thread(() -> handleNewPlayer(communicationHandler)).start();
                         }
                     }
@@ -130,15 +127,14 @@ public class Server {
                         ChosenGame choice = (ChosenGame) message;
                         clientManager.getController().setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
                         synchronized (this) {
-                            state = ServerState.NORMAL;
                             countDownLatch.countDown();
                             clientManager.addPlayer(communicationHandler, nickname);
+                            state = ServerState.NORMAL;
                         }
                     } else
-                        communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
+                        communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
                 });
                 communicationHandler.setDisconnectListener((e) -> {
-                    communicationHandler.stop();
                     synchronized (this) {
                         state = ServerState.EMPTY;
                     }
@@ -155,15 +151,13 @@ public class Server {
                 }
 
             } else {
-                communicationHandler.stop();
                 synchronized (this) {
                     state = ServerState.EMPTY;
                 }
             }
         } catch (TimeoutException e) {
             if (communicationHandler.isConnected()) {
-                communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
-                communicationHandler.stop();
+                communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
                 synchronized (this) {
                     state = ServerState.EMPTY;
                 }
@@ -187,7 +181,7 @@ public class Server {
                 Login login = (Login) message;
                 nickname.set(login.getNickname());
             } else {
-                communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
+                communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
                 nickname.set(null);
             }
             latch.countDown();
@@ -226,29 +220,26 @@ public class Server {
             if (nickname != null) {
                 communicationHandler.setMessageHandler((m) -> {
                 });
-                if (clientManager.getController().isGameStarted()) {
-                    synchronized (this) {
-                        if (clientManager.getVirtualClient(nickname) != null && !clientManager.getVirtualClient(nickname).isConnected()) {
-                            clientManager.getVirtualClient(nickname).reconnect(communicationHandler);
+                synchronized (this) {
+                    synchronized (clientManager) {
+                        if (clientManager.getController().isGameStarted()) {
+                            if (clientManager.getVirtualClient(nickname) != null && !clientManager.getVirtualClient(nickname).isConnected()) {
+                                clientManager.reconnectPlayer(communicationHandler, nickname);
+                            } else {
+                                communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
+                            }
+                        } else if (clientManager.getVirtualClient(nickname) != null) {
+                            communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE));
                         } else {
-                            communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
-                            communicationHandler.stop();
+                            if (!clientManager.addPlayer(communicationHandler, nickname)) {
+                                communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
+                            }
                         }
                     }
-                } else if (clientManager.getVirtualClient(nickname) != null) {
-                    communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE));
-                    communicationHandler.stop();
-                } else {
-                    if (!clientManager.addPlayer(communicationHandler, nickname)) {
-                        communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
-                        communicationHandler.stop();
-                    }
                 }
-            } else
-                communicationHandler.stop();
+            }
         } catch (TimeoutException e) {
-            communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
-            communicationHandler.stop();
+            communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
         }
     }
 
