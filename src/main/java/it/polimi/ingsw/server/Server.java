@@ -94,10 +94,7 @@ public class Server {
                                 state = ServerState.HANDLING_FIRST;
                                 new Thread(() -> handleFirstPlayer(communicationHandler)).start();
                             }
-                            case HANDLING_FIRST -> new Thread(() -> {
-                                communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_SERVER_UNAVAILABLE));
-                                communicationHandler.stop();
-                            }).start();
+                            case HANDLING_FIRST -> new Thread(() -> communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_SERVER_UNAVAILABLE))).start();
                             case NORMAL -> new Thread(() -> handleNewPlayer(communicationHandler)).start();
                         }
                     }
@@ -135,10 +132,9 @@ public class Server {
                             state = ServerState.NORMAL;
                         }
                     } else
-                        communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
+                        communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
                 });
                 communicationHandler.setDisconnectListener((e) -> {
-                    communicationHandler.stop();
                     synchronized (this) {
                         state = ServerState.EMPTY;
                     }
@@ -155,15 +151,13 @@ public class Server {
                 }
 
             } else {
-                communicationHandler.stop();
                 synchronized (this) {
                     state = ServerState.EMPTY;
                 }
             }
         } catch (TimeoutException e) {
             if (communicationHandler.isConnected()) {
-                communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
-                communicationHandler.stop();
+                communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
                 synchronized (this) {
                     state = ServerState.EMPTY;
                 }
@@ -187,7 +181,7 @@ public class Server {
                 Login login = (Login) message;
                 nickname.set(login.getNickname());
             } else {
-                communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
+                communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
                 nickname.set(null);
             }
             latch.countDown();
@@ -232,25 +226,20 @@ public class Server {
                             if (clientManager.getVirtualClient(nickname) != null && !clientManager.getVirtualClient(nickname).isConnected()) {
                                 clientManager.reconnectPlayer(communicationHandler, nickname);
                             } else {
-                                communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
-                                communicationHandler.stop();
+                                communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
                             }
                         } else if (clientManager.getVirtualClient(nickname) != null) {
-                            communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE));
-                            communicationHandler.stop();
+                            communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE));
                         } else {
                             if (!clientManager.addPlayer(communicationHandler, nickname)) {
-                                communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
-                                communicationHandler.stop();
+                                communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
                             }
                         }
                     }
                 }
-            } else
-                communicationHandler.stop();
+            }
         } catch (TimeoutException e) {
-            communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
-            communicationHandler.stop();
+            communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
         }
     }
 

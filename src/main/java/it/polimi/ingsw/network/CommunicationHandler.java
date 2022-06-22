@@ -291,33 +291,37 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     public synchronized void stop() {
         if (!stopped) {
             stopped = true;
-            new Thread(this::stopWhenEmptyQueue).start();
+            disconnectListener = event -> {
+            };
+            System.out.println("CH : stop");
+            timer.cancel();
+            timer.purge();
+            queue.add(new IgnoreMessage());
+            try {
+                if (socket != null) socket.close();
+                if (reader != null) reader.close();
+                if (writer != null) writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     /**
-     * Stops the message exchange handler when the queue is empty.
+     * Sends the last message to the client and stops the communication handler.
+     *
+     * @param message the message to send
      */
-    private void stopWhenEmptyQueue() {
-        synchronized (this) {
-            try {
-                while (!queue.isEmpty())
-                    wait();
-            } catch (InterruptedException ignored) {
-            }
-        }
-        disconnectListener = null;
-        System.out.println("CH : stop");
-        timer.cancel();
-        timer.purge();
-        queue.add(new IgnoreMessage());
+    public synchronized void sendLastMessage(Message message) {
+        disconnectListener = event -> {
+        };
+        stopped = true;
         try {
-            if (socket != null) socket.close();
-            if (reader != null) reader.close();
-            if (writer != null) writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            MessageExchange.sendMessage(message, writer);
+        } catch (IOException ignored) {
         }
+        stopped = false;
+        stop();
     }
 
     /**

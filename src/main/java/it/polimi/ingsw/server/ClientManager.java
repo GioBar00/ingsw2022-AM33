@@ -272,7 +272,6 @@ public class ClientManager implements DisconnectListener {
             return;
         }
         VirtualClient vc = (VirtualClient) event.getSource();
-        vc.stop();
         if (!controller.isGameStarted()) {
             controller.handleDisconnect(vc);
             controller.removeModelListener(vc);
