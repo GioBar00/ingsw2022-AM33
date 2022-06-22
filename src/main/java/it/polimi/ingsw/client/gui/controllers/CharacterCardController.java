@@ -70,7 +70,15 @@ public class CharacterCardController implements GUIController {
     @FXML
     private AnchorPane anchorPaneCharacter;
     @FXML
-    private AnchorPane anchorPanePawn;
+    private AnchorPane anchorPanePawnGreen;
+    @FXML
+    private AnchorPane anchorPanePawnRed;
+    @FXML
+    private AnchorPane anchorPanePawnMagenta;
+    @FXML
+    private AnchorPane anchorPanePawnBlue;
+    @FXML
+    private AnchorPane anchorPanePawnYellow;
     @FXML
     private ImageView characterImg;
     @FXML
@@ -89,7 +97,7 @@ public class CharacterCardController implements GUIController {
     private Label redLbl;
 
     @FXML
-    private Button pinkBtn;
+    private Button magentaBtn;
     @FXML
     private Label pinkLbl;
 
@@ -106,6 +114,8 @@ public class CharacterCardController implements GUIController {
 
     @FXML
     private AnchorPane anchorPaneCoin;
+    @FXML
+    private AnchorPane anchorPaneEndEffect;
 
 
     /**
@@ -119,13 +129,95 @@ public class CharacterCardController implements GUIController {
     }
 
     /**
+     * This method is used to initialize the controller and stage.
+     */
+    @Override
+    public void init() {
+        buttons = new EnumMap<>(StudentColor.class);
+        labels = new EnumMap<>(StudentColor.class);
+        buttons.put(StudentColor.GREEN, greenBtn);
+        labels.put(StudentColor.GREEN, greenLbl);
+        buttons.put(StudentColor.RED, redBtn);
+        labels.put(StudentColor.RED, redLbl);
+        buttons.put(StudentColor.BLUE, blueBtn);
+        labels.put(StudentColor.BLUE, blueLbl);
+        buttons.put(StudentColor.MAGENTA, magentaBtn);
+        labels.put(StudentColor.MAGENTA, pinkLbl);
+        buttons.put(StudentColor.YELLOW, yellowBtn);
+        labels.put(StudentColor.YELLOW, yellowLbl);
+
+
+        for (StudentColor s : StudentColor.values()) {
+            setNotUsable(buttons.get(s), labels.get(s));
+        }
+        GUIUtils.bindSize(anchorPaneCharacter, characterBtn);
+        GUIUtils.bindSize(anchorPaneCharacter, characterImg);
+
+        GUIUtils.addToPaneCenterKeepRatio(anchorPanePawnBlue, blueBtn, 1.0);
+        GUIUtils.bindSize(blueBtn, imgViewBlue);
+        GUIUtils.addToPaneCenterKeepRatio(anchorPanePawnGreen, greenBtn, 1.0);
+        GUIUtils.bindSize(greenBtn, imgViewGreen);
+        GUIUtils.addToPaneCenterKeepRatio(anchorPanePawnRed, redBtn, 1.0);
+        GUIUtils.bindSize(redBtn, imgViewRed);
+        GUIUtils.addToPaneCenterKeepRatio(anchorPanePawnYellow, yellowBtn, 1.0);
+        GUIUtils.bindSize(yellowBtn, imgViewYellow);
+        GUIUtils.addToPaneCenterKeepRatio(anchorPanePawnMagenta, magentaBtn, 1.0);
+        GUIUtils.bindSize(magentaBtn, imgViewMagenta);
+
+        GUIUtils.bindSize(anchorPaneCoin, imgViewCoin);
+        GUIUtils.bindSize(anchorPaneEndEffect, endEffectBtn);
+        GUIUtils.bindSize(anchorPaneEndEffect, endEffectImg);
+
+        root.getChildren().clear();
+        GUIUtils.addToPaneCenterKeepRatio(root, anchorPaneCharacter, 685.0 / 1039);
+
+
+    }
+
+    /**
+     * This method is used to set the parent of the controller.
+     *
+     * @param root the parent of the controller.
+     */
+    @Override
+    public void setRootPane(Pane root) {
+        this.root = root;
+    }
+
+    /**
+     * This method returns the node of the controller.
+     *
+     * @return the node of the controller.
+     */
+    @Override
+    public Pane getRootPane() {
+        return root;
+    }
+
+    /**
+     * This method sets the index of the card.
+     *
+     * @param index the index.
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    /**
+     * This method returns the index of the card.
+     *
+     * @return the index of the card.
+     */
+    public Integer getIndex() {
+        return index;
+    }
+
+    /**
      * Sets and shows the details on a character card.
      *
      * @param view {@link CharacterCardView} of the card.
      */
     public void setCharacterView(CharacterCardView view) {
-
-
         GUIUtils.resetButton(characterBtn);
 
         canEndEffect = view.canEndEffect();
@@ -216,95 +308,6 @@ public class CharacterCardController implements GUIController {
         endEffectImg.setVisible(false);
         endEffectBtn.setVisible(false);
         GUIUtils.resetButton(endEffectBtn);
-    }
-
-    /**
-     * This method is used to initialize the controller and stage.
-     */
-    @Override
-    public void init() {
-        buttons = new EnumMap<>(StudentColor.class);
-        labels = new EnumMap<>(StudentColor.class);
-        buttons.put(StudentColor.GREEN, greenBtn);
-        labels.put(StudentColor.GREEN, greenLbl);
-        buttons.put(StudentColor.RED, redBtn);
-        labels.put(StudentColor.RED, redLbl);
-        buttons.put(StudentColor.BLUE, blueBtn);
-        labels.put(StudentColor.BLUE, blueLbl);
-        buttons.put(StudentColor.MAGENTA, pinkBtn);
-        labels.put(StudentColor.MAGENTA, pinkLbl);
-        buttons.put(StudentColor.YELLOW, yellowBtn);
-        labels.put(StudentColor.YELLOW, yellowLbl);
-
-
-        for (StudentColor s : StudentColor.values()) {
-            setNotUsable(buttons.get(s), labels.get(s));
-        }
-        GUIUtils.bindSize(anchorPaneCharacter, characterBtn);
-        GUIUtils.bindSize(anchorPaneCharacter, characterImg);
-
-        GUIUtils.bindSize(anchorPanePawn, blueBtn);
-        GUIUtils.bindSize(anchorPanePawn, blueLbl);
-        GUIUtils.bindSize(anchorPanePawn, imgViewBlue);
-        GUIUtils.bindSize(anchorPanePawn, redBtn);
-        GUIUtils.bindSize(anchorPanePawn, redLbl);
-        GUIUtils.bindSize(anchorPanePawn, imgViewRed);
-        GUIUtils.bindSize(anchorPanePawn, greenBtn);
-        GUIUtils.bindSize(anchorPanePawn, greenLbl);
-        GUIUtils.bindSize(anchorPanePawn, imgViewGreen);
-        GUIUtils.bindSize(anchorPanePawn, pinkBtn);
-        GUIUtils.bindSize(anchorPanePawn, pinkLbl);
-        GUIUtils.bindSize(anchorPanePawn, imgViewMagenta);
-        GUIUtils.bindSize(anchorPanePawn, yellowBtn);
-        GUIUtils.bindSize(anchorPanePawn, yellowLbl);
-        GUIUtils.bindSize(anchorPanePawn, imgViewYellow);
-
-        GUIUtils.bindSize(anchorPaneCoin, imgViewCoin);
-        GUIUtils.bindSize(anchorPaneCoin, endEffectBtn);
-        GUIUtils.bindSize(anchorPaneCoin, endEffectImg);
-
-        root.getChildren().clear();
-        GUIUtils.addToPaneCenterKeepRatio(root, anchorPaneCharacter, 685.0 / 1039);
-
-
-    }
-
-    /**
-     * This method is used to set the parent of the controller.
-     *
-     * @param root the parent of the controller.
-     */
-    @Override
-    public void setRootPane(Pane root) {
-        this.root = root;
-    }
-
-    /**
-     * This method returns the node of the controller.
-     *
-     * @return the node of the controller.
-     */
-    @Override
-    public Pane getRootPane() {
-        return root;
-    }
-
-    /**
-     * This method sets the index of the card.
-     *
-     * @param index the index.
-     */
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    /**
-     * This method returns the index of the card.
-     *
-     * @return the index of the card.
-     */
-    public Integer getIndex() {
-        return index;
     }
 
 }

@@ -152,6 +152,10 @@ public class ClientManager implements DisconnectListener {
                         numOfTeamsWithPlayers++;
                     }
                 }
+                if (numOfTeamsWithPlayers == 0) {
+                    gameEnded();
+                    return;
+                }
                 if (numOfTeamsWithPlayers <= 1) {
                     forceEndGameLatch = new CountDownLatch(1);
                     for (Tower t : connectedPlayersByTeam.keySet()) {
@@ -233,10 +237,12 @@ public class ClientManager implements DisconnectListener {
             Tower team = controller.getPlayerTeam(vc.getIdentifier());
             if (team != null) {
                 List<VirtualClient> connectedPlayers = connectedPlayersByTeam.get(team);
-                if (forceEndGameLatch != null && connectedPlayers.size() == 0) {
-                    forceEndGameLatch.countDown();
-                }
                 connectedPlayers.add(vc);
+                if (forceEndGameLatch != null && connectedPlayers.size() == 1) {
+                    forceEndGameLatch.countDown();
+                } else
+                    controller.notifyCurrentGameStateToPlayer(vc.getIdentifier());
+
             }
         }
     }
@@ -262,6 +268,9 @@ public class ClientManager implements DisconnectListener {
      */
     @Override
     public synchronized void onDisconnect(DisconnectEvent event) {
+        if (connectedPlayersByTeam.isEmpty()) {
+            return;
+        }
         VirtualClient vc = (VirtualClient) event.getSource();
         vc.stop();
         if (!controller.isGameStarted()) {

@@ -130,9 +130,9 @@ public class Server {
                         ChosenGame choice = (ChosenGame) message;
                         clientManager.getController().setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
                         synchronized (this) {
-                            state = ServerState.NORMAL;
                             countDownLatch.countDown();
                             clientManager.addPlayer(communicationHandler, nickname);
+                            state = ServerState.NORMAL;
                         }
                     } else
                         communicationHandler.sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));

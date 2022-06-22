@@ -174,6 +174,11 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                 }
                 if (m != null && MessageType.retrieveByMessage(m) != MessageType.IGNORE)
                     MessageExchange.sendMessage(m, writer);
+                if (queue.isEmpty()) {
+                    synchronized (this) {
+                        notify();
+                    }
+                }
             }
             System.out.println("CH: Stop handle output");
             notifyDisconnectIfNotAlreadyDone();
@@ -286,11 +291,26 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     public synchronized void stop() {
         if (!stopped) {
             stopped = true;
-            System.out.println("CH : stop");
-            timer.cancel();
-            timer.purge();
-            queue.add(new IgnoreMessage());
+            new Thread(this::stopWhenEmptyQueue).start();
         }
+    }
+
+    /**
+     * Stops the message exchange handler when the queue is empty.
+     */
+    private void stopWhenEmptyQueue() {
+        synchronized (this) {
+            try {
+                while (!queue.isEmpty())
+                    wait();
+            } catch (InterruptedException ignored) {
+            }
+        }
+        disconnectListener = null;
+        System.out.println("CH : stop");
+        timer.cancel();
+        timer.purge();
+        queue.add(new IgnoreMessage());
         try {
             if (socket != null) socket.close();
             if (reader != null) reader.close();

@@ -77,7 +77,6 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
         setCommunicationHandler(ch);
         ch.setDisconnectListener(this);
         ch.setMessageHandler(this);
-        notifyMessageListeners(new MessageEvent(this, new Connected()));
     }
 
     /**
