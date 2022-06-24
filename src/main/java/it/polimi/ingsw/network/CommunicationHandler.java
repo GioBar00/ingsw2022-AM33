@@ -290,8 +290,10 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
         if (!stopped) {
             stopped = true;
             System.out.println("CH : stop");
-            timer.cancel();
-            timer.purge();
+            if (timer != null) {
+                timer.cancel();
+                timer.purge();
+            }
             queue.add(new IgnoreMessage());
             try {
                 if (socket != null) socket.close();
