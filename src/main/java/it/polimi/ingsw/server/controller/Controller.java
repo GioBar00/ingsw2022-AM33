@@ -472,6 +472,7 @@ public class Controller implements Runnable, MessageListener {
                 }
             } catch (InterruptedException ignored) {
             }
+            System.out.println("CONTR: STOPPED!!");
         }
     }
 

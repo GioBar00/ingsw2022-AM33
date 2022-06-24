@@ -289,6 +289,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     public synchronized void stop() {
         if (!stopped) {
             stopped = true;
+            disconnectListener = e -> {};
             System.out.println("CH : stop");
             if (timer != null) {
                 timer.cancel();

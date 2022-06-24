@@ -196,15 +196,17 @@ public class Server {
         try {
             if (latch.await(10, TimeUnit.SECONDS) && nickname.get() != null) {
                 communicationHandler.setMessageHandler(null);
+                communicationHandler.setDisconnectListener(e -> {});
                 return nickname.get();
             } else if (nickname.get() == null) {
                 communicationHandler.setMessageHandler(null);
+                communicationHandler.setDisconnectListener(e -> {});
                 return null;
             }
         } catch (InterruptedException ignored) {
         }
         communicationHandler.setMessageHandler(null);
-        communicationHandler.setDisconnectListener(null);
+        communicationHandler.setDisconnectListener(e -> {});
         throw new TimeoutException();
     }
 

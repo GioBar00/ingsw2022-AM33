@@ -36,7 +36,7 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
     /**
      * The message exchange handler used to send and receive messages to and from the client
      */
-    private final CommunicationHandler communicationHandler;
+    private CommunicationHandler communicationHandler;
 
     /**
      * The interface for the user
@@ -58,7 +58,6 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
      */
     public Client(UI ui) {
         queue = new LinkedBlockingQueue<>();
-        this.communicationHandler = new CommunicationHandler(this);
         userInterface = ui;
     }
 
@@ -103,6 +102,7 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
         try {
             Socket socket = new Socket();
             socket.connect(serverAddress, 5 * 1000);
+            communicationHandler = new CommunicationHandler(this);
             communicationHandler.setSocket(socket);
             communicationHandler.setDisconnectListener(this);
             communicationHandler.start();
