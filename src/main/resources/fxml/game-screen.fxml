@@ -131,7 +131,7 @@
                                                 <Font name="Sono Medium" size="18.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="lblGamePhase" layoutX="10.0" layoutY="170.0" minHeight="0.0" minWidth="0.0" prefHeight="69.0" prefWidth="383.0" text="Planning Phase" wrapText="true">
+                                          <Label fx:id="lblGamePhase" layoutX="10.0" layoutY="170.0" minHeight="0.0" minWidth="0.0" text="Planning Phase" wrapText="true">
                                              <font>
                                                 <Font name="Sono Medium" size="18.0" />
                                              </font>

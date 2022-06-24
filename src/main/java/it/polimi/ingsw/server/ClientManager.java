@@ -179,6 +179,9 @@ public class ClientManager implements DisconnectListener {
                                                 }
                                             }
                                             controller.setWaiting(false);
+                                            if (connectedPlayersByTeam.values().stream().noneMatch(x -> x.contains(virtualClients.get(controller.getCurrentPlayer())))) {
+                                                controller.handleDisconnect(virtualClients.get(controller.getCurrentPlayer()));
+                                            }
                                             System.out.println("S: continue game");
                                         } else {
                                             for (VirtualClient player : connectedPlayersByTeam.get(winnerTeam)) {
@@ -302,8 +305,8 @@ public class ClientManager implements DisconnectListener {
     public synchronized void reconnectPlayer(CommunicationHandler communicationHandler, String nickname) {
         VirtualClient vc = virtualClients.get(nickname);
         if (vc != null) {
-            connected(vc);
             vc.reconnect(communicationHandler);
+            connected(vc);
         }
     }
 

@@ -394,6 +394,8 @@ public class Controller implements Runnable, MessageListener {
 
             default -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
         }
+        if (model.getGameState() == GameState.ENDED)
+            clientManager.gameEnded();
     }
 
     /**
@@ -497,7 +499,7 @@ public class Controller implements Runnable, MessageListener {
      *
      * @param identifier the nickname of the player.
      */
-    public void notifyCurrentGameStateToPlayer(String identifier) {
+    public synchronized void notifyCurrentGameStateToPlayer(String identifier) {
         if (isInstantiated())
             model.notifyCurrentGameStateToPlayer(identifier);
     }

@@ -106,7 +106,7 @@ public class GameController implements GUIController, MuteToggle {
 
     private final EnumMap<GamePhase, String> gamePhaseMessageMap = new EnumMap<>(Map.of(
             GamePhase.PLANNING, "Planning",
-            GamePhase.MOVE_STUDENTS, "Move 3 Students",
+            GamePhase.MOVE_STUDENTS, "Move Students",
             GamePhase.MOVE_MOTHER_NATURE, "Move Mother Nature",
             GamePhase.CHOOSE_CLOUD, "Choose a Cloud"
     ));

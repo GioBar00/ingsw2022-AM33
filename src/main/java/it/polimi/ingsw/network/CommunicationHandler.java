@@ -181,9 +181,10 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                 }
             }
             System.out.println("CH: Stop handle output");
-            notifyDisconnectIfNotAlreadyDone();
+            notifyDisconnectAndStop();
         } catch (IOException e) {
             System.out.println("CH : handleOutput IOException");
+            notifyDisconnectAndStop();
         }
     }
 
@@ -206,6 +207,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
             notifyDisconnectAndStop();
         } catch (IOException e) {
             System.out.println("CH : handleInput IOException");
+            notifyDisconnectAndStop();
         }
     }
 
@@ -288,8 +290,10 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
         if (!stopped) {
             stopped = true;
             System.out.println("CH : stop");
-            timer.cancel();
-            timer.purge();
+            if (timer != null) {
+                timer.cancel();
+                timer.purge();
+            }
             queue.add(new IgnoreMessage());
             try {
                 if (socket != null) socket.close();
