@@ -22,11 +22,13 @@ import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
 import it.polimi.ingsw.server.model.enums.GameState;
+import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.*;
 
@@ -459,14 +461,7 @@ public class GUI extends Application implements UI {
                     Platform.runLater(() -> gameController.processPlayAssistantCard(((PlayAssistantCard) message).getPlayableAssistantCards()));
             case CHOOSE_CLOUD -> Platform.runLater(() -> gameController.processChooseCloud((ChooseCloud) message));
             case CHOOSE_ISLAND -> Platform.runLater(() -> gameController.processChooseIsland((ChooseIsland) message));
-            case CHOOSE_STUDENT_COLOR -> Platform.runLater(() -> {
-                Stage chooseColor = new Stage();
-                ChooseColorController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_COLOR, this);
-                controller.init();
-                controller.setAvailableButtons(((ChooseStudentColor) message).getAvailableStudentColors());
-                controller.loadScene(chooseColor);
-                chooseColor.show();
-            });
+            case CHOOSE_STUDENT_COLOR -> Platform.runLater(() -> handleChooseColor(((ChooseStudentColor) message).getAvailableStudentColors()));
             case MOVE_MOTHER_NATURE ->
                     Platform.runLater(() -> gameController.processMoveMotherNature((MoveMotherNature) message));
             case MOVE_STUDENT -> Platform.runLater(() -> handleMoveStudent((MoveStudent) message));
@@ -475,6 +470,22 @@ public class GUI extends Application implements UI {
             case SWAP_STUDENTS -> Platform.runLater(() -> handleSwap((SwapStudents) message));
         }
     }
+
+    /**
+     * This method handles a {@link ChooseStudentColor} request.
+     *
+     * @param colors an enum-set of available colors.
+     */
+    private void handleChooseColor(EnumSet<StudentColor> colors) {
+        Stage chooseColor = new Stage();
+        ChooseColorController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_COLOR, this);
+        controller.init();
+        controller.setAvailableButtons(colors);
+        controller.loadScene(chooseColor);
+        chooseColor.initStyle(StageStyle.UNDECORATED);
+        chooseColor.show();
+    }
+
 
     /**
      * This method handles a {@link MoveStudent} request.

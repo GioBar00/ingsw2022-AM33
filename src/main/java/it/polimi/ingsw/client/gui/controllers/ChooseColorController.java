@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.actions.ChosenStudentColor;
+import it.polimi.ingsw.network.messages.actions.requests.ChooseStudentColor;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -46,6 +47,10 @@ public class ChooseColorController implements GUIController {
 
     private Map<StudentColor, Button> buttonsMap;
 
+    /**
+     * This boolean indicates if the player has choose a color
+     */
+    private boolean hasChoose;
 
     /**
      * This method is used to set the GUI of the controller.
@@ -62,6 +67,7 @@ public class ChooseColorController implements GUIController {
      */
     @Override
     public void init() {
+        hasChoose = false;
         buttonsMap = new HashMap<>();
         blueBtn.setOnAction(buildAction(StudentColor.BLUE));
         redBtn.setOnAction(buildAction(StudentColor.RED));
@@ -108,6 +114,7 @@ public class ChooseColorController implements GUIController {
             btn.setDisable(false);
             btn.setOpacity(1);
             stdNotAvailable.remove(s);
+            hasChoose = true;
         }
 
         for (StudentColor s : stdNotAvailable) {
@@ -152,5 +159,14 @@ public class ChooseColorController implements GUIController {
         stage.setWidth(500);
         stage.setResizable(false);
         stage.setAlwaysOnTop(true);
+    }
+
+    /**
+     * Returns if the player has chosen a color
+     *
+     * @return true if the player has chosen a color, false otherwise.
+     */
+    public boolean isHasChoose() {
+        return hasChoose;
     }
 }

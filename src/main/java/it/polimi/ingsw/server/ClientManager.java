@@ -275,9 +275,10 @@ public class ClientManager implements DisconnectListener {
         VirtualClient vc = (VirtualClient) event.getSource();
         System.out.println("S: client disconnected " + vc.getIdentifier());
         if (!controller.isGameStarted()) {
-            controller.handleDisconnect(vc);
-            controller.removeModelListener(vc);
             vc.removeAllMessageListeners();
+            vc.setDisconnectListener(event1 -> {});
+            controller.removeModelListener(vc);
+            controller.handleDisconnect(vc);
             for (Tower team : connectedPlayersByTeam.keySet()) {
                 connectedPlayersByTeam.get(team).remove(vc);
             }
