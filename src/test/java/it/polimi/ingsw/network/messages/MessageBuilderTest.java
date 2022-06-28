@@ -1,13 +1,12 @@
 package it.polimi.ingsw.network.messages;
 
-import it.polimi.ingsw.network.messages.client.ChosenGame;
-import it.polimi.ingsw.network.messages.client.StartGame;
-import it.polimi.ingsw.server.model.enums.GameMode;
-import it.polimi.ingsw.server.model.enums.GamePreset;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests {@link MessageBuilder} class.
+ */
 public class MessageBuilderTest {
     /**
      * Serializes and deserializes a message

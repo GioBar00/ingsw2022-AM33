@@ -14,12 +14,17 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests {@link GameModelExpert} class.
+ */
 class GameModelExpertTest {
 
     PlayerConvertor pC = new PlayerConvertor();
 
     /**
-     * Tests the simulation of an expert game. Stress out the correct
+     * Simulates an expert game match.
+     * Inserts the player, each player plays a card and the first player plays his round.
+     *
      * @param preset Game Presets
      */
     @ParameterizedTest
@@ -54,7 +59,7 @@ class GameModelExpertTest {
         ArrayList<AssistantCard> played = new ArrayList<>(preset.getPlayersNumber());
         ArrayList<AssistantCard> available = new ArrayList<>(Arrays.asList(AssistantCard.values()));
         for (int i = 0; i < preset.getPlayersNumber(); i++) {
-           do {
+            do {
                 int sel = ThreadLocalRandom.current().nextInt(0, available.size());
                 if (!played.contains(available.get(sel))) {
                     assertTrue(m.playAssistantCard(available.get(sel)));
@@ -117,8 +122,10 @@ class GameModelExpertTest {
             m.tryRemoveStudentsFromHalls(StudentColor.BLUE, 3);
             for (Player p : gameModel.playersManager.getPlayers()) {
                 switch (oldValues.get(p)) {
-                    case 0, 1, 3 -> assertEquals(0, gameModel.playersManager.getSchoolBoard(p).getStudentsInHall(StudentColor.BLUE));
-                    default -> assertEquals(oldValues.get(p) - 3, gameModel.playersManager.getSchoolBoard(p).getStudentsInHall(StudentColor.BLUE));
+                    case 0, 1, 3 ->
+                            assertEquals(0, gameModel.playersManager.getSchoolBoard(p).getStudentsInHall(StudentColor.BLUE));
+                    default ->
+                            assertEquals(oldValues.get(p) - 3, gameModel.playersManager.getSchoolBoard(p).getStudentsInHall(StudentColor.BLUE));
                 }
             }
 
@@ -144,6 +151,9 @@ class GameModelExpertTest {
         }
     }
 
+    /**
+     * Check the implementation of {@link Herbalist} card effect.
+     */
     @Test
     void returnBlocksToHerbalist() {
         GameModel gameModel = new GameModel(GamePreset.THREE);

@@ -10,6 +10,9 @@ import java.util.EnumSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests {@link SchoolBoard} class.
+ */
 class SchoolBoardTest {
 
     /**
@@ -18,12 +21,12 @@ class SchoolBoardTest {
      */
     @Test
     void removeTowers() {
-        SchoolBoard s = new SchoolBoard(300, Tower.WHITE,10);
+        SchoolBoard s = new SchoolBoard(300, Tower.WHITE, 10);
         assertTrue(s.removeTowers(1));
-        assertEquals(9,s.getNumTowers());
+        assertEquals(9, s.getNumTowers());
         assertTrue(s.removeTowers(8));
         assertFalse(s.removeTowers(2));
-        assertEquals(0,s.getNumTowers());
+        assertEquals(0, s.getNumTowers());
     }
 
     /**
@@ -34,10 +37,10 @@ class SchoolBoardTest {
      */
     @Test
     void addTowers() {
-        SchoolBoard s = new SchoolBoard(10,Tower.BLACK,0);
+        SchoolBoard s = new SchoolBoard(10, Tower.BLACK, 0);
         assertFalse(s.addTowers(1));
 
-        SchoolBoard n = new SchoolBoard(10,Tower.BLACK, 10);
+        SchoolBoard n = new SchoolBoard(10, Tower.BLACK, 10);
         assertEquals(10, n.getNumTowers());
         assertFalse(n.removeTowers(10));
         assertTrue(n.addTowers(1));
@@ -48,11 +51,11 @@ class SchoolBoardTest {
         assertEquals(4, n.getNumTowers());
 
 
-        SchoolBoard m =new SchoolBoard(300,Tower.BLACK,30);
-        assertEquals(30,m.getNumTowers());
-        assertFalse( m.removeTowers(30));
+        SchoolBoard m = new SchoolBoard(300, Tower.BLACK, 30);
+        assertEquals(30, m.getNumTowers());
+        assertFalse(m.removeTowers(30));
 
-        for(int i = 0; i < 30; i++) {
+        for (int i = 0; i < 30; i++) {
             assertEquals(i, m.getNumTowers());
             assertTrue(m.addTowers(1));
         }
@@ -67,17 +70,17 @@ class SchoolBoardTest {
      * professor that is not present called in a remove
      */
     @Test
-    void ProfessorsTest(){
-        SchoolBoard s = new SchoolBoard(20,Tower.GREY,10);
+    void ProfessorsTest() {
+        SchoolBoard s = new SchoolBoard(20, Tower.GREY, 10);
         EnumSet<StudentColor> profs;
         profs = s.getProfessors();
         //Check add and get
-        assertEquals(0,profs.size());
+        assertEquals(0, profs.size());
         s.addProfessor(StudentColor.BLUE);
         profs = s.getProfessors();
         assertTrue(profs.contains(StudentColor.BLUE));
-        for(StudentColor t : StudentColor.values()){
-            if(!t.equals(StudentColor.BLUE))
+        for (StudentColor t : StudentColor.values()) {
+            if (!t.equals(StudentColor.BLUE))
                 assertFalse(profs.contains(t));
         }
         assertEquals(1, profs.size());
@@ -91,11 +94,11 @@ class SchoolBoardTest {
         //Check remove and get
         s.removeProfessor(StudentColor.BLUE);
         profs = s.getProfessors();
-        assertEquals(1,profs.size());
+        assertEquals(1, profs.size());
         s.removeProfessor(StudentColor.RED);
         profs = s.getProfessors();
-        assertEquals(0,profs.size());
-        for(StudentColor t : StudentColor.values()){
+        assertEquals(0, profs.size());
+        for (StudentColor t : StudentColor.values()) {
             assertFalse(profs.contains(t));
         }
         assertFalse(s.removeProfessor(StudentColor.BLUE));
@@ -108,19 +111,19 @@ class SchoolBoardTest {
      * removeFromEntrance
      */
     @Test
-    void EntranceTest(){
-        SchoolBoard s = new SchoolBoard(20,Tower.GREY,10);
+    void EntranceTest() {
+        SchoolBoard s = new SchoolBoard(20, Tower.GREY, 10);
         //Check addInEntrance and getStudentsInEntrance
-        for(int i =0 ; i < 3; i++){
-         assertTrue(s.addToEntrance(StudentColor.BLUE));
-         assertEquals(StudentColor.BLUE, s.getStudentInEntrance(i));
+        for (int i = 0; i < 3; i++) {
+            assertTrue(s.addToEntrance(StudentColor.BLUE));
+            assertEquals(StudentColor.BLUE, s.getStudentInEntrance(i));
         }
 
-        ArrayList<StudentColor>entrance = s.getStudentsInEntrance();
+        ArrayList<StudentColor> entrance = s.getStudentsInEntrance();
         assertTrue(entrance.contains(StudentColor.BLUE));
         assertFalse(entrance.contains(StudentColor.GREEN));
         assertFalse(entrance.contains(StudentColor.YELLOW));
-        assertEquals(-1 ,entrance.indexOf(StudentColor.GREEN));
+        assertEquals(-1, entrance.indexOf(StudentColor.GREEN));
         assertEquals(20, entrance.size());
         assertTrue(s.moveToHall(2));
         assertTrue(s.addToEntrance(StudentColor.GREEN));
@@ -130,7 +133,7 @@ class SchoolBoardTest {
         assertEquals(StudentColor.GREEN, s.getStudentInEntrance(2));
 
         //Check removeFromEntrance
-        SchoolBoard m = new SchoolBoard(2,Tower.GREY,10);
+        SchoolBoard m = new SchoolBoard(2, Tower.GREY, 10);
         assertTrue(m.addToEntrance(StudentColor.BLUE));
         assertTrue(m.addToEntrance(StudentColor.MAGENTA));
 
@@ -138,7 +141,7 @@ class SchoolBoardTest {
         assertFalse(m.getStudentsInEntrance().contains(StudentColor.BLUE));
         assertTrue(m.removeFromEntrance(0));
         assertNull(m.getStudentsInEntrance().get(0));
-        assertEquals( StudentColor.MAGENTA, m.getStudentsInEntrance().get(1));
+        assertEquals(StudentColor.MAGENTA, m.getStudentsInEntrance().get(1));
         m.getStudentsInEntrance().add(StudentColor.GREEN);
         assertTrue(m.removeFromEntrance(1));
         assertFalse(m.getStudentsInEntrance().contains(StudentColor.BLUE));
@@ -147,40 +150,40 @@ class SchoolBoardTest {
     }
 
     /**
-     * the test checks two methods related to che Hall of the SchoolBoard: moveToHall and removeFromHall
+     * the test checks two methods related to the Hall of the SchoolBoard: moveToHall and removeFromHall
      */
     @Test
-    void HallTest(){
-        SchoolBoard s = new SchoolBoard(10,Tower.BLACK,0);
+    void HallTest() {
+        SchoolBoard s = new SchoolBoard(10, Tower.BLACK, 0);
         s.addToEntrance(StudentColor.BLUE);
         s.addToEntrance(StudentColor.BLUE);
         s.addToEntrance(StudentColor.GREEN);
         s.addToEntrance(StudentColor.MAGENTA);
         assertTrue(s.moveToHall(0));
-        assertEquals(1,s.getStudentsInHall(StudentColor.BLUE));
+        assertEquals(1, s.getStudentsInHall(StudentColor.BLUE));
         assertNull(s.getStudentsInEntrance().get(0));
-        assertEquals(StudentColor.BLUE,s.getStudentsInEntrance().get(1));
+        assertEquals(StudentColor.BLUE, s.getStudentsInEntrance().get(1));
         assertTrue(s.moveToHall(1));
-        assertEquals(2,s.getStudentsInHall(StudentColor.BLUE));
+        assertEquals(2, s.getStudentsInHall(StudentColor.BLUE));
         assertTrue(s.moveToHall(2));
         assertTrue(s.moveToHall(3));
 
-        assertEquals(1,s.getStudentsInHall(StudentColor.GREEN));
-        assertEquals(1,s.getStudentsInHall(StudentColor.MAGENTA));
+        assertEquals(1, s.getStudentsInHall(StudentColor.GREEN));
+        assertEquals(1, s.getStudentsInHall(StudentColor.MAGENTA));
 
-        assertTrue(s.removeFromHall(StudentColor.MAGENTA,0));
-        assertEquals(1,s.getStudentsInHall(StudentColor.MAGENTA));
-        assertTrue(s.removeFromHall(StudentColor.MAGENTA,1));
-        assertEquals(0,s.getStudentsInHall(StudentColor.MAGENTA));
-        s.tryRemoveFromHall(StudentColor.GREEN,10);
-        assertEquals(0,s.getStudentsInHall(StudentColor.GREEN));
-        assertEquals(0,s.getStudentsInHall(StudentColor.GREEN));
-        assertTrue(s.removeFromHall(StudentColor.BLUE,2));
-        assertEquals(0,s.getStudentsInHall(StudentColor.BLUE));
-        assertEquals(0,s.getStudentsInHall(StudentColor.RED));
-        assertEquals(0,s.getStudentsInHall(StudentColor.YELLOW));
+        assertTrue(s.removeFromHall(StudentColor.MAGENTA, 0));
+        assertEquals(1, s.getStudentsInHall(StudentColor.MAGENTA));
+        assertTrue(s.removeFromHall(StudentColor.MAGENTA, 1));
+        assertEquals(0, s.getStudentsInHall(StudentColor.MAGENTA));
+        s.tryRemoveFromHall(StudentColor.GREEN, 10);
+        assertEquals(0, s.getStudentsInHall(StudentColor.GREEN));
+        assertEquals(0, s.getStudentsInHall(StudentColor.GREEN));
+        assertTrue(s.removeFromHall(StudentColor.BLUE, 2));
+        assertEquals(0, s.getStudentsInHall(StudentColor.BLUE));
+        assertEquals(0, s.getStudentsInHall(StudentColor.RED));
+        assertEquals(0, s.getStudentsInHall(StudentColor.YELLOW));
 
-        SchoolBoard s1 = new SchoolBoard(GamePreset.FOUR.getEntranceCapacity(), Tower.BLACK,0);
+        SchoolBoard s1 = new SchoolBoard(GamePreset.FOUR.getEntranceCapacity(), Tower.BLACK, 0);
         for (int i = 0; i < GamePreset.FOUR.getEntranceCapacity(); i++) {
             s1.addToEntrance(StudentColor.BLUE);
         }

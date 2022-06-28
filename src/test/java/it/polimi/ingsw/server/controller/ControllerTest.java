@@ -21,7 +21,9 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//todo javacdoc
+/**
+ * Test {@link Controller} class.
+ */
 class ControllerTest {
 
     Server srv;
@@ -29,6 +31,9 @@ class ControllerTest {
     Controller controller;
     ModelListeners modelListeners;
 
+    /**
+     * Inside class used for checking the messages sent by the Controller.
+     */
     static class ModelListener extends VirtualClient implements MessageListener {
 
         ModelListener(String name, MessageListener controller) {
@@ -63,6 +68,9 @@ class ControllerTest {
         }
     }
 
+    /**
+     * A collection of {@link ModelListener}s.
+     */
     static class ModelListeners {
         private final ArrayList<ModelListener> mL;
 
@@ -85,7 +93,8 @@ class ControllerTest {
 
 
     /**
-     * Tests the setting up of the Controller and the first games phases
+     * Tests the setting up of the Controller and the first games phases.
+     * Adds players to the lobby, gives them a wizard and then starts the game.
      */
     void controllerCreationTest() {
         srv = new Server();
@@ -152,6 +161,10 @@ class ControllerTest {
         assertTrue(controller.isGameStarted());
     }
 
+    /**
+     * This method simulates the initial round of a game.
+     * Players choose an assistant card and then the current player try to move some students and mother nature.
+     */
     @Test
     void partySimulation() {
         controllerCreationTest();
@@ -224,9 +237,9 @@ class ControllerTest {
     }
 
     /**
-     * Test the possible combinations of messages during a moveStudent phase
+     * Test the possible messages received from the server during a moveStudent phase.
      *
-     * @param current the current player
+     * @param current the current player.
      */
     void moveStudentPhaseTest(ModelListener current) {
         //send a valid request
@@ -301,9 +314,9 @@ class ControllerTest {
     }
 
     /**
-     * Test the possible combinations of messages during a moveMotherNature phase
+     * Test the possible messages received from the server during a moveMotherNature phase.
      *
-     * @param current the current player
+     * @param current the current player.
      */
     void moveMotherNaturePhaseTest(ModelListener current) {
         controller.handleMessage(new MessageEvent(current, new MovedMotherNature(10)));
@@ -320,7 +333,7 @@ class ControllerTest {
 
 
     /**
-     * Tests the situation when players disconnect before the beginning of the match
+     * Tests the situation when players disconnect before the beginning of the match.
      */
     @Test
     void EarlyDisconnectionTest() {
@@ -365,7 +378,7 @@ class ControllerTest {
     }
 
     /**
-     * Tests the situation when players disconnect during the match in a 3+ player game
+     * Tests the situation when players disconnect during the match in a 3+ player game.
      */
     @Test
     void SkipTurn() {
@@ -433,7 +446,7 @@ class ControllerTest {
     }
 
     /**
-     * Test change team calls
+     * Test the requests of changing team.
      */
     @Test
     void chooseTeamTest() {

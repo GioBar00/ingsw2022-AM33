@@ -8,13 +8,16 @@ import java.util.EnumSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests {@link IslandGroup} class.
+ */
 class IslandGroupTest {
 
     /**
      * check that the computation of the influence is done correctly
      */
     @Test
-    void CalcInfluenceGeneralTest(){
+    void CalcInfluenceGeneralTest() {
         IslandGroup ig1 = new IslandGroup();
         ig1.setTower(Tower.BLACK);
         ig1.addStudent(StudentColor.GREEN);
@@ -32,7 +35,7 @@ class IslandGroupTest {
      * contains the least amount of students
      */
     @Test
-    void getIslandWithMinStudents(){
+    void getIslandWithMinStudents() {
         IslandGroup ig1 = new IslandGroup();
         IslandGroup ig2 = new IslandGroup();
         IslandGroup ig3 = new IslandGroup();
@@ -42,7 +45,7 @@ class IslandGroupTest {
         assertEquals(1, ig3.size());
 
         ig1.setTower(Tower.WHITE);
-        for(StudentColor s: StudentColor.values()){
+        for (StudentColor s : StudentColor.values()) {
             ig1.addStudent(s);
         }
 
@@ -74,7 +77,7 @@ class IslandGroupTest {
      * and the objects now on the merged Island are the union of the objects on the original Islands
      */
     @Test
-    void mergeWith(){
+    void mergeWith() {
         IslandGroup ig1 = new IslandGroup();
         IslandGroup ig2 = new IslandGroup();
 
@@ -99,7 +102,7 @@ class IslandGroupTest {
      * the test checks that the attribute isBlocked can be set correctly
      */
     @Test
-    void blockedTest(){
+    void blockedTest() {
         IslandGroup ig = new IslandGroup();
 
         assertFalse(ig.isBlocked());

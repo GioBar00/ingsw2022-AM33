@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests {@link Cloud} class.
+ */
 class CloudTest {
 
     /**
@@ -13,7 +16,7 @@ class CloudTest {
      * pop all students and check that finally the islands is empty
      */
     @Test
-    void get_add_pop_Students(){
+    void get_add_pop_Students() {
         Cloud testCloud = new Cloud(3);
 
         assertTrue(testCloud.popStudents().isEmpty());

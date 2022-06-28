@@ -9,10 +9,17 @@ import org.junit.jupiter.api.Test;
 import static it.polimi.ingsw.network.messages.MessageBuilderTest.toAndFromJson;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests for {@link AvailableWizards} class.
+ */
 class AvailableWizardsTest {
 
+    /**
+     * Tests the right implementation of {@link AvailableWizards} class by adding 4 players into a lobby and then giving
+     * to them 4 different wizards. At the end the collection of available wizards should be empty
+     */
     @Test
-    void availableWizardsTest(){
+    void availableWizardsTest() {
         Lobby lobby = new Lobby(4);
         lobby.addPlayer("player1");
         lobby.addPlayer("player2");

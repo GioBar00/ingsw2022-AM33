@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests {@link GameModelTeams} class.
+ */
 class GameModelTeamsTest {
 
     private final PlayerConvertor pC = new PlayerConvertor();
@@ -61,7 +64,7 @@ class GameModelTeamsTest {
      * that player is named the winner of the game.
      */
     @Test
-    void swapTowers(){
+    void swapTowers() {
         GameModel gmTeams = new GameModelTeams();
 
         assertTrue(gmTeams.addPlayer(pC.getPlayer("whiteLeader", Wizard.SENSEI, Tower.WHITE)));
@@ -89,7 +92,7 @@ class GameModelTeamsTest {
         assertEquals(0, gmTeams.playersManager.getSchoolBoard(pl4).getNumTowers());
         assertEquals(gmTeams.islandsManager.getTower(0), Tower.BLACK);
 
-        for(int i = 7; i > 0; i--){
+        for (int i = 7; i > 0; i--) {
             gmTeams.islandsManager.setTower(Tower.WHITE, i);
             gmTeams.checkMergeIslandGroups(i);
         }

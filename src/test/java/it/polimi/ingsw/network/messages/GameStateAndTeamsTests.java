@@ -15,6 +15,9 @@ import org.junit.jupiter.api.Test;
 import static it.polimi.ingsw.network.messages.MessageBuilderTest.toAndFromJson;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests the {@link CurrentGameState} class.
+ */
 class GameStateAndTeamsTests {
     GameModelExpert gm = new GameModelExpert(new GameModel(GamePreset.FOUR));
 
@@ -37,7 +40,9 @@ class GameStateAndTeamsTests {
     }
 
     /**
-     * test for the message CurrentGameState
+     * test for the message CurrentGameState.
+     * When the party has started check if the information inside the model match with the ones inside the {@link CurrentGameState}.
+     * After that we checked the serialization and deserialization of {@link CurrentGameState}
      */
     @Test
     void CurrentGameStateTest() {

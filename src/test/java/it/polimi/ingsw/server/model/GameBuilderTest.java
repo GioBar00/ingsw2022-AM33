@@ -17,10 +17,10 @@ class GameBuilderTest {
     @Test
     void getGame() {
         Game brandNew = GameBuilder.getGame(GamePreset.TWO, GameMode.EASY);
-        assertEquals(GameMode.EASY,brandNew.getGameMode());
+        assertEquals(GameMode.EASY, brandNew.getGameMode());
         brandNew = GameBuilder.getGame(GamePreset.THREE, GameMode.EASY);
-        assertEquals(GameMode.EASY,brandNew.getGameMode());
+        assertEquals(GameMode.EASY, brandNew.getGameMode());
         brandNew = GameBuilder.getGame(GamePreset.FOUR, GameMode.EXPERT);
-        assertEquals(GameMode.EXPERT,brandNew.getGameMode());
+        assertEquals(GameMode.EXPERT, brandNew.getGameMode());
     }
 }

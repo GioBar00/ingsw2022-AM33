@@ -7,19 +7,22 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests {@link PlayerTest} class.
+ */
 class PlayerTest {
 
     Player p = new Player("p1", Wizard.WITCH, new SchoolBoard(7, Tower.GREY, 6));
 
     /**
-     * check the correct implementation of playAssistantCard,clearPlayedCard and getHand by forcing the remove in an empty list
+     * checks the correct implementation of playAssistantCard,clearPlayedCard and getHand by forcing the remove in an empty list
      */
     @Test
     void assistantCardHandling() {
         // check that player can play every card
-        for(AssistantCard c: AssistantCard.values()) {
+        for (AssistantCard c : AssistantCard.values()) {
             assertTrue(p.playAssistantCard(c));
-            assertEquals(c,p.getAssistantCard());
+            assertEquals(c, p.getAssistantCard());
             assertFalse(p.getHand().contains(c));
             p.clearPlayedCard();
             assertNull(p.getAssistantCard());
@@ -28,7 +31,7 @@ class PlayerTest {
         p.clearPlayedCard();
         assertNull(p.getAssistantCard());
         // check that there are no more cards to be played
-        for(AssistantCard c: AssistantCard.values()) {
+        for (AssistantCard c : AssistantCard.values()) {
             assertFalse(p.playAssistantCard(c));
         }
     }
