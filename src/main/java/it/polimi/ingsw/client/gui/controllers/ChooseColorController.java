@@ -6,6 +6,7 @@ import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.actions.ChosenStudentColor;
 import it.polimi.ingsw.network.messages.actions.requests.ChooseStudentColor;
 import it.polimi.ingsw.server.model.enums.StudentColor;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -93,8 +94,10 @@ public class ChooseColorController implements GUIController {
      */
     private EventHandler<ActionEvent> buildAction(StudentColor s) {
         return actionEvent -> {
+            hasChoose = true;
             gui.notifyViewListener(new ChosenStudentColor(s));
             ((Stage) root.getScene().getWindow()).close();
+
         };
     }
 
@@ -114,7 +117,6 @@ public class ChooseColorController implements GUIController {
             btn.setDisable(false);
             btn.setOpacity(1);
             stdNotAvailable.remove(s);
-            hasChoose = true;
         }
 
         for (StudentColor s : stdNotAvailable) {
@@ -168,5 +170,12 @@ public class ChooseColorController implements GUIController {
      */
     public boolean isHasChoose() {
         return hasChoose;
+    }
+
+    /**
+     * This method closes the window.
+     */
+    public void close() {
+        Platform.runLater(() -> ((Stage) root.getScene().getWindow()).close());
     }
 }

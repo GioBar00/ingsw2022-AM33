@@ -206,7 +206,8 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
      * End the connection
      */
     public void closeConnection() {
-        communicationHandler.stop();
+        if(communicationHandler != null)
+            communicationHandler.stop();
     }
 
     /**

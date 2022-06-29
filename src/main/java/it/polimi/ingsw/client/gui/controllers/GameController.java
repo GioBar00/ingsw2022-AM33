@@ -668,10 +668,18 @@ public class GameController implements GUIController, MuteToggle {
         toggleMute(imgViewMute);
     }
 
+    /**
+     * This method requests to show the waiting screen.
+     */
     public void showWaiting() {
         showWaiting(60);
     }
 
+    /**
+     * Shows the waiting screen. The waiting screen has a countdown.
+     *
+     * @param timer the initial value of the countdown timer.
+     */
     private void showWaiting(int timer) {
         waitingViewController = ResourceLoader.loadFXML(FXMLPath.WAITING_SCREEN, gui);
         Platform.runLater(() -> {

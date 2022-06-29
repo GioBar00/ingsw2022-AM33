@@ -28,7 +28,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.util.*;
 
@@ -92,8 +91,21 @@ public class GUI extends Application implements UI {
      */
     private List<PlayerView> players;
 
+    /**
+     * The controller of the "choose color" view.
+     */
+    private ChooseColorController chooseColorController;
+
+    /**
+     * This boolean is set as true when the client has to ignore a server unavailable message.
+     */
     private boolean ignoreServerUnavailable = false;
 
+    /**
+     * Main of the GUI application
+     *
+     * @param args a list of arguments.
+     */
     public static void main(String[] args) {
         launch(args);
     }
@@ -461,7 +473,8 @@ public class GUI extends Application implements UI {
                     Platform.runLater(() -> gameController.processPlayAssistantCard(((PlayAssistantCard) message).getPlayableAssistantCards()));
             case CHOOSE_CLOUD -> Platform.runLater(() -> gameController.processChooseCloud((ChooseCloud) message));
             case CHOOSE_ISLAND -> Platform.runLater(() -> gameController.processChooseIsland((ChooseIsland) message));
-            case CHOOSE_STUDENT_COLOR -> Platform.runLater(() -> handleChooseColor(((ChooseStudentColor) message).getAvailableStudentColors()));
+            case CHOOSE_STUDENT_COLOR ->
+                    Platform.runLater(() -> handleChooseColor(((ChooseStudentColor) message).getAvailableStudentColors()));
             case MOVE_MOTHER_NATURE ->
                     Platform.runLater(() -> gameController.processMoveMotherNature((MoveMotherNature) message));
             case MOVE_STUDENT -> Platform.runLater(() -> handleMoveStudent((MoveStudent) message));
@@ -478,11 +491,19 @@ public class GUI extends Application implements UI {
      */
     private void handleChooseColor(EnumSet<StudentColor> colors) {
         Stage chooseColor = new Stage();
-        ChooseColorController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_COLOR, this);
-        controller.init();
-        controller.setAvailableButtons(colors);
-        controller.loadScene(chooseColor);
-        chooseColor.initStyle(StageStyle.UNDECORATED);
+        if (chooseColorController == null) {
+            chooseColorController = ResourceLoader.loadFXML(FXMLPath.CHOOSE_COLOR, this);
+        }
+        chooseColorController.init();
+        chooseColorController.setAvailableButtons(colors);
+        chooseColorController.loadScene(chooseColor);
+
+        chooseColor.setOnHidden(event -> {
+            if (!chooseColorController.isHasChoose()) {
+                chooseColorController = null;
+                handleChooseColor(colors);
+            }
+        });
         chooseColor.show();
     }
 
@@ -611,6 +632,9 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showWaiting() {
+        if (chooseColorController != null)
+            chooseColorController.close();
+
         if (gameController != null)
             gameController.showWaiting();
 
