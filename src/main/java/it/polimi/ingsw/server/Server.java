@@ -123,7 +123,7 @@ public class Server {
                 CountDownLatch countDownLatch = new CountDownLatch(1);
                 communicationHandler.setMessageHandler((message) -> {
                     if (message.isValid() && MessageType.retrieveByMessage(message) == MessageType.CHOSEN_GAME) {
-                        communicationHandler.setDisconnectListener(null);
+                        communicationHandler.setDisconnectListener(e -> {});
                         ChosenGame choice = (ChosenGame) message;
                         clientManager.getController().setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
                         synchronized (this) {

@@ -8,6 +8,7 @@ import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
+import it.polimi.ingsw.server.VirtualClient;
 
 import java.io.*;
 import java.net.Socket;
@@ -358,7 +359,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      * @param listener the listener to set
      */
     @Override
-    public void setDisconnectListener(DisconnectListener listener) {
+    public synchronized void setDisconnectListener(DisconnectListener listener) {
         disconnectListener = listener;
     }
 
@@ -371,7 +372,12 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     public void notifyDisconnectListener(DisconnectEvent event) {
         if (disconnectListener != null) {
             System.out.println("CH : notify disconnect");
-            new Thread(() -> disconnectListener.onDisconnect(event)).start();
+            //new Thread(() -> disconnectListener.onDisconnect(event)).start();
+            //FIXME: remove after testing
+            if (!(disconnectListener instanceof VirtualClient))
+                System.err.println("NON è UN VIRTUAL CLIENT");
+            disconnectListener.onDisconnect(event);
+
         }
     }
 }

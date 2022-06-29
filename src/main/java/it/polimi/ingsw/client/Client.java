@@ -58,6 +58,7 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
      */
     public Client(UI ui) {
         queue = new LinkedBlockingQueue<>();
+        communicationHandler = null;
         userInterface = ui;
     }
 
@@ -102,6 +103,11 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
         try {
             Socket socket = new Socket();
             socket.connect(serverAddress, 5 * 1000);
+            if (communicationHandler != null) {
+                communicationHandler.setMessageHandler(e -> {});
+                communicationHandler.setDisconnectListener(e -> {});
+                communicationHandler.stop();
+            }
             communicationHandler = new CommunicationHandler(this);
             communicationHandler.setSocket(socket);
             communicationHandler.setDisconnectListener(this);
