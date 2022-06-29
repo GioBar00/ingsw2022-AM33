@@ -1,12 +1,12 @@
-package it.polimi.ingsw.network.messages;
+package it.polimi.ingsw.network.messages.server;
 
+import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.requests.*;
+import it.polimi.ingsw.network.messages.enums.CommMsgType;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
-import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.StudentColor;
-import it.polimi.ingsw.network.messages.enums.CommMsgType;
-
 import org.junit.jupiter.api.Test;
 
 import java.util.*;

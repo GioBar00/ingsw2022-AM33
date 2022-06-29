@@ -81,6 +81,9 @@ public class CharacterCardController implements GUIController {
     private AnchorPane anchorPanePawnYellow;
     @FXML
     private ImageView characterImg;
+    /**
+     * Button for clicking on the card in the game-screen
+     */
     @FXML
     public Button characterBtn;
     @FXML

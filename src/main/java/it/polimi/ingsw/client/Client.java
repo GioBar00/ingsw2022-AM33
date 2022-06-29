@@ -55,6 +55,8 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
 
     /**
      * Constructor of Virtual Server
+     *
+     * @param ui the user interface that corresponds to the Virtual Server
      */
     public Client(UI ui) {
         queue = new LinkedBlockingQueue<>();
@@ -98,6 +100,8 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
 
     /**
      * This method sets up the connection and starts the communicationHandler.
+     *
+     * @return true if the connection is set up correctly.
      */
     public boolean startConnection() {
         try {

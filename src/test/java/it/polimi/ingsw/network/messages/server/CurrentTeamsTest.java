@@ -1,6 +1,6 @@
-package it.polimi.ingsw.network.messages;
+package it.polimi.ingsw.network.messages.server;
 
-import it.polimi.ingsw.network.messages.server.CurrentTeams;
+import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.server.lobby.TeamLobby;
 import org.junit.jupiter.api.Test;
 

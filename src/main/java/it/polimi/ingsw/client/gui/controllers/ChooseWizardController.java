@@ -113,7 +113,9 @@ public class ChooseWizardController implements GUIController {
     }
 
     /**
-     * This method is used to handle the event of clicking the Merlin button.
+     * This method is used to handle the event of clicking the Wizard button.
+     *
+     * @param actionEvent event that triggers the button (click on the Wizard button)
      */
     @FXML
     public void handleButtonAction(ActionEvent actionEvent) {

@@ -59,6 +59,8 @@ public class Controller implements Runnable, MessageListener {
 
     /**
      * Default constructor of class Controller
+     *
+     * @param clientManager the client manager associated with this controller
      */
     public Controller(ClientManager clientManager) {
         this.clientManager = clientManager;
@@ -90,6 +92,7 @@ public class Controller implements Runnable, MessageListener {
      *
      * @param preset is the number of players for the game
      * @param mode   is the mode of the game
+     * @param lobby lobby of the game
      */
     public void setModelAndLobby(GamePreset preset, GameMode mode, Lobby lobby) {
         model = GameBuilder.getGame(preset, mode);

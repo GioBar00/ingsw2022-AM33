@@ -14,6 +14,11 @@ public class AvailableWizards implements Message {
     private final WizardsView wizardsView;
 
 
+    /**
+     * Constructor.
+     *
+     * @param wizardsView wizardsView of the current wizards
+     */
     public AvailableWizards(WizardsView wizardsView) {
         this.wizardsView = wizardsView;
     }
