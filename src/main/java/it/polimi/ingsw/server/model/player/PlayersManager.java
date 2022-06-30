@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * This Class manages players during the match. Gives methods for modify SchoolBoards and Player hands
  */
-public class PlayersManager {
+public class PlayersManager{
 
     /**
      * preset of the current game
