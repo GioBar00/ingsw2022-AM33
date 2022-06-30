@@ -93,8 +93,6 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
      */
     public void sendMessage(Message message) {
         if (isConnected()) {
-//            System.out.println("VC : send to " + identifier);
-//            System.out.println(MessageBuilder.toJson(message));
             communicationHandler.sendMessage(message);
         }
     }

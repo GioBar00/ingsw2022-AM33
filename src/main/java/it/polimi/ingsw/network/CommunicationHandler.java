@@ -80,6 +80,11 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     private boolean notifiedDisconnect = false;
 
     /**
+     * Lock used to notify the disconnection.
+     */
+    private final Object disconnectLock = new Object();
+
+    /**
      * Constructor.
      *
      * @param isMaster if true, pings will be sent to ensure that the two parties are connected.
@@ -330,24 +335,24 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      */
     public void sendMessage(Message message) {
         queue.add(message);
-//        if (!(MessageType.retrieveByMessage(message) == MessageType.COMM_MESSAGE && (((CommMessage) message).getType() == CommMsgType.PONG || ((CommMessage) message).getType() == CommMsgType.PING)))
-//            System.out.println("CH: Added to queue - " + MessageBuilder.toJson(message));
     }
 
     /**
      * This method notifies the disconnect listener if it was not already notified.
      */
-    private synchronized void notifyDisconnectIfNotAlreadyDone() {
-        if (!notifiedDisconnect) {
-            notifiedDisconnect = true;
-            notifyDisconnectListener(new DisconnectEvent(this));
+    private void notifyDisconnectIfNotAlreadyDone() {
+        synchronized (disconnectLock) {
+            if (!notifiedDisconnect) {
+                notifiedDisconnect = true;
+                notifyDisconnectListener(new DisconnectEvent(this));
+            }
         }
     }
 
     /**
      * Notifies the disconnect listener and stops the communication handler.
      */
-    private synchronized void notifyDisconnectAndStop() {
+    private void notifyDisconnectAndStop() {
         notifyDisconnectIfNotAlreadyDone();
         if (!stopped) stop();
     }
@@ -369,9 +374,10 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
      */
     @Override
     public void notifyDisconnectListener(DisconnectEvent event) {
-        if (disconnectListener != null) {
+        DisconnectListener listener = disconnectListener;
+        if (listener != null) {
             System.out.println("CH : notify disconnect");
-            disconnectListener.onDisconnect(event);
+            listener.onDisconnect(event);
         }
     }
 }
