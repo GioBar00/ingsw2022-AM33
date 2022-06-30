@@ -40,6 +40,9 @@ public class Controller implements Runnable, MessageListener {
      */
     private Lobby lobby;
 
+    /**
+     * The ClientManager associated to the Controller
+     */
     private final ClientManager clientManager;
 
     /**

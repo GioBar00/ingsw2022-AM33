@@ -60,6 +60,7 @@ public interface EffectHandler {
      * Blocks and island group.
      *
      * @param islandGroupIndex island group index to block.
+     * @return true if the method was executed correctly.
      */
     boolean blockIslandGroup(int islandGroupIndex);
 
@@ -88,6 +89,7 @@ public interface EffectHandler {
     /**
      * Adds a student to the entrance of current player's school board.
      *
+     * @param s color of the student to be added to the entrance.
      * @param entranceIndex index of the entrance.
      * @return if the student was added successfully.
      */

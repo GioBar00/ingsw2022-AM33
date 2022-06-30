@@ -94,8 +94,17 @@ public class CLI implements UI {
      */
     private final CLIPrinter cliPrinter;
 
+    /**
+     * string containing the name of the 'green' cli color
+     */
     private final String GREEN = Color.GREEN.getName();
+    /**
+     * string containing the name of the 'reset' cli color
+     */
     private final String RESET = Color.RESET.getName();
+    /**
+     * string containing the name of the 'yellow' cli color
+     */
     private final String YELLOW = Color.YELLOW.getName();
 
     /**

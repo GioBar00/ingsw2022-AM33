@@ -4,7 +4,26 @@ package it.polimi.ingsw.server.model.enums;
  * types of students, by color
  */
 public enum StudentColor {
-    GREEN, RED, YELLOW, MAGENTA, BLUE;
+    /**
+     * Green StudentColor
+     */
+    GREEN,
+    /**
+     * Red StudentColor
+     */
+    RED,
+    /**
+     * Yellow StudentColor
+     */
+    YELLOW,
+    /**
+     * Magenta StudentColor
+     */
+    MAGENTA,
+    /**
+     * Blue StudentColor
+     */
+    BLUE;
 
     /**
      * private attribute to store the value of the color.

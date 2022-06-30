@@ -21,6 +21,9 @@ public class Island {
      */
     final EnumMap<StudentColor, Integer> students;
 
+    /**
+     * Constructor for Island class
+     */
     public Island() {
         students = new EnumMap<>(StudentColor.class);
         for (StudentColor s : StudentColor.values()) {

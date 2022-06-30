@@ -4,7 +4,22 @@ package it.polimi.ingsw.server.model.enums;
  * types of wizards
  */
 public enum Wizard {
-    SENSEI, WITCH, MERLIN, KING;
+    /**
+     * Sensei Wizard
+     */
+    SENSEI,
+    /**
+     * Witch Wizard
+     */
+    WITCH,
+    /**
+     * Merlin Wizard
+     */
+    MERLIN,
+    /**
+     * King Wizard
+     */
+    KING;
 
     /**
      * This method returns the name of the wizard.

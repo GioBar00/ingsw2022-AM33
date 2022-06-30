@@ -19,6 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CharacterCardsEffectTest {
 
+    /**
+     * player convertor.
+     */
     PlayerConvertor pC = new PlayerConvertor();
     /**
      * game model expert.

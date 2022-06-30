@@ -90,6 +90,8 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
 
     /**
      * Send a Message to the client
+     *
+     * @param message the message sent to the client
      */
     public void sendMessage(Message message) {
         if (isConnected()) {

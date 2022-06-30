@@ -13,12 +13,18 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * this class tests the CharacterCardView generated from a CharacterCard
+ */
 class CharacterCardViewTest {
     /**
      * the game model for the expert game
      */
     GameModelExpert gme = new GameModelExpert(new GameModel(GamePreset.THREE));
 
+    /**
+     * player convertor.
+     */
     PlayerConvertor pC = new PlayerConvertor();
     /**
      * adds the player and prepares the game
