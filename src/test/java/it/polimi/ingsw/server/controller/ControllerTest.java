@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.controller;
 
+import it.polimi.ingsw.network.CommunicationHandler;
 import it.polimi.ingsw.network.listeners.DisconnectEvent;
 import it.polimi.ingsw.network.listeners.MessageEvent;
 import it.polimi.ingsw.network.listeners.MessageListener;
@@ -48,9 +49,9 @@ class ControllerTest {
 
         boolean queueContains(MessageType type) {
 
-            for (Message m : communicationHandler.getQueue()) {
+            for (Message m : super.communicationHandler.getQueue()) {
                 if (MessageType.retrieveByMessage(m).equals(type)) {
-                    communicationHandler.clearQueue();
+                    super.communicationHandler.clearQueue();
                     return true;
                 }
             }
@@ -59,12 +60,12 @@ class ControllerTest {
         }
 
         void clearQueue() {
-            communicationHandler.clearQueue();
+            super.communicationHandler.clearQueue();
         }
 
         @Override
         public void onMessage(MessageEvent event) {
-            communicationHandler.sendMessage(event.getMessage());
+            super.communicationHandler.sendMessage(event.getMessage());
         }
     }
 
@@ -103,7 +104,7 @@ class ControllerTest {
 
         modelListeners = new ModelListeners();
         ModelListener m1 = new ModelListener("p1", controller);
-
+        m1.setCommunicationHandler(new CommunicationHandler(false));
         modelListeners.add(m1);
 
         assertNull(controller.getCurrentPlayer());
@@ -133,6 +134,7 @@ class ControllerTest {
         assertTrue(m1.queueContains(MessageType.COMM_MESSAGE));
 
         ModelListener m2 = new ModelListener("p2", controller);
+        m2.setCommunicationHandler(new CommunicationHandler(false));
         modelListeners.add(m2);
         controller.addModelListener(m2);
         controller.addPlayer("p2");
@@ -345,22 +347,26 @@ class ControllerTest {
 
         assertTrue(c.isInstantiated());
         ModelListener m1 = new ModelListener("p1", c);
+        m1.setCommunicationHandler(new CommunicationHandler(false));
         assertTrue(c.addPlayer(m1.getIdentifier()));
         c.addModelListener(m1);
         server.getClientManager().addVirtualClient(m1);
 
         ModelListener m2 = new ModelListener("p2", c);
+        m2.setCommunicationHandler(new CommunicationHandler(false));
         assertTrue(c.addPlayer(m2.getIdentifier()));
         c.addModelListener(m2);
         assertFalse(c.addPlayer("p2"));
         server.getClientManager().addVirtualClient(m2);
 
         ModelListener m3 = new ModelListener("p3", c);
+        m3.setCommunicationHandler(new CommunicationHandler(false));
         assertTrue(c.addPlayer(m3.getIdentifier()));
         c.addModelListener(m3);
         server.getClientManager().addVirtualClient(m3);
 
         ModelListener m4 = new ModelListener("p4", c);
+        m4.setCommunicationHandler(new CommunicationHandler(false));
         assertTrue(c.addPlayer(m4.getIdentifier()));
         c.addModelListener(m4);
         server.getClientManager().addVirtualClient(m4);
@@ -388,6 +394,7 @@ class ControllerTest {
 
         modelListeners = new ModelListeners();
         ModelListener m1 = new ModelListener("p1", controller);
+        m1.setCommunicationHandler(new CommunicationHandler(false));
 
         modelListeners.add(m1);
 
@@ -402,6 +409,8 @@ class ControllerTest {
 
 
         ModelListener m2 = new ModelListener("p2", controller);
+        m2.setCommunicationHandler(new CommunicationHandler(false));
+
         modelListeners.add(m2);
         controller.addModelListener(m2);
         controller.addPlayer("p2");
@@ -414,6 +423,8 @@ class ControllerTest {
         controller.addPlayer(m2.getIdentifier());
 
         ModelListener m3 = new ModelListener("p3", controller);
+        m3.setCommunicationHandler(new CommunicationHandler(false));
+
         modelListeners.add(m3);
         controller.addModelListener(m3);
         controller.addPlayer("p3");
@@ -455,22 +466,27 @@ class ControllerTest {
         c.setModelAndLobby(GamePreset.FOUR, GameMode.EASY, LobbyConstructor.getLobby(GamePreset.FOUR));
 
         ModelListener m1 = new ModelListener("p1", c);
+        m1.setCommunicationHandler(new CommunicationHandler(false));
+
         c.addPlayer(m1.getIdentifier());
         c.addModelListener(m1);
         c.handleMessage(new MessageEvent(m1, new ChosenWizard(Wizard.SENSEI)));
 
 
         ModelListener m2 = new ModelListener("p2", c);
+        m2.setCommunicationHandler(new CommunicationHandler(false));
         c.addPlayer(m2.getIdentifier());
         c.addModelListener(m2);
         c.handleMessage(new MessageEvent(m2, new ChosenWizard(Wizard.WITCH)));
 
         ModelListener m3 = new ModelListener("p3", c);
+        m3.setCommunicationHandler(new CommunicationHandler(false));
         c.addPlayer(m3.getIdentifier());
         c.addModelListener(m3);
         c.handleMessage(new MessageEvent(m3, new ChosenWizard(Wizard.KING)));
 
         ModelListener m4 = new ModelListener("p4", c);
+        m4.setCommunicationHandler(new CommunicationHandler(false));
         c.addPlayer(m4.getIdentifier());
         c.addModelListener(m4);
         c.handleMessage(new MessageEvent(m4, new ChosenWizard(Wizard.MERLIN)));
