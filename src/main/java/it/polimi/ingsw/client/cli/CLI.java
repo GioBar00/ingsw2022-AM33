@@ -389,7 +389,7 @@ public class CLI implements UI {
     }
 
     /**
-     * This method notifies the host that the game cant start.
+     * This method notifies the host that the game can't start.
      */
     @Override
     synchronized public void hostCantStart() {

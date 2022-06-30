@@ -35,22 +35,7 @@ public abstract class MessageExchange {
 
         if (line.equals("") || line.equals("null")) return null;
 
-        Message message = MessageBuilder.fromJson(line);
-//        if (!(MessageType.retrieveByMessage(message) == MessageType.COMM_MESSAGE && (((CommMessage) message).getType() == CommMsgType.PONG || ((CommMessage) message).getType() == CommMsgType.PING)))
-//            System.out.println("Real message received - " + line);
-        return message;
-    }
-
-    /**
-     * This method is used to receive a message.
-     *
-     * @param reader the reader used to read the message.
-     * @return the message received.
-     * @throws IOException if an I/O error occurs.
-     */
-    public static Message receiveMessage(BufferedReader reader) throws IOException {
-        return receiveMessage(reader, (event -> {
-        }));
+        return MessageBuilder.fromJson(line);
     }
 
     /**
@@ -65,8 +50,6 @@ public abstract class MessageExchange {
             writer.write(MessageBuilder.toJson(message));
             writer.write("\n");
             writer.flush();
-//            if (!(MessageType.retrieveByMessage(message) == MessageType.COMM_MESSAGE && (((CommMessage) message).getType() == CommMsgType.PONG || ((CommMessage) message).getType() == CommMsgType.PING)))
-//                System.out.println("Real message sent - " + MessageBuilder.toJson(message));
         }
     }
 

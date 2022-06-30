@@ -27,12 +27,12 @@ class GameModelTest {
     /**
      * Players notified about the CurrentGameState and CurrentTeams
      */
-    Set<String> messagesNotified = new HashSet<>();
+    final Set<String> messagesNotified = new HashSet<>();
 
     /**
      * Players notified about ActionRequests.
      */
-    Set<String> actionRequestNotified = new HashSet<>();
+    final Set<String> actionRequestNotified = new HashSet<>();
 
     private final PlayerConvertor pC = new PlayerConvertor();
 

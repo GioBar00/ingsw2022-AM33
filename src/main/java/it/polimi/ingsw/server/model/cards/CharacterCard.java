@@ -216,7 +216,7 @@ public abstract class CharacterCard {
     }
 
     /**
-     * This method returns a set of the currently available students, generated from the EnumSet of the students currenctly
+     * This method returns a set of the currently available students, generated from the EnumSet of the students currently
      * positioned of the card
      *
      * @param students enumSet of the students on the Character Card

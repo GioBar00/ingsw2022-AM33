@@ -4,10 +4,8 @@ import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.network.messages.client.ChosenGame;
 import it.polimi.ingsw.server.model.enums.GameMode;
 import it.polimi.ingsw.server.model.enums.GamePreset;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.Pane;
@@ -35,8 +33,6 @@ public class ChooseGameController implements GUIController {
     private RadioButton radioBtn4;
     @FXML
     private CheckBox checkBoxExpert;
-    @FXML
-    private Button btnCreateGame;
 
 
     /**

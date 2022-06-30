@@ -60,7 +60,7 @@ public interface UI extends ViewListenerSubscriber {
     void hostCanStart();
 
     /**
-     * This method notifies the host that the game cant start.
+     * This method notifies the host that the game can't start.
      */
     void hostCantStart();
 

@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.lobby;
 
-import it.polimi.ingsw.network.listeners.MessageListener;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 
 /**

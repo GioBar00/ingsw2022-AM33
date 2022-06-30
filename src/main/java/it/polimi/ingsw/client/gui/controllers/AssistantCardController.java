@@ -172,7 +172,7 @@ public class AssistantCardController implements GUIController {
     }
 
     /**
-     * This methods set the values in the assistant card view
+     * This method sets the values in the assistant card view
      *
      * @param playableAssistantCards an EnumSet of playable card
      */

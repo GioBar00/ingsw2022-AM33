@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class GameModelExpertTest {
 
-    PlayerConvertor pC = new PlayerConvertor();
+    final PlayerConvertor pC = new PlayerConvertor();
 
     /**
      * Simulates an expert game match.

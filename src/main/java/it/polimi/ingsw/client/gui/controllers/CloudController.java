@@ -104,15 +104,6 @@ public class CloudController implements GUIController {
     }
 
     /**
-     * Enable the picking of the cloud.
-     *
-     * @param enable set as true if the cloud could be picked.
-     */
-    public void enableCloud(boolean enable) {
-        cloudBtn.setDisable(!enable);
-    }
-
-    /**
      * This method is used to initialize the controller and stage.
      */
     @Override

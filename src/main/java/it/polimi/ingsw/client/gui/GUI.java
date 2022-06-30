@@ -437,7 +437,7 @@ public class GUI extends Application implements UI {
     }
 
     /**
-     * This method notifies the host that the game cant start.
+     * This method notifies the host that the game can't start.
      */
     @Override
     public void hostCantStart() {

@@ -119,8 +119,6 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
      */
     @Override
     public void handleMessage(Message message) {
-//        System.out.println("VC " + identifier + ": received message ");
-//        System.out.println(MessageBuilder.toJson(message));
         notifyMessageListeners(new MessageEvent(this, message));
     }
 

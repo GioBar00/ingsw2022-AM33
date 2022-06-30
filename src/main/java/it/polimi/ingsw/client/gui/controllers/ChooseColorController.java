@@ -51,7 +51,7 @@ public class ChooseColorController implements GUIController {
     private Map<StudentColor, Button> buttonsMap;
 
     /**
-     * This boolean indicates if the player has choose a color
+     * This boolean indicates if the player has chosen a color
      */
     private boolean hasChoose;
 

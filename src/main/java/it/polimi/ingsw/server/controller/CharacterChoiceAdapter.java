@@ -4,12 +4,11 @@ import it.polimi.ingsw.network.messages.actions.ChosenIsland;
 import it.polimi.ingsw.network.messages.actions.ChosenStudentColor;
 import it.polimi.ingsw.network.messages.actions.MovedStudent;
 import it.polimi.ingsw.network.messages.actions.SwappedStudents;
-import it.polimi.ingsw.network.messages.actions.requests.SwapStudents;
 import it.polimi.ingsw.server.model.cards.CharacterParameters;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 
 /**
- * Static class used to convert a message into a CharacterParamters
+ * Static class used to convert a message into a CharacterParameters
  */
 public class CharacterChoiceAdapter {
 

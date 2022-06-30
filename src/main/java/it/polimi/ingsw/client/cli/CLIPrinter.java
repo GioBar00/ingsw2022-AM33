@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.*;
 
 import static it.polimi.ingsw.server.model.enums.StudentColor.*;
-import static it.polimi.ingsw.server.model.enums.StudentColor.YELLOW;
 
 /**
  * This class gives method for printing contents in the CLI.

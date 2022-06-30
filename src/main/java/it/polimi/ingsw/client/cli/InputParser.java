@@ -131,8 +131,8 @@ public class InputParser {
 
 
     /**
-     * This method is used for setting if the user can end a effect.
-     * @param b true if the user can end a effect, false otherwise.
+     * This method is used for setting if the user can end an effect.
+     * @param b true if the user can end an effect, false otherwise.
      */
     public void setCanEndEffect(boolean b) {
         canEndEffect = b;
@@ -524,7 +524,7 @@ public class InputParser {
     }
 
     /**
-     * This method is used for parsing the input of the user when he wants to end a effect.
+     * This method is used for parsing the input of the user when he wants to end an effect.
      */
     private void parseConcludeChoice() {
         if (checkRightMoment(MessageType.SWAP_STUDENTS) && canEndEffect) {

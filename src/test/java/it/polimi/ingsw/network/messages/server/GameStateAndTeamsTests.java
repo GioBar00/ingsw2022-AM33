@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests the {@link CurrentGameState} class.
  */
 class GameStateAndTeamsTests {
-    GameModelExpert gm = new GameModelExpert(new GameModel(GamePreset.FOUR));
+    final GameModelExpert gm = new GameModelExpert(new GameModel(GamePreset.FOUR));
 
-    PlayerConvertor pC = new PlayerConvertor();
+    final PlayerConvertor pC = new PlayerConvertor();
 
     /**
      * initialized the gameModel before each test

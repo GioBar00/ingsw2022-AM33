@@ -40,7 +40,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     /**
      * Round manager.
      */
-    RoundManager roundManager;
+    final RoundManager roundManager;
 
     /**
      * Players manager.

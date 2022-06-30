@@ -4,7 +4,6 @@ import it.polimi.ingsw.server.model.enums.AssistantCard;
 import it.polimi.ingsw.server.model.enums.Wizard;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

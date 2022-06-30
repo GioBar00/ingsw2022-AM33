@@ -22,11 +22,11 @@ class CharacterCardsEffectTest {
     /**
      * player convertor.
      */
-    PlayerConvertor pC = new PlayerConvertor();
+    final PlayerConvertor pC = new PlayerConvertor();
     /**
      * game model expert.
      */
-    GameModelExpert gme = new GameModelExpert(new GameModel(GamePreset.THREE));
+    final GameModelExpert gme = new GameModelExpert(new GameModel(GamePreset.THREE));
 
     /**
      * adds players and initializes the game.

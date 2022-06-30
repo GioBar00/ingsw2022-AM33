@@ -66,7 +66,7 @@ class SchoolBoardTest {
 
     /**
      * checks that the professors of a SchoolBoard are initialized in the correct way and then modified through the
-     * game as per the rules
+     * game as per the rules.
      * professor that is not present called in a remove
      */
     @Test

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests {@link PlayersManager} class.
  */
 class PlayersManagerTest {
-    PlayersManager pm = new PlayersManager(GamePreset.THREE);
+    final PlayersManager pm = new PlayersManager(GamePreset.THREE);
 
     private final PlayerConvertor pC = new PlayerConvertor();
 

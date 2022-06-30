@@ -74,7 +74,7 @@ class IslandGroupTest {
 
     /**
      * checks that the method mergeWith() works in the correct way: the size of the IslandGroup is correctly incremented
-     * and the objects now on the merged Island are the union of the objects on the original Islands
+     * and that the objects now on the merged Island are the union of the objects on the original Islands
      */
     @Test
     void mergeWith() {

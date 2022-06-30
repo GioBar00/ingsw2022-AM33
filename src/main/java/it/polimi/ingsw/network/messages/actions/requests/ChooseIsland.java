@@ -1,7 +1,6 @@
 package it.polimi.ingsw.network.messages.actions.requests;
 
 import it.polimi.ingsw.network.messages.ActionRequest;
-import it.polimi.ingsw.network.messages.Message;
 
 import java.util.Set;
 

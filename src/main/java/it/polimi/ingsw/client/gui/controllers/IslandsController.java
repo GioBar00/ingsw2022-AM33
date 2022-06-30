@@ -24,7 +24,7 @@ public class IslandsController implements GUIController {
     private GUI gui;
 
     /**
-     * List used to keep track of the anchorpanes on which the islands will be set
+     * List used to keep track of the anchor panes on which the islands will be set
      */
     private final List<AnchorPane> anchors = new LinkedList<>();
 

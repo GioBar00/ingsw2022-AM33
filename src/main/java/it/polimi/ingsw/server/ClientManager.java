@@ -311,7 +311,7 @@ public class ClientManager implements DisconnectListener {
     }
 
     /**
-     * For testing porposes
+     * For testing purposes
      * @param vc the virtual client
      */
     public synchronized void addVirtualClient(VirtualClient vc) {

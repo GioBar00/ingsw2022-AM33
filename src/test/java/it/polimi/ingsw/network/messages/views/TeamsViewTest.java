@@ -3,7 +3,6 @@ package it.polimi.ingsw.network.messages.views;
 import it.polimi.ingsw.network.messages.server.CurrentTeams;
 import it.polimi.ingsw.server.lobby.Lobby;
 import it.polimi.ingsw.server.lobby.LobbyConstructor;
-import it.polimi.ingsw.server.VirtualClient;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import it.polimi.ingsw.server.model.enums.Tower;
 import org.junit.jupiter.api.Test;

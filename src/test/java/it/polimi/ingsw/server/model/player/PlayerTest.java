@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class PlayerTest {
 
-    Player p = new Player("p1", Wizard.WITCH, new SchoolBoard(7, Tower.GREY, 6));
+    final Player p = new Player("p1", Wizard.WITCH, new SchoolBoard(7, Tower.GREY, 6));
 
     /**
      * checks the correct implementation of playAssistantCard,clearPlayedCard and getHand by forcing the remove in an empty list

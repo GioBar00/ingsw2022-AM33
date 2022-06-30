@@ -49,7 +49,7 @@ class ControllerTest {
         /**
          * Constructor.
          *
-         * @param name the name of the client that the listener will be assiciated to
+         * @param name the name of the client that the listener will be associated to
          * @param controller the controller used in the test
          */
         ModelListener(String name, MessageListener controller) {

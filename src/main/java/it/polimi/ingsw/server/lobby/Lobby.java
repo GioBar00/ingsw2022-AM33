@@ -22,7 +22,7 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
     /**
      * List of players in the lobby with their details
      */
-    protected List<PlayerDetails> players;
+    protected final List<PlayerDetails> players;
 
     /**
      * Max number of players
