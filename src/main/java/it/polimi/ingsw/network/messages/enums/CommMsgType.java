@@ -8,7 +8,7 @@ public enum CommMsgType {
     /**
      * error message: the nickname chosen is not valid because it is null
      */
-    ERROR_NULL_NICKNAME("ERROR: the nickname needs to be at least one character long"),
+    ERROR_INVALID_NICKNAME("ERROR: the nickname cannot be blank and cannot be longer than 20 characters"),
     /**
      * error message: the nickname is not available because another player has already claimed it
      */
@@ -17,10 +17,6 @@ public enum CommMsgType {
      * error message: the game is already at full capacity
      */
     ERROR_NO_SPACE("ERROR: the party is already full"),
-    /**
-     * error message: the game cannot be started because the teams are unbalanced
-     */
-    ERROR_UNBALANCED_TEAMS("ERROR: the game can be started only if the teams have the same number of players"),
     /**
      * error message: the action requested cannot be done because the client doesn't have the rights to request it
      */
@@ -38,29 +34,17 @@ public enum CommMsgType {
      */
     ERROR_IMPOSSIBLE_MOVE("ERROR: you can't move that now!"),
     /**
-     * error message: the input from the client is incorrect
-     */
-    ERROR_INCORRECT_INPUT("ERROR: the elements chosen are unavailable"),
-    /**
-     * error message: internal server error
-     */
-    ERROR_SERVER("ERROR: internal server error"),
-    /**
      * error message: the game cannot be started because there aren't enough players yet
      */
     ERROR_CANT_START("ERROR : wait for other players. You can't start now"),
     /**
      * error message: the server is not available
      */
-    ERROR_SERVER_UNAVAILABLE("ERROR: service unavailable"),
+    ERROR_SERVER_UNAVAILABLE("ERROR: server unavailable"),
     /**
      * error message: the message sent to the server is invalid
      */
     ERROR_INVALID_MESSAGE("ERROR: the message is not valid"),
-    /**
-     * error message: the host has left the party
-     */
-    ERROR_HOST_DISCONNECTED("ERROR: the host has left the party."),
     /**
      * error message: the disconnection timeout went off
      */

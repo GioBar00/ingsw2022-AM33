@@ -99,7 +99,7 @@ public class Server {
                         }
                     }
                 } catch (Throwable e) {
-                    System.out.println("S: NOT HANDLED ERROR!!!!");
+                    System.err.println("S: NOT HANDLED ERROR!!!!");
                     e.printStackTrace();
                     break;
                 }
@@ -179,7 +179,12 @@ public class Server {
         communicationHandler.setMessageHandler((message) -> {
             if (message.isValid() && MessageType.retrieveByMessage(message) == MessageType.LOGIN) {
                 Login login = (Login) message;
-                nickname.set(login.getNickname());
+                String nick = login.getNickname().trim();
+                if (nick.isEmpty() || nick.length() > 20) {
+                    communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_INVALID_NICKNAME));
+                    nickname.set(null);
+                } else
+                    nickname.set(nick);
             } else {
                 communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
                 nickname.set(null);
@@ -228,7 +233,7 @@ public class Server {
                             if (clientManager.getVirtualClient(nickname) != null && !clientManager.getVirtualClient(nickname).isConnected()) {
                                 clientManager.reconnectPlayer(communicationHandler, nickname);
                             } else {
-                                communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
+                                communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_GAME_STARTED));
                             }
                         } else if (clientManager.getVirtualClient(nickname) != null) {
                             communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE));
@@ -244,6 +249,4 @@ public class Server {
             communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
         }
     }
-
-
 }
