@@ -10,7 +10,7 @@
 # Final examination of Software Engineering 2021-22
 
 [![Build](https://github.com/GioBar00/ingsw2022-AM33/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/GioBar00/ingsw2022-AM33/actions/workflows/maven.yml)
-[![](https://img.shields.io/badge/JavaDoc--green.svg?style=flat&logo=openjdk)](https://giobar00.github.io/ingsw2022-AM33/)
+[![](https://img.shields.io/badge/JavaDoc--blue.svg?style=flat&logo=openjdk)](https://giobar00.github.io/ingsw2022-AM33/)
 
 ## Eriantys
 
@@ -46,14 +46,12 @@ the [rules][game-rules] of the game.
 | Persistence            |     [![][not-implemented]][project-requirements]      |
 | Disconnections control |           [![][done]][project-requirements]           |
 
-### Legend
-
-| Status                   |
-|:-------------------------|
-| [![][not-implemented]]() |
-| [![][implementing]]()    |
-| [![][testing]]()         |
-| [![][done]]()            |
+| Legend               |
+|:---------------------|
+| ![][not-implemented] |
+| ![][implementing]    |
+| ![][testing]         |
+| ![][done]            |
 
 ## Code coverage
 All classes for model, lobby, controller and messages were tested.
@@ -67,6 +65,29 @@ All classes for model, lobby, controller and messages were tested.
 | model         | 92% (1489/1610) |
 | **_network_** |  93% (506/544)  |
 | messages      |  96% (483/503)  |
+
+## Building
+### Dependencies
+* JDK 17
+* Maven 3
+
+### Run Maven
+`mvn clean install`
+
+This will build the project and install all dependencies creating a jar file inside in the `target` directory.
+
+## Start Eriantys
+After building the project, you can start the game in 3 different modes by appending the following arguments to the command:
+
+`java -jar AM33-1.0-SNAPSHOT.jar`
+
+- `-s`: starts the game in **Server** mode
+- `-c`: starts the game in **CLI** mode
+- ` ` or `-g`: starts the game in **GUI** mode
+
+### Server mode
+When starting the game in **Server** mode, you can also specify the port number to use by appending the following argument to the command:
+- `-p <port>`: the port number to use
 
 
 ## Team
