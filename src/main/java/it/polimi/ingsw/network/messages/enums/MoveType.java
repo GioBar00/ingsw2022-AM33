@@ -13,11 +13,26 @@ import java.util.Map;
  * Enum that represents the type of move
  */
 public enum MoveType {
+    /**
+     * Invalid Move
+     */
     INVALID(null),
+    /**
+     * Message that tells the player they can move a student from a Location to another
+     */
     MOVE(MoveStudent.class),
+    /**
+     * Message that tells the player they can swap two students between each other
+     */
     SWAP(SwapStudents.class),
 
+    /**
+     * Message that tells the server that a player has moved a student
+     */
     MOVED(MovedStudent.class),
+    /**
+     * Message that tells the server that two students have been swapped
+     */
     SWAPPED(SwappedStudents.class);
 
     /**

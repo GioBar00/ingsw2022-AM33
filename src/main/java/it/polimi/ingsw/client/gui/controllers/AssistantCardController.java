@@ -49,10 +49,19 @@ public class AssistantCardController implements GUIController {
      */
     private boolean choseAnAssistant = false;
 
+    /**
+     * EnumMap used to save the gridPanes where each assistant card is positioned
+     */
     private EnumMap<AssistantCard, GridPane> assistantGridMap;
 
+    /**
+     * Map that specifies which AssistantView will be instanced a specific gridPane
+     */
     private Map<GridPane, AssistantView> assistantViewMaps;
 
+    /**
+     * EnumSet of the currently available Assistant cards
+     */
     private EnumSet<AssistantCard> availableCards = EnumSet.noneOf(AssistantCard.class);
     @FXML
     private Text lblTitle;

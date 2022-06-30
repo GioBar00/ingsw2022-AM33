@@ -23,6 +23,8 @@ public interface MuteToggle {
 
     /**
      * Toggle the mute state and change the image of the mute button.
+     *
+     * @param imgView current image of the button.
      */
     default void toggleMute(ImageView imgView) {
         AudioManager.setMute(!AudioManager.getMuted());

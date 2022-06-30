@@ -53,6 +53,9 @@ public class IslandController implements GUIController {
     @FXML
     private ImageView blockImage;
 
+    /**
+     * Button used by the player to click on the island
+     */
     @FXML
     public Button islandButton;
 

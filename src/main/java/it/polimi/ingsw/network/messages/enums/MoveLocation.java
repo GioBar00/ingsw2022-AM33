@@ -1,14 +1,24 @@
 package it.polimi.ingsw.network.messages.enums;
 
-import java.util.Locale;
-
 /**
  * Enum for the possible locations of a move
  */
 public enum MoveLocation {
+    /**
+     * Entrance of the Schoolboard
+     */
     ENTRANCE(true, true),
+    /**
+     * Hall of the Schoolboard
+     */
     HALL(true, false),
+    /**
+     * Island
+     */
     ISLAND(true, true),
+    /**
+     * Character card
+     */
     CARD(true, false);
 
     /**

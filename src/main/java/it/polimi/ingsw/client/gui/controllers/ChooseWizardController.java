@@ -152,7 +152,10 @@ public class ChooseWizardController implements GUIController {
     }
 
     /**
-     * Return the button related to a specified wizard
+     * This method returns the button that corresponds to a certain wizard
+     *
+     * @param wizard the selected wizard
+     * @return the button related to a specified wizard
      */
     private Button getButtonFromWizard(Wizard wizard) {
         return switch (wizard) {

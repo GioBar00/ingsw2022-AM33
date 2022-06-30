@@ -27,13 +27,37 @@ class CLIPrinter {
      */
     final Map<String, String> colors;
 
+    /**
+     * string containing the name of the 'green' cli color
+     */
     private final String green = Color.GREEN.getName();
+    /**
+     * string containing the name of the 'reset' cli color
+     */
     private final String reset = Color.RESET.getName();
+    /**
+     * string containing the name of the 'red' cli color
+     */
     private final String red = Color.RED.getName();
+    /**
+     * string containing the name of the 'yellow' cli color
+     */
     private final String yellow = Color.YELLOW.getName();
+    /**
+     * string containing the name of the 'blue' cli color
+     */
     private final String blue = Color.BLUE.getName();
+    /**
+     * string containing the name of the 'magenta' cli color
+     */
     private final String magenta = Color.MAGENTA.getName();
+    /**
+     * string containing the name of the 'cyan' cli color
+     */
     private final String cyan = Color.CYAN.getName();
+    /**
+     * string containing the name of the 'white' cli color
+     */
     private final String white = Color.WHITE.getName();
 
     /**
@@ -98,7 +122,7 @@ class CLIPrinter {
     }
 
     /**
-     * This method converts an enum-set of <T> into a printable string.
+     * This method converts an enum-set of T into a printable string.
      *
      * @param choices the enum-set to convert.
      * @param <T>     the type of the enum-set.

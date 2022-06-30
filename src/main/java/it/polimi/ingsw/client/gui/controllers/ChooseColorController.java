@@ -4,7 +4,6 @@ import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.ResourceLoader;
 import it.polimi.ingsw.network.messages.actions.ChosenStudentColor;
-import it.polimi.ingsw.network.messages.actions.requests.ChooseStudentColor;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -46,6 +45,9 @@ public class ChooseColorController implements GUIController {
     @FXML
     private Button yellowBtn;
 
+    /**
+     * This map keeps track of which button corresponds to each StudentColor
+     */
     private Map<StudentColor, Button> buttonsMap;
 
     /**

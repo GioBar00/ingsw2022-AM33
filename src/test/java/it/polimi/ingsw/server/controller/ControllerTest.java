@@ -27,9 +27,18 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ControllerTest {
 
+    /**
+     * The server used in the test
+     */
     Server srv;
 
+    /**
+     * The game Controller
+     */
     Controller controller;
+    /**
+     * The model listener
+     */
     ModelListeners modelListeners;
 
     /**
@@ -37,16 +46,33 @@ class ControllerTest {
      */
     static class ModelListener extends VirtualClient implements MessageListener {
 
+        /**
+         * Constructor.
+         *
+         * @param name the name of the client that the listener will be assiciated to
+         * @param controller the controller used in the test
+         */
         ModelListener(String name, MessageListener controller) {
             super(name);
             super.addMessageListener(controller);
         }
 
+        /**
+         * Method used to know if the client is connected.
+         *
+         * @return true, for testing purposes.
+         */
         @Override
         public synchronized boolean isConnected() {
             return true;
         }
 
+        /**
+         * The method returns whether the messages queue contains a certain message.
+         *
+         * @param type the type of the message.
+         * @return true if the queue contains the message, false otherwise.
+         */
         boolean queueContains(MessageType type) {
 
             for (Message m : super.communicationHandler.getQueue()) {
@@ -59,10 +85,17 @@ class ControllerTest {
 
         }
 
+        /**
+         * This method clears all contents of the queue.
+         */
         void clearQueue() {
             super.communicationHandler.clearQueue();
         }
 
+        /**
+         * This method handles a Message Event
+         * @param event of the received message
+         */
         @Override
         public void onMessage(MessageEvent event) {
             super.communicationHandler.sendMessage(event.getMessage());
@@ -73,16 +106,33 @@ class ControllerTest {
      * A collection of {@link ModelListener}s.
      */
     static class ModelListeners {
+        /**
+         * ArrayList used to keep track of teh current model listeners.
+         */
         private final ArrayList<ModelListener> mL;
 
+        /**
+         * Constructor.
+         */
         ModelListeners() {
             mL = new ArrayList<>();
         }
 
+        /**
+         * Method used to add a model listener.
+         *
+         * @param m model listener to be added.
+         */
         void add(ModelListener m) {
             mL.add(m);
         }
 
+        /**
+         * The method returns the model listener of a certain client.
+         *
+         * @param Nickname the id of the client and the model listener.
+         * @return the model listener that corresponds to the client that goes by that nickname.
+         */
         ModelListener getByNickname(String Nickname) {
             for (ModelListener m : mL) {
                 if (m.getIdentifier().equals(Nickname))

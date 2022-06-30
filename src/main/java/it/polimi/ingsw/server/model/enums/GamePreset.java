@@ -6,8 +6,17 @@ import java.util.EnumSet;
  * This class represents the preset of the game. It contains all the information for setting up the game.
  */
 public enum GamePreset {
+    /**
+     * Game for two players
+     */
     TWO(2, 8, 2, 7, 3, 3, EnumSet.of(Tower.WHITE, Tower.BLACK)),
+    /**
+     * Game for three players
+     */
     THREE(3, 6, 3, 9, 4, 4, EnumSet.of(Tower.WHITE, Tower.BLACK, Tower.GREY)),
+    /**
+     * Game for four players
+     */
     FOUR(4, 8, 4, 7, 3, 3, EnumSet.of(Tower.WHITE, Tower.BLACK));
 
     /**

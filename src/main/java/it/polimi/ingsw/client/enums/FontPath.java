@@ -4,6 +4,9 @@ package it.polimi.ingsw.client.enums;
  * Enum for the font paths.
  */
 public enum FontPath {
+    /**
+     * Font used on the GUI
+     */
     SONO("/fonts/Sono-Medium.ttf");
 
     /**
