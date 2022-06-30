@@ -280,10 +280,7 @@ public class GUI extends Application implements UI {
     @Override
     public void setGameView(GameView gameView) {
         boolean show = checkGameController();
-        if (this.players == null) {
-            players = gameView.getPlayersView();
-        }
-
+        players = gameView.getPlayersView();
         if (gameView.getState() == GameState.ENDED) {
             show = false;
         } else
@@ -426,7 +423,7 @@ public class GUI extends Application implements UI {
         Platform.runLater(() -> {
             controller.init();
             controller.loadScene(stage);
-            controller.updateWinners(this.players, winners);
+            controller.updateWinners(players, winners);
         });
     }
 
