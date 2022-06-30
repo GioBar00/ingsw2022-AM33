@@ -202,7 +202,6 @@ public class Controller implements Runnable, MessageListener {
         if (waiting || !clientManager.isClientInGame(vc))
             return;
         String identifier = vc.getIdentifier();
-        System.out.println("CONTR: Skip turn from " + identifier);
         switch (model.getGameState()) {
             case UNINITIALIZED -> {
                 if (lobby.containsPlayer(identifier)) {
@@ -221,6 +220,7 @@ public class Controller implements Runnable, MessageListener {
                 if (isInstantiated()) {
                     if (identifier.equals(model.getCurrentPlayer())) {
                         model.skipCurrentPlayerTurn();
+                        System.out.println("S: " + identifier + "'s turn skipped");
                     }
                 }
             }
@@ -478,7 +478,6 @@ public class Controller implements Runnable, MessageListener {
                 }
             } catch (InterruptedException ignored) {
             }
-            System.out.println("CONTR: STOPPED!!");
         }
     }
 

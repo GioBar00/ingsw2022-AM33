@@ -129,7 +129,6 @@ public class VirtualClient extends ConcreteMessageListenerSubscriber implements 
      */
     @Override
     public void onDisconnect(DisconnectEvent event) {
-        System.out.println("VC " + identifier + ": disconnected");
         notifyDisconnectListener(new DisconnectEvent(this));
     }
 

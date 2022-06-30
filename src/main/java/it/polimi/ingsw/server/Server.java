@@ -71,7 +71,7 @@ public class Server {
      * Reset the server to the initial state
      */
     public synchronized void resetGame() {
-        System.out.println("S: Resetting game");
+        System.out.println("S: resetting game");
         state = ServerState.EMPTY;
     }
 
@@ -118,6 +118,7 @@ public class Server {
      */
     private void handleFirstPlayer(CommunicationHandler communicationHandler) {
         try {
+            System.out.println("S: handling first player");
             String nickname = getPlayerNickname(communicationHandler);
             if (nickname != null) {
                 CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -134,12 +135,7 @@ public class Server {
                     } else
                         communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
                 });
-                communicationHandler.setDisconnectListener((e) -> {
-                    synchronized (this) {
-                        state = ServerState.EMPTY;
-                    }
-                    System.out.println("S: EMPTY");
-                });
+                communicationHandler.setDisconnectListener((e) -> resetGame());
 
                 communicationHandler.sendMessage(new CommMessage(CommMsgType.CHOOSE_GAME));
 
@@ -158,10 +154,7 @@ public class Server {
         } catch (TimeoutException e) {
             if (communicationHandler.isConnected()) {
                 communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
-                synchronized (this) {
-                    state = ServerState.EMPTY;
-                }
-                System.out.println("S: EMPTY");
+                resetGame();
             }
         }
     }
@@ -222,6 +215,7 @@ public class Server {
      */
     private void handleNewPlayer(CommunicationHandler communicationHandler) {
         try {
+            System.out.println("S: handling new player");
             String nickname = getPlayerNickname(communicationHandler);
 
             if (nickname != null) {

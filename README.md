@@ -58,7 +58,6 @@ All classes for model, lobby, controller and messages were tested.
 
 | Package       |  Line Coverage  |
 |:--------------|:---------------:|
-| **_ingsw_**   | 91% (2455/2671) |
 | **_server_**  | 91% (1949/2127) |
 | controller    |  92% (184/199)  |
 | lobby         |  98% (119/121)  |
@@ -88,6 +87,8 @@ After building the project, you can start the game in 3 different modes by appen
 ### Server mode
 When starting the game in **Server** mode, you can also specify the port number to use by appending the following argument to the command:
 - `-p <port>`: the port number to use
+
+If not specified, the **default port** number is `1234`.
 
 
 ## Team

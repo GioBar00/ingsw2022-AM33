@@ -181,7 +181,7 @@ public class Lobby extends ConcreteMessageListenerSubscriber {
      * @param identifier the player who has to receive available Wizards
      */
     public void notifyAvailableWizards(String identifier) {
-        System.out.println("Sending initial stats to " + identifier);
+        System.out.println("S: notifying available wizards to " + identifier);
         notifyMessageListener(identifier, new MessageEvent(this, new AvailableWizards(getWizardsView())));
     }
 
