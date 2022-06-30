@@ -123,7 +123,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     public synchronized void setSocket(Socket socket) {
         this.socket = socket;
         if (!socket.isClosed()) {
-            System.out.println("CH : setSocket set new socket");
             try {
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -175,7 +174,7 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                 try {
                     m = queue.take();
                 } catch (InterruptedException e) {
-                    if (isMaster) System.out.println("CH : output interrupted");
+                    if (isMaster) notifyDisconnectAndStop();
                 }
                 if (m != null && MessageType.retrieveByMessage(m) != MessageType.IGNORE)
                     MessageExchange.sendMessage(m, writer);
@@ -185,10 +184,8 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                     }
                 }
             }
-            System.out.println("CH: Stop handle output");
             notifyDisconnectAndStop();
         } catch (IOException e) {
-            System.out.println("CH : handleOutput IOException");
             notifyDisconnectAndStop();
         }
     }
@@ -208,10 +205,8 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                     } else if (isMaster) sendMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
                 }
             }
-            System.out.println("CH: Stopped handle input");
             notifyDisconnectAndStop();
         } catch (IOException e) {
-            System.out.println("CH : handleInput IOException");
             notifyDisconnectAndStop();
         }
     }
@@ -260,12 +255,10 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
                 try {
                     if (isMaster) sendMessage(new CommMessage(CommMsgType.PING));
                     if (!latch.await(seconds, TimeUnit.SECONDS)) {
-                        System.out.println("CH : timer timeout");
                         notifyDisconnectAndStop();
                     }
 
                 } catch (InterruptedException ignored) {
-                    System.out.println("CH : timer InterruptedException");
                 }
             }
         }, 0, 5 * 1000);
@@ -284,7 +277,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
             new Thread(this::handleInput).start();
             new Thread(this::handleOutput).start();
             startTimer();
-            System.out.println("CH : start");
         }
     }
 
@@ -295,7 +287,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
         if (!stopped) {
             stopped = true;
             disconnectListener = e -> {};
-            System.out.println("CH : stop");
             if (timer != null) {
                 timer.cancel();
                 timer.purge();
@@ -376,7 +367,6 @@ public class CommunicationHandler implements DisconnectListenerSubscriber {
     public void notifyDisconnectListener(DisconnectEvent event) {
         DisconnectListener listener = disconnectListener;
         if (listener != null) {
-            System.out.println("CH : notify disconnect");
             listener.onDisconnect(event);
         }
     }

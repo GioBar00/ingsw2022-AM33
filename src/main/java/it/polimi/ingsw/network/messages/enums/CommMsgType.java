@@ -69,7 +69,7 @@ public enum CommMsgType {
     /**
      * waiting message: the server is waiting for other players
      */
-    WAITING("Wait for other players"),
+    WAITING("Wait for other players..."),
     // COMMUNICATION MESSAGES FOR REQUESTS/ACKs
     /**
      * communication message: ping message

@@ -6,7 +6,6 @@ import it.polimi.ingsw.client.enums.Color;
 import it.polimi.ingsw.client.enums.ViewState;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
@@ -14,7 +13,10 @@ import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.server.Winners;
 import it.polimi.ingsw.network.messages.views.*;
-import it.polimi.ingsw.server.model.enums.*;
+import it.polimi.ingsw.server.model.enums.AssistantCard;
+import it.polimi.ingsw.server.model.enums.GameMode;
+import it.polimi.ingsw.server.model.enums.GameState;
+import it.polimi.ingsw.server.model.enums.StudentColor;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -383,7 +385,7 @@ public class CLI implements UI {
             if (teamsView != null)
                 showLobbyScreen();
         }
-        System.out.println("The match can start now. Type START if you want to start it");
+        System.out.println("The match can start now. Type START if you want to start it.");
     }
 
     /**
@@ -525,7 +527,6 @@ public class CLI implements UI {
     @Override
     public void showWaiting() {
         lastState = ViewState.WAITING;
-        System.out.println(colors.get(RESET) + "Waiting for other players...");
     }
 
     /**
@@ -551,7 +552,7 @@ public class CLI implements UI {
             text = new StringBuilder(text.subSequence(0, text.lastIndexOf("|")) + "] ");
             System.out.println("Available Character Card " + text);
         }
-        System.out.println(MessageBuilder.toJson(lastRequest));
+
         switch (MessageType.retrieveByMessage(lastRequest)) {
             case CHOOSE_CLOUD -> {
                 Set<Integer> choices = ((ChooseCloud) lastRequest).getAvailableCloudIndexes();

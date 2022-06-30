@@ -3,9 +3,6 @@ package it.polimi.ingsw.network;
 import it.polimi.ingsw.network.listeners.DisconnectListener;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.messages.MessageBuilder;
-import it.polimi.ingsw.network.messages.enums.CommMsgType;
-import it.polimi.ingsw.network.messages.enums.MessageType;
-import it.polimi.ingsw.network.messages.server.CommMessage;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -32,7 +29,6 @@ public abstract class MessageExchange {
         }
 
         if (line == null) {
-            System.out.println("MexEx: null line -> disconnect");
             disconnectListener.onDisconnect(null);
             return null;
         }

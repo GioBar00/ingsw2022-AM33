@@ -7,7 +7,6 @@ import it.polimi.ingsw.network.listeners.DisconnectListener;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.IgnoreMessage;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.client.Login;
 import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.*;
@@ -134,7 +133,6 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
      */
     @Override
     public void handleMessage(Message message) {
-        System.out.println("C: received message - " + MessageBuilder.toJson(message));
         queue.add(message);
     }
 
@@ -145,7 +143,6 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
      */
     @Override
     public void onMessage(Message message) {
-        System.out.println("C: sending message - " + MessageBuilder.toJson(message));
         communicationHandler.sendMessage(message);
     }
 
@@ -173,14 +170,12 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
             try {
                 Message message = queue.take();
                 if (MessageType.retrieveByMessage(message) != MessageType.IGNORE) {
-                    System.out.println("CL : " + message.getClass().getName());
                     updateView(message);
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        System.out.println("Client: stopped!!");
     }
 
     /**
@@ -189,8 +184,6 @@ public class Client implements MessageHandler, ViewListener, Runnable, Disconnec
      * @param message a Message from the model.
      */
     public void updateView(Message message) {
-        System.out.println(MessageBuilder.toJson(message));
-
         switch (MessageType.retrieveByMessage(message)) {
             case COMM_MESSAGE -> {
                 switch (((CommMessage) message).getType()) {

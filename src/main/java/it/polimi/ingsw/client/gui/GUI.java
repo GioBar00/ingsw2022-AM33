@@ -136,7 +136,6 @@ public class GUI extends Application implements UI {
         try {
             ResourceLoader.checkResources();
         } catch (MissingResourceException e) {
-            System.err.println(e.getMessage());
             stop();
         }
     }

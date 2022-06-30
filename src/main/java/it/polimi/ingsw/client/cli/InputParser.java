@@ -273,7 +273,6 @@ public class InputParser {
                 if (w != null && wizardsView != null)
                     if (wizardsView.getAvailableWizards().contains(w)) {
                         cli.notifyViewListener(new ChosenWizard(w));
-                        System.out.println("Waiting for other players");
                         return;
                     }
             }
@@ -306,7 +305,6 @@ public class InputParser {
      * @param in the input of the user.
      */
     private void parseStart(String[] in) {
-        System.out.println(canStart);
         if (canStart) {
             if (in[0].equalsIgnoreCase("START")) {
                 cli.notifyViewListener(new StartGame());
