@@ -527,6 +527,7 @@ public class CLI implements UI {
     @Override
     public void showWaiting() {
         lastState = ViewState.WAITING;
+        System.out.println(colors.get(RESET) + "Waiting for other players...");
     }
 
     /**
