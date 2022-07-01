@@ -1,9 +1,11 @@
 package it.polimi.ingsw.client.gui.controllers;
 
+import it.polimi.ingsw.client.enums.AudioPath;
 import it.polimi.ingsw.client.enums.ImagePath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
 import it.polimi.ingsw.client.gui.ResourceLoader;
+import it.polimi.ingsw.client.gui.audio.AudioManager;
 import it.polimi.ingsw.network.messages.client.StartGame;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -84,6 +86,7 @@ public class NormalLobbyController implements LobbyController {
     @Override
     public void setCanStart() {
         startBtn.setDisable(false);
+        AudioManager.playEffect(AudioPath.START_EFFECT);
     }
 
     /**

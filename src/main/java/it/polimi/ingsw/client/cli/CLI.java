@@ -419,18 +419,18 @@ public class CLI implements UI {
 
         StringBuilder builder = new StringBuilder();
         builder.append(colors.get(RESET)).append("╔");
-        builder.append("═".repeat(142));
+        builder.append("═".repeat(143));
         builder.append("╗");
         System.out.println(colors.get(RESET) + builder);
         builder.delete(0, builder.length());
         builder.append(cliPrinter.getFirstLine(nickname, gameView));
-        builder.append(" ".repeat(142 - builder.length()));
+        builder.append(" ".repeat(143 - builder.length()));
         System.out.println("║" + colors.get(GREEN) + builder + colors.get(RESET) + "║");
 
         builder.delete(0, builder.length());
 
         builder.append("╚");
-        builder.append("═".repeat(142));
+        builder.append("═".repeat(143));
         builder.append("╝");
         System.out.println(colors.get(RESET) + builder);
 

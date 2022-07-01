@@ -79,6 +79,7 @@ public abstract class AudioManager {
      */
     public static void playEffect(AudioPath audio) {
         MediaPlayer player = ResourceLoader.loadAudio(audio);
+        player.seek(player.getStartTime());
         player.setMute(isMuted);
         player.play();
     }

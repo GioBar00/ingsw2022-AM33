@@ -419,11 +419,11 @@ class CLIPrinter {
         StringBuilder stringBuilder = new StringBuilder();
 
 
-        appendWater(stringBuilder);
+        appendWater(stringBuilder, views);
         islandsLines.add(0, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
         // top border
-        stringBuilder.append(colors.get(blue)).append("░");
+        stringBuilder.append(colors.get(blue)).append("░ ");
         for (IslandGroupView igv : views) {
             stringBuilder.append(colors.get(green)).append("╔");
             for (int i = 0; i < igv.getIslands().size(); i++) {
@@ -441,7 +441,7 @@ class CLIPrinter {
         islandsLines.add(1, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
 
-        stringBuilder.append(colors.get(blue)).append("░");
+        stringBuilder.append(colors.get(blue)).append("░ ");
         int islandIndex = 0;
         for (IslandGroupView igv : views) {
             stringBuilder.append(colors.get(green)).append("║");
@@ -467,7 +467,7 @@ class CLIPrinter {
         islandsLines.add(2, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
 
-        stringBuilder.append(colors.get(blue)).append("░");
+        stringBuilder.append(colors.get(blue)).append("░ ");
         for (IslandGroupView igv : views) {
             stringBuilder.append(colors.get(green)).append("║ ");
             for (int i = 0; i < igv.getIslands().size(); i++) {
@@ -489,7 +489,7 @@ class CLIPrinter {
         islandsLines.add(3, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
 
-        stringBuilder.append(colors.get(blue)).append("░");
+        stringBuilder.append(colors.get(blue)).append("░ ");
         for (IslandGroupView igv : views) {
             stringBuilder.append(colors.get(green)).append("║ ");
             for (int i = 0; i < igv.getIslands().size(); i++) {
@@ -510,7 +510,7 @@ class CLIPrinter {
         islandsLines.add(4, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
 
-        stringBuilder.append(colors.get(blue)).append("░");
+        stringBuilder.append(colors.get(blue)).append("░ ");
         for (IslandGroupView igv : views) {
             stringBuilder.append(colors.get(green)).append("╚");
             for (int i = 0; i < igv.getIslands().size(); i++) {
@@ -526,7 +526,7 @@ class CLIPrinter {
         // water layer
         islandsLines.add(5, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
-        appendWater(stringBuilder);
+        appendWater(stringBuilder, views);
         islandsLines.add(6, stringBuilder.toString());
 
 
@@ -827,10 +827,18 @@ class CLIPrinter {
      *
      * @param s the string builder to append to.
      */
-    private void appendWater(StringBuilder s) {
-        s.append(colors.get(blue));
-        s.append("░".repeat(144));
-        s.append(colors.get(reset));
+    private void appendWater(StringBuilder s, List<IslandGroupView> igv) {
+        int i = 145;
+        if (igv.size() < 12) {
+            int N = igv.size();
+            i = (N - 1) * 3 + 4;
+            for (IslandGroupView group : igv) {
+                i = i + 8 * group.getIslands().size() + 1;
+            }
+        }
+        s.append(colors.get("blue"));
+        s.append("░".repeat(i));
+        s.append(colors.get("reset"));
     }
 
     /**
