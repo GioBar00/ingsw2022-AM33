@@ -423,7 +423,7 @@ class CLIPrinter {
         islandsLines.add(0, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
         // top border
-        stringBuilder.append(colors.get(blue)).append("░");
+        stringBuilder.append(colors.get(blue)).append("░ ");
         for (IslandGroupView igv : views) {
             stringBuilder.append(colors.get(green)).append("╔");
             for (int i = 0; i < igv.getIslands().size(); i++) {
@@ -441,7 +441,7 @@ class CLIPrinter {
         islandsLines.add(1, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
 
-        stringBuilder.append(colors.get(blue)).append("░");
+        stringBuilder.append(colors.get(blue)).append("░ ");
         int islandIndex = 0;
         for (IslandGroupView igv : views) {
             stringBuilder.append(colors.get(green)).append("║");
@@ -467,7 +467,7 @@ class CLIPrinter {
         islandsLines.add(2, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
 
-        stringBuilder.append(colors.get(blue)).append("░");
+        stringBuilder.append(colors.get(blue)).append("░ ");
         for (IslandGroupView igv : views) {
             stringBuilder.append(colors.get(green)).append("║ ");
             for (int i = 0; i < igv.getIslands().size(); i++) {
@@ -489,7 +489,7 @@ class CLIPrinter {
         islandsLines.add(3, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
 
-        stringBuilder.append(colors.get(blue)).append("░");
+        stringBuilder.append(colors.get(blue)).append("░ ");
         for (IslandGroupView igv : views) {
             stringBuilder.append(colors.get(green)).append("║ ");
             for (int i = 0; i < igv.getIslands().size(); i++) {
@@ -510,7 +510,7 @@ class CLIPrinter {
         islandsLines.add(4, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
 
-        stringBuilder.append(colors.get(blue)).append("░");
+        stringBuilder.append(colors.get(blue)).append("░ ");
         for (IslandGroupView igv : views) {
             stringBuilder.append(colors.get(green)).append("╚");
             for (int i = 0; i < igv.getIslands().size(); i++) {
@@ -828,7 +828,7 @@ class CLIPrinter {
      * @param s the string builder to append to.
      */
     private void appendWater(StringBuilder s, List<IslandGroupView> igv) {
-        int i = 144;
+        int i = 145;
         if(igv.size() < 12){
             // 108 are the spaces occupied by the island alone, the rest of the formula is for the spaces
             i = igv.size() * 3 + 108;
