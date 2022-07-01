@@ -605,7 +605,6 @@ public class GameController implements GUIController, MuteToggle {
                     });
                 }
                 // activate hall
-                System.out.println(entranceToHallIndexes.toString());
                 if (entranceToHallIndexes.contains(i)) {
                     GUIUtils.setButton(me.getSchoolBoardController().hallButton, e -> {
                         gui.notifyViewListener(new MovedStudent(MoveLocation.ENTRANCE, i, MoveLocation.HALL, null));
