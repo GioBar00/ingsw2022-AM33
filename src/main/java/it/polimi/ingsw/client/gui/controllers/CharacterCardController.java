@@ -37,11 +37,6 @@ public class CharacterCardController implements GUIController {
     EnumMap<StudentColor, Button> buttons;
 
     /**
-     * A map of labels associated to the student color buttons.
-     */
-    EnumMap<StudentColor, Label> labels;
-
-    /**
      * The index of the character card.
      */
     private Integer index;
@@ -91,26 +86,15 @@ public class CharacterCardController implements GUIController {
 
     @FXML
     private Button greenBtn;
-    @FXML
-    private Label greenLbl;
 
     @FXML
     private Button redBtn;
-    @FXML
-    private Label redLbl;
 
     @FXML
     private Button magentaBtn;
-    @FXML
-    private Label pinkLbl;
 
     @FXML
     private Button blueBtn;
-    @FXML
-    private Label blueLbl;
-
-    @FXML
-    private Label yellowLbl;
 
     @FXML
     private Button yellowBtn;
@@ -137,22 +121,12 @@ public class CharacterCardController implements GUIController {
     @Override
     public void init() {
         buttons = new EnumMap<>(StudentColor.class);
-        labels = new EnumMap<>(StudentColor.class);
         buttons.put(StudentColor.GREEN, greenBtn);
-        labels.put(StudentColor.GREEN, greenLbl);
         buttons.put(StudentColor.RED, redBtn);
-        labels.put(StudentColor.RED, redLbl);
         buttons.put(StudentColor.BLUE, blueBtn);
-        labels.put(StudentColor.BLUE, blueLbl);
         buttons.put(StudentColor.MAGENTA, magentaBtn);
-        labels.put(StudentColor.MAGENTA, pinkLbl);
         buttons.put(StudentColor.YELLOW, yellowBtn);
-        labels.put(StudentColor.YELLOW, yellowLbl);
 
-
-        for (StudentColor s : StudentColor.values()) {
-            setNotUsable(buttons.get(s), labels.get(s));
-        }
         GUIUtils.bindSize(anchorPaneCharacter, characterBtn);
         GUIUtils.bindSize(anchorPaneCharacter, characterImg);
 
@@ -237,9 +211,8 @@ public class CharacterCardController implements GUIController {
 
         if (view.getNumBlocks() > 0) {
             imgViewRed.setImage(ResourceLoader.loadImage(ImagePath.BLOCK));
-            redLbl.setText(String.valueOf(view.getNumBlocks()));
+            redBtn.setText(String.valueOf(view.getNumBlocks()));
             redBtn.setVisible(true);
-            redLbl.setVisible(true);
             return;
         }
 
@@ -248,9 +221,9 @@ public class CharacterCardController implements GUIController {
             for (StudentColor s : StudentColor.values()) {
                 num = view.getStudent().get(s);
                 if (num == null || num == 0) {
-                    setNotUsable(buttons.get(s), labels.get(s));
+                    buttons.get(s).setVisible(false);
                     buttons.get(s).setOpacity(1);
-                } else setUsable(buttons.get(s), labels.get(s), num);
+                } else setUsable(buttons.get(s), num);
             }
         }
 
@@ -264,28 +237,15 @@ public class CharacterCardController implements GUIController {
     }
 
     /**
-     * Private method that sets if a button is not usable.
-     *
-     * @param in    {@link Button} the button we want to enable.
-     * @param inLbl {@link Label} the label we want to enable.
-     */
-    private void setNotUsable(Button in, Label inLbl) {
-        in.setVisible(false);
-        inLbl.setVisible(false);
-    }
-
-    /**
      * Private method that sets if a button is usable.
      *
-     * @param in    {@link Button} the button we want to enable.
-     * @param inLbl {@link Label} the label we want to enable.
+     * @param btn    {@link Button} the button we want to enable.
      * @param num   the quantity related to the button.
      */
-    private void setUsable(Button in, Label inLbl, int num) {
-        in.setVisible(true);
-        in.setDisable(false);
-        inLbl.setVisible(true);
-        inLbl.setText(String.valueOf(num));
+    private void setUsable(Button btn, int num) {
+        btn.setVisible(true);
+        btn.setDisable(false);
+        btn.setText(String.valueOf(num));
     }
 
     /**
