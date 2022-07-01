@@ -597,11 +597,9 @@ public class GameController implements GUIController, MuteToggle {
             GUIUtils.setButton(entranceButtons.get(i), event -> {
                 lblAction.setText("Select a highlighted island or hall to move the student to");
                 clearCharacterButtons();
-                System.out.println("Entrance button pressed: " + i);
                 // activate islands
                 for (Integer j : islandIndexes) {
                     GUIUtils.setButton(islandsController.islandControllers.get(j).islandButton, e -> {
-                        System.out.println("Island button pressed: " + j);
                         gui.notifyViewListener(new MovedStudent(MoveLocation.ENTRANCE, i, MoveLocation.ISLAND, j));
                         clearHallAndIslandButtons.apply();
                     });
@@ -610,7 +608,6 @@ public class GameController implements GUIController, MuteToggle {
                 System.out.println(entranceToHallIndexes.toString());
                 if (entranceToHallIndexes.contains(i)) {
                     GUIUtils.setButton(me.getSchoolBoardController().hallButton, e -> {
-                        System.out.println("Hall button pressed");
                         gui.notifyViewListener(new MovedStudent(MoveLocation.ENTRANCE, i, MoveLocation.HALL, null));
                         clearHallAndIslandButtons.apply();
                     });

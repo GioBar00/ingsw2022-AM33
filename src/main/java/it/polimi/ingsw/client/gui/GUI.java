@@ -321,7 +321,6 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showStartScreen() {
-        System.out.println("Showing start screen");
         viewState = ViewState.SETUP;
         checkStartScreenController();
         Platform.runLater(() -> {
@@ -353,7 +352,6 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showWizardMenu() {
-        System.out.println("Showing wizard menu");
         checkLobbyController();
         Platform.runLater(() -> {
             if (startScreenController != null)
