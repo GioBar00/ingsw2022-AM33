@@ -2,13 +2,15 @@ package it.polimi.ingsw.server.model.islands;
 
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
-import it.polimi.ingsw.server.model.islands.IslandsManager;
 import org.junit.jupiter.api.Test;
 
 import java.util.EnumSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests {@link IslandsManager} class.
+ */
 public class IslandsManagerTest {
 
     /**
@@ -19,7 +21,7 @@ public class IslandsManagerTest {
      * is reduced), whether the merge of the first and last IslandGroups still work correctly
      */
     @Test
-    void MergeTest(){
+    void MergeTest() {
         IslandsManager im = new IslandsManager();
 
         assertEquals(12, im.getNumIslandGroups());
@@ -54,11 +56,11 @@ public class IslandsManagerTest {
      * - whether the method returns the right value of influence after a merge of islands has happened
      */
     @Test
-    void InfluenceTest(){
+    void InfluenceTest() {
         IslandsManager im = new IslandsManager();
         EnumSet<StudentColor> professors = EnumSet.of(StudentColor.BLUE, StudentColor.GREEN);
 
-        for (StudentColor s: StudentColor.values()) {
+        for (StudentColor s : StudentColor.values()) {
             im.getIslandGroup(0).addStudent(s);
         }
 
@@ -86,7 +88,7 @@ public class IslandsManagerTest {
 
         assertEquals(11, im.getNumIslandGroups());
 
-        for (StudentColor s: StudentColor.values()) {
+        for (StudentColor s : StudentColor.values()) {
             im.getIslandGroup(0).addStudent(s);
         }
 

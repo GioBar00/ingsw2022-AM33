@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ViewsTest {
-    PlayerConvertor pC = new PlayerConvertor();
+    final PlayerConvertor pC = new PlayerConvertor();
 
     /**
      * test for the playersView for the standard GameModel with two and three players

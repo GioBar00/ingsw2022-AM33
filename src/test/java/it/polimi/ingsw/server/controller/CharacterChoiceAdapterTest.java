@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Test for CharacterChoiceAdapter class
+ * Test for CharacterChoiceAdapter class.
  */
 class CharacterChoiceAdapterTest {
 
@@ -20,11 +20,11 @@ class CharacterChoiceAdapterTest {
      * Tests all the methods contain in the static class CharacterChoiceAdapter
      */
     @Test
-    void adapterTest(){
+    void adapterTest() {
         CharacterParameters parameters;
         ChosenIsland chosenIsland = new ChosenIsland(10);
         parameters = CharacterChoiceAdapter.convert(chosenIsland);
-        assertEquals(10,parameters.getIndex());
+        assertEquals(10, parameters.getIndex());
         assertNull(parameters.getStudentColor());
 
         ChosenStudentColor chosenStudentColor = new ChosenStudentColor(StudentColor.BLUE);
@@ -32,13 +32,13 @@ class CharacterChoiceAdapterTest {
         assertEquals(StudentColor.BLUE, parameters.getStudentColor());
         assertNull(parameters.getIndex());
 
-        MovedStudent movedStudent = new MovedStudent(MoveLocation.CARD, 1,MoveLocation.CARD,10);
+        MovedStudent movedStudent = new MovedStudent(MoveLocation.CARD, 1, MoveLocation.CARD, 10);
         parameters = CharacterChoiceAdapter.convert(movedStudent);
         assertEquals(StudentColor.retrieveStudentColorByOrdinal(1), parameters.getStudentColor());
         assertEquals(10, parameters.getIndex());
 
 
-        SwappedStudents swapStudents = new SwappedStudents(MoveLocation.CARD, 1 ,MoveLocation.HALL,3);
+        SwappedStudents swapStudents = new SwappedStudents(MoveLocation.CARD, 1, MoveLocation.HALL, 3);
         parameters = CharacterChoiceAdapter.convert(swapStudents);
         assertEquals(StudentColor.retrieveStudentColorByOrdinal(3), parameters.getStudentColor());
         assertEquals(StudentColor.retrieveStudentColorByOrdinal(1), StudentColor.retrieveStudentColorByOrdinal(parameters.getIndex()));

@@ -2,7 +2,6 @@ package it.polimi.ingsw.network.messages.actions.requests;
 
 import it.polimi.ingsw.network.messages.ActionRequest;
 import it.polimi.ingsw.server.model.enums.AssistantCard;
-import it.polimi.ingsw.network.messages.Message;
 
 import java.util.EnumSet;
 

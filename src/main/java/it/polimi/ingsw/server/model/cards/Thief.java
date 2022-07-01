@@ -31,7 +31,6 @@ public class Thief extends CharacterCard {
     public boolean applyEffect(EffectHandler effectHandler, CharacterParameters parameters) {
         if (!appliedEffect && parameters != null) {
             StudentColor s = parameters.getStudentColor();
-            //FIXME: check professor and remove if 0
             if (s != null) {
                 effectHandler.tryRemoveStudentsFromHalls(s, 3);
                 effectHandler.checkProfessorOnRemove(s);

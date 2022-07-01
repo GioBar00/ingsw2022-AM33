@@ -22,11 +22,6 @@ import java.util.*;
  * This class is the controller of the island view.
  */
 public class IslandController implements GUIController {
-
-    /**
-     * {@link GUI} instance
-     */
-    private GUI gui;
     @FXML
     private AnchorPane anchorPaneStudent;
     @FXML
@@ -48,11 +43,14 @@ public class IslandController implements GUIController {
     @FXML
     private AnchorPane anchorPaneIsland;
 
-    Map<StudentColor, Label> studentNumbersMap = new HashMap<>();
+    final Map<StudentColor, Label> studentNumbersMap = new HashMap<>();
 
     @FXML
     private ImageView blockImage;
 
+    /**
+     * Button used by the player to click on the island
+     */
     @FXML
     public Button islandButton;
 
@@ -99,7 +97,6 @@ public class IslandController implements GUIController {
      */
     @Override
     public void setGUI(GUI gui) {
-        this.gui = gui;
     }
 
     /**

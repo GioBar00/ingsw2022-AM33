@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.*;
 
 import static it.polimi.ingsw.server.model.enums.StudentColor.*;
-import static it.polimi.ingsw.server.model.enums.StudentColor.YELLOW;
 
 /**
  * This class gives method for printing contents in the CLI.
@@ -27,13 +26,37 @@ class CLIPrinter {
      */
     final Map<String, String> colors;
 
+    /**
+     * string containing the name of the 'green' cli color
+     */
     private final String green = Color.GREEN.getName();
+    /**
+     * string containing the name of the 'reset' cli color
+     */
     private final String reset = Color.RESET.getName();
+    /**
+     * string containing the name of the 'red' cli color
+     */
     private final String red = Color.RED.getName();
+    /**
+     * string containing the name of the 'yellow' cli color
+     */
     private final String yellow = Color.YELLOW.getName();
+    /**
+     * string containing the name of the 'blue' cli color
+     */
     private final String blue = Color.BLUE.getName();
+    /**
+     * string containing the name of the 'magenta' cli color
+     */
     private final String magenta = Color.MAGENTA.getName();
+    /**
+     * string containing the name of the 'cyan' cli color
+     */
     private final String cyan = Color.CYAN.getName();
+    /**
+     * string containing the name of the 'white' cli color
+     */
     private final String white = Color.WHITE.getName();
 
     /**
@@ -98,7 +121,7 @@ class CLIPrinter {
     }
 
     /**
-     * This method converts an enum-set of <T> into a printable string.
+     * This method converts an enum-set of T into a printable string.
      *
      * @param choices the enum-set to convert.
      * @param <T>     the type of the enum-set.
@@ -275,7 +298,7 @@ class CLIPrinter {
 
         int indexEntrance = 0;
         int countTower = 0;
-        // CONTORNO SOPRA
+        // border above
         stringBuilder.append(colors.get(yellow)).append("╔");
         for (int i = 0; i < 92; i++) {
             if ((i == 14) || (i == 77) || (i == 67)) {
@@ -287,11 +310,11 @@ class CLIPrinter {
         stringBuilder.append("╗").append(colors.get(reset));
         schoolBoardLines.add(0, stringBuilder.toString());
 
-        // INTERNO RIGA PER RIGA
+        // middle lines
         for (int rows = 0; rows < 5; rows++) {
             stringBuilder.delete(0, stringBuilder.length());
 
-            // ENTRANCE
+            // entrance
             stringBuilder.append(colors.get(yellow)).append("║");
             for (int i = 0; i < 2; i++) {
                 stringBuilder.append(colors.get(white)).append("░");
@@ -313,12 +336,12 @@ class CLIPrinter {
                 stringBuilder.append(colors.get(white)).append("░");
             }
 
-            // HALL
+            // hall
             stringBuilder.append(colors.get(yellow)).append("║");
             appendHall(rows, stringBuilder, sbv.getStudentsHall());
 
 
-            // PROFESSORS
+            // professors
             stringBuilder.append(colors.get(yellow)).append("║");
             for (int i = 0; i < 3; i++) {
                 stringBuilder.append(colors.get(white)).append("░");
@@ -339,7 +362,7 @@ class CLIPrinter {
                 stringBuilder.append(colors.get(white)).append("░");
             }
 
-            // TOWERS
+            // towers
             stringBuilder.append(colors.get(yellow)).append("║");
             for (int i = 0; i < 2; i++) {
                 stringBuilder.append(colors.get(white)).append("░");
@@ -366,7 +389,7 @@ class CLIPrinter {
             schoolBoardLines.add(rows + 1, stringBuilder.toString());
         }
 
-        // CONTORNO SOTTO
+        // border below
         stringBuilder.delete(0, stringBuilder.length());
         stringBuilder.append(colors.get(yellow)).append("╚");
         for (int i = 0; i < 92; i++) {
@@ -379,7 +402,7 @@ class CLIPrinter {
         stringBuilder.append("╝").append(colors.get(reset));
         schoolBoardLines.add(6, stringBuilder.toString());
 
-        // NOMI
+        // names
         schoolBoardLines.add(7, "    Entrance                         Hall                            Professors    Towers" + " ".repeat(5));
         return schoolBoardLines;
     }
@@ -542,7 +565,7 @@ class CLIPrinter {
         sb.append(colors.get(white)).append(characterCardView.getOriginalCost()).append("+").append(characterCardView.getAdditionalCost()).append(" = ").append(total).append(colors.get(reset));
         sb.append(colors.get(red)).append("   ║").append(colors.get(reset));
 
-        // addictionals (students or blocks)
+        // additional (students or blocks)
         cardLines.add(2, sb.toString());
         sb.delete(0, sb.length());
 
@@ -586,7 +609,7 @@ class CLIPrinter {
             sb.delete(0, sb.length());
 
             sb.append(colors.get(red)).append("║           ║").append(colors.get(reset));
-            // if the card has no addictional
+            // if the card has no additional
         } else {
             sb.append(colors.get(red)).append("║           ║").append(colors.get(reset));
 
@@ -811,7 +834,7 @@ class CLIPrinter {
     }
 
     /**
-     * This method returns a string with information about the owner of a schoolboard.
+     * This method returns a string with information about the owner of a school board.
      *
      * @param nickname the nickname of the owner.
      * @param gameView the game view.

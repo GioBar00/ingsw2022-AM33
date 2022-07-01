@@ -1,7 +1,6 @@
 package it.polimi.ingsw.network.messages.views;
 
 import it.polimi.ingsw.server.lobby.Lobby;
-import it.polimi.ingsw.server.VirtualClient;
 import it.polimi.ingsw.server.model.enums.Wizard;
 import org.junit.jupiter.api.Test;
 

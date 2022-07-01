@@ -1,5 +1,7 @@
-package it.polimi.ingsw.network.messages;
+package it.polimi.ingsw.network.messages.server;
 
+import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.actions.*;
 import it.polimi.ingsw.network.messages.client.*;
 import it.polimi.ingsw.network.messages.enums.MessageType;

@@ -40,6 +40,9 @@ public class Controller implements Runnable, MessageListener {
      */
     private Lobby lobby;
 
+    /**
+     * The ClientManager associated to the Controller
+     */
     private final ClientManager clientManager;
 
     /**
@@ -59,6 +62,8 @@ public class Controller implements Runnable, MessageListener {
 
     /**
      * Default constructor of class Controller
+     *
+     * @param clientManager the client manager associated with this controller
      */
     public Controller(ClientManager clientManager) {
         this.clientManager = clientManager;
@@ -90,6 +95,7 @@ public class Controller implements Runnable, MessageListener {
      *
      * @param preset is the number of players for the game
      * @param mode   is the mode of the game
+     * @param lobby lobby of the game
      */
     public void setModelAndLobby(GamePreset preset, GameMode mode, Lobby lobby) {
         model = GameBuilder.getGame(preset, mode);
@@ -196,7 +202,6 @@ public class Controller implements Runnable, MessageListener {
         if (waiting || !clientManager.isClientInGame(vc))
             return;
         String identifier = vc.getIdentifier();
-        System.out.println("CONTR: Skip turn from " + identifier);
         switch (model.getGameState()) {
             case UNINITIALIZED -> {
                 if (lobby.containsPlayer(identifier)) {
@@ -215,6 +220,7 @@ public class Controller implements Runnable, MessageListener {
                 if (isInstantiated()) {
                     if (identifier.equals(model.getCurrentPlayer())) {
                         model.skipCurrentPlayerTurn();
+                        System.out.println("S: " + identifier + "'s turn skipped");
                     }
                 }
             }
@@ -394,6 +400,8 @@ public class Controller implements Runnable, MessageListener {
 
             default -> vc.sendMessage(new CommMessage(CommMsgType.ERROR_IMPOSSIBLE_MOVE));
         }
+        if (model.getGameState() == GameState.ENDED)
+            clientManager.gameEnded();
     }
 
     /**
@@ -497,7 +505,7 @@ public class Controller implements Runnable, MessageListener {
      *
      * @param identifier the nickname of the player.
      */
-    public void notifyCurrentGameStateToPlayer(String identifier) {
+    public synchronized void notifyCurrentGameStateToPlayer(String identifier) {
         if (isInstantiated())
             model.notifyCurrentGameStateToPlayer(identifier);
     }

@@ -102,7 +102,7 @@ public class IslandGroup {
     }
 
     /**
-     * calculates the influence that a specific player has on the island group, inclunding towers
+     * calculates the influence that a specific player has on the island group, including towers
      *
      * @param playerTower tower of the Player
      * @param professors  list of professors currently controlled by the player
@@ -113,7 +113,7 @@ public class IslandGroup {
 
         infl = calcInfluence(professors);
 
-        // adds addictional influence if the player controls the towers present on the island
+        // adds additional influence if the player controls the towers present on the island
         if (getTower() != null && this.getTower().equals(playerTower)) {
             infl = infl + islands.size();
         }
@@ -130,7 +130,7 @@ public class IslandGroup {
     int calcInfluence(EnumSet<StudentColor> professors) {
         int infl = 0;
 
-        // calculates the number of students on which the player has influence, considering all the islands of the gruop
+        // calculates the number of students on which the player has influence, considering all the islands of the group
         for (Island i : islands) {
             for (StudentColor p : professors) {
                 infl = infl + i.getNumStudents(p);

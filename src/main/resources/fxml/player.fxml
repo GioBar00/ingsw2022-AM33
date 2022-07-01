@@ -111,14 +111,14 @@
                                  <children>
                                     <Button fx:id="btnHand" contentDisplay="CENTER" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" style="-fx-background-color: transparent;" text="1" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <graphic>
-                                          <ImageView fx:id="imgViewHand" fitHeight="100.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fx:id="imgViewHand" fitHeight="100.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-opacity: 0.70;">
                                              <image>
                                                 <Image url="@../images/cards/back.jpg" />
                                              </image>
                                           </ImageView>
                                        </graphic>
                                        <font>
-                                          <Font name="Sono Medium" size="36.0" />
+                                          <Font name="Sono Medium" size="16.0" />
                                        </font>
                                     </Button>
                                  </children>

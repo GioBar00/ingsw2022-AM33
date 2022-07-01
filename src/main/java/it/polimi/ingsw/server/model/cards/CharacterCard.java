@@ -216,6 +216,10 @@ public abstract class CharacterCard {
     }
 
     /**
+     * This method returns a set of the currently available students, generated from the EnumSet of the students currently
+     * positioned of the card
+     *
+     * @param students enumSet of the students on the Character Card
      * @return an ordinal student set of the available students.
      */
     static Set<Integer> getAvailableStudentsOrdinal(EnumMap<StudentColor, Integer> students) {
@@ -227,6 +231,9 @@ public abstract class CharacterCard {
     }
 
     /**
+     * This method returns the currently available entrance indexes.
+     *
+     * @param effectHandler the effectHandler that controls the entrance.
      * @return the available entrance indexes.
      */
     static Set<Integer> getAvailableEntranceIndexes(EffectHandler effectHandler) {

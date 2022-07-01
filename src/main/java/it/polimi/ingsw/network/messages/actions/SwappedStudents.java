@@ -1,9 +1,7 @@
 package it.polimi.ingsw.network.messages.actions;
 
-import it.polimi.ingsw.network.messages.actions.MovedStudent;
-import it.polimi.ingsw.network.messages.actions.requests.MoveStudent;
-import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.network.messages.enums.MoveLocation;
+import it.polimi.ingsw.server.model.enums.StudentColor;
 
 /**
  * This message signifies that the player swapped two students.

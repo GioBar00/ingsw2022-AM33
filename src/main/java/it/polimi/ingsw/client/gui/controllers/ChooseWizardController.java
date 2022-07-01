@@ -113,7 +113,9 @@ public class ChooseWizardController implements GUIController {
     }
 
     /**
-     * This method is used to handle the event of clicking the Merlin button.
+     * This method is used to handle the event of clicking the Wizard button.
+     *
+     * @param actionEvent event that triggers the button (click on the Wizard button)
      */
     @FXML
     public void handleButtonAction(ActionEvent actionEvent) {
@@ -150,7 +152,10 @@ public class ChooseWizardController implements GUIController {
     }
 
     /**
-     * Return the button related to a specified wizard
+     * This method returns the button that corresponds to a certain wizard
+     *
+     * @param wizard the selected wizard
+     * @return the button related to a specified wizard
      */
     private Button getButtonFromWizard(Wizard wizard) {
         return switch (wizard) {

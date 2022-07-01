@@ -19,7 +19,7 @@ class GameViewTest {
     /**
      * game and its components
      */
-    GameModelExpert gmTest = new GameModelExpert(new GameModel(GamePreset.THREE));
+    final GameModelExpert gmTest = new GameModelExpert(new GameModel(GamePreset.THREE));
     PlayersManager pmTest;
     IslandsManager imTest;
     ArrayList<Tower> playerTowers;
@@ -40,7 +40,7 @@ class GameViewTest {
     Map<String, Integer> playerCoins;
     List<CloudView> cloudViews;
 
-    PlayerConvertor pC = new PlayerConvertor();
+    final PlayerConvertor pC = new PlayerConvertor();
 
     /**
      * set up of the gameModel, before each test

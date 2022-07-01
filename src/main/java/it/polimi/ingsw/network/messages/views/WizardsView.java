@@ -13,7 +13,7 @@ public class WizardsView implements Serializable {
     /**
      * set of available players
      */
-    EnumSet<Wizard> availableWizards;
+    private final EnumSet<Wizard> availableWizards;
 
     /**
      * Constructor

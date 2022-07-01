@@ -1,20 +1,23 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.server.model.RoundManager;
 import it.polimi.ingsw.server.model.enums.GamePhase;
 import it.polimi.ingsw.server.model.enums.GamePreset;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests {@link RoundManager} class.
+ */
 class RoundManagerTest {
+
     /**
      * for every type of GamePreset (TWO, THREE, FOUR), the test checks that the RoundManager changes the phases of
      * the game in the right order; it also controls that the last round can be set correctly
      */
     @Test
-    void roundPhaseOrder(){
-        for (GamePreset gp: GamePreset.values()) {
+    void roundPhaseOrder() {
+        for (GamePreset gp : GamePreset.values()) {
             RoundManager roundManagerTest = new RoundManager(gp);
             // check of initial set up > phase: PLANNING
             assertEquals(roundManagerTest.getGamePhase(), GamePhase.PLANNING);
@@ -25,7 +28,7 @@ class RoundManagerTest {
             assertNotEquals(roundManagerTest.getGamePhase(), GamePhase.PLANNING);
             assertEquals(roundManagerTest.getGamePhase(), GamePhase.MOVE_STUDENTS);
             // phase: MOVE_MOTHER_NATURE
-            for(int i = 0; i < gp.getMaxNumMoves(); i ++){
+            for (int i = 0; i < gp.getMaxNumMoves(); i++) {
                 assertTrue(roundManagerTest.canMoveStudents());
                 roundManagerTest.addMoves();
             }

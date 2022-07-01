@@ -40,7 +40,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
     /**
      * Round manager.
      */
-    RoundManager roundManager;
+    final RoundManager roundManager;
 
     /**
      * Players manager.
@@ -693,6 +693,7 @@ public class GameModel extends ConcreteMessageListenerSubscriber implements Game
             islandGroupIndex = fixIslandGroupsIndexes(islandGroupIndex, next);
         }
 
+        previous = Math.floorMod(islandGroupIndex - 1, islandsManager.getNumIslandGroups());
         bothBlocked = islandsManager.getIslandGroup(islandGroupIndex).isBlocked() && islandsManager.getIslandGroup(previous).isBlocked();
 
         if (islandsManager.checkMergePrevious(islandGroupIndex)) {

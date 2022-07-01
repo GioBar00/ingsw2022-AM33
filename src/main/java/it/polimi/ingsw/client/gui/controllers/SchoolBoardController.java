@@ -21,11 +21,6 @@ import java.util.*;
 public class SchoolBoardController implements GUIController {
 
     /**
-     * {@link GUI} instance.
-     */
-    private GUI gui;
-
-    /**
      * The root of the scene.
      */
     private Pane root;
@@ -91,7 +86,6 @@ public class SchoolBoardController implements GUIController {
      */
     @Override
     public void setGUI(GUI gui) {
-        this.gui = gui;
     }
 
     /**

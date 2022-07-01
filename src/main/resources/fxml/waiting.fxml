@@ -50,18 +50,18 @@
                   <AnchorPane minHeight="0.0" minWidth="0.0" GridPane.columnSpan="3" GridPane.rowSpan="2">
                      <children>
                         <Label alignment="CENTER" minHeight="0.0" minWidth="0.0" text="Waiting for the other players to reconnect..." textAlignment="CENTER" textFill="WHITE" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <font>
-                              <Font size="36.0" />
-                           </font>
+                            <font>
+                                <Font name="Sono Medium" size="36.0" />
+                            </font>
                         </Label>
                      </children>
                   </AnchorPane>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
                         <Label fx:id="timerLbl" alignment="CENTER" minHeight="0.0" minWidth="0.0" style="-fx-text-alignment: center;" text="60" textAlignment="CENTER" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <font>
-                              <Font name="System Bold" size="23.0" />
-                           </font>
+                            <font>
+                                <Font name="Sono Medium" size="23.0" />
+                            </font>
                         </Label>
                      </children>
                   </AnchorPane>

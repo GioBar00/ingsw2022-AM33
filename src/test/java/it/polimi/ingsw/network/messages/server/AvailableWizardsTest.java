@@ -1,18 +1,25 @@
-package it.polimi.ingsw.network.messages;
+package it.polimi.ingsw.network.messages.server;
 
-import it.polimi.ingsw.network.messages.server.AvailableWizards;
+import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.server.lobby.Lobby;
-import it.polimi.ingsw.server.VirtualClient;
 import it.polimi.ingsw.server.model.enums.Wizard;
 import org.junit.jupiter.api.Test;
 
 import static it.polimi.ingsw.network.messages.MessageBuilderTest.toAndFromJson;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Tests for {@link AvailableWizards} class.
+ */
 class AvailableWizardsTest {
 
+    /**
+     * Tests the right implementation of {@link AvailableWizards} class by adding 4 players into a lobby and then giving
+     * to them 4 different wizards. At the end the collection of available wizards should be empty
+     */
     @Test
-    void availableWizardsTest(){
+    void availableWizardsTest() {
         Lobby lobby = new Lobby(4);
         lobby.addPlayer("player1");
         lobby.addPlayer("player2");

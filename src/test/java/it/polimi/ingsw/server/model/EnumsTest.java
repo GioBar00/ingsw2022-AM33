@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+/**
+ * Tests the enumerations contained in Server package.
+ */
 public class EnumsTest {
 
     /**
@@ -40,7 +43,7 @@ public class EnumsTest {
      * Tests method getFromNumber in class GamePreset.
      */
     @Test
-    public void testGamePreset(){
+    public void testGamePreset() {
         assertEquals(GamePreset.TWO, GamePreset.getFromNumber(2));
         assertEquals(GamePreset.THREE, GamePreset.getFromNumber(3));
         assertEquals(GamePreset.FOUR, GamePreset.getFromNumber(4));
@@ -51,7 +54,7 @@ public class EnumsTest {
      * Tests method getColorFromString in class StudentColor.
      */
     @Test
-    public void testStudentColor(){
+    public void testStudentColor() {
         assertEquals(StudentColor.GREEN, StudentColor.getColorFromString("green"));
         assertEquals(StudentColor.BLUE, StudentColor.getColorFromString("blue"));
         assertEquals(StudentColor.RED, StudentColor.getColorFromString("red"));
@@ -64,7 +67,7 @@ public class EnumsTest {
      * Tests method getWizardFromString in class Wizard.
      */
     @Test
-    public void testWizard(){
+    public void testWizard() {
         assertEquals(Wizard.SENSEI, Wizard.getWizardFromString("sensei"));
         assertEquals(Wizard.KING, Wizard.getWizardFromString("king"));
         assertEquals(Wizard.MERLIN, Wizard.getWizardFromString("merlin"));

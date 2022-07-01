@@ -6,7 +6,6 @@ import it.polimi.ingsw.client.enums.Color;
 import it.polimi.ingsw.client.enums.ViewState;
 import it.polimi.ingsw.network.listeners.ViewListener;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.messages.MessageBuilder;
 import it.polimi.ingsw.network.messages.MoveActionRequest;
 import it.polimi.ingsw.network.messages.actions.requests.*;
 import it.polimi.ingsw.network.messages.enums.CommMsgType;
@@ -14,7 +13,10 @@ import it.polimi.ingsw.network.messages.enums.MessageType;
 import it.polimi.ingsw.network.messages.server.CommMessage;
 import it.polimi.ingsw.network.messages.server.Winners;
 import it.polimi.ingsw.network.messages.views.*;
-import it.polimi.ingsw.server.model.enums.*;
+import it.polimi.ingsw.server.model.enums.AssistantCard;
+import it.polimi.ingsw.server.model.enums.GameMode;
+import it.polimi.ingsw.server.model.enums.GameState;
+import it.polimi.ingsw.server.model.enums.StudentColor;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -94,8 +96,17 @@ public class CLI implements UI {
      */
     private final CLIPrinter cliPrinter;
 
+    /**
+     * string containing the name of the 'green' cli color
+     */
     private final String GREEN = Color.GREEN.getName();
+    /**
+     * string containing the name of the 'reset' cli color
+     */
     private final String RESET = Color.RESET.getName();
+    /**
+     * string containing the name of the 'yellow' cli color
+     */
     private final String YELLOW = Color.YELLOW.getName();
 
     /**
@@ -169,7 +180,6 @@ public class CLI implements UI {
         if (executorService == null) {
             System.out.println("We are sorry, the server is unavailable");
             System.out.println("Type a character if you want to close the application");
-            input.nextLine();
             System.exit(0);
         } else {
             System.out.println("We are sorry, the server is unavailable");
@@ -375,11 +385,11 @@ public class CLI implements UI {
             if (teamsView != null)
                 showLobbyScreen();
         }
-        System.out.println("The match can start now. Type START if you want to start it");
+        System.out.println("The match can start now. Type START if you want to start it.");
     }
 
     /**
-     * This method notifies the host that the game cant start.
+     * This method notifies the host that the game can't start.
      */
     @Override
     synchronized public void hostCantStart() {
@@ -543,7 +553,7 @@ public class CLI implements UI {
             text = new StringBuilder(text.subSequence(0, text.lastIndexOf("|")) + "] ");
             System.out.println("Available Character Card " + text);
         }
-        System.out.println(MessageBuilder.toJson(lastRequest));
+
         switch (MessageType.retrieveByMessage(lastRequest)) {
             case CHOOSE_CLOUD -> {
                 Set<Integer> choices = ((ChooseCloud) lastRequest).getAvailableCloudIndexes();

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.controller;
 
+import it.polimi.ingsw.network.CommunicationHandler;
 import it.polimi.ingsw.network.listeners.DisconnectEvent;
 import it.polimi.ingsw.network.listeners.MessageEvent;
 import it.polimi.ingsw.network.listeners.MessageListener;
@@ -21,31 +22,62 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//todo javacdoc
+/**
+ * Test {@link Controller} class.
+ */
 class ControllerTest {
 
+    /**
+     * The server used in the test
+     */
     Server srv;
 
+    /**
+     * The game Controller
+     */
     Controller controller;
+    /**
+     * The model listener
+     */
     ModelListeners modelListeners;
 
+    /**
+     * Inside class used for checking the messages sent by the Controller.
+     */
     static class ModelListener extends VirtualClient implements MessageListener {
 
+        /**
+         * Constructor.
+         *
+         * @param name the name of the client that the listener will be associated to
+         * @param controller the controller used in the test
+         */
         ModelListener(String name, MessageListener controller) {
             super(name);
             super.addMessageListener(controller);
         }
 
+        /**
+         * Method used to know if the client is connected.
+         *
+         * @return true, for testing purposes.
+         */
         @Override
         public synchronized boolean isConnected() {
             return true;
         }
 
+        /**
+         * The method returns whether the messages queue contains a certain message.
+         *
+         * @param type the type of the message.
+         * @return true if the queue contains the message, false otherwise.
+         */
         boolean queueContains(MessageType type) {
 
-            for (Message m : communicationHandler.getQueue()) {
+            for (Message m : super.communicationHandler.getQueue()) {
                 if (MessageType.retrieveByMessage(m).equals(type)) {
-                    communicationHandler.clearQueue();
+                    super.communicationHandler.clearQueue();
                     return true;
                 }
             }
@@ -53,27 +85,54 @@ class ControllerTest {
 
         }
 
+        /**
+         * This method clears all contents of the queue.
+         */
         void clearQueue() {
-            communicationHandler.clearQueue();
+            super.communicationHandler.clearQueue();
         }
 
+        /**
+         * This method handles a Message Event
+         * @param event of the received message
+         */
         @Override
         public void onMessage(MessageEvent event) {
-            communicationHandler.sendMessage(event.getMessage());
+            super.communicationHandler.sendMessage(event.getMessage());
         }
     }
 
+    /**
+     * A collection of {@link ModelListener}s.
+     */
     static class ModelListeners {
+        /**
+         * ArrayList used to keep track of teh current model listeners.
+         */
         private final ArrayList<ModelListener> mL;
 
+        /**
+         * Constructor.
+         */
         ModelListeners() {
             mL = new ArrayList<>();
         }
 
+        /**
+         * Method used to add a model listener.
+         *
+         * @param m model listener to be added.
+         */
         void add(ModelListener m) {
             mL.add(m);
         }
 
+        /**
+         * The method returns the model listener of a certain client.
+         *
+         * @param Nickname the id of the client and the model listener.
+         * @return the model listener that corresponds to the client that goes by that nickname.
+         */
         ModelListener getByNickname(String Nickname) {
             for (ModelListener m : mL) {
                 if (m.getIdentifier().equals(Nickname))
@@ -85,7 +144,8 @@ class ControllerTest {
 
 
     /**
-     * Tests the setting up of the Controller and the first games phases
+     * Tests the setting up of the Controller and the first games phases.
+     * Adds players to the lobby, gives them a wizard and then starts the game.
      */
     void controllerCreationTest() {
         srv = new Server();
@@ -94,7 +154,7 @@ class ControllerTest {
 
         modelListeners = new ModelListeners();
         ModelListener m1 = new ModelListener("p1", controller);
-
+        m1.setCommunicationHandler(new CommunicationHandler(false));
         modelListeners.add(m1);
 
         assertNull(controller.getCurrentPlayer());
@@ -124,6 +184,7 @@ class ControllerTest {
         assertTrue(m1.queueContains(MessageType.COMM_MESSAGE));
 
         ModelListener m2 = new ModelListener("p2", controller);
+        m2.setCommunicationHandler(new CommunicationHandler(false));
         modelListeners.add(m2);
         controller.addModelListener(m2);
         controller.addPlayer("p2");
@@ -152,6 +213,10 @@ class ControllerTest {
         assertTrue(controller.isGameStarted());
     }
 
+    /**
+     * This method simulates the initial round of a game.
+     * Players choose an assistant card and then the current player try to move some students and mother nature.
+     */
     @Test
     void partySimulation() {
         controllerCreationTest();
@@ -224,9 +289,9 @@ class ControllerTest {
     }
 
     /**
-     * Test the possible combinations of messages during a moveStudent phase
+     * Test the possible messages received from the server during a moveStudent phase.
      *
-     * @param current the current player
+     * @param current the current player.
      */
     void moveStudentPhaseTest(ModelListener current) {
         //send a valid request
@@ -301,9 +366,9 @@ class ControllerTest {
     }
 
     /**
-     * Test the possible combinations of messages during a moveMotherNature phase
+     * Test the possible messages received from the server during a moveMotherNature phase.
      *
-     * @param current the current player
+     * @param current the current player.
      */
     void moveMotherNaturePhaseTest(ModelListener current) {
         controller.handleMessage(new MessageEvent(current, new MovedMotherNature(10)));
@@ -320,7 +385,7 @@ class ControllerTest {
 
 
     /**
-     * Tests the situation when players disconnect before the beginning of the match
+     * Tests the situation when players disconnect before the beginning of the match.
      */
     @Test
     void EarlyDisconnectionTest() {
@@ -332,22 +397,26 @@ class ControllerTest {
 
         assertTrue(c.isInstantiated());
         ModelListener m1 = new ModelListener("p1", c);
+        m1.setCommunicationHandler(new CommunicationHandler(false));
         assertTrue(c.addPlayer(m1.getIdentifier()));
         c.addModelListener(m1);
         server.getClientManager().addVirtualClient(m1);
 
         ModelListener m2 = new ModelListener("p2", c);
+        m2.setCommunicationHandler(new CommunicationHandler(false));
         assertTrue(c.addPlayer(m2.getIdentifier()));
         c.addModelListener(m2);
         assertFalse(c.addPlayer("p2"));
         server.getClientManager().addVirtualClient(m2);
 
         ModelListener m3 = new ModelListener("p3", c);
+        m3.setCommunicationHandler(new CommunicationHandler(false));
         assertTrue(c.addPlayer(m3.getIdentifier()));
         c.addModelListener(m3);
         server.getClientManager().addVirtualClient(m3);
 
         ModelListener m4 = new ModelListener("p4", c);
+        m4.setCommunicationHandler(new CommunicationHandler(false));
         assertTrue(c.addPlayer(m4.getIdentifier()));
         c.addModelListener(m4);
         server.getClientManager().addVirtualClient(m4);
@@ -365,7 +434,7 @@ class ControllerTest {
     }
 
     /**
-     * Tests the situation when players disconnect during the match in a 3+ player game
+     * Tests the situation when players disconnect during the match in a 3+ player game.
      */
     @Test
     void SkipTurn() {
@@ -375,6 +444,7 @@ class ControllerTest {
 
         modelListeners = new ModelListeners();
         ModelListener m1 = new ModelListener("p1", controller);
+        m1.setCommunicationHandler(new CommunicationHandler(false));
 
         modelListeners.add(m1);
 
@@ -389,6 +459,8 @@ class ControllerTest {
 
 
         ModelListener m2 = new ModelListener("p2", controller);
+        m2.setCommunicationHandler(new CommunicationHandler(false));
+
         modelListeners.add(m2);
         controller.addModelListener(m2);
         controller.addPlayer("p2");
@@ -401,6 +473,8 @@ class ControllerTest {
         controller.addPlayer(m2.getIdentifier());
 
         ModelListener m3 = new ModelListener("p3", controller);
+        m3.setCommunicationHandler(new CommunicationHandler(false));
+
         modelListeners.add(m3);
         controller.addModelListener(m3);
         controller.addPlayer("p3");
@@ -433,7 +507,7 @@ class ControllerTest {
     }
 
     /**
-     * Test change team calls
+     * Test the requests of changing team.
      */
     @Test
     void chooseTeamTest() {
@@ -442,22 +516,27 @@ class ControllerTest {
         c.setModelAndLobby(GamePreset.FOUR, GameMode.EASY, LobbyConstructor.getLobby(GamePreset.FOUR));
 
         ModelListener m1 = new ModelListener("p1", c);
+        m1.setCommunicationHandler(new CommunicationHandler(false));
+
         c.addPlayer(m1.getIdentifier());
         c.addModelListener(m1);
         c.handleMessage(new MessageEvent(m1, new ChosenWizard(Wizard.SENSEI)));
 
 
         ModelListener m2 = new ModelListener("p2", c);
+        m2.setCommunicationHandler(new CommunicationHandler(false));
         c.addPlayer(m2.getIdentifier());
         c.addModelListener(m2);
         c.handleMessage(new MessageEvent(m2, new ChosenWizard(Wizard.WITCH)));
 
         ModelListener m3 = new ModelListener("p3", c);
+        m3.setCommunicationHandler(new CommunicationHandler(false));
         c.addPlayer(m3.getIdentifier());
         c.addModelListener(m3);
         c.handleMessage(new MessageEvent(m3, new ChosenWizard(Wizard.KING)));
 
         ModelListener m4 = new ModelListener("p4", c);
+        m4.setCommunicationHandler(new CommunicationHandler(false));
         c.addPlayer(m4.getIdentifier());
         c.addModelListener(m4);
         c.handleMessage(new MessageEvent(m4, new ChosenWizard(Wizard.MERLIN)));

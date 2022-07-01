@@ -7,14 +7,41 @@ import java.util.Map;
  * Enum class for the possible colors used in the CLI.
  */
 public enum Color {
+    /**
+     * used to set a "null" color
+     */
     RESET("reset"),
+    /**
+     * black color
+     */
     BLACK("black"),
+    /**
+     * green color
+     */
     GREEN("green"),
+    /**
+     * yellow color
+     */
     YELLOW("yellow"),
+    /**
+     * blue color
+     */
     BLUE("blue"),
+    /**
+     * magenta color
+     */
     MAGENTA("magenta"),
+    /**
+     * cyan color
+     */
     CYAN("cyan"),
+    /**
+     * white color
+     */
     WHITE("white"),
+    /**
+     * red color
+     */
     RED("red");
 
     /**

@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.server.model.Bag;
 import it.polimi.ingsw.server.model.enums.StudentColor;
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +8,9 @@ import java.util.LinkedList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests {@link Bag} class.
+ */
 class BagTest {
 
     /**
@@ -17,7 +19,7 @@ class BagTest {
      * throwing the right exception
      */
     @Test
-    void popRandomStudentTest(){
+    void popRandomStudentTest() {
         Bag testBag = new Bag();
         StudentColor eliminated;
         LinkedList<StudentColor> studentToAdd;
@@ -33,13 +35,16 @@ class BagTest {
         assertEquals(4, testBag.students.size());
         assertFalse(testBag.students.contains(eliminated));
 
-        for(int i = 0; i < 4; i++)  testBag.popRandomStudent();
+        for (int i = 0; i < 4; i++) testBag.popRandomStudent();
 
         assertNull(testBag.popRandomStudent());
     }
 
+    /**
+     * This method checks the isEmpty method implemented by the Bag class.
+     */
     @Test
-    void checkEmptiness(){
+    void checkEmptiness() {
         Bag testBag = new Bag();
         LinkedList<StudentColor> studentToAdd;
         studentToAdd = new LinkedList<>(Arrays.asList(StudentColor.values()));

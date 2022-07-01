@@ -18,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LobbyTest {
 
     /**
-     * Test methods in lobby
+     * Test methods in {@link Lobby}.
      */
     @Test
-    void lobbyTest(){
+    void lobbyTest() {
         Lobby lobby = LobbyConstructor.getLobby(GamePreset.THREE);
 
         assertTrue(lobby.addPlayer("p1"));
@@ -36,26 +36,26 @@ public class LobbyTest {
 
         assertFalse(lobby.canStart());
         ArrayList<String> playersNickname = new ArrayList<>();
-        for(PlayerDetails p : lobby.getPlayers()){
+        for (PlayerDetails p : lobby.getPlayers()) {
             playersNickname.add(p.getNickname());
         }
 
         assertTrue(playersNickname.contains("p1"));
         assertTrue(playersNickname.contains("p2"));
         assertTrue(playersNickname.contains("p3"));
-        assertEquals(3,playersNickname.size());
+        assertEquals(3, playersNickname.size());
 
-        assertTrue(lobby.setWizard(Wizard.MERLIN,"p1"));
-        assertFalse(lobby.setWizard(Wizard.SENSEI,"p1"));
-        assertFalse(lobby.setWizard(Wizard.MERLIN,"p2"));
-        assertTrue(lobby.setWizard(Wizard.SENSEI,"p2"));
-        assertTrue(lobby.setWizard(Wizard.KING,"p3"));
+        assertTrue(lobby.setWizard(Wizard.MERLIN, "p1"));
+        assertFalse(lobby.setWizard(Wizard.SENSEI, "p1"));
+        assertFalse(lobby.setWizard(Wizard.MERLIN, "p2"));
+        assertTrue(lobby.setWizard(Wizard.SENSEI, "p2"));
+        assertTrue(lobby.setWizard(Wizard.KING, "p3"));
 
-        assertFalse(lobby.setWizard(Wizard.WITCH,"p4"));
+        assertFalse(lobby.setWizard(Wizard.WITCH, "p4"));
 
         assertTrue(lobby.removePlayer("p3"));
         assertTrue(lobby.addPlayer("p4"));
-        assertTrue(lobby.setWizard(Wizard.KING,"p4"));
+        assertTrue(lobby.setWizard(Wizard.KING, "p4"));
         assertTrue(lobby.canStart());
 
         assertFalse(lobby.removePlayer("p1"));
@@ -67,15 +67,15 @@ public class LobbyTest {
         assertTrue(set.contains(Wizard.WITCH));
         assertEquals(1, set.size());
 
-        assertEquals("p1",lobby.getMaster());
+        assertEquals("p1", lobby.getMaster());
         assertFalse(lobby.removePlayer("p5"));
     }
 
     /**
-     * Test methods in TeamLobby
+     * Test methods in {@link it.polimi.ingsw.server.lobby.TeamLobby}.
      */
     @Test
-    void TeamLobbyTest(){
+    void TeamLobbyTest() {
         VirtualClient v1 = new VirtualClient("p1");
         Lobby lobby = LobbyConstructor.getLobby(GamePreset.FOUR);
 
@@ -86,18 +86,18 @@ public class LobbyTest {
         lobby.notifyAvailableWizards(v1.getIdentifier());
         assertFalse(lobby.canStart());
 
-        lobby.setWizard(Wizard.KING,"p1");
-        lobby.setWizard(Wizard.MERLIN,"p2");
-        lobby.setWizard(Wizard.WITCH,"p3");
-        lobby.setWizard(Wizard.SENSEI,"p4");
+        lobby.setWizard(Wizard.KING, "p1");
+        lobby.setWizard(Wizard.MERLIN, "p2");
+        lobby.setWizard(Wizard.WITCH, "p3");
+        lobby.setWizard(Wizard.SENSEI, "p4");
 
         assertFalse(lobby.canStart());
 
-        assertFalse(lobby.changeTeam("p5",Tower.BLACK));
-        assertFalse(lobby.changeTeam("p1",Tower.GREY));
-        assertTrue(lobby.changeTeam("p1",Tower.WHITE));
-        assertTrue(lobby.changeTeam("p2",Tower.WHITE));
-        assertTrue(lobby.changeTeam("p3",Tower.WHITE));
+        assertFalse(lobby.changeTeam("p5", Tower.BLACK));
+        assertFalse(lobby.changeTeam("p1", Tower.GREY));
+        assertTrue(lobby.changeTeam("p1", Tower.WHITE));
+        assertTrue(lobby.changeTeam("p2", Tower.WHITE));
+        assertTrue(lobby.changeTeam("p3", Tower.WHITE));
         assertTrue(lobby.changeTeam("p4", Tower.BLACK));
 
         assertFalse(lobby.canStart());

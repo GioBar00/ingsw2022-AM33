@@ -19,11 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CharacterCardsEffectTest {
 
-    PlayerConvertor pC = new PlayerConvertor();
+    /**
+     * player convertor.
+     */
+    final PlayerConvertor pC = new PlayerConvertor();
     /**
      * game model expert.
      */
-    GameModelExpert gme = new GameModelExpert(new GameModel(GamePreset.THREE));
+    final GameModelExpert gme = new GameModelExpert(new GameModel(GamePreset.THREE));
 
     /**
      * adds players and initializes the game.
@@ -38,6 +41,7 @@ class CharacterCardsEffectTest {
 
     /**
      * Replaces the character cards in the game and initializes the card.
+     *
      * @param card to initialize.
      */
     void initializeCharacterCardOnGameModel(CharacterCard card) {
@@ -49,6 +53,7 @@ class CharacterCardsEffectTest {
 
     /**
      * Tests for empty and null values as parameters.
+     *
      * @param card to test.
      */
     void testEffectForNullAndEmptyStudent(CharacterCard card) {
@@ -57,11 +62,12 @@ class CharacterCardsEffectTest {
         // test null parameters
         CharacterParameters parameters = new CharacterParameters(null, null);
         assertFalse(card.applyEffect(gme, parameters));
-        
+
     }
 
     /**
      * Tests for empty and null values as parameters with null as the student color.
+     *
      * @param card to test.
      */
     void testEffectForNullAndInvalidInteger(CharacterCard card) {
@@ -70,7 +76,8 @@ class CharacterCardsEffectTest {
 
     /**
      * Tests for empty and null values as parameters with a valid value student color.
-     * @param card to test.
+     *
+     * @param card  to test.
      * @param valid value.
      */
     void testEffectForNullAndInvalidInteger(CharacterCard card, StudentColor valid) {
@@ -87,26 +94,28 @@ class CharacterCardsEffectTest {
 
     /**
      * Tests if the initial and other students are equal.
+     *
      * @param initial students.
-     * @param other students.
+     * @param other   students.
      */
     void checkStudentsAreEqual(EnumMap<StudentColor, Integer> initial, EnumMap<StudentColor, Integer> other) {
-        for (StudentColor s: StudentColor.values())
+        for (StudentColor s : StudentColor.values())
             assertEquals(initial.get(s), other.get(s));
     }
 
     /**
      * Tests if the other students are the initial ones removing the removedFromCard ones and adding new ones.
-     * @param initial students.
-     * @param other students.
+     *
+     * @param initial         students.
+     * @param other           students.
      * @param removedFromCard students removed.
      */
     void checkIfGotStudentsFromBag(EnumMap<StudentColor, Integer> initial, EnumMap<StudentColor, Integer> other, List<StudentColor> removedFromCard) {
-        for (StudentColor s: removedFromCard)
+        for (StudentColor s : removedFromCard)
             initial.put(s, initial.get(s) - 1);
 
         int numToFind = removedFromCard.size();
-        for (StudentColor st: StudentColor.values()) {
+        for (StudentColor st : StudentColor.values()) {
             if (other.get(st) > initial.get(st) && numToFind > 0) {
                 numToFind -= other.get(st) - initial.get(st);
                 assertTrue(numToFind >= 0);
@@ -145,14 +154,14 @@ class CharacterCardsEffectTest {
         Player current = gme.model.playersManager.getCurrentPlayer();
         SchoolBoard schoolBoardCurrent = gme.model.playersManager.getSchoolBoard();
         SchoolBoard other = null;
-        for (Player p: gme.model.playersManager.getPlayers()) {
+        for (Player p : gme.model.playersManager.getPlayers()) {
             if (!p.equals(current)) {
                 other = gme.model.playersManager.getSchoolBoard(p);
                 break;
             }
         }
         assert other != null;
-        for (StudentColor s: StudentColor.values()) {
+        for (StudentColor s : StudentColor.values()) {
             schoolBoardCurrent.removeProfessor(s);
             other.removeProfessor(s);
             schoolBoardCurrent.tryRemoveFromHall(s, 10);
@@ -213,7 +222,7 @@ class CharacterCardsEffectTest {
         assertTrue(friar.containsStudents());
         EnumMap<StudentColor, Integer> initialStudents = friar.getStudents();
         List<StudentColor> students = new LinkedList<>();
-        for (StudentColor s: initialStudents.keySet()) {
+        for (StudentColor s : initialStudents.keySet()) {
             students.addAll(Collections.nCopies(initialStudents.get(s), s));
         }
         assertEquals(4, students.size());
@@ -222,7 +231,7 @@ class CharacterCardsEffectTest {
 
         StudentColor s = students.get(0);
 
-        
+
         testEffectForNullAndEmptyStudent(friar);
         testEffectForNullAndInvalidInteger(friar, s);
         // test with correct parameters
@@ -250,22 +259,22 @@ class CharacterCardsEffectTest {
         initializeCharacterCardOnGameModel(harvester);
 
         CharacterParameters parameters;
-        
+
         testEffectForNullAndEmptyStudent(harvester);
-        
+
         // test adding already skipped color
         gme.skipStudentColors.clear();
         gme.skipStudentColors.add(StudentColor.BLUE);
         parameters = new CharacterParameters(StudentColor.BLUE);
         assertFalse(harvester.applyEffect(gme, parameters));
-        
+
         // test normal effect
         parameters = new CharacterParameters(StudentColor.RED);
         assertTrue(harvester.applyEffect(gme, parameters));
         assertTrue(gme.skipStudentColors.contains(StudentColor.RED));
 
         assertFalse(harvester.endEffect());
-        
+
         // check end effect
         harvester.revertEffect(gme);
         assertFalse(gme.skipStudentColors.contains(StudentColor.BLUE));
@@ -281,7 +290,7 @@ class CharacterCardsEffectTest {
     void heraldEffectTest() {
         CharacterCard herald = new Herald();
         initializeCharacterCardOnGameModel(herald);
-        
+
         testEffectForNullAndInvalidInteger(herald);
 
         CharacterParameters parameters;
@@ -306,7 +315,7 @@ class CharacterCardsEffectTest {
         initializeCharacterCardOnGameModel(herbalist);
 
         assertEquals(4, herbalist.getNumBlocks());
-        
+
         testEffectForNullAndInvalidInteger(herbalist);
 
         CharacterParameters parameters;
@@ -331,7 +340,7 @@ class CharacterCardsEffectTest {
         // test no more blocks
         gme.model.islandsManager.getIslandGroup(0).setBlocked(false);
         assertFalse(herbalist.applyEffect(gme, parameters));
-        
+
         assertEquals(herbalist.getCost() + 4, herbalist.getTotalCost());
     }
 
@@ -347,7 +356,7 @@ class CharacterCardsEffectTest {
         assertTrue(jester.containsStudents());
         EnumMap<StudentColor, Integer> initialStudents = jester.getStudents();
         List<StudentColor> students = new LinkedList<>();
-        for (StudentColor s: initialStudents.keySet()) {
+        for (StudentColor s : initialStudents.keySet()) {
             students.addAll(Collections.nCopies(initialStudents.get(s), s));
         }
         assertEquals(6, students.size());
@@ -421,7 +430,7 @@ class CharacterCardsEffectTest {
         initializeCharacterCardOnGameModel(minstrel);
 
         SchoolBoard sb = gme.model.playersManager.getSchoolBoard();
-        for (StudentColor s: StudentColor.values())
+        for (StudentColor s : StudentColor.values())
             sb.tryRemoveFromHall(s, 10);
         for (int i = 0; i < 10; i++)
             sb.addToHall(StudentColor.MAGENTA);
@@ -522,7 +531,7 @@ class CharacterCardsEffectTest {
         assertTrue(princess.containsStudents());
         EnumMap<StudentColor, Integer> initialStudents = princess.getStudents();
         List<StudentColor> students = new LinkedList<>();
-        for (StudentColor s: initialStudents.keySet()) {
+        for (StudentColor s : initialStudents.keySet()) {
             students.addAll(Collections.nCopies(initialStudents.get(s), s));
         }
         assertEquals(4, students.size());
@@ -535,7 +544,7 @@ class CharacterCardsEffectTest {
         checkStudentsAreEqual(initialStudents, princess.getStudents());
         // test full hall
         SchoolBoard current = gme.model.playersManager.getSchoolBoard();
-        for (StudentColor s: StudentColor.values())
+        for (StudentColor s : StudentColor.values())
             current.tryRemoveFromHall(s, 10);
         StudentColor s = students.get(0);
         for (int i = 0; i < 10; i++)
@@ -574,11 +583,11 @@ class CharacterCardsEffectTest {
         // test normal effect
         StudentColor s = StudentColor.BLUE;
         Map<SchoolBoard, Integer> initialValues = new HashMap<>();
-        for (Player p: gme.model.playersManager.getPlayers()) {
+        for (Player p : gme.model.playersManager.getPlayers()) {
             SchoolBoard sb = gme.model.playersManager.getSchoolBoard(p);
             sb.tryRemoveFromHall(s, 10);
             int num = p != gme.model.playersManager.getCurrentPlayer() ?
-                    ThreadLocalRandom.current().nextInt(0, 11):
+                    ThreadLocalRandom.current().nextInt(0, 11) :
                     ThreadLocalRandom.current().nextInt(4, 11);
             for (int i = 0; i < num; i++)
                 sb.addToHall(s);
@@ -588,7 +597,7 @@ class CharacterCardsEffectTest {
         assertTrue(thief.applyEffect(gme, parameters));
         assertFalse(thief.endEffect());
         // check final values
-        for (Player p: gme.model.playersManager.getPlayers()) {
+        for (Player p : gme.model.playersManager.getPlayers()) {
             SchoolBoard sb = gme.model.playersManager.getSchoolBoard(p);
             if (initialValues.get(sb) > 3)
                 assertEquals(initialValues.get(sb) - 3, sb.getStudentsInHall(s));

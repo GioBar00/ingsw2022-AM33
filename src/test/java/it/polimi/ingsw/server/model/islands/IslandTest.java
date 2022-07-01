@@ -1,11 +1,13 @@
 package it.polimi.ingsw.server.model.islands;
 
 import it.polimi.ingsw.server.model.enums.StudentColor;
-import it.polimi.ingsw.server.model.islands.Island;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests {@link Island} class.
+ */
 class IslandTest {
     /**
      * checks that when the island is created the number of student present is 0 for every color, then adds

@@ -171,11 +171,4 @@ public class IslandsManager {
         }
         return islandsView;
     }
-
-    /**
-     * @return the ArrayList of IslandGroups
-     */
-    public ArrayList<IslandGroup> getIslandGroups() {
-        return islandGroups;
-    }
 }

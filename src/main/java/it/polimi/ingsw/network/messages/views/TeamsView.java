@@ -31,10 +31,7 @@ public class TeamsView implements Serializable {
         EnumMap<Tower, List<String>> teamsString = new EnumMap<>(Tower.class);
         for (Tower t : teams.keySet()) {
             teamsString.put(t, new LinkedList<>());
-            ArrayList<String> playerNicks = new ArrayList<>();
-            for (String s : teams.get(t)) {
-                playerNicks.add(s);
-            }
+            ArrayList<String> playerNicks = new ArrayList<>(teams.get(t));
             teamsString.put(t, playerNicks);
         }
         this.teams = teamsString;

@@ -4,9 +4,46 @@ package it.polimi.ingsw.server.model.enums;
  * enumeration for assistant cards: contains data for number of card, its value and number of moves
  */
 public enum AssistantCard {
-    CHEETAH(1, 1), OSTRICH(2, 1), CAT(3, 2), EAGLE(4, 2),
-    FOX(5, 3), SNAKE(6, 3), OCTOPUS(7, 4), DOG(8, 4),
-    ELEPHANT(9, 5), TURTLE(10, 5);
+    /**
+     * cheetah card
+     */
+    CHEETAH(1, 1),
+    /**
+     * ostrich card
+     */
+    OSTRICH(2, 1),
+    /**
+     * cat card
+     */
+    CAT(3, 2),
+    /**
+     * eagle card
+     */
+    EAGLE(4, 2),
+    /**
+     * fox card
+     */
+    FOX(5, 3),
+    /**
+     * snake card
+     */
+    SNAKE(6, 3),
+    /**
+     * octopus card
+     */
+    OCTOPUS(7, 4),
+    /**
+     * dog card
+     */
+    DOG(8, 4),
+    /**
+     * elephant card
+     */
+    ELEPHANT(9, 5),
+    /**
+     * turtle card
+     */
+    TURTLE(10, 5);
 
     /**
      * number of card

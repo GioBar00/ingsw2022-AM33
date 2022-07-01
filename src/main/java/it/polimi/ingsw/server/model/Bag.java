@@ -14,7 +14,7 @@ class Bag {
     /**
      * students currently in the bag
      */
-    LinkedList<StudentColor> students;
+    final LinkedList<StudentColor> students;
 
     /**
      * Public constructor for a Bag

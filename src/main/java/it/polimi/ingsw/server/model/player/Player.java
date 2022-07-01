@@ -65,15 +65,6 @@ public class Player {
     }
 
     /**
-     * Used to get the wizard
-     *
-     * @return the wizard of the Player
-     */
-    Wizard getWizard() {
-        return wizard;
-    }
-
-    /**
      * Used to get the schoolBoard
      *
      * @return the schoolBoard of the Player

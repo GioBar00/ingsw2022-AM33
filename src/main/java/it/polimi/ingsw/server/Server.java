@@ -71,7 +71,7 @@ public class Server {
      * Reset the server to the initial state
      */
     public synchronized void resetGame() {
-        System.out.println("S: Resetting game");
+        System.out.println("S: resetting game");
         state = ServerState.EMPTY;
     }
 
@@ -99,7 +99,7 @@ public class Server {
                         }
                     }
                 } catch (Throwable e) {
-                    System.out.println("S: NOT HANDLED ERROR!!!!");
+                    System.err.println("S: NOT HANDLED ERROR!!!!");
                     e.printStackTrace();
                     break;
                 }
@@ -118,12 +118,13 @@ public class Server {
      */
     private void handleFirstPlayer(CommunicationHandler communicationHandler) {
         try {
+            System.out.println("S: handling first player");
             String nickname = getPlayerNickname(communicationHandler);
             if (nickname != null) {
                 CountDownLatch countDownLatch = new CountDownLatch(1);
                 communicationHandler.setMessageHandler((message) -> {
                     if (message.isValid() && MessageType.retrieveByMessage(message) == MessageType.CHOSEN_GAME) {
-                        communicationHandler.setDisconnectListener(null);
+                        communicationHandler.setDisconnectListener(e -> {});
                         ChosenGame choice = (ChosenGame) message;
                         clientManager.getController().setModelAndLobby(choice.getPreset(), choice.getMode(), LobbyConstructor.getLobby(choice.getPreset()));
                         synchronized (this) {
@@ -134,12 +135,7 @@ public class Server {
                     } else
                         communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
                 });
-                communicationHandler.setDisconnectListener((e) -> {
-                    synchronized (this) {
-                        state = ServerState.EMPTY;
-                    }
-                    System.out.println("S: EMPTY");
-                });
+                communicationHandler.setDisconnectListener((e) -> resetGame());
 
                 communicationHandler.sendMessage(new CommMessage(CommMsgType.CHOOSE_GAME));
 
@@ -158,10 +154,7 @@ public class Server {
         } catch (TimeoutException e) {
             if (communicationHandler.isConnected()) {
                 communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
-                synchronized (this) {
-                    state = ServerState.EMPTY;
-                }
-                System.out.println("S: EMPTY");
+                resetGame();
             }
         }
     }
@@ -179,7 +172,12 @@ public class Server {
         communicationHandler.setMessageHandler((message) -> {
             if (message.isValid() && MessageType.retrieveByMessage(message) == MessageType.LOGIN) {
                 Login login = (Login) message;
-                nickname.set(login.getNickname());
+                String nick = login.getNickname().trim();
+                if (nick.isEmpty() || nick.length() > 20) {
+                    communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_INVALID_NICKNAME));
+                    nickname.set(null);
+                } else
+                    nickname.set(nick);
             } else {
                 communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_INVALID_MESSAGE));
                 nickname.set(null);
@@ -196,15 +194,17 @@ public class Server {
         try {
             if (latch.await(10, TimeUnit.SECONDS) && nickname.get() != null) {
                 communicationHandler.setMessageHandler(null);
+                communicationHandler.setDisconnectListener(e -> {});
                 return nickname.get();
             } else if (nickname.get() == null) {
                 communicationHandler.setMessageHandler(null);
+                communicationHandler.setDisconnectListener(e -> {});
                 return null;
             }
         } catch (InterruptedException ignored) {
         }
         communicationHandler.setMessageHandler(null);
-        communicationHandler.setDisconnectListener(null);
+        communicationHandler.setDisconnectListener(e -> {});
         throw new TimeoutException();
     }
 
@@ -215,6 +215,7 @@ public class Server {
      */
     private void handleNewPlayer(CommunicationHandler communicationHandler) {
         try {
+            System.out.println("S: handling new player");
             String nickname = getPlayerNickname(communicationHandler);
 
             if (nickname != null) {
@@ -226,7 +227,7 @@ public class Server {
                             if (clientManager.getVirtualClient(nickname) != null && !clientManager.getVirtualClient(nickname).isConnected()) {
                                 clientManager.reconnectPlayer(communicationHandler, nickname);
                             } else {
-                                communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_NO_SPACE));
+                                communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_GAME_STARTED));
                             }
                         } else if (clientManager.getVirtualClient(nickname) != null) {
                             communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_NICKNAME_UNAVAILABLE));
@@ -242,6 +243,4 @@ public class Server {
             communicationHandler.sendLastMessage(new CommMessage(CommMsgType.ERROR_TIMEOUT));
         }
     }
-
-
 }

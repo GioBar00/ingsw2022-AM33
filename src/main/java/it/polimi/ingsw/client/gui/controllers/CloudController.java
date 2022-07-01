@@ -29,6 +29,9 @@ public class CloudController implements GUIController {
     private int cloudIndex;
     @FXML
     private Pane root;
+    /**
+     * Button used to click on the cloud in the game-screen
+     */
     @FXML
     public Button cloudBtn;
 
@@ -47,9 +50,15 @@ public class CloudController implements GUIController {
     private ImageView imgViewCloud;
     @FXML
     private AnchorPane anchorPanePawn;
+    /**
+     * Pane on which the elements of the cloud are anchored
+     */
     @FXML
     public AnchorPane anchorPaneCloud;
 
+    /**
+     * ArrayList used to access the imageViews of the students' paws
+     */
     public ArrayList<ImageView> imageViews;
 
 
@@ -92,15 +101,6 @@ public class CloudController implements GUIController {
      */
     public void sendChosenCloud() {
         gui.notifyViewListener(new ChosenCloud(cloudIndex));
-    }
-
-    /**
-     * Enable the picking of the cloud.
-     *
-     * @param enable set as true if the cloud could be picked.
-     */
-    public void enableCloud(boolean enable) {
-        cloudBtn.setDisable(!enable);
     }
 
     /**

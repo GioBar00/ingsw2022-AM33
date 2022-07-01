@@ -4,6 +4,9 @@ import it.polimi.ingsw.server.model.enums.StudentColor;
 
 import java.util.ArrayList;
 
+/**
+ * data structure that represents a Cloud
+ */
 public class CloudView {
 
     /**

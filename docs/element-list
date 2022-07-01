@@ -17,7 +17,6 @@ it.polimi.ingsw.network.messages.views
 it.polimi.ingsw.server
 it.polimi.ingsw.server.controller
 it.polimi.ingsw.server.enums
-it.polimi.ingsw.server.listeners
 it.polimi.ingsw.server.lobby
 it.polimi.ingsw.server.model
 it.polimi.ingsw.server.model.cards

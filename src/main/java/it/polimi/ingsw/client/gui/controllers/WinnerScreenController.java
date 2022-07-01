@@ -123,13 +123,15 @@ public class WinnerScreenController implements GUIController, MuteToggle {
                 AudioManager.playAudio(AudioPath.DRAW);
             } else if (players.contains(gui.getNickname())) {
                 lblResult.setText("You won!");
+                lblResult.setStyle("-fx-text-fill: #FFDF00");
                 AudioManager.playAudio(AudioPath.WON);
             } else {
-                lblResult.setText(winners.stream().findAny().get().toString().toLowerCase() + " won!");
+                lblResult.setText("You lost...");
+                lblResult.setStyle("-fx-text-fill: #E84855");
                 AudioManager.playAudio(AudioPath.LOST);
             }
-
             String sb = "Congratulations to " +
+                    (playerViews.size() > 3 ? winners.stream().findAny().get().toString().toLowerCase() + " team: " : "") +
                     String.join(", ", players) +
                     "!";
             lblWinner.setText(sb);

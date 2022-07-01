@@ -1,10 +1,8 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.cli.CLI;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.server.Server;
-import javafx.application.Application;
 import org.apache.commons.cli.*;
 
 /**
@@ -52,7 +50,6 @@ public class Eriantys {
             }
 
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
             formatter.printHelp("Eriantys", options);
         }
     }

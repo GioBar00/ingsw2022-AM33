@@ -32,85 +32,115 @@ import java.util.*;
  */
 public class GameController implements GUIController, MuteToggle {
     @FXML
-    public AnchorPane anchorPaneCharacterCard0;
+    private AnchorPane anchorPaneCharacterCard0;
     @FXML
-    public AnchorPane anchorPaneCharacterCard1;
+    private AnchorPane anchorPaneCharacterCard1;
     @FXML
-    public AnchorPane anchorPaneCharacterCard2;
+    private AnchorPane anchorPaneCharacterCard2;
     @FXML
-    public VBox vBoxReserve;
+    private VBox vBoxReserve;
     @FXML
-    public ImageView imgViewReserveCoin;
+    private ImageView imgViewReserveCoin;
     @FXML
-    public Label lblReserveCoins;
+    private Label lblReserveCoins;
     @FXML
-    public HBox hBoxTitle;
+    private HBox hBoxTitle;
     @FXML
-    public ImageView imgViewTitle;
+    private ImageView imgViewTitle;
     @FXML
-    public Label lblTurn;
+    private Label lblTurn;
     @FXML
-    public Label lblGamePhase;
+    private Label lblGamePhase;
     @FXML
-    public Label lblAction;
+    private Label lblAction;
     @FXML
-    public AnchorPane anchorPanePlayerInfo;
+    private AnchorPane anchorPanePlayerInfo;
     @FXML
-    public AnchorPane anchorPaneBoard;
+    private AnchorPane anchorPaneBoard;
     @FXML
-    public AnchorPane anchorPaneIslands;
+    private AnchorPane anchorPaneIslands;
     @FXML
-    public AnchorPane anchorPaneCloud0;
+    private AnchorPane anchorPaneCloud0;
     @FXML
-    public AnchorPane anchorPaneCloud1;
+    private AnchorPane anchorPaneCloud1;
     @FXML
-    public AnchorPane anchorPaneCloud2;
+    private AnchorPane anchorPaneCloud2;
     @FXML
-    public AnchorPane anchorPaneCloud3;
+    private AnchorPane anchorPaneCloud3;
     @FXML
-    public AnchorPane anchorPanePlayer0;
+    private AnchorPane anchorPanePlayer0;
     @FXML
-    public AnchorPane anchorPanePlayer1;
+    private AnchorPane anchorPanePlayer1;
     @FXML
-    public AnchorPane anchorPanePlayer2;
+    private AnchorPane anchorPanePlayer2;
     @FXML
-    public GridPane gridRoot;
+    private GridPane gridRoot;
     @FXML
-    public Button btnMute;
+    private Button btnMute;
     @FXML
-    public ImageView imgViewMute;
+    private ImageView imgViewMute;
     @FXML
-    public ImageView imgViewBackground;
+    private ImageView imgViewBackground;
     @FXML
-    public AnchorPane suggestionBox;
+    private AnchorPane suggestionBox;
     @FXML
-    public Rectangle suggestionBackground;
+    private Rectangle suggestionBackground;
     @FXML
-    public Rectangle playerInfoBackground;
+    private Rectangle playerInfoBackground;
     @FXML
-    public AnchorPane titleBackAnchor;
+    private AnchorPane titleBackAnchor;
     @FXML
-    public Rectangle titleBackground;
+    private Rectangle titleBackground;
 
     private Pane root;
 
+    /**
+     * The GUI associated to the controller
+     */
     private GUI gui;
 
+    /**
+     * List of the Cloud panes
+     */
     private final List<AnchorPane> cloudPanes = new ArrayList<>(4);
+    /**
+     * List of the Cloud controllers
+     */
     private final List<CloudController> cloudControllers = new ArrayList<>(2);
+    /**
+     * List of the CharacterCard panes
+     */
     private final List<AnchorPane> characterCardPanes = new ArrayList<>(3);
+    /**
+     * List of the CharacterCard controllers
+     */
     private final List<CharacterCardController> characterCardControllers = new ArrayList<>();
+    /**
+     * Controller of the Islands
+     */
     private IslandsController islandsController;
+    /**
+     * List of the panes associated with the remaining Players
+     */
     private final List<AnchorPane> remainingPlayerPanes = new ArrayList<>(3);
+    /**
+     * Map of the PlayerControllers, by nickname
+     */
     private final Map<String, PlayerController> playerControllersByNickname = new HashMap<>();
 
+    /**
+     * Map of the GamePhase messages, by GamePhase
+     */
     private final EnumMap<GamePhase, String> gamePhaseMessageMap = new EnumMap<>(Map.of(
             GamePhase.PLANNING, "Planning",
-            GamePhase.MOVE_STUDENTS, "Move 3 Students",
+            GamePhase.MOVE_STUDENTS, "Move Students",
             GamePhase.MOVE_MOTHER_NATURE, "Move Mother Nature",
             GamePhase.CHOOSE_CLOUD, "Choose a Cloud"
     ));
 
+    /**
+     * The current GameView
+     */
     private GameView gameView;
 
     /**
@@ -210,6 +240,7 @@ public class GameController implements GUIController, MuteToggle {
      * This method is used to update the game with the new game view.
      *
      * @param gameView the new game view.
+     * @param nickname of the client who will receive the game view.
      */
     public void updateGameView(GameView gameView, String nickname) {
         closeWaitingStage();
@@ -243,6 +274,7 @@ public class GameController implements GUIController, MuteToggle {
      * This method is used to load the character cards.
      *
      * @param characterCardViews the character cards to load.
+     * @param nickname of the player that will receive the updated CharacterCard scene.
      */
     private void updateCharacterCardControllers(List<CharacterCardView> characterCardViews, String nickname) {
         if (characterCardViews == null)
@@ -565,11 +597,9 @@ public class GameController implements GUIController, MuteToggle {
             GUIUtils.setButton(entranceButtons.get(i), event -> {
                 lblAction.setText("Select a highlighted island or hall to move the student to");
                 clearCharacterButtons();
-                System.out.println("Entrance button pressed: " + i);
                 // activate islands
                 for (Integer j : islandIndexes) {
                     GUIUtils.setButton(islandsController.islandControllers.get(j).islandButton, e -> {
-                        System.out.println("Island button pressed: " + j);
                         gui.notifyViewListener(new MovedStudent(MoveLocation.ENTRANCE, i, MoveLocation.ISLAND, j));
                         clearHallAndIslandButtons.apply();
                     });
@@ -578,7 +608,6 @@ public class GameController implements GUIController, MuteToggle {
                 System.out.println(entranceToHallIndexes.toString());
                 if (entranceToHallIndexes.contains(i)) {
                     GUIUtils.setButton(me.getSchoolBoardController().hallButton, e -> {
-                        System.out.println("Hall button pressed");
                         gui.notifyViewListener(new MovedStudent(MoveLocation.ENTRANCE, i, MoveLocation.HALL, null));
                         clearHallAndIslandButtons.apply();
                     });
@@ -668,10 +697,18 @@ public class GameController implements GUIController, MuteToggle {
         toggleMute(imgViewMute);
     }
 
+    /**
+     * This method requests to show the waiting screen.
+     */
     public void showWaiting() {
         showWaiting(60);
     }
 
+    /**
+     * Shows the waiting screen. The waiting screen has a countdown.
+     *
+     * @param timer the initial value of the countdown timer.
+     */
     private void showWaiting(int timer) {
         waitingViewController = ResourceLoader.loadFXML(FXMLPath.WAITING_SCREEN, gui);
         Platform.runLater(() -> {

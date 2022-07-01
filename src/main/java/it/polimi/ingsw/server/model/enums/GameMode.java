@@ -4,7 +4,13 @@ package it.polimi.ingsw.server.model.enums;
  * enumeration of GameModes
  */
 public enum GameMode {
+    /**
+     * easy game mode
+     */
     EASY,
+    /**
+     * expert game mode
+     */
     EXPERT;
 
     /**

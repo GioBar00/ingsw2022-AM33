@@ -22,6 +22,7 @@ import it.polimi.ingsw.network.messages.views.PlayerView;
 import it.polimi.ingsw.network.messages.views.TeamsView;
 import it.polimi.ingsw.network.messages.views.WizardsView;
 import it.polimi.ingsw.server.model.enums.GameState;
+import it.polimi.ingsw.server.model.enums.StudentColor;
 import it.polimi.ingsw.server.model.enums.Tower;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -90,8 +91,21 @@ public class GUI extends Application implements UI {
      */
     private List<PlayerView> players;
 
+    /**
+     * The controller of the "choose color" view.
+     */
+    private ChooseColorController chooseColorController;
+
+    /**
+     * This boolean is set as true when the client has to ignore a server unavailable message.
+     */
     private boolean ignoreServerUnavailable = false;
 
+    /**
+     * Main of the GUI application
+     *
+     * @param args a list of arguments.
+     */
     public static void main(String[] args) {
         launch(args);
     }
@@ -122,7 +136,6 @@ public class GUI extends Application implements UI {
         try {
             ResourceLoader.checkResources();
         } catch (MissingResourceException e) {
-            System.err.println(e.getMessage());
             stop();
         }
     }
@@ -252,7 +265,7 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void setTeamsView(TeamsView teamsView) {
-        boolean show = viewState == ViewState.CHOOSE_TEAM && checkTeamLobbyController();
+        boolean show = checkTeamLobbyController() && viewState == ViewState.CHOOSE_TEAM;
         Platform.runLater(() -> ((TeamLobbyController) lobbyController).updateTeams(teamsView, nickname));
         if (show)
             showLobbyScreen();
@@ -266,10 +279,7 @@ public class GUI extends Application implements UI {
     @Override
     public void setGameView(GameView gameView) {
         boolean show = checkGameController();
-        if (this.players == null) {
-            players = gameView.getPlayersView();
-        }
-
+        players = gameView.getPlayersView();
         if (gameView.getState() == GameState.ENDED) {
             show = false;
         } else
@@ -311,7 +321,6 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showStartScreen() {
-        System.out.println("Showing start screen");
         viewState = ViewState.SETUP;
         checkStartScreenController();
         Platform.runLater(() -> {
@@ -343,7 +352,6 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showWizardMenu() {
-        System.out.println("Showing wizard menu");
         checkLobbyController();
         Platform.runLater(() -> {
             if (startScreenController != null)
@@ -412,7 +420,7 @@ public class GUI extends Application implements UI {
         Platform.runLater(() -> {
             controller.init();
             controller.loadScene(stage);
-            controller.updateWinners(this.players, winners);
+            controller.updateWinners(players, winners);
         });
     }
 
@@ -427,7 +435,7 @@ public class GUI extends Application implements UI {
     }
 
     /**
-     * This method notifies the host that the game cant start.
+     * This method notifies the host that the game can't start.
      */
     @Override
     public void hostCantStart() {
@@ -459,14 +467,8 @@ public class GUI extends Application implements UI {
                     Platform.runLater(() -> gameController.processPlayAssistantCard(((PlayAssistantCard) message).getPlayableAssistantCards()));
             case CHOOSE_CLOUD -> Platform.runLater(() -> gameController.processChooseCloud((ChooseCloud) message));
             case CHOOSE_ISLAND -> Platform.runLater(() -> gameController.processChooseIsland((ChooseIsland) message));
-            case CHOOSE_STUDENT_COLOR -> Platform.runLater(() -> {
-                Stage chooseColor = new Stage();
-                ChooseColorController controller = ResourceLoader.loadFXML(FXMLPath.CHOOSE_COLOR, this);
-                controller.init();
-                controller.setAvailableButtons(((ChooseStudentColor) message).getAvailableStudentColors());
-                controller.loadScene(chooseColor);
-                chooseColor.show();
-            });
+            case CHOOSE_STUDENT_COLOR ->
+                    Platform.runLater(() -> handleChooseColor(((ChooseStudentColor) message).getAvailableStudentColors()));
             case MOVE_MOTHER_NATURE ->
                     Platform.runLater(() -> gameController.processMoveMotherNature((MoveMotherNature) message));
             case MOVE_STUDENT -> Platform.runLater(() -> handleMoveStudent((MoveStudent) message));
@@ -475,6 +477,30 @@ public class GUI extends Application implements UI {
             case SWAP_STUDENTS -> Platform.runLater(() -> handleSwap((SwapStudents) message));
         }
     }
+
+    /**
+     * This method handles a {@link ChooseStudentColor} request.
+     *
+     * @param colors an enum-set of available colors.
+     */
+    private void handleChooseColor(EnumSet<StudentColor> colors) {
+        Stage chooseColor = new Stage();
+        if (chooseColorController == null) {
+            chooseColorController = ResourceLoader.loadFXML(FXMLPath.CHOOSE_COLOR, this);
+        }
+        chooseColorController.init();
+        chooseColorController.setAvailableButtons(colors);
+        chooseColorController.loadScene(chooseColor);
+
+        chooseColor.setOnHidden(event -> {
+            if (!chooseColorController.isHasChoose()) {
+                chooseColorController = null;
+                handleChooseColor(colors);
+            }
+        });
+        chooseColor.show();
+    }
+
 
     /**
      * This method handles a {@link MoveStudent} request.
@@ -600,6 +626,9 @@ public class GUI extends Application implements UI {
      */
     @Override
     public void showWaiting() {
+        if (chooseColorController != null)
+            chooseColorController.close();
+
         if (gameController != null)
             gameController.showWaiting();
 
