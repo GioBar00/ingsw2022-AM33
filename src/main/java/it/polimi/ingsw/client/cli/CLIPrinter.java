@@ -830,7 +830,7 @@ class CLIPrinter {
     private void appendWater(StringBuilder s, List<IslandGroupView> igv) {
         int i = 144;
         if(igv.size() < 12){
-            // 108 are the spaces occupaid by the island alone, the rest of the formula is for the spaces
+            // 108 are the spaces occupied by the island alone, the rest of the formula is for the spaces
             i = igv.size() * 3 + 108;
         }
         s.append(colors.get("blue"));
