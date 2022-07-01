@@ -419,7 +419,7 @@ class CLIPrinter {
         StringBuilder stringBuilder = new StringBuilder();
 
 
-        appendWater(stringBuilder);
+        appendWater(stringBuilder, views);
         islandsLines.add(0, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
         // top border
@@ -526,7 +526,7 @@ class CLIPrinter {
         // water layer
         islandsLines.add(5, stringBuilder.toString());
         stringBuilder.delete(0, stringBuilder.length());
-        appendWater(stringBuilder);
+        appendWater(stringBuilder, views);
         islandsLines.add(6, stringBuilder.toString());
 
 
@@ -827,10 +827,15 @@ class CLIPrinter {
      *
      * @param s the string builder to append to.
      */
-    private void appendWater(StringBuilder s) {
-        s.append(colors.get(blue));
-        s.append("░".repeat(144));
-        s.append(colors.get(reset));
+    private void appendWater(StringBuilder s, List<IslandGroupView> igv) {
+        int i = 144;
+        if(igv.size() < 12){
+            // 108 are the spaces occupaid by the island alone, the rest of the formula is for the spaces
+            i = igv.size() * 3 + 108;
+        }
+        s.append(colors.get("blue"));
+        s.append("░".repeat(i));
+        s.append(colors.get("reset"));
     }
 
     /**
