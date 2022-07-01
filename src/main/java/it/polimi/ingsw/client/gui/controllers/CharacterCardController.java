@@ -148,6 +148,10 @@ public class CharacterCardController implements GUIController {
         root.getChildren().clear();
         GUIUtils.addToPaneCenterKeepRatio(root, anchorPaneCharacter, 685.0 / 1039);
 
+        for (StudentColor s : StudentColor.values()) {
+            buttons.get(s).setVisible(false);
+        }
+
 
     }
 

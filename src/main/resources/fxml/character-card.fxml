@@ -66,7 +66,7 @@
                                                 </ImageView>
                                              </graphic>
                                               <font>
-                                                  <Font name="Sono Medium" size="13.0" />
+                                                  <Font name="Sono Medium" size="11.0" />
                                               </font>
                                           </Button>
                                        </children>
@@ -82,7 +82,7 @@
                                                 </ImageView>
                                              </graphic>
                                               <font>
-                                                  <Font name="Sono Medium" size="13.0" />
+                                                  <Font name="Sono Medium" size="11.0" />
                                               </font>
                                           </Button>
                                        </children>
@@ -98,7 +98,7 @@
                                                 </ImageView>
                                              </graphic>
                                               <font>
-                                                  <Font name="Sono Medium" size="13.0" />
+                                                  <Font name="Sono Medium" size="11.0" />
                                               </font>
                                           </Button>
                                        </children>
@@ -128,7 +128,7 @@
                                                 </ImageView>
                                              </graphic>
                                               <font>
-                                                  <Font name="Sono Medium" size="13.0" />
+                                                  <Font name="Sono Medium" size="11.0" />
                                               </font>
                                           </Button>
                                        </children>
@@ -144,7 +144,7 @@
                                                 </ImageView>
                                              </graphic>
                                               <font>
-                                                  <Font name="Sono Medium" size="13.0" />
+                                                  <Font name="Sono Medium" size="11.0" />
                                               </font>
                                           </Button>
                                        </children>
