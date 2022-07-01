@@ -76,11 +76,30 @@
       <artifactId>javafx-fxml</artifactId>
       <version>18.0.1</version>
     </dependency>
-    <!-- javafx-media -->
+    <!-- javafx-media all platforms -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-media</artifactId>
       <version>18.0.1</version>
+      <classifier>mac</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-media</artifactId>
+      <version>18.0.1</version>
+      <classifier>mac-aarch64</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-media</artifactId>
+      <version>18.0.1</version>
+      <classifier>win</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-media</artifactId>
+      <version>18.0.1</version>
+      <classifier>linux</classifier>
     </dependency>
   </dependencies>
 
