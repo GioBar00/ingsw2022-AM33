@@ -1,7 +1,9 @@
 package it.polimi.ingsw.client.gui.controllers;
 
+import it.polimi.ingsw.client.enums.AudioPath;
 import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.client.gui.GUIUtils;
+import it.polimi.ingsw.client.gui.audio.AudioManager;
 import it.polimi.ingsw.network.messages.client.ChosenTeam;
 import it.polimi.ingsw.network.messages.client.StartGame;
 import it.polimi.ingsw.network.messages.views.TeamsView;
@@ -189,6 +191,7 @@ public class TeamLobbyController implements LobbyController {
     public void setCanStart() {
         startButton.setVisible(true);
         startButton.setDisable(false);
+        AudioManager.playEffect(AudioPath.START_EFFECT);
     }
 
     /**

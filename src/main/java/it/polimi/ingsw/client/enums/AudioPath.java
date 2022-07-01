@@ -27,7 +27,11 @@ public enum AudioPath {
     /**
      * audio file for the winner-screen in case there is a draw
      */
-    DRAW("/audio/draw.mp3");
+    DRAW("/audio/draw.mp3"),
+    /**
+     * audio file for start effect
+     */
+    START_EFFECT("/audio/effects/start.mp3");
 
     /**
      * The path of the audio file.

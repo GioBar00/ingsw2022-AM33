@@ -155,6 +155,7 @@ public class ClientManager implements DisconnectListener {
                 }
                 if (numOfTeamsWithPlayers == 0) {
                     gameEnded();
+                    forceEndGameLatch.countDown();
                     return;
                 }
                 if (numOfTeamsWithPlayers <= 1) {
