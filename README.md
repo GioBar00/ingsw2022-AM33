@@ -56,14 +56,14 @@ the [rules][game-rules] of the game.
 ## Code coverage
 All classes for model, lobby, controller and messages were tested.
 
-| Package       |  Line Coverage  |
-|:--------------|:---------------:|
-| **_server_**  | 91% (1949/2127) |
-| controller    |  92% (184/199)  |
-| lobby         |  98% (119/121)  |
-| model         | 92% (1489/1610) |
-| **_network_** |  93% (506/544)  |
-| messages      |  96% (483/503)  |
+| Package       | Class Coverage | Method Coverage |  Line Coverage  |
+|:--------------|:--------------:|:---------------:|:---------------:|
+| **_server_**  |  100% (62/62)  |  94% (436/460)  | 92% (1805/1958) |
+| controller    |   100% (3/3)   |  100% (28/28)   |  92% (170/183)  |
+| lobby         |   100% (3/3)   |  100% (22/22)   |  98% (112/114)  |
+| model         |  100% (52/52)  |  94% (353/372)  | 92% (1384/1491) |
+| **_network_** |  92% (51/55)   |  93% (163/175)  |  93% (451/483)  |
+| messages      |  96% (48/50)   |  94% (155/164)  |  95% (435/454)  |
 
 ## Building
 ### Dependencies
