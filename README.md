@@ -12,6 +12,8 @@
 [![Build](https://github.com/GioBar00/ingsw2022-AM33/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/GioBar00/ingsw2022-AM33/actions/workflows/maven.yml)
 [![](https://img.shields.io/badge/JavaDoc--blue.svg?style=flat&logo=openjdk)](https://giobar00.github.io/ingsw2022-AM33/)
 
+**Final score: 30 cum laude**
+
 ## Eriantys
 
 <img src="https://www.craniocreations.it/wp-content/uploads/2021/06/Eriantys_scatola3Dombra.png" width="256px" height="256px" alt="Eriantys box" align="right"/>
